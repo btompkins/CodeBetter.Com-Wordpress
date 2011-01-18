@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Enterprise Library &#8211; Logging and Instrumentation Application Block &#8211; Patterns and Practices | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='ASP.NET Page Inheritance &#8211; Base Page Classes in your Web Applications' href='http://codebetter.com/davidhayden/2005/03/14/asp-net-page-inheritance-base-page-classes-in-your-web-applications/' />
+<link rel='next' title='Codus &#8211; Code Generation Tool for object-Relational Mapping &#8211; O/R Mapper' href='http://codebetter.com/davidhayden/2005/03/17/codus-code-generation-tool-for-object-relational-mapping-or-mapper/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=24' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-24" class="post-24 post type-post status-publish format-standard hentry category-application-blocks">
+					<h1 class="entry-title">Enterprise Library &#8211; Logging and Instrumentation Application Block &#8211; Patterns and Practices</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/" title="3:07 pm" rel="bookmark"><span class="entry-date">March 17, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Another useful application block that is part of the <STRONG>Enterprise Library</STRONG> is the <STRONG>Logging and Instrumentation Application Block</STRONG>.&nbsp; It allows you to log events in your applications to various locations, such as a database, the event log, email, a flat file, etc.</P><br />
+<P>As you can see from the snapshot of the configuration tool below, I created a single location to store all my events &#8211; <STRONG>a flat file</STRONG>.&nbsp; It is the <STRONG>MessageLogSink</STRONG>, which stores messages in a file I decided to call <STRONG>message.log</STRONG>.</P><br />
+<P>&nbsp;</P><br />
+<P align="center"><IMG alt="Logging Application Block" hspace="0" src="/blogs//images/codebetter_com/david.hayden/130/o_Logging%20Application%20Block.gif" align="baseline" border="0"></P><br />
+<P>&nbsp;</P><br />
+<P>For testing purposes, I decide to group all my events into 5 categories:</P><br />
+<UL><br />
+<LI>Debug<br />
+<LI>Exception<br />
+<LI>General<br />
+<LI>Performance<br />
+<LI>Security</LI></UL><br />
+<P>You have to assign one of the categories as default, so I assigned <STRONG>General</STRONG> as default.&nbsp; Each category can be assigned to one of more sinks.&nbsp; Thus you could have events of type <STRONG>Exception</STRONG> not only stored to a text file, but also sent to you via email, placed in the event log, etc.&nbsp; In my case, I just assigned them all to <STRONG>MessageLogSink</STRONG> that saves messages to <STRONG>message.log</STRONG>.</P><br />
+<P>How you organize your categories&nbsp;is fairly important because you not only have the ability to channel categories to one or more different locations, but you also have the ability to <STRONG>filter on categories</STRONG>.&nbsp; For example, when you first start building the application you will probably want to see all events of type <STRONG>Debug</STRONG>.&nbsp; However, when the application gets closer to production or into production, you will probably want to turn off a lot of the <STRONG>Debug</STRONG> messages.&nbsp; You can also filter on <STRONG>Priority</STRONG> as well, so one needs to think out the strategy on how you organize the events and the priority of the events within each category so that you can minimize the logging as the application becomes more mature.</P><br />
+<P>The <STRONG>Logging and Instrumentation Application Block</STRONG> is called within your application using a simple <STRONG>Logger.Write(&#8230;)</STRONG> call that has several overloads where you can pass parameters:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Logger.Write</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Write(</SPAN><SPAN>object</SPAN><SPAN> message)<br />
+</SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Write(</SPAN><SPAN>object</SPAN><SPAN> message, </SPAN><SPAN>string</SPAN><SPAN> category)<br />
+&#8230;<br />
+</SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Write(LogEntry log)</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The parameters are as such:</P><br />
+<UL><br />
+<LI>Message<br />
+<LI>Category<br />
+<LI>Priority<br />
+<LI>Title<br />
+<LI>EventID<br />
+<LI>Severity<br />
+<LI>etc&#8230;</LI></UL><br />
+<P>These values are all neatly placed in a type of <STRONG>LogEntry</STRONG> that gets distributed (after filtering) to each Sink on a category-by-category basis via the Interface <STRONG>ILogSink</STRONG>.</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>ILogSink Interface</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>interface</SPAN><SPAN> ILogSink<br />
+{<br />
+    </SPAN><SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;summary&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>///</SPAN><SPAN> Send message to log sink handler.<br />
+    </SPAN><SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;/summary&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;param name=&#8221;log&#8221;&gt;</SPAN><SPAN>xmlMessage as string</SPAN><SPAN>&lt;/param&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>    </SPAN><SPAN>void</SPAN><SPAN> SendMessage(LogEntry log);</p>
+<p>    </SPAN><SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;summary&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>///</SPAN><SPAN> Sets the formatter to be used by this sink.<br />
+    </SPAN><SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;/summary&gt;</SPAN></PRE><PRE><SPAN>    </SPAN><SPAN>ILogFormatter Formatter { </SPAN><SPAN>get</SPAN><SPAN>; </SPAN><SPAN>set</SPAN><SPAN>; }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The formatter you see mentioned above is also configurable per sink and category and just specifies what you want the message to look like and what information you want it to contain.</P><br />
+<P>After I finished creating the configuration files, I created a quick test application in <A href="http://www.sliver.com/dotnet/SnippetCompiler/" target="_blank">Snippet Compiler</A> as shown below.&nbsp; To stay somewhat consistent on how I use the categories and set priorties, etc., I&nbsp;derived more specific category-based&nbsp;LogEntry classes&nbsp;from LogEntry.&nbsp; This is totally unnecessary as I was just playing:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Testing Logging Application Block</LEGEND><PRE><SPAN>using</SPAN><SPAN> System;<br />
+</SPAN><SPAN>using</SPAN><SPAN> System.Collections;</p>
+<p></SPAN><SPAN>using</SPAN><SPAN> Microsoft.Practices.EnterpriseLibrary.Logging;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> GeneralLogEntry : LogEntry<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> GeneralLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message) : </SPAN><SPAN>this</SPAN><SPAN>(message, </SPAN><SPAN>2</SPAN><SPAN>) {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> GeneralLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message, </SPAN><SPAN>int</SPAN><SPAN> priority) : </SPAN><SPAN>base</SPAN><SPAN>()<br />
+    {<br />
+        Category </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>General</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+        Priority </SPAN><SPAN>=</SPAN><SPAN> priority;<br />
+        Severity </SPAN><SPAN>=</SPAN><SPAN> Severity.Unspecified;<br />
+        Message </SPAN><SPAN>=</SPAN><SPAN> message;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> ExceptionLogEntry : LogEntry<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> ExceptionLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message) : </SPAN><SPAN>this</SPAN><SPAN>(message, </SPAN><SPAN>5</SPAN><SPAN>) {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> ExceptionLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message, </SPAN><SPAN>int</SPAN><SPAN> priority) : </SPAN><SPAN>base</SPAN><SPAN>()<br />
+    {<br />
+        Category </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Exception</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+        Priority </SPAN><SPAN>=</SPAN><SPAN> priority;<br />
+        Severity </SPAN><SPAN>=</SPAN><SPAN> Severity.Error;<br />
+        Message </SPAN><SPAN>=</SPAN><SPAN> message;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> PerformanceLogEntry : LogEntry<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> PerformanceLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message) : </SPAN><SPAN>this</SPAN><SPAN>(message, </SPAN><SPAN>3</SPAN><SPAN>) {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> PerformanceLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message, </SPAN><SPAN>int</SPAN><SPAN> priority) : </SPAN><SPAN>base</SPAN><SPAN>()<br />
+    {<br />
+        Category </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Performance</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+        Priority </SPAN><SPAN>=</SPAN><SPAN> priority;<br />
+        Severity </SPAN><SPAN>=</SPAN><SPAN> Severity.Information;<br />
+        Message </SPAN><SPAN>=</SPAN><SPAN> message;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SecurityLogEntry : LogEntry<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> SecurityLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message) : </SPAN><SPAN>this</SPAN><SPAN>(message, </SPAN><SPAN>5</SPAN><SPAN>) {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> SecurityLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message, </SPAN><SPAN>int</SPAN><SPAN> priority) : </SPAN><SPAN>base</SPAN><SPAN>()<br />
+    {<br />
+        Category </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Security</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+        Priority </SPAN><SPAN>=</SPAN><SPAN> priority;<br />
+        Severity </SPAN><SPAN>=</SPAN><SPAN> Severity.Warning;<br />
+        Message </SPAN><SPAN>=</SPAN><SPAN> message;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> DebugLogEntry : LogEntry<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> DebugLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message) : </SPAN><SPAN>this</SPAN><SPAN>(message, </SPAN><SPAN>1</SPAN><SPAN>) {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> DebugLogEntry(</SPAN><SPAN>string</SPAN><SPAN> message, </SPAN><SPAN>int</SPAN><SPAN> priority) : </SPAN><SPAN>base</SPAN><SPAN>()<br />
+    {<br />
+        Category </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Debug</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+        Priority </SPAN><SPAN>=</SPAN><SPAN> priority;<br />
+        Severity </SPAN><SPAN>=</SPAN><SPAN> Severity.Information;<br />
+        Message </SPAN><SPAN>=</SPAN><SPAN> message;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> MyClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        Logger.Write(</SPAN><SPAN>new</SPAN><SPAN> GeneralLogEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>A Beautiful Day</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+        Logger.Write(</SPAN><SPAN>new</SPAN><SPAN> DebugLogEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>Loading Array</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+        Logger.Write(</SPAN><SPAN>new</SPAN><SPAN> SecurityLogEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>User is not authenticated.</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+        Logger.Write(</SPAN><SPAN>new</SPAN><SPAN> PerformanceLogEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>Application running slow&#8230;</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>4</SPAN><SPAN>));<br />
+        Logger.Write(</SPAN><SPAN>new</SPAN><SPAN> ExceptionLogEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>Division by zero exception.</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+    }</p>
+<p>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Here is the output using my template for <STRONG>Text Formatter</STRONG>:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Messages.log</LEGEND><PRE><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</SPAN><SPAN><br />
+Timestamp: </SPAN><SPAN>3</SPAN><SPAN>/</SPAN><SPAN>16</SPAN><SPAN>/</SPAN><SPAN>2005</SPAN><SPAN> </SPAN><SPAN>4</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN>:</SPAN><SPAN>49</SPAN><SPAN> PM<br />
+Message: A Beautiful Day<br />
+Category: General<br />
+Priority: </SPAN><SPAN>2</SPAN><SPAN><br />
+Severity: Unspecified<br />
+</SPAN><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</SPAN><SPAN><br />
+Timestamp: </SPAN><SPAN>3</SPAN><SPAN>/</SPAN><SPAN>16</SPAN><SPAN>/</SPAN><SPAN>2005</SPAN><SPAN> </SPAN><SPAN>4</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN> PM<br />
+Message: Loading Array<br />
+Category: Debug<br />
+Priority: </SPAN><SPAN>1</SPAN><SPAN><br />
+Severity: Information<br />
+</SPAN><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</SPAN><SPAN><br />
+Timestamp: </SPAN><SPAN>3</SPAN><SPAN>/</SPAN><SPAN>16</SPAN><SPAN>/</SPAN><SPAN>2005</SPAN><SPAN> </SPAN><SPAN>4</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN> PM<br />
+Message: User </SPAN><SPAN>is</SPAN><SPAN> not authenticated.<br />
+Category: Security<br />
+Priority: </SPAN><SPAN>5</SPAN><SPAN><br />
+Severity: Warning<br />
+</SPAN><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</SPAN><SPAN><br />
+Timestamp: </SPAN><SPAN>3</SPAN><SPAN>/</SPAN><SPAN>16</SPAN><SPAN>/</SPAN><SPAN>2005</SPAN><SPAN> </SPAN><SPAN>4</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN> PM<br />
+Message: Application running slow&#8230;<br />
+Category: Performance<br />
+Priority: </SPAN><SPAN>4</SPAN><SPAN><br />
+Severity: Information<br />
+</SPAN><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-</SPAN><SPAN><br />
+Timestamp: </SPAN><SPAN>3</SPAN><SPAN>/</SPAN><SPAN>16</SPAN><SPAN>/</SPAN><SPAN>2005</SPAN><SPAN> </SPAN><SPAN>4</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN>:</SPAN><SPAN>50</SPAN><SPAN> PM<br />
+Message: Division by zero exception.<br />
+Category: Exception<br />
+Priority: </SPAN><SPAN>5</SPAN><SPAN><br />
+Severity: Error</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>You could also pull off a cleaner and more consistent model by using your own <STRONG>facade</STRONG> on top of <STRONG>Logger</STRONG> to maintain the additional consistency in your applications such as:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Log Facade</LEGEND><PRE><SPAN>using</SPAN><SPAN> System;<br />
+</SPAN><SPAN>using</SPAN><SPAN> System.Collections;</p>
+<p></SPAN><SPAN>using</SPAN><SPAN> Microsoft.Practices.EnterpriseLibrary.Logging;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>enum</SPAN><SPAN> Priority : </SPAN><SPAN>int</SPAN><SPAN><br />
+    { Low </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>1</SPAN><SPAN>, Medium </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>3</SPAN><SPAN>, High </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>5</SPAN><SPAN> }</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>sealed</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Log<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> WriteGeneralEntry (</SPAN><SPAN>string</SPAN><SPAN> message, Priority priority)<br />
+    {<br />
+        Logger.Write(message, </SPAN><SPAN>&#8220;</SPAN><SPAN>General</SPAN><SPAN>&#8220;</SPAN><SPAN>, (</SPAN><SPAN>int</SPAN><SPAN>)priority);<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> WriteDebugEntry (</SPAN><SPAN>string</SPAN><SPAN> message, Priority priority)<br />
+    {<br />
+        Logger.Write(message, </SPAN><SPAN>&#8220;</SPAN><SPAN>Debug</SPAN><SPAN>&#8220;</SPAN><SPAN>, (</SPAN><SPAN>int</SPAN><SPAN>)priority);<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> MyClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        Log.WriteGeneralEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>New Entry</SPAN><SPAN>&#8220;</SPAN><SPAN>, Priority.Low);<br />
+        Log.WriteDebugEntry(</SPAN><SPAN>&#8220;</SPAN><SPAN>Blog Down</SPAN><SPAN>&#8220;</SPAN><SPAN>, Priority.High);<br />
+    }</p>
+<p>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>You could obviously refactor the code above as necessary, but you get the idea.&nbsp; I am basically trying to&nbsp;create a more intuitive method and consistent manner in which I use the <STRONG>Logging and Instrumentation Application Block</STRONG> so that as I grow from an immature application to a mature application I can filter the amount of information that is written into the log as necessary by <STRONG>Category</STRONG> and <STRONG>Priority</STRONG>.</P><br />
+<P>I have purposely not posted the config files with this example as they are your typical Enterprise Library log files.</P><br />
+<P>Here are other <A href="http://codebetter.com/blogs/david.hayden/category/141.aspx">Enterprise Library Application Blocks</A> that I have posted about:</P><br />
+<UL><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/02/56345.aspx">Configuration Application Block</A></LI><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/04/56523.aspx">Cache and Configuration Application Block</A></LI><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/09/59533.aspx">Data Access Application Block (DAAB)</A></LI><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/11/59644.aspx">Data Access Application Block Revealed &#8211; Factory Methods and Reflection</A> </LI></UL><br />
+<P>You can download Enterprise Library <A href="http://www.microsoft.com/downloads/details.aspx?FamilyId=0325B97A-9534-4349-8038-D56B38EC394C&amp;displaylang=en" target="_blank">here</A>.</P><br />
+<P>Don&#8217;t forget about the Enterprise Library <A href="http://www.microsoft.com/resources/practices/default.mspx" target="_blank">webcasts</A>.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/application-blocks/" title="View all posts in Application Blocks" rel="category tag">Application Blocks</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/" title="Permalink to Enterprise Library &#8211; Logging and Instrumentation Application Block &#8211; Patterns and Practices" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/feed/" title="Comments RSS to Enterprise Library &#8211; Logging and Instrumentation Application Block &#8211; Patterns and Practices" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-24 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/03/14/asp-net-page-inheritance-base-page-classes-in-your-web-applications/" rel="prev"><span class="meta-nav">&larr;</span> ASP.NET Page Inheritance &#8211; Base Page Classes in your Web Applications</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/03/17/codus-code-generation-tool-for-object-relational-mapping-or-mapper/" rel="next">Codus &#8211; Code Generation Tool for object-Relational Mapping &#8211; O/R Mapper <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">5 Responses to <em>Enterprise Library &#8211; Logging and Instrumentation Application Block &#8211; Patterns and Practices</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-57">
+		<div id="comment-57">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#comment-57">March 18, 2005 at 2:13 pm</a></div>
+
+		<div class="comment-body"><p>Tom Hollander talks about the Logging Application Block vs. Log4Net &quot;debate&quot; here:</p>
+<p><a target="_new" href="http://blogs.msdn.com/tomholl/archive/2005/03/15/396189.aspx">http://blogs.msdn.com/tomholl/archive/2005/03/15/396189.aspx</a></p>
+<p>He also mentions as I did in the post that they are looking at ways to speed up the performance now.  Fantastic.  They focus on a solid tool and then look at ways to improve it in subsequent releases.</p>
+<p>He also doesn&#8217;t dismiss the fact that Log4Net is perhaps a faster and simpler tool. If you just need a logging tool with simple needs, it is hard to beat a tool like Log4Net that just does logging. The big picture is the suite of tools you get from EntLib.  It will no doubt be overkill for many applications, and for some it will be a &quot;perfect&quot; solution.</p>
+<p>Nicely said, Tom.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-56">
+		<div id="comment-56">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#comment-56">March 18, 2005 at 10:42 am</a></div>
+
+		<div class="comment-body"><p>Thanks for the link, Patrik.  </p>
+<p>I have been using Log4Net for all my application logging and even though a new version hasn&#8217;t been released in some time, it has worked flawlessly for me.  Log4Net is an excellent logging solution.</p>
+<p>I haven&#8217;t compared the performance, but I am sure that most (if not all) of the applications blocks in Enterprise Library will be slower than a more dedicated counterpart.  This is due to the fact that the application blocks are instantiating types on the fly using reflection after reading the type information from a configuration file.  And because to the best of my knowledge I don&#8217;t see any caching being done in the application blocks, this occurs everytime you ask for the CacheManager in the Caching Application Block, get an instance of Database in the DAAB, do a Logger.Write in the Logging Block, etc.</p>
+<p>I don&#8217;t believe the Patterns and Practices Group were focused on writing high-performance blocks on the first version.  They were probably more focused on writing a suite of solutions that worked together in a common fashion and were highly extensible.</p>
+<p>Loren&#8217;s post is not as balanced as I would ideally prefer.  He mentions minor things (as he even said) about priority not being an Enumeration, and I just &quot;solved&quot; it here in my example <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />   These kinds of strategies are not necessarily required of the logging infrastructure, but required of your application architecture.</p>
+<p>I will take a stab at a similar post in the near future as I think this is a great discussion.  Thanks for pointing out Loren&#8217;s post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-55">
+		<div id="comment-55">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Patrik</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#comment-55">March 18, 2005 at 3:24 am</a></div>
+
+		<div class="comment-body"><p>This is interesting reading:<br />
+<br /><a target="_new" href="http://weblogs.asp.net/lorenh/archive/2005/02/18/376191.aspx">http://weblogs.asp.net/lorenh/archive/2005/02/18/376191.aspx</a></p>
+<p>They compare the speed of Logging block and Log4Net.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-54">
+		<div id="comment-54">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#comment-54">March 17, 2005 at 5:42 pm</a></div>
+
+		<div class="comment-body"><p>The Logging Application Block requires the Configuration Application Block only to read the logging configuration settings.  In fact, every application block requires the configuration application block to read its configuration settings.</p>
+<p>This is transparent to you.  It just means you have to add the extra configuration DLL to your bin directory and that is it.  You can still use web.config for your application settings.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-53">
+		<div id="comment-53">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jun Meng</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#comment-53">March 17, 2005 at 3:50 pm</a></div>
+
+		<div class="comment-body"><p>Hi,</p>
+<p>Maybe I missed something good of the new Enterprise library. For web application, if I want to use the Log library ONLY, how can I do that?</p>
+<p>It seems Log library depends on Configuration library that I do not need (as I have web.config already). I feel confused that what&#8217;s the use for the new library to combine those blocks together in a web application.</p>
+<p>Any suggestions? Thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/03/17/enterprise-library-logging-and-instrumentation-application-block-patterns-and-practices/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='24' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="432a0acc2c" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.398 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:02:30 -->
+<!-- super cache -->

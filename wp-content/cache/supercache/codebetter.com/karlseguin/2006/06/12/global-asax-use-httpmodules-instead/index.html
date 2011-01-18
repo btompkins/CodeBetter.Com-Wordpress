@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Global.asax? Use HttpModules Instead! | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='ASP.NET Job @ Blizzard' href='http://codebetter.com/karlseguin/2006/06/06/asp-net-job-blizzard/' />
+<link rel='next' title='Poor .NET search results on Google' href='http://codebetter.com/karlseguin/2006/06/15/poor-net-search-results-on-google/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=32' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-32" class="post-32 post type-post status-publish format-standard hentry category-grab-a-coffee-before-reading">
+					<h1 class="entry-title">Global.asax? Use HttpModules Instead!</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/" title="3:00 pm" rel="bookmark"><span class="entry-date">June 12, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In a previous post, I <a href="/blogs/karlseguin/archive/2006/05/24/145397.aspx">talked about HttpHandlers</a> &#8211; an underused but incredibly useful feature of ASP.NET. Today I want to talk about HttpModules, which are probably more common than HttpHandlers, but could still stand to be advertised a bit more.</p>
+<p>HttpModules are incredibly easy to explain, so this will hopefully be a short-ish post. Simply put, HttpModules are portable versions of the global.asax. So, in your HttpModule you&#8217;ll see things like BeginRequest, OnError, AuthenticateRequest, etc. Actually, since HttpModules implement IHttpModule, you actually only get Init (and Dispose if you have any cleanup to do). The Init method passes in the HttpApplication which lets you hook into all of those events. For example, I have an ErrorModule that I use on most projects:</p>
+<p><font face="Courier New" size="2"><font color="#0000ff">using </font>System;<br /><font color="#0000ff">using </font>System.Web;<br /><font color="#0000ff">using </font>log4net;</p>
+<p><font color="#0000ff">namespace </font>Fuel.Web<br />{<br /><font color="#0000ff">&nbsp;public class</font> ErrorModule : IHttpModule<br />&nbsp;{<br />&nbsp; <font color="#800080">#region IHttpModule Members</font><br />&nbsp; <font color="#0000ff">public void</font> Init(HttpApplication application)<br />&nbsp; {<br />&nbsp;&nbsp; application.Error += <font color="#0000ff">new </font>EventHandler(application_Error); &nbsp;<br />&nbsp; }&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;<br />&nbsp; <font color="#0000ff">public void</font> Dispose() { }<br />&nbsp; <font color="#800080">#endregion</font></p>
+<p>&nbsp; <font color="#0000ff">public void</font> application_Error(<font color="#0000ff">object </font>sender, <font color="#0000ff">EventArgs </font>e)<br />&nbsp; {<br />&nbsp;&nbsp;&nbsp; <font color="#006400">//handle error</font><br />&nbsp; }<br />&nbsp;}<br />}<br /></font><br />Now, the code in my error handler is pretty simple:</p>
+<p><font face="Courier New" size="2">HttpContext ctx = HttpContext.Current;<br /><font color="#006400">//get the inner most exception</font><br />Exception exception;<br /><font color="#0000ff">for </font>(exception = ctx.Server.GetLastError(); exception.InnerException != <font color="#0000ff">null</font>; exception = exception.InnerException) { }<br /><font color="#0000ff">if </font>(exception is HttpException &amp;&amp; ((HttpException)exception).GetHttpCode() == 404)<br />{<br />&nbsp;logger.Warn(&#8220;A 404 occurred&#8221;, exception);<br />}<br /><font color="#0000ff">else</font><br />{<br />&nbsp;logger.Error(&#8220;ErrorModule caught an unhandled exception&#8221;, exception);<br />}</font></p>
+<p>I&#8217;m just using a log4net logger to log the exception, if it&#8217;s a 404 I&#8217;m just logging it as a warning.</p>
+<p>You can do this just as easily with a global.asax, but those things aren&#8217;t reusable across projects. That of course means that you&#8217;ll end up duplicating your code and making it hard to manage. With my ErrorModule class, I just put it in a DLL, drop it in my bin folder and add a couple lines to my web.config under &lt;system.web&gt;:</p>
+<p><font face="Courier New" size="2">&lt;httpModules&gt;<br />&nbsp;&lt;add&nbsp; name=&#8221;<font color="#a52a2a">ErrorModule</font>&#8221; type=&#8221;<font color="#a52a2a">Fuel.Web.ErrorModule, Fuel.Web</font>&#8221; /&gt;<br />&lt;/httpModules&gt;</font></p>
+<p>And voila, I have a global error in place.</p>
+<p>In almost all cases, you should go with HttpModules over global.asax because they are simply more reusable. As another example, <a href="http://openmymind.net/index.aspx?documentId=52">my localization stuff</a> uses an HttpModule as the basis for adding a multilingual framework to any application. Simply drop the DLL in the bin and add the relevant line in your web.config and you&#8217;re on your way. Here&#8217;s the important code from that module:</p>
+<p><font color="#000000" face="Courier New" size="2"><font color="#0000ff">public void</font> Init(HttpApplication context) <br />{<br />&nbsp;context.BeginRequest += <font color="#0000ff">new </font>EventHandler(context_BeginRequest);<br />}<br /><font color="#0000ff">public void</font> Dispose() {}<br /><font color="#0000ff">private void</font> context_BeginRequest(<font color="#0000ff">object </font>sender, EventArgs e)<br />{<br />&nbsp;HttpRequest request = ((HttpApplication) sender).Request;<br />&nbsp;HttpContext context = ((HttpApplication)sender).Context;<br /><font color="#000080">&nbsp;string </font>applicationPath = request.ApplicationPath;<br /><font color="#0000ff">&nbsp;if</font>(applicationPath == &#8220;/&#8221;)<br />&nbsp;{<br />&nbsp;&nbsp;&nbsp; applicationPath = string.Empty;<br />&nbsp;}<br />&nbsp;<font color="#0000ff">string </font>requestPath = request.Url.AbsolutePath.Substring(applicationPath.Length); <br />&nbsp;<font color="#006400">//just a function that parses the path for a culture and sets the CurrentCulture and CurrentUICulture</font><br />&nbsp;LoadCulture(<font color="#0000ff">ref </font>requestPath);<br />&nbsp;context.RewritePath(applicationPath + requestPath);<br />}</font></p>
+<p>If you are developing a shrink-wrap product, you don&#8217;t have a choice but to use HttpModules, because the last thing you want is to ship a global.asax which the user must use, overwriting the code in his own global.asax.</p>
+<p>The only time you want to use Global.asax is when using OutputCaching with the VaryByCustom property. As far as I know, the GetVaryByCustomString function _must_ be placed in the global.asax file.</p>
+<p>Anyways, switching from Global.asax to HttpModules is pretty straightforward. So I encourage you to look at where it makes sense (ie, where you see the potential for reuse across applications) and make it so.</p>
+<p></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/grab-a-coffee-before-reading/" title="View all posts in Grab a coffee before reading" rel="category tag">Grab a coffee before reading</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/" title="Permalink to Global.asax? Use HttpModules Instead!" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/feed/" title="Comments RSS to Global.asax? Use HttpModules Instead!" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-32 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2006/06/06/asp-net-job-blizzard/" rel="prev"><span class="meta-nav">&larr;</span> ASP.NET Job @ Blizzard</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2006/06/15/poor-net-search-results-on-google/" rel="next">Poor .NET search results on Google <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">29 Responses to <em>Global.asax? Use HttpModules Instead!</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-398">
+		<div id="comment-398">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.redware.com' rel='external nofollow' class='url'>redware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-398">January 16, 2009 at 3:54 pm</a></div>
+
+		<div class="comment-body"><p>Karl. Great article and very clear explanation.</p>
+<p>We use Microsoft CRM and are trying to override the error trapping mechanism they have (probably in the global.asax). Trouble is this apporach is an alternative to the global.asax but how do we stop the existing error handling from running as well. </p>
+<p>I expect somehow we need to stop the module passing it on down the chain. Looking up more now&#8230;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-397">
+		<div id="comment-397">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Prasad Pimparkar</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-397">June 22, 2008 at 5:52 pm</a></div>
+
+		<div class="comment-body"><p>This is a great article. Following is the MSDN link which provides overview of the entire ASP.Net application life cycle. It also provides the place where handlers are called. </p>
+<p><a href="http://msdn.microsoft.com/en-us/library/ms178473.aspx" rel="nofollow">http://msdn.microsoft.com/en-us/library/ms178473.aspx</a>.</p>
+<p>Prasad</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-396">
+		<div id="comment-396">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Steve</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-396">December 12, 2007 at 6:09 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for a good explanation of using httpModules.<br />
+Do you have any samples of using them with Authentication?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-395">
+		<div id="comment-395">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.yogendrathakur.com' rel='external nofollow' class='url'>yogendra thakur</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-395">July 19, 2007 at 3:31 pm</a></div>
+
+		<div class="comment-body"><p>Sure you can do it using vb.net codiing</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-394">
+		<div id="comment-394">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mathi</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-394">July 4, 2007 at 3:15 pm</a></div>
+
+		<div class="comment-body"><p>Can we  do this through vb.net coding ?. If we can then how to write the httphandlers in vb coding</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-393">
+		<div id="comment-393">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.ayende.com/Blog/' rel='external nofollow' class='url'>Ayende Rahien</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-393">May 20, 2007 at 10:37 pm</a></div>
+
+		<div class="comment-body"><p>There is just one big difference that you should be aware of, Application_Start is called multiply times for HttpModule, but only once for Global.asax.<br />
+This means that for singleton style stuff, it is easier to use the Global.asax<br />
+I have a UnitOfWorkApplication that inherits from HttpApplication that handles this for me, and I just inherit from that in my Global.asax and I am done with it.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-392">
+		<div id="comment-392">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-392">May 20, 2007 at 2:56 pm</a></div>
+
+		<div class="comment-body"><p>Vikas<br />
+1 &#8211; Yes, an HttpModule seems like the right thing in your case. If you hook into the BeginRequest event, you can do whatever needs doing, and then the normal processing will occur.</p>
+<p>2 &#8211; You can simply call base.Function(params), or in vb.net use MyBase.Function(), something like:</p>
+<p>public void override DoSomething(int value)<br />
+{<br />
+   //put your overriding cod here;<br />
+   base.DoSomething(value);<br />
+}</p>
+<p>3 &#8211; Well, you can hook any button event to any button handler even if something else is already hooked into it, there are really two ways to do this, hook them directly into the same function:</p>
+<p>button1.Click += new &#8230;.ButtonClick;<br />
+button2.Click += new &#8230;ButtonClick;</p>
+<p>OR</p>
+<p>button1.Click += new &#8230;. Button1Click;<br />
+button2.click += new &#8230; Button2Click;</p>
+<p>and then call Button1Click from Button2click&#8230;I think the first approach is better.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-391">
+		<div id="comment-391">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">vikasMisra</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-391">May 20, 2007 at 12:42 pm</a></div>
+
+		<div class="comment-body"><p>i want answers of  questions please answer<br />
+1) I have a running site having 2000 pages and suddenly i required to call a certain single function on each page request.<br />
+do i need to implement httpmodule for this if yes then how to call that function then do normal processing???<br />
+2)i wanna override a base class functon and then after want to call the base class function what will be the way????<br />
+3)i wanna call button 2 event handler on button1 event handler<br />
+occasionaly<br />
+i know all the answers but not sure kindly help me</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-390">
+		<div id="comment-390">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jacob</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-390">March 27, 2007 at 2:26 pm</a></div>
+
+		<div class="comment-body"><p>Karl: &#8220;As best as I know&#8230;There&#8217;s a single HttpApplication instance for a given site. This instance has a collection of all the modules as well as the facilities to determine the correct httphandler to use.&#8221;</p>
+<p>Karl, I don&#8217;t believe this is the case. The MSDN help says: &#8220;__Instances__ of the HttpApplication class are created in the ASP.NET infrastructure, not by the user directly. One instance of the HttpApplication class is used to process many requests in its lifetime; however, it can process only one request at a time. Thus, member variables can be used to store per-request data.&#8221;</p>
+<p>In order to deal with multiple requests concurrently, ASP.NET would need to create several instances of this class. Take a look at this article for a bug that can occur if you assume there is only one instance of this class in your application</p>
+<p><a href="http://odetocode.com/Blogs/scott/archive/2007/02/06/10484.aspx" rel="nofollow">http://odetocode.com/Blogs/scott/archive/2007/02/06/10484.aspx</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-389">
+		<div id="comment-389">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-389">February 27, 2007 at 10:18 pm</a></div>
+
+		<div class="comment-body"><p>Ken:<br />
+Thanks for the comment. May I ask what website? <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-388">
+		<div id="comment-388">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.tabletopsoftware.com' rel='external nofollow' class='url'>Ken</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-388">February 27, 2007 at 3:09 pm</a></div>
+
+		<div class="comment-body"><p>This post was really useful for me. I actually found it on another website where someone cut and pasted it all but I found your comment at the bottom so now I can compliment the right person!</p>
+<p>The one thing that was really useful for me was the reference to HttpException.GetHttpCode().</p>
+<p>I was writing my own Error Log code and wanted to catch all the exceptions on the Application.Error event, but I didn&#8217;t want to log 404 and 403 errors. I couldn&#8217;t figure out how to filter out the unwanted exceptions but now that I&#8217;ve got GetHttpCode everything&#8217;s great.</p>
+<p>Thanks again for posting this. It&#8217;s made my app that wee bit better.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-387">
+		<div id="comment-387">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-387">February 21, 2007 at 11:38 pm</a></div>
+
+		<div class="comment-body"><p>Ankit:<br />
+A key point is that HttpModules fire for all requests, HttpHandlers only for requests matching the path=&#8221;" attribute of the configuration &#8211; and there can only be 1 match.</p>
+<p>As best as I know&#8230;There&#8217;s a single HttpApplication instance for a given site. This instance has a collection of all the modules as well as the facilities to determine the correct httphandler to use.</p>
+<p>A request comes in, the Application fires off a number of events which your HttpModules can hook into (like BeginRequest). As best I can tell they are fired in the order you put them in, but I wouldn&#8217;t rely on that. At some point, the correct HttpHandler is determine from the requested URL and ProcessRequest is called. Then a series of other events, such as EndRequest are fired.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-386">
+		<div id="comment-386">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ankit Goel</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-386">February 21, 2007 at 6:07 am</a></div>
+
+		<div class="comment-body"><p>Hi Karl<br />
+this is agreat article.<br />
+Can you please describe the relation and sequence of HTTPHandler, HTTPModule, HttpApplication objects</p>
+<p>Thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-385">
+		<div id="comment-385">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-385">January 20, 2007 at 1:41 pm</a></div>
+
+		<div class="comment-body"><p>There&#8217;s a way to hook into those events, but as far as I know, it&#8217;s something of a nightmare. People have a really hard time doing it. It&#8217;s something like (which you place in your Init):</p>
+<p>HttpModuleCollection modules = application.Modules;<br />
+SessionStateModule module = modules["Session"] as SessionStateModule;<br />
+if (module != null)<br />
+{<br />
+  stateModule.Start += (new EventHandler (this.Session_Start));<br />
+  stateModule.End += (new EventHandler(this.Session_End));<br />
+}</p>
+<p>The problem, as I understand it, is that there are multiple SessionStateModules loaded, and you need to find the right one for the start and end events. Also, I believe your own httpmodule fires multiple times and you need to find the right one of those too. I have no clue which  the &#8220;right one&#8221; is though <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-384">
+		<div id="comment-384">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Anonymous</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-384">January 20, 2007 at 8:01 am</a></div>
+
+		<div class="comment-body"><p>If you need Session_Start and/or Session_End events, then you still need Global.asax, isn&#8217;t that right?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-383">
+		<div id="comment-383">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-383">November 6, 2006 at 11:23 pm</a></div>
+
+		<div class="comment-body"><p>Vinny:<br />
+As you can see from my example, the sender parameter to the function is actually an HttpApplication object. From it you can get access to the Response object (the same way I got access to the Request object) and redirect away <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-382">
+		<div id="comment-382">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">VInny</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-382">November 6, 2006 at 10:13 pm</a></div>
+
+		<div class="comment-body"><p>Good alternative to the Global.asax, however I am trying to redirect user to a friendly error page after the error is handled. However, Response.Redirect is not an option from the HttpModule, how were you doing it?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-381">
+		<div id="comment-381">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-381">July 22, 2006 at 2:59 pm</a></div>
+
+		<div class="comment-body"><p>Prakash: this isn&#8217;t possible using HttpHandlers, mostly &#8216;cuz the close &#8220;event&#8221; is a client-side behaviour. Your best bet is to hook into the onbeforeunload javascript event (which is only supported in IE I think) and try to clean up there (possibly be opening up a very small window window.open(&#8220;terminate.aspx&#8221;) or something like it). It won&#8217;t be the most reliable, but I&#8217;m pretty sure it&#8217;s your only solution.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-380">
+		<div id="comment-380">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://rajprakash52@yahoo.co.in' rel='external nofollow' class='url'>Prakash Raj</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-380">July 22, 2006 at 12:57 pm</a></div>
+
+		<div class="comment-body"><p>Hi ,</p>
+<p>I want Session to be end whenever the user directly closes the IE Browse X button.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-379">
+		<div id="comment-379">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-379">July 18, 2006 at 7:55 pm</a></div>
+
+		<div class="comment-body"><p>Dan:<br />
+In your httpmodule, check to see if the requested page is GenericError.aspx, and if so, simply don&#8217;t redirect, something like:</p>
+<p>HttpRequest request = Context.Current.Request;<br />
+if (string.Compare(request.LocalPath, &#8220;/GenericError.aspx&#8221;, true))<br />
+{<br />
+    Context.Current.Response.Write(&#8220;An unhandled error occurred&#8221;);<br />
+    Context.Current.Response.End();<br />
+}<br />
+//should be safe to redirect to GenericError.aspx</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-378">
+		<div id="comment-378">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Dan Sikorsky</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-378">July 18, 2006 at 4:06 pm</a></div>
+
+		<div class="comment-body"><p>I use a similar HttpModule that handles unhandled exceptions from an .aspx.cs page by logging to a text file, logging to the event viewer&#8217;s app log, and sending out an email to the website developer and any interested parties. Finally, a user friendly page (GenericError.aspx) is Redirected To.</p>
+<p>My Page_Load event has no code, so when the page is unavailable, (for instance, the website is down), an unhandled event is generated and my HttpModule is called. Everything is executed as listed above, but the redirection to GenericError.aspx generates another unhandled exception (because the website is down), and thus we enter into a loop.</p>
+<p>I end up with 14000+ email messages, and so does everyone specified in a web.config list.</p>
+<p>The only fix I can see is to put a try/catch block in every Page&#8217;s Page_Load event.</p>
+<p>Is there some smarter way to handle this?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-377">
+		<div id="comment-377">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-377">July 8, 2006 at 3:20 am</a></div>
+
+		<div class="comment-body"><p>use the &#8220;App_Code&#8221; assembly I think.</p>
+<p>Namespace.Class, App_Code</p>
+<p>Karl</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-376">
+		<div id="comment-376">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Zoltan Grose</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-376">July 7, 2006 at 9:37 pm</a></div>
+
+		<div class="comment-body"><p>What is the proper syntax for the httpModules add element if you aren&#8217;t compiling your webapp into a DLL? I tried moving some of my global.asax code into a class but I&#8217;m uncertain what the proper syntax would be for, as an example, MyHttpModule.cs in the App_Code folder.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-375">
+		<div id="comment-375">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-375">July 6, 2006 at 11:37 pm</a></div>
+
+		<div class="comment-body"><p>Cameron:<br />
+Most stand-alone libraries or whatnot require some type of configuration. It&#8217;s true that my example here is a little on the slim &#8211; so you&#8217;re only benefiting slightly. It&#8217;s generally easier to add a custom configuration section and add a few lines of code, than it is to have to rewrite somethign though.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-374">
+		<div id="comment-374">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Cameron</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-374">July 6, 2006 at 11:29 pm</a></div>
+
+		<div class="comment-body"><p>This is neat.  And thanks for explaining it in a down-to-earth manner!  My only question is we log our errors.  If your error handler has something like ErrorClass.LogError(blah blah); then an HttpModule may not be much more portable than Global.asax because the developer is still going to have database connections and whatnot to configure.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-373">
+		<div id="comment-373">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://leadingthenextinquisition.wordpress.com' rel='external nofollow' class='url'>Pedrito</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-373">June 26, 2006 at 5:57 pm</a></div>
+
+		<div class="comment-body"><p>Good article.  However, another useful and just as easy to implement solution for creating useful, reusable code at the application level is to create a base class (or hierarchy of them depending on your needs) to sit between your HttpApplication base class and your front end Global classes.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-372">
+		<div id="comment-372">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-372">June 14, 2006 at 12:43 am</a></div>
+
+		<div class="comment-body"><p>Dan:<br />
+I&#8217;m pretty sure you can safely put this code in the init function itself. It fires more or less around the same timeframe as the ApplicationStart for the global.asax &#8211; I can&#8217;t remember which fires first, but the app/site is at the same state in both cases.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-371">
+		<div id="comment-371">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Dan Napierski</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-371">June 14, 2006 at 12:09 am</a></div>
+
+		<div class="comment-body"><p>Great article.  The error handling is very clear.  What about tasks that we&#8217;re doing in Application_Start(&#8230;)?  How can we port these to the IHttpModule?  &#8211; Thanks, Dan</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-370">
+		<div id="comment-370">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://kapoorsolutions.com/blog' rel='external nofollow' class='url'>Sonu Kapoor</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/06/12/global-asax-use-httpmodules-instead/#comment-370">June 12, 2006 at 8:27 pm</a></div>
+
+		<div class="comment-body"><p>ELMAH (a application-wide error logging module that is completely pluggable) is a pretty good example on HttpModules:</p>
+<p><a href="http://www.gotdotnet.com/workspaces/workspace.aspx?id=f18bab11-162c-4267-a46e-72438c38df6f" rel="nofollow">http://www.gotdotnet.com/workspaces/workspace.aspx?id=f18bab11-162c-4267-a46e-72438c38df6f</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.295 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:06:17 -->
+<!-- super cache -->

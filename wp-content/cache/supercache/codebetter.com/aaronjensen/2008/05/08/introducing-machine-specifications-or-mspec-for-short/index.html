@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Introducing Machine.Specifications (or MSpec for short) | Aaron Jensen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/aaronjensen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/aaronjensen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/aaronjensen/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/aaronjensen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/aaronjensen/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Aaron Jensen' href='http://codebetter.com/aaronjensen/' />
+<link rel='start' title='The Eleutian Guys join the CodeBetter Guys' href='http://codebetter.com/aaronjensen/2008/03/19/the-eleutian-guys-join-the-codebetter-guys/' />
+<link rel='prev' title='Mocking Events' href='http://codebetter.com/aaronjensen/2008/04/13/mocking-events/' />
+<link rel='next' title='Mock Framework Benchmarks' href='http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/' />
+<link rel='shortlink' href='http://codebetter.com/aaronjensen/?p=11' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/aaronjensen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/aaronjensen/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/aaronjensen/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-11" class="post-11 post type-post status-publish format-standard hentry category-bdd category-frameworks category-machine">
+					<h1 class="entry-title">Introducing Machine.Specifications (or MSpec for short)</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/aaronjensen/author/aaronjensen/" title="View all posts by Aaron Jensen">Aaron Jensen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/" title="7:12 am" rel="bookmark"><span class="entry-date">May 8, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/aaronjensen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/aaronjensen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/aaronjensen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>As some of you who follow <a href="http://twitter.com/aaronjensen">me on twitter</a> know, I&#8217;ve been working on Yet Another Context/Specification Framework as an experiment. Yeah, I know we already have <a href="http://nspec.tigris.org/">NSpec</a> and <a href="http://nbehave.org/">NBehave</a>, and they&#8217;re great and all, but MSpec takes things on from a slightly different angle, and it&#8217;s just an experiment (for now). Here&#8217;s a sample Description:</p>
+<pre>[Description]
+public class Transferring_between_from_account_and_to_account
+{
+  static Account fromAccount;
+  static Account toAccount;
+
+  Context before_each =()=&gt;
+  {
+    fromAccount = new Account {Balance = 1m};
+    toAccount = new Account {Balance = 1m};
+  };
+
+  When the_transfer_is_made =()=&gt;
+  {
+    fromAccount.Transfer(1m, toAccount);
+  };
+
+  It should_debit_the_from_account_by_the_amount_transferred =()=&gt;
+  {
+    fromAccount.Balance.ShouldEqual(0m);
+  };
+
+  It should_credit_the_to_account_by_the_amount_transferred =()=&gt;
+  {
+    toAccount.Balance.ShouldEqual(2m);
+  };
+}</pre>
+<p>And a TestDriven.NET run:</p>
+<pre>------ Test started: Assembly: Machine.Specifications.Example.dll ------
+
+Transferring between from account and to account
+  When the transfer is made
+    * It should debit the from account by the amount transferred
+    * It should credit the to account by the amount transferred
+
+2 passed, 0 failed, 0 skipped, took 0.79 seconds.</pre>
+<h3>Err, What?</h3>
+<p>Different eh? The idea was heavily inspired by <a href="http://twitter.com/sbellware">Scott Bellware</a>&#8216;s SpecUnit.Net framework he showed at the ALT.NET conference. It also took heavy cues from <a href="http://rspec.info/">RSpec</a> and my insanity. I realize that the the code doesn&#8217;t look much like C# code and I&#8217;m OK with that. Many have and will ask why I don&#8217;t just use Boo or RSpec w/ IronRuby eventually or even one of the existing Context/Spec/BDD frameworks. Those are good questions, but my main motivations are tooling and syntax. I enjoy the tooling I get in C# and I personally like the syntax in this library considering the limitations imposed by C#.</p>
+<h3>How&#8217;s it work?</h3>
+<p>The simplest way to describe it is to compare it to a normal *Unit style testing framework: </p>
+<ul>
+<li>Description = TestContext </li>
+<li>Context before_each = SetUp </li>
+<li>Context before_all = SetUpFixture </li>
+<li>Context after_each = TearDown </li>
+<li>Context after_all = TearDownFixture </li>
+<li>When = Also SetUp, but happens after Context before_each </li>
+<li>It = Test </li>
+</ul>
+<p>Rather than methods and attributes, MSpec uses named delegates and anonymous functions. The only reason for this is readability. You&#8217;ll also notice that the fields used in the context are static. This is necessary so that the anonymous functions in the field initializers can access them. Probably the first thing you noticed is the =()=&gt; construct. I won&#8217;t mention the names that this was given on twitter, but I think it&#8217;s an acceptable thing to have to deal with in exchange for the cleanliness of the rest of the syntax.</p>
+<h3>Ok, you&#8217;re crazy, but how do I try it?</h3>
+<p>First, this is a very rough cut. Everything is subject to change as we experiment with the language. That said, here&#8217;s how you play with it:</p>
+<ol>
+<li>Grab the drop <a href="http://blog.eleutian.com/download/mspec-0.1.zip">here</a>. </li>
+<li>Extract it somewhere. Put it somewhere semi-permanent because the <a href="http://testdriven.net/">TestDriven.NET</a> runner will need a static location for the MSpec TDNet Runner. </li>
+<li>If you want TestDriven.NET support, run <strong>InstallTDNetRunner.bat</strong> </li>
+<li>Check out the example in <strong>Machine.Specifications.Example</strong>. Note that you can run with TD.NET. </li>
+<li>Create a project of your own. Just add <strong>Machine.Specifications.dll</strong> and get started. </li>
+<li>Send me feedback! Leave comments, email me, <a href="http://twitter.com/aaronjensen">tweet me</a>, whatever. </li>
+</ol>
+<p>Also, this is part of <a href="http://www.assembla.com/wiki/show/machine">Machine</a>, so feel free to take a <a href="http://svn2.assembla.com/svn/machine/trunk/">look at the code</a> and/or submit patches. There&#8217;s also a <a href="http://www.gallio.org/">Gallio</a> adapter in there, but I didn&#8217;t include it in the release as it&#8217;s not quite polished enough yet. If you&#8217;re interested in it, talk to me. Special thanks to <a href="http://twitter.com/sbellware">Scott Bellware</a>, <a href="http://blog.bits-in-motion.com/">Jeff Brown</a> and <a href="http://weblogs.asp.net/nunitaddin/default.aspx">Jamie Cansdale</a> for their help and support.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/aaronjensen/category/bdd/" title="View all posts in bdd" rel="category tag">bdd</a>, <a href="http://codebetter.com/aaronjensen/category/frameworks/" title="View all posts in frameworks" rel="category tag">frameworks</a>, <a href="http://codebetter.com/aaronjensen/category/machine/" title="View all posts in machine" rel="category tag">machine</a>. Bookmark the <a href="http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/" title="Permalink to Introducing Machine.Specifications (or MSpec for short)" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/feed/" title="Comments RSS to Introducing Machine.Specifications (or MSpec for short)" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-11 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/aaronjensen/2008/04/13/mocking-events/" rel="prev"><span class="meta-nav">&larr;</span> Mocking Events</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/" rel="next">Mock Framework Benchmarks <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-21">
+					<div id="dsq-comment-header-21" class="dsq-comment-header">
+						<cite id="dsq-cite-21">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-21">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-21" class="dsq-comment-body">
+						<div id="dsq-comment-message-21" class="dsq-comment-message"><p>I&#8217;m not normally one that gets excited by new syntactic sugar but I saw the example you put on twitter and immediately liked it. Very cool.</p>
+<p>Best thing was I looked at it and thought &#8220;It&#8221;, what’s that about? I was expecting it to be some mad work around but when I downloaded the Machine codebase I found it was really elegant and understandable. Made me feel dumb (in a good way).</p>
+<p>Anyway to me the &#8220;=()=>&#8221; is not a major issue, it’s at the end of the line and easily ignored. The static field thing threw me a little but I guess with the BDD style of small focussed fixtures it won&#8217;t be an issue.</p>
+<p>Only thing that I&#8217;m still unsure of is whether just having [Description] is that useful, would I not also want to use something like this group my specifications (especially given that with the context/specification approach I might end up with lots of fixtures for one higher level behavior such as funds transfer). Guess it depends on how you use these specifications but finding ways to group them seems to be important.</p>
+<p>My first impression is also that you are not necessarily covering exactly the same area as NBehave, my feeling it is xBehave is _supposed_ to be most suitable for higher level story tests where as to me the xSpec approach is more generally applicable.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-22">
+					<div id="dsq-comment-header-22" class="dsq-comment-header">
+						<cite id="dsq-cite-22">
+	http://rhouston.lostechies.com							<span id="dsq-author-user-22">Ray Houston</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-22" class="dsq-comment-body">
+						<div id="dsq-comment-message-22" class="dsq-comment-message"><p>Nice work man!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-23">
+					<div id="dsq-comment-header-23" class="dsq-comment-header">
+						<cite id="dsq-cite-23">
+	http://blog.bits-in-motion.com/							<span id="dsq-author-user-23">Jeff Brown</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-23" class="dsq-comment-body">
+						<div id="dsq-comment-message-23" class="dsq-comment-message"><p>Neat!<br />
+The =()=> notation with fields is a clever way to work around the fact that we can&#8217;t otherwise define new &#8220;shapes&#8221; for methods.</p>
+<p>hmmm&#8230;  I can see interesting things coming out of this&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-24">
+					<div id="dsq-comment-header-24" class="dsq-comment-header">
+						<cite id="dsq-cite-24">
+	http://www.sergiopereira.com/blog							<span id="dsq-author-user-24">Sergio Pereira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-24" class="dsq-comment-body">
+						<div id="dsq-comment-message-24" class="dsq-comment-message"><p>This is brilliant, Aaron.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-25">
+					<div id="dsq-comment-header-25" class="dsq-comment-header">
+						<cite id="dsq-cite-25">
+	http://blogs.codehaus.org/people/bamboo							<span id="dsq-author-user-25">Rodrigo B. de Oliveira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-25" class="dsq-comment-body">
+						<div id="dsq-comment-message-25" class="dsq-comment-message"><p>That&#8217;s pretty cool.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-26">
+					<div id="dsq-comment-header-26" class="dsq-comment-header">
+						<cite id="dsq-cite-26">
+	http://www.jamesthigpen.com							<span id="dsq-author-user-26">James Thigpen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-26" class="dsq-comment-body">
+						<div id="dsq-comment-message-26" class="dsq-comment-message"><p>This is very awesome. However&#8230;</p>
+<p>While I understand your choice for doing it in C#, I feel that by not using a language that would allow for a more fluent DSL syntax, you have created something that will hamper it&#8217;s adoption.</p>
+<p>The way you are using C# goes against the grain of how users are taught to use C#. static fields and what look like fancy function but end in semicolons. If I brought this to my team it&#8217;d be very confusing for them because it *is* C# but it&#8217;s not the C# they&#8217;re use to.</p>
+<p>That could be just dumped into the &#8220;learning curve&#8221; bucket, but I see it being a recurring problem with the context switching required between MSpec and C# when bouncing between tests and code.</p>
+<p>It could be argued that the context switching between MPsech C# and &#8220;regular&#8221; C# when bouncing back and forth between tests and code is no more grating than if it were a completely separate DSL, but I feel that all the syntactic sugar required to make this work prevents me from forgetting that it is C#. There is a certain amount of muscle memory in &#8220;private Account fromAccount;&#8221;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-27">
+					<div id="dsq-comment-header-27" class="dsq-comment-header">
+						<cite id="dsq-cite-27">
+								<span id="dsq-author-user-27">Aaron Jensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-27" class="dsq-comment-body">
+						<div id="dsq-comment-message-27" class="dsq-comment-message"><p>James,</p>
+<p>I hear you. It&#8217;s definitely a stretch of C#. The benefits of using C# are clear though. The tool and the framework support make it worth it in my opinion. Like I said in the post though, this is an experiment. I&#8217;ve got no ego behind this and I&#8217;m not pushing for widespread adoption. I&#8217;m just kind of dropping it on the community and seeing if it sticks at all <img src='http://codebetter.com/aaronjensen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-28">
+					<div id="dsq-comment-header-28" class="dsq-comment-header">
+						<cite id="dsq-cite-28">
+								<span id="dsq-author-user-28">Michael</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-28" class="dsq-comment-body">
+						<div id="dsq-comment-message-28" class="dsq-comment-message"><p>Hi Aaron,</p>
+<p>You might have already mentioned that somewhere but I can&#8217;t seem to find it.. How do you manage to have a pretty print output after you run your test in TestDriven.NET. ?</p>
+<p>Thanks,<br />
+Take care</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-29">
+					<div id="dsq-comment-header-29" class="dsq-comment-header">
+						<cite id="dsq-cite-29">
+								<span id="dsq-author-user-29">Aaron Jensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-29" class="dsq-comment-body">
+						<div id="dsq-comment-message-29" class="dsq-comment-message"><p>Michael,</p>
+<p>TD.NET allows you to print whatever you like when implementing a custom runner. I just used that. </p>
+<p>It&#8217;s not super flexible (errors always print the same, along w/ the stack trace) so I save the errors until the end in TD.NET.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-30">
+					<div id="dsq-comment-header-30" class="dsq-comment-header">
+						<cite id="dsq-cite-30">
+	http://www.menoncello.net							<span id="dsq-author-user-30">Eduardo Menoncello</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-30" class="dsq-comment-body">
+						<div id="dsq-comment-message-30" class="dsq-comment-message"><p>Hi Aaron, I am testing the machine specification, but I have a problem&#8230; when I run my tests, the tests break like that:</p>
+<p>TestCase &#8216;N:Machine.Specifications.Example&#8217;<br />
+failed: Method not found: &#8216;System.Collections.Generic.IEnumerable`1<machine .Specifications.Model.Description> Machine.Specifications.Explorers.AssemblyExplorer.FindDescriptionsIn(System.Reflection.Assembly, System.String)&#8217;.</p>
+<p>thanks for the help</machine></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-31">
+					<div id="dsq-comment-header-31" class="dsq-comment-header">
+						<cite id="dsq-cite-31">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-31">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-31" class="dsq-comment-body">
+						<div id="dsq-comment-message-31" class="dsq-comment-message"><p>Hi Eduardo, </p>
+<p>This looks like a versioning issue. I&#8217;m guessing you have some old mspec assemblies laying around somewhere (perhaps the td.net runner if this is from td.net). I&#8217;d rebuild mspec and reregister the td.net runner from the built location.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-32">
+					<div id="dsq-comment-header-32" class="dsq-comment-header">
+						<cite id="dsq-cite-32">
+	http://www.LinkedTraining.com.au							<span id="dsq-author-user-32">Paul Linton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-32" class="dsq-comment-body">
+						<div id="dsq-comment-message-32" class="dsq-comment-message"><p>Rob Conery opened my eyes to MSpec and I&#8217;m loving it.  I have followed all his suggestions and created a toolbar button and html reports.<br />
+How do I debug a failing specification?  Setting a breakpoint on the failing line within the Because delegate doesn&#8217;t work.<br />
+What am I missing?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-33">
+					<div id="dsq-comment-header-33" class="dsq-comment-header">
+						<cite id="dsq-cite-33">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-33">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-33" class="dsq-comment-body">
+						<div id="dsq-comment-message-33" class="dsq-comment-message"><p>Paul, Thanks! Are you running TD.NET? If so you can just run with debugger. If not, I&#8217;d recommend it <img src='http://codebetter.com/aaronjensen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  R#&#8217;s runner can run with debugger as well. If you&#8217;re just running the console runner you&#8217;ll have a harder time debugging, but you could always use Debugger.Break() and attach.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-34">
+					<div id="dsq-comment-header-34" class="dsq-comment-header">
+						<cite id="dsq-cite-34">
+	http://www.LinkedTraining.com.au							<span id="dsq-author-user-34">Paul Linton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-34" class="dsq-comment-body">
+						<div id="dsq-comment-message-34" class="dsq-comment-message"><p><sheepish>What&#8217;s TD.NET?  <a href="http://www.td.net" rel="nofollow">http://www.td.net</a> is not very interesting nor is <a href="http://www.tdnet.com" rel="nofollow">http://www.tdnet.com</a> and nothing on the first page of a google search for &#8220;td.net&#8221; sheds any light</sheepish></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-35">
+					<div id="dsq-comment-header-35" class="dsq-comment-header">
+						<cite id="dsq-cite-35">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-35">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-35" class="dsq-comment-body">
+						<div id="dsq-comment-message-35" class="dsq-comment-message"><p>Paul, TestDriven.NET</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-36">
+					<div id="dsq-comment-header-36" class="dsq-comment-header">
+						<cite id="dsq-cite-36">
+								<span id="dsq-author-user-36">Ori</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-36" class="dsq-comment-body">
+						<div id="dsq-comment-message-36" class="dsq-comment-message"><p>Heya guys, promising start on a exciting test framework, just one thing, long time no updates, what gives is 0.1 it ??</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-37">
+					<div id="dsq-comment-header-37" class="dsq-comment-header">
+						<cite id="dsq-cite-37">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-37">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-37" class="dsq-comment-body">
+						<div id="dsq-comment-message-37" class="dsq-comment-message"><p>Hey Ori,</p>
+<p>I actually released 0.2 several months ago: <a href="http://codebetter.com/blogs/aaron.jensen/archive/2008/09/02/mspec-v0-2.aspx" rel="nofollow">http://codebetter.com/blogs/aaron.jensen/archive/2008/09/02/mspec-v0-2.aspx</a></p>
+<p>And since then all changes have been in the actual repository without much announcement:</p>
+<p><a href="http://github.com/machine/machine.specifications/tree/master" rel="nofollow">http://github.com/machine/machine.specifications/tree/master</a></p>
+<p>Though I&#8217;m probably due for another post on it with the latest info&#8230; Thanks!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-38">
+					<div id="dsq-comment-header-38" class="dsq-comment-header">
+						<cite id="dsq-cite-38">
+	http://www.kodart.com							<span id="dsq-author-user-38">Arthur</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-38" class="dsq-comment-body">
+						<div id="dsq-comment-message-38" class="dsq-comment-message"><p>Hi, that&#8217;s great! I was also in the same direction making ArtSpec, but your approach is better!</p>
+<p>I would suggest some changes. Instead of:</p>
+<p>Context before_each = SetUp<br />
+Context before_all = SetUpFixture<br />
+Context after_each = TearDown<br />
+Context after_all = TearDownFixture</p>
+<p>introduce:</p>
+<p>Before each = () => {&#8230;}<br />
+Before all = () => {&#8230;}</p>
+<p>same for:<br />
+After each/all</p>
+<p>Best regards,<br />
+Arthur</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-39">
+					<div id="dsq-comment-header-39" class="dsq-comment-header">
+						<cite id="dsq-cite-39">
+								<span id="dsq-author-user-39">JonnyRoc</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-39" class="dsq-comment-body">
+						<div id="dsq-comment-message-39" class="dsq-comment-message"><p>I&#8217;m lovin&#8217; it!!</p>
+<p>Are there any plans to accomodate parameterized tests?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-40">
+					<div id="dsq-comment-header-40" class="dsq-comment-header">
+						<cite id="dsq-cite-40">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-40">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-40" class="dsq-comment-body">
+						<div id="dsq-comment-message-40" class="dsq-comment-message"><p>Thanks Jonny. No plans for parameterized tests, those are different types of tests and as such should use a more suited framework. MSpec isn&#8217;t a golden hammer <img src='http://codebetter.com/aaronjensen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-41">
+					<div id="dsq-comment-header-41" class="dsq-comment-header">
+						<cite id="dsq-cite-41">
+	http://marcinobel.com							<span id="dsq-author-user-41">Marcin Obel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-41" class="dsq-comment-body">
+						<div id="dsq-comment-message-41" class="dsq-comment-message"><p>You can find some useful Resharper templates for MSpec here: <a href="http://marcinobel.com/index.php/resharpers-live-templates-for-mspec-bdd-framework/" rel="nofollow">http://marcinobel.com/index.php/resharpers-live-templates-for-mspec-bdd-framework/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-42">
+					<div id="dsq-comment-header-42" class="dsq-comment-header">
+						<cite id="dsq-cite-42">
+	http://www.abhobley.co.uk							<span id="dsq-author-user-42">Assembly Machines Fixtures</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-42" class="dsq-comment-body">
+						<div id="dsq-comment-message-42" class="dsq-comment-message"><p>Its a piece of nice work but initially it looks strange . I would love to read your further posts.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-43">
+					<div id="dsq-comment-header-43" class="dsq-comment-header">
+						<cite id="dsq-cite-43">
+	http://code.google.com/p/dotnetxp/w/list							<span id="dsq-author-user-43">Kirk </span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-43" class="dsq-comment-body">
+						<div id="dsq-comment-message-43" class="dsq-comment-message"><p>I have yet another BDD framework for .NET called CSSharp. It attempts to force better coding standards and conventions when writing unit tests by keeping each test to three lines of code. The actual code to implement the test is kept in a separate test state class allowing the developer and reader to focus on the test meaning and human requirements. If anyone is interested, the google code project is here: <a href="http://code.google.com/p/dotnetxp/w/list" rel="nofollow">http://code.google.com/p/dotnetxp/w/list</a>. I would appreciate any feedback.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-44">
+					<div id="dsq-comment-header-44" class="dsq-comment-header">
+						<cite id="dsq-cite-44">
+								<span id="dsq-author-user-44">ErikF</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-44" class="dsq-comment-body">
+						<div id="dsq-comment-message-44" class="dsq-comment-message"><p>After reviewing several BDD frameworks for .Net, MSpec has become my favorite.  The syntax is so clean and readable.  The only puzzle for me was using my code to document the entire user story, not just scenario/assertions &#8211; this was something that comes out-of-the-box with NBehave and StoryQ.  To that end, I contribed a simple solution that I have used on a few projects.  It may be of interest to people who appreciate the readability of MSpec: <a href="http://www.codeproject.com/KB/testing/user-story-structure.aspx" rel="nofollow">http://www.codeproject.com/KB/testing/user-story-structure.aspx</a>.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-45">
+					<div id="dsq-comment-header-45" class="dsq-comment-header">
+						<cite id="dsq-cite-45">
+								<span id="dsq-author-user-45">ErikF</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-45" class="dsq-comment-body">
+						<div id="dsq-comment-message-45" class="dsq-comment-message"><p>typo: contribed should be contrived <img src='http://codebetter.com/aaronjensen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-46">
+					<div id="dsq-comment-header-46" class="dsq-comment-header">
+						<cite id="dsq-cite-46">
+								<span id="dsq-author-user-46">Mike</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-46" class="dsq-comment-body">
+						<div id="dsq-comment-message-46" class="dsq-comment-message"><p>I&#8217;m using Linux and Monodevelop &#8211; is there a test runner that fits that environment?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-47">
+					<div id="dsq-comment-header-47" class="dsq-comment-header">
+						<cite id="dsq-cite-47">
+	http://codebetter.com/members/aaronjensen/default.aspx							<span id="dsq-author-user-47">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-47" class="dsq-comment-body">
+						<div id="dsq-comment-message-47" class="dsq-comment-message"><p>You could try compiling the command line runner under Mono. I&#8217;ve never done it, but I&#8217;m not using anything I can think of that would cause it to not work. Let me know how it goes, thanks!</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/ ';
+	var disqus_identifier = '11 /blogs/aaron.jensen/archive/2008/05/08/introducing-machine-specifications-or-mspec-for-short.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'aaronjensen';
+	var disqus_title = "Introducing Machine.Specifications (or MSpec for short)";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=11');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/aaronjensen/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/aaronjensen\/2008\/05\/08\/introducing-machine-specifications-or-mspec-for-short\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 1.095 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 15:59:38 -->
+<!-- super cache -->

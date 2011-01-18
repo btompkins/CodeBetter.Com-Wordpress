@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Building HelloMEF – Part V – Refactoring to ViewModel | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='Building Hello MEF – Part IV – DeploymentCatalog' href='http://codebetter.com/glennblock/2010/03/08/building-hello-mef-part-iv-deploymentcatalog/' />
+<link rel='next' title='Speaking on “Ignite your coding”' href='http://codebetter.com/glennblock/2010/03/08/speaking-on-ignite-your-coding/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2010/03/08/building-hellomef-part-v-refactoring-to-viewmodel/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=119' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-119" class="post-119 post type-post status-publish format-standard hentry category-hellomef category-mef category-silverlight category-sl category-sl4 category-viewmodel">
+					<h1 class="entry-title">Building HelloMEF – Part V – Refactoring to ViewModel</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2010/03/08/building-hellomef-part-v-refactoring-to-viewmodel/" title="5:07 am" rel="bookmark"><span class="entry-date">March 8, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In the last post we migrated over to the new DeploymentCatalog. In this post we&rsquo;ll look at refactoring the code to incorporate the MVVM pattern. Code from the last post is available <a href="http://cid-f8b2fd72406fb218.skydrive.live.com/self.aspx/blog/Hello%20MEF/HelloMEF%5E_Part%5E_IV.zip">here</a></p>
+<h1>Why ViewModel?</h1>
+<p>There&rsquo;s a ton of content out there in the blogosphere that discuss the virtues of separated presentation patterns including MVVM. I am not going to reiterate those here, but I will point you at <a href="http://joshsmithonwpf.wordpress.com/">Josh Smith&rsquo;s</a> excellent MVVM article <a href="http://msdn.microsoft.com/en-us/magazine/dd419663.aspx">here</a>. I&rsquo;ll also shamelessly plug my own <a href="/blogs/glenn.block/archive/2009/08/03/the-spirit-of-mvvm-viewmodel-it-s-not-a-code-counting-exercise.aspx">post</a> where I shared my own view on the essence of MVVM (which is based on views of others i respect). In short it&rsquo;s about decoupling UI logic for better maintainability which includes making it easier for a graphic designer to style the UI.</p>
+<p>So where are the maintainability issues in the current &ldquo;app&rdquo;? Currently the main place is within MainPage.xaml.cs where you see the following code:</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> OnImportsSatisfied()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    TopWidgets.Items.Clear();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    BottomWidgets.Items.Clear();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">foreach</span> (var widget <span style="color: #0000ff">in</span> Widgets)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Top)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            TopWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Bottom)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            BottomWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}</pre>
+</pre>
+<p>The logic is simple yes, but it still has issues. </p>
+<ul>
+<li>The main issue is that it is mixing UI business logic with the rendering. The logic which determines which item goes to Top to Bottom is a completely separate concern from how those items actually get displayed. Having the logic mixed in means&nbsp; the code is very brittle where any slight change to the way the UI is rendered can break it. It also makes it difficult for a graphic designer from being able to change the look and feel of how the widgets are rendered. </li>
+<li>The second issue is that I am imperatively adding elements to the UI rather than letting the rich DataBinding engine do the work it was designed for. This makes it difficult to re-skin the UI. </li>
+<li>Third, in it&rsquo;s current form, the logic is difficult to test, meaning if the logic breaks I am relying on QA / manual testing to pick it up. </li>
+</ul>
+<h2>So ViewModel will fix all of this?</h2>
+<p>I say with confidence Yes! Using ViewModel will allow us to refactor the logic into a nice reusable and testable place. It will also gives us the decoupling we need to leverage the Silverlight rendering engine to it&rsquo;s fullest. Along the way you will also see how MEF can help us with regards to implementing MVVM within our applications. We&rsquo;ll introduce 2 view models to help us get there. When we&rsquo;re done, our application will look like this.</p>
+<p><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/glenn.block/image_5F00_015C95DB.png"><img height="186" width="419" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/glenn/block/image_thumb_497A2BEA.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1920566611&amp;Signature=3wtq5Re3YpPgjM6Wy6tmssENJhU%3d" alt="image" border="0" style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" /></a> </p>
+<p>&nbsp;</p>
+<h2>Pre-requisites.</h2>
+<p>&nbsp;</p>
+<p>As with the last post, you&rsquo;ll need our MEF codeplex bits for following along. If you start where we left off in the last post you&rsquo;ll be fine. You&rsquo;ll also need a copy of <a href="http://galasoft.ch/">Laurent Bugnion&rsquo;s</a> awesome &ldquo;Glenn Block approved&rdquo; <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> &nbsp;MVVM Light, which you can get <a href="http://mvvmlight.codeplex.com/">here</a> and which we&rsquo;ll be using for it&rsquo;s ICommand default implementation.</p>
+<h1></h1>
+<h1>Let the refactoring begin!</h1>
+<p>First we&rsquo;ll go create our ViewModel. We&rsquo;ll start off with an empty class. Go add a new MainPageViewModel.cs class to the HelloMEF project. Leave it empty for now. Now let&rsquo;s refactor MainPage to have MEF deliver it&rsquo;s ViewModel. There&rsquo;s a lot of religous debate in the community around View First vs ViewModel First construction of the UI. I am going to use View first, period, and no that&rsquo;s not open for debate <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  </p>
+<h2>Refactoring MainPageView</h2>
+<p>What we&rsquo;re going to do is rip out the logic in MainPageView, and replace it with importing it&rsquo;s ViewModel and setting it to the DataContext. Replace MainPageView.xaml.cs the following:</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> MainPage : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> MainPage()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        CompositionInitializer.SatisfyImports(<span style="color: #0000ff">this</span>);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">this</span>.DataContext = ViewModel;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    [Import]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> MainPageViewModel ViewModel { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}
+</pre>
+</pre>
+<p>I think you&rsquo;ll agree this code is a lot cleaner. My UI is now completely decoupled from any UI &ldquo;logic&rdquo;. </p>
+<p>But WAIT, there IS code in the code behind, and the ViewModel police are probably on their way to my house. My answer when they show up is &ldquo;it&rsquo;s simple wiring logic, so WHAT!&rdquo; That being said you can certainly look at ways to remove to right that small amount of code, but I am not losing any sleep over it. <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>Notice I am not using constructor injection rather I am importing my ViewModel through a property. The reason is because I am allowing XAML to create my view rather than having MEF create it for me. SatisfyImports is then called to tell MEF to inject the view. It removes one level of mental gymnastics which in particular manifests itself when you start dealing with nested Views and ViewModels. If you&rsquo;ve dealt with manually assembling Composite UIs / using regions, you know what I mean. It also allows this view to be more designer friendly as I can configure a design time VM to show up. That is for another post.</p>
+<h2>Fleshing out MainPage&rsquo;s ViewModel</h2>
+<p>Now we&rsquo;re go and finish the empty MainPageViewModel we created earlier. We&rsquo;re not just going to move the code from the view into the model as we&rsquo;d just be moving the problem. Instead we&rsquo;re going to get rid of the imperative code and allow the view to render itself on the model through binding. We&rsquo;ll still need to leverage MEF&rsquo;s metadata and ensure that the widgets go in the right &ldquo;place&rdquo; wherever that happens to be. This raises a question as to how as previously there was a single collection of widgets that we imported into MainPage before and which we manually walked. The solution I chose was to create collection properties for each set of widgets. That allows the view to render it any way it wishes and decouples from the ItemsControls that were used previously.</p>
+<p>Below is the code: </p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">[Export]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> MainPageViewModel : IPartImportsSatisfiedNotification,
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    INotifyPropertyChanged
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    [ImportMany(AllowRecomposition = <span style="color: #0000ff">true</span>)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> Lazy&lt;UserControl, IWidgetMetadata&gt;[] Widgets { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> IEnumerable&lt;UserControl&gt; TopWidgets { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">private</span> <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> IEnumerable&lt;UserControl&gt; BottomWidgets { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">private</span> <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> OnImportsSatisfied()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        TopWidgets = Widgets.Where(w =&gt; w.Metadata.Location ==
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            WidgetLocation.Top).Select(i =&gt; i.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        BottomWidgets = Widgets.Where(w =&gt; w.Metadata.Location ==
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            WidgetLocation.Bottom).Select(i =&gt; i.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        OnPropertyChanged("<span style="color: #8b0000">TopWidgets</span>");
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        OnPropertyChanged("<span style="color: #8b0000">BottomWidgets</span>");
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> <span style="color: #0000ff">event</span> PropertyChangedEventHandler PropertyChanged;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">private</span> <span style="color: #0000ff">void</span> OnPropertyChanged(<span style="color: #0000ff">string</span> property)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        var handler = PropertyChanged;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">if</span> (handler != <span style="color: #0000ff">null</span>)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            PropertyChanged(<span style="color: #0000ff">this</span>, <span style="color: #0000ff">new</span> PropertyChangedEventArgs(
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">                property));
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}</pre>
+</pre>
+<p>MainPageViewModel implements IPartImportSatisfiedNotification as the view did previously. It also implements INotifyPropertyChanged in order to tell the view whenever it is recomposed. It exports itself in order to make itself available to be imported by the view. MainPageViewModel imports all the Widgets as did the view, but it also exposes two different properties TopWidgets and BottomWidgets. Whenever recompostion occurs, OnImportsSatisfied is called which updates these properties with their own filtered collections by using a LINQ query with the appropriate metadata filter. It then raises PropertyChanged in order to update the UI. This really shines through the power of metadata and metadata views in MEF!</p>
+<h2>Updating the bindings</h2>
+<p>The last thing we need to do to get the ViewModel wired is to update the view to bind the widget ItemControls to the appropriate properties. Replace the StackPanel in MainPage.xaml.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">&lt;</span><span style="color: #800000">StackPanel</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"LayoutRoot"</span> <span style="color: #ff0000">Background</span>=<span style="color: #0000ff">"Black"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;</span><span style="color: #800000">Border</span> <span style="color: #ff0000">Background</span>=<span style="color: #0000ff">"Cyan"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">&lt;</span><span style="color: #800000">ItemsControl</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"TopWidgets"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            <span style="color: #ff0000">ItemsSource</span>=<span style="color: #0000ff">"{Binding TopWidgets}"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"Auto"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            <span style="color: #ff0000">FontSize</span>=<span style="color: #0000ff">"30"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">ItemsControl</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">Border</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;</span><span style="color: #800000">Border</span> <span style="color: #ff0000">Background</span>=<span style="color: #0000ff">"Yellow"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">&lt;</span><span style="color: #800000">ItemsControl</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"BottomWidgets"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            <span style="color: #ff0000">ItemsSource</span>=<span style="color: #0000ff">"{Binding BottomWidgets}"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"Auto"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            <span style="color: #ff0000">FontSize</span>=<span style="color: #0000ff">"30"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">&lt;/</span><span style="color: #800000">ItemsControl</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">Border</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">&lt;/</span><span style="color: #800000">StackPanel</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+</pre>
+<h2>We&rsquo;re almost there</h2>
+<p>Build and execute the app. You should see that everything works as before only now our new ViewModel is in place. You can now easily go and and reformat the UI without impacting the underlying ViewModel at all. We could stop here as we&rsquo;ve already made a good leap in improving the maintenance of our app. We won&rsquo;t though, there&rsquo;s one more culprit we can refactor. Widget1.</p>
+<h2>What&rsquo;s wrong with Widget1?</h2>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">[ExportWidget(Location = WidgetLocation.Top)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> Widget1 : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    [Import]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> IDeploymentCatalogService CatalogService { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> Widget1()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        Button.Click += <span style="color: #0000ff">new</span> RoutedEventHandler(Button_Click);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">void</span> Button_Click(<span style="color: #0000ff">object</span> sender, RoutedEventArgs e)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        CatalogService.AddXap("<span style="color: #8b0000">HelloMEF.Extensions.xap</span>");
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}</pre>
+</pre>
+<p>Widget1 contains logic which calls the DeploymentCatalogService to download a XAP, it&rsquo;s not horrible but it has some of the same problems as MainPage did.</p>
+<ul>
+<li>It tightly couples the download logic to the UI. This means if you refactor the UI there is a decent chance it will break.
+<ul>
+<li>Downloading widgets is a completely non-UI concern which does not belong in the view. </li>
+<li>It means a designer can&rsquo;t change from using a button without modifying the code. </li>
+</ul>
+</li>
+<li>The logic is not reusable, you can&rsquo;t reuse it across multiple views. This may or may not matter depending on the specific case. </li>
+<li>As small as it is, it is hard to test. That means if someone breaks the code and it no longer works, the only way to pick it up is through QA/automated UI testing. We want to pick up as many bugs as we can up stream rather than waiting for them to be caught. </li>
+</ul>
+<h2>Refactoring Widget1 to use a ViewModel.</h2>
+<p>Widget1 can be refactored to use it&rsquo;s own ViewModel. We can then refactor the logic out of the code behind and move it into the model leveraging Silverlight 4&rsquo;s new commanding support, Laurent&rsquo;s MVVM light library, and a little MEF to make it more maintainable.</p>
+<p>We&rsquo;ll do this again with the ViewFirst approach <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  This time we don&rsquo;t need to use CompositionInitializer though as our ViewModel will get discovered by the catalog. Add a new Widget1ViewModel.cs file to the HelloMEF project. Second add a reference to GalaSoft.MVVM light (in your &ldquo;ProgramFiles\Laurent Bugnion (Galasoft)\Mvvm Light Toolkit\Binaries\Silverlight&rdquo; folder). Now paste in the following code to Widget1ViewModel.cs.</p>
+<p>&nbsp;</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">using</span> System.ComponentModel.Composition;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">using</span> System.Windows.Input;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">using</span> GalaSoft.MvvmLight.Command;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">namespace</span> HelloMEF
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    [Export]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> Widget1ViewModel
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">public</span> Widget1ViewModel()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">            Download = <span style="color: #0000ff">new</span> RelayCommand(() =&gt;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">                CatalogService.AddXap("<span style="color: #8b0000">HelloMEF.Extensions.xap</span>"));
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        [Import]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">public</span> IDeploymentCatalogService CatalogService { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">public</span> ICommand Download { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">private</span> <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}</pre>
+</pre>
+<p>&nbsp;</p>
+<p>Widget1ViewModel is an export similar to MainPageViewModel. It imports IDeploymentCatalogService in order to allow downloading XAPs. It then exposes a Download command which is implemented using MVVM Lights&rsquo; (contributed by Josh Smith) RelayCommand to download the extensions. </p>
+<h2>Updating Widget1View</h2>
+<p>Once we have that in place we can clean up the Widget1 view. Paste the following into Widget1.xaml.cs.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">[ExportWidget(Location=WidgetLocation.Top)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> Widget1 : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> Widget1()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    [Import]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">public</span> Widget1ViewModel ViewModel
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">get</span>{ <span style="color: #0000ff">return</span> (Widget1ViewModel) <span style="color: #0000ff">this</span>.DataContext;}
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #0000ff">set</span> { <span style="color: #0000ff">this</span>.DataContext = <span style="color: #0000ff">value</span>;}
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">}
+</pre>
+</pre>
+<p>First I removed the previous UI logic. Then I added an import of the MainPageViewModel and set it to the DataContext. Constructor injection was also an option through usage of our ImportingConstructor attribute. I chose not to for consistency and in order to not increase the concept count. Feel free to use either approach though.</p>
+<p>Now that we&rsquo;ve updated the code behind we can update the XAML to bind to the new DownloadCommand. Replace the Grid element in Widget1.xaml with the following.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">&lt;</span><span style="color: #800000">Grid</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"LayoutRoot"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"Auto"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;</span><span style="color: #800000">Button</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"Button"</span> <span style="color: #ff0000">Content</span>=<span style="color: #0000ff">"Hello MEF!"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">        <span style="color: #ff0000">Command</span>=<span style="color: #0000ff">"{Binding Download}"</span> <span style="color: #ff0000">Width</span>=<span style="color: #0000ff">"300"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"100"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">Button</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"><span style="color: #0000ff">&lt;/</span><span style="color: #800000">Grid</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px"></pre>
+</pre>
+<h2>Run the app!</h2>
+<p>Build and run the application, press the top button and you should see a screen that is quite familiar by now <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/glenn.block/image_5F00_07A568C4.png"><img height="348" width="487" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/glenn/block/image_thumb_69E3DE04.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1920566611&amp;Signature=4PYLz%2f6icmL2JlHfUNWphd%2byrFM%3d" alt="image" border="0" /></a></p>
+<p>We&rsquo;re done.</p>
+<h1>What did we gain?</h1>
+<p>You might be sitting there thinking wow that was fun, but what did it buy me? Here&rsquo;s a quite summary:&#8217;</p>
+<ul>
+<li>MainPage and Widget1 are completely decoupled from the UI logic. </li>
+<li>MainPageViewModel and Widget1ViewModel are easily testable. </li>
+</ul>
+<p>Both of which translate into less pain for us as our app evolves.</p>
+<h1>How did MEF help?</h1>
+<p>MEF enabled us to put the decoupled pieces back together. To be fair, we could have used other mechanisms. However MEF offered a nice solution in the box, which was convenient as our app was already using it <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  MEF also provided us CompositionInitializer which made it very easy to compose our UI parts without having to jump through a lot of hoops.</p>
+<h1>What&rsquo;s next?</h1>
+<p>In this post I mentioned testing several times though notice I did not show ANY tests. That was deliberate <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  The reason is because I wanted you to see the value of ViewModel beyond the simple testability aspects, I wanted you to focus on how it improved our code whether we were testing it our not. In the next post we&rsquo;ll look at how we can test it.</p>
+<p>As always, code is attached.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/hellomef/" title="View all posts in HelloMEF" rel="category tag">HelloMEF</a>, <a href="http://codebetter.com/glennblock/category/mef/" title="View all posts in MEF" rel="category tag">MEF</a>, <a href="http://codebetter.com/glennblock/category/silverlight/" title="View all posts in silverlight" rel="category tag">silverlight</a>, <a href="http://codebetter.com/glennblock/category/sl/" title="View all posts in SL" rel="category tag">SL</a>, <a href="http://codebetter.com/glennblock/category/sl4/" title="View all posts in SL4" rel="category tag">SL4</a>, <a href="http://codebetter.com/glennblock/category/viewmodel/" title="View all posts in ViewModel" rel="category tag">ViewModel</a>. Bookmark the <a href="http://codebetter.com/glennblock/2010/03/08/building-hellomef-part-v-refactoring-to-viewmodel/" title="Permalink to Building HelloMEF – Part V – Refactoring to ViewModel" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2010/03/08/building-hellomef-part-v-refactoring-to-viewmodel/feed/" title="Comments RSS to Building HelloMEF – Part V – Refactoring to ViewModel" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-119 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2010/03/08/building-hello-mef-part-iv-deploymentcatalog/" rel="prev"><span class="meta-nav">&larr;</span> Building Hello MEF – Part IV – DeploymentCatalog</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2010/03/08/speaking-on-ignite-your-coding/" rel="next">Speaking on “Ignite your coding” <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-526">
+					<div id="dsq-comment-header-526" class="dsq-comment-header">
+						<cite id="dsq-cite-526">
+	http://sachabarber.net							<span id="dsq-author-user-526">sacha barber</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-526" class="dsq-comment-body">
+						<div id="dsq-comment-message-526" class="dsq-comment-message"><p>Nice post Glen, loving the MEF man</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-527">
+					<div id="dsq-comment-header-527" class="dsq-comment-header">
+						<cite id="dsq-cite-527">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-527">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-527" class="dsq-comment-body">
+						<div id="dsq-comment-message-527" class="dsq-comment-message"><p>Thanks Sacha!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-528">
+					<div id="dsq-comment-header-528" class="dsq-comment-header">
+						<cite id="dsq-cite-528">
+	http://www.rudigrobler.net							<span id="dsq-author-user-528">Rudi Grobler</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-528" class="dsq-comment-body">
+						<div id="dsq-comment-message-528" class="dsq-comment-message"><p>WOW, Glenn&#8230;</p>
+<p>Very nice!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-529">
+					<div id="dsq-comment-header-529" class="dsq-comment-header">
+						<cite id="dsq-cite-529">
+								<span id="dsq-author-user-529">Bill Campbell</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-529" class="dsq-comment-body">
+						<div id="dsq-comment-message-529" class="dsq-comment-message"><p>Wow &#8211; this Rocks! What an excellent example. I hope you know how much all your hard work helps the dev community. Regards!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-530">
+					<div id="dsq-comment-header-530" class="dsq-comment-header">
+						<cite id="dsq-cite-530">
+	http://andyonwpf.blogspot.com							<span id="dsq-author-user-530">AndyWilkinson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-530" class="dsq-comment-body">
+						<div id="dsq-comment-message-530" class="dsq-comment-message"><p>Nice introduction to MEF/MVVM Glenn. One trick I like to use for inserting widgets into different regions is to bind to an indexer through XAML. So, rather than having,</p>
+<p>public IEnumerable<usercontrol> TopWidgets<br />
+public IEnumerable</usercontrol><usercontrol> BottomWidgets<br />
+&#8230;<br />
+[ExportWidget(Location=WidgetLocation.Top)]</p>
+<p>you can have what is effectively (NB: Not real code, you have to play about a bit with an extra class with an indexer to get the property how we want),</p>
+<p>public IEnumerable</usercontrol><usercontrol> AllWidgets[string regionName]<br />
+&#8230;<br />
+[ExportWidget(Location="Top")]</p>
+<p>Now you can bind to this in the MainPage.xaml as,</p>
+<p>ItemsSource=&#8221;{Binding AllWidgets[Top]}&#8221;</p>
+<p>The main advantage here is that the designer can easily add new regions into the XAML without any changes required to the MainPageViewModel code (in my case I actually use MEF to import a selection of views to apply, so a third-party can add a view with a new region that imports their widgets &#8211; all on top of the same view-model).</p>
+<p>Andy</usercontrol></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-531">
+					<div id="dsq-comment-header-531" class="dsq-comment-header">
+						<cite id="dsq-cite-531">
+								<span id="dsq-author-user-531">hafasa</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-531" class="dsq-comment-body">
+						<div id="dsq-comment-message-531" class="dsq-comment-message"><p>Thank you for sharing Glenn. One question, I just need to know if it is just me or what. When I click the button the first time, great Widget3 gets loaded. However, if I click a second time the browser goes blank. I&#8217;m using Firefox 3.6.<br />
+Thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-532">
+					<div id="dsq-comment-header-532" class="dsq-comment-header">
+						<cite id="dsq-cite-532">
+	http://joshsmithonwpf.wordpress.com							<span id="dsq-author-user-532">Josh Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-532" class="dsq-comment-body">
+						<div id="dsq-comment-message-532" class="dsq-comment-message"><p>Well done!  This series is great.  Another interesting thing to show, in my opinion, is how recomposition could work in conjunction with an ObservableCollection<widget>.</widget></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-533">
+					<div id="dsq-comment-header-533" class="dsq-comment-header">
+						<cite id="dsq-cite-533">
+	http://www.devlicio.us							<span id="dsq-author-user-533">Rob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-533" class="dsq-comment-body">
+						<div id="dsq-comment-message-533" class="dsq-comment-message"><p>Glenn, a few thoughts on this&#8230;</p>
+<p>As you know, I favor a Model-First approach, but that is not my complaint here&#8230;.and I don&#8217;t have any problem with the code-behind either.  </p>
+<p>The problem is that your MainPageViewModel, IMHO, is *not* actually a View Model.  It is a Supervising Controller.  Your Widget1ViewModel *is* a ViewModel though.  The difference?  MainPageViewModel references Views.  In ViewModel, there is no explicit View synchronization, data binding handles that.  In Supervising Controller, there is a combination of explicit synchronization and data binding, which is what you have here.  In fact, what you have is something that looks a lot more like a bad ScreenCollection/ScreenConductor implementation (no offense, you know I love ya).  Your forthcoming unit tests will prove this to you because you will have to instantiate a UserControl in order to test the functionality of your MainPageViewModel.</p>
+<p>The second problem I have is also with the design of MainPageViewModel.  If you take a normal approach to testing your VM by instantiating the SUT and inspecting the TopWidgets, you will have a NRE.  If you instantiate, set the Widgets property, then inspect the TopWidgets, you will still have an NRE.  You have to know to Instantiate, Populate Widgets, and manually call OnImportsSatisfied, in that order, before you can actually access the getter of TopWidgets.  Why not just use constructor injection and avoid all that?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-534">
+					<div id="dsq-comment-header-534" class="dsq-comment-header">
+						<cite id="dsq-cite-534">
+	http://www.devlicio.us							<span id="dsq-author-user-534">Rob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-534" class="dsq-comment-body">
+						<div id="dsq-comment-message-534" class="dsq-comment-message"><p>Just to be clear, I have nothing against Supervising Controller.  Probably every WPF/Silverlight project I have done has some mixture of Supervising Controller with MVVM.  But, you should at least remove the UserControl reference and replace it with an interface.  That would be the right way to handle that pattern.</p>
+<p>Of coarse, you could also replace the UserControl with a WidgetViewModel, then your MainPageViewModel would actually be a ViewModel, but now you would be doing Model-First <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-535">
+					<div id="dsq-comment-header-535" class="dsq-comment-header">
+						<cite id="dsq-cite-535">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-535">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-535" class="dsq-comment-body">
+						<div id="dsq-comment-message-535" class="dsq-comment-message"><p>@Rob </p>
+<p>You mean have the widgets implement IWidget? I didn&#8217;t do that deliberately in order to illustarte you &#8220;could&#8221; reuse existing types as contracts.</p>
+<p>However, I have no issue with using IWidget if that is what you mean. I&#8217;ll do a follow up mini-post with IWidget <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>On using the VM Yes I could have (and I did think of that), but then I need to have all my user controls have view models, or I need datatempltes / special plumbing. I wanted to keep it simple.</p>
+<p>Thanks<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-536">
+					<div id="dsq-comment-header-536" class="dsq-comment-header">
+						<cite id="dsq-cite-536">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-536">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-536" class="dsq-comment-body">
+						<div id="dsq-comment-message-536" class="dsq-comment-message"><p>@Rudi, @Bill thanks that means a lot.</p>
+<p>@Andy I like the dynamicity of that approach. One caveat on that is that when the underlying collection changes, the UI requeries all &#8220;regions&#8221;. AFAIK there is no way to throw a collection changed notification with an indexer value. In the current implementation although I am firing notifications for both collections, I don&#8217;t have to, I can be more fine grained or even use ObservableCollection<t> as Josh mentioned.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-537">
+					<div id="dsq-comment-header-537" class="dsq-comment-header">
+						<cite id="dsq-cite-537">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-537">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-537" class="dsq-comment-body">
+						<div id="dsq-comment-message-537" class="dsq-comment-message"><p>@Rob </p>
+<p>I respectfully disagree that MainPageViewModel is not a model. Having a ViewModel that references UI elements does not in itself violate any tenents fo ViewModel that I know of. </p>
+<p>It&#8217;s a ViewModel because the primary way the view communicates with it is through binding, nor is the ViewModel coupled to the view. It is exposing other view elements as a collection yes. However whether they implement IWidget or not is besides the point.</p>
+<p>Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-538">
+					<div id="dsq-comment-header-538" class="dsq-comment-header">
+						<cite id="dsq-cite-538">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-538">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-538" class="dsq-comment-body">
+						<div id="dsq-comment-message-538" class="dsq-comment-message"><p>@Josh</p>
+<p>ObservableCollection<t> is one thing I did think about. We have used it combined with Recomposition in other samples.</p>
+<p>The reason I avoided it in this case relates to ordering. Often when folks use metadata they apply ordering schemes. If both properties were ObservableCollections I am not sure how I could address ordering changes when new things appear. </p>
+<p>Now granted I am not doing any sort of ordering in this example, so using ObservableCollection works fine <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  </p>
+<p>The other challenge with Observable collection relates to synchronizing the changes. Each time recomposition occurs, I would need to track manually exactly what changed so that I could update the collection (i.e. do the appropriate Add and Remove). I might attempt it for a follow up post though, or better yet&#8230;YOU can do it <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>Thanks<br />
+Glenn</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-539">
+					<div id="dsq-comment-header-539" class="dsq-comment-header">
+						<cite id="dsq-cite-539">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-539">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-539" class="dsq-comment-body">
+						<div id="dsq-comment-message-539" class="dsq-comment-message"><p>One refactoring I am considering after watching Jeremy Liknesses video is to not use CompositionInitializer on MainPage and instead use CI on the application level. Advantage of this is MainPage has an export and is discovered in the catalog. In it&#8217;s current form the MainPage itself is not pluggable, which is reasonable in some circumstances.</p>
+<p>Thoughts on whether I should do that in a follow up post?</p>
+<p>Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-540">
+					<div id="dsq-comment-header-540" class="dsq-comment-header">
+						<cite id="dsq-cite-540">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-540">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-540" class="dsq-comment-body">
+						<div id="dsq-comment-message-540" class="dsq-comment-message"><p>You are right, using CI will improve testability signficantly. I started off with CI, but reverted back to props for consistency. You make very good arguments though for why that should move back to CI so I will do that. It&#8217;s looking like I definitely will do a follow up post with the flurry of suggestions. As a side not this is what happens when you DON&#8217;T (which I didn&#8217;t) write tests first <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>Thanks!<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-541">
+					<div id="dsq-comment-header-541" class="dsq-comment-header">
+						<cite id="dsq-cite-541">
+	http://www.devlicio.us							<span id="dsq-author-user-541">Rob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-541" class="dsq-comment-body">
+						<div id="dsq-comment-message-541" class="dsq-comment-message"><p>Well, if it *is* a View Model, it&#8217;s a very funky View Model indeed <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' />   Especially considering that its primary role is to host and organize Views.  In fact, it is a bit like a data-bindable region manager&#8230;  Perhaps it&#8217;s not a SC, but I&#8217;m not sure that classifying it as a VM is the proper description.  It certainly exhibits the MVVM mindset, but I&#8217;m still not sure I would call it a VM if I encountered it &#8220;in the wild.&#8221;  Regardless, good post.  Looking forward to the next installment.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-542">
+					<div id="dsq-comment-header-542" class="dsq-comment-header">
+						<cite id="dsq-cite-542">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-542">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-542" class="dsq-comment-body">
+						<div id="dsq-comment-message-542" class="dsq-comment-message"><p>@Rob </p>
+<p>There&#8217; s a grey area for sure <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  In general I don&#8217;t see controllers as bindable entities, rather they observe and coordinate. It&#8217;s arguable though.</p>
+<p>I&#8217;l ponder on this more though.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-543">
+					<div id="dsq-comment-header-543" class="dsq-comment-header">
+						<cite id="dsq-cite-543">
+	http://www.davidezordan.net/blog							<span id="dsq-author-user-543">Davide Zordan</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-543" class="dsq-comment-body">
+						<div id="dsq-comment-message-543" class="dsq-comment-message"><p>Great article Glenn,<br />
+awesome approach for MVVM with MEF, I&#8217;ve used it recently and I find it elegant and extensible. I agree with you for the usage of CompositionInitializer at the application level <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-544">
+					<div id="dsq-comment-header-544" class="dsq-comment-header">
+						<cite id="dsq-cite-544">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-544">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-544" class="dsq-comment-body">
+						<div id="dsq-comment-message-544" class="dsq-comment-message"><p>@Davide</p>
+<p>Thanks! It&#8217;s in good company with your posts. On using CompositionInitializer at the app level there are many places where it makes sense not to do that. The downside of using it at the app-level is it pushes the concern up a notch. The View implementer may want to have it&#8217;s imports composed without worrying about the app having to do work. </p>
+<p>In particular this manifests itself in nested UI element scenarios. Imagine I am a custom button that gets a VM which uses a custom service. I am dropped somewhere deep in the XAML hieararchy within a custom user control. I don&#8217;t want the host to have to know that I have imports as that&#8217;s an implementation detail. This is really evident when we look at the third-party control using MEF scenario.</p>
+<p>In this particular case doing it at the App level is fine. I think the determiner is whether or not the thing needing to be composed is replacable or not. If it is then use the App to import it, if it is not, then use CI to compose it.</p>
+<p>The decision is yours.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-545">
+					<div id="dsq-comment-header-545" class="dsq-comment-header">
+						<cite id="dsq-cite-545">
+	http://andyonwpf.blogspot.com							<span id="dsq-author-user-545">Andy Wilkinson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-545" class="dsq-comment-body">
+						<div id="dsq-comment-message-545" class="dsq-comment-message"><p>I agree with your comments entirely Glenn. I don&#8217;t know either of any way to provide notifications of changes to indexer elements. In my case I&#8217;m not supporting recomposition (although it&#8217;s something I&#8217;ll definately do in the near future) so I&#8217;m taking the hit of invalidating the whole UI each time.</p>
+<p>I have a similar issue with binding to indexers elsewhere in my app where I bind to file metadata, and which metadata can be defined in the XAML&#8230;</p>
+<p>e.g. {Binding File.Metadata[FileSize]}</p>
+<p>To avoid the problem with change notifications I add an extra class between so that the result is,</p>
+<p>e.g. {Binding File.Metadata[FileSize].Value}</p>
+<p>In this case the value the indexer returns never changes, and I raise all changes on the &#8216;Value&#8217; property of the this child object.</p>
+<p>In fact, this is exactly what you can do with ObservableCollection too&#8230;</p>
+<p>public ObservableCollection<usercontrol> AllWidgets[string regionName]</p>
+<p>Here the &#8216;AllWidgets&#8217; indexer creates and caches a new ObservableCollection each time a new regionName is used, and all changes are then done on this single ObservableCollection &#8211; problem solved! <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>NB: Regarding ObservableCollections and syncronising changes, I&#8217;m having great success with using the Reactive Framework (Rx) to do this &#8211; my code here is quite buggy at the moment to be fair, but you can set up a binding with filters and transformations etc. at initialization, then the syncs are all performed automatically from then on!</usercontrol></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-546">
+					<div id="dsq-comment-header-546" class="dsq-comment-header">
+						<cite id="dsq-cite-546">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-546">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-546" class="dsq-comment-body">
+						<div id="dsq-comment-message-546" class="dsq-comment-message"><p>@Rob, after further investigation I realize why I did not go with constructor injection on MainPageViewModel. Constructor imports are not recomposable, and I am relying on recomposition.</p>
+<p>Now I did do a blog post a while ago on supporting recomposition through CI with a wrapper.  (<a href="http://codebetter.com/blogs/glenn.block/archive/2009/03/21/recomposition-and-constructors.aspx" rel="nofollow">http://codebetter.com/blogs/glenn.block/archive/2009/03/21/recomposition-and-constructors.aspx</a>)<br />
+I guess I could consider using that approach.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-547">
+					<div id="dsq-comment-header-547" class="dsq-comment-header">
+						<cite id="dsq-cite-547">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-547">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-547" class="dsq-comment-body">
+						<div id="dsq-comment-message-547" class="dsq-comment-message"><p>@Rob</p>
+<p>After stewing on this more and chatting with Laurent. I realize that having the ViewModel exposing user controls rather than IWidget was not the best move. I also realize how I got there as I startted off having everything in th code-behind rather with no VM. Also I wanted to show that you did need to create a new abstraction as a contract if there was an existing one.</p>
+<p>In my follow up post I&#8217;ll certainly refactor to use an IWidget. It makes very good sense as it removes the unnecessary UI dependency on the VM, something which is bad bad bad.</p>
+<p>Thanks as always.<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-548">
+					<div id="dsq-comment-header-548" class="dsq-comment-header">
+						<cite id="dsq-cite-548">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-548">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-548" class="dsq-comment-body">
+						<div id="dsq-comment-message-548" class="dsq-comment-message"><p>@Rob</p>
+<p>One other thing, the reasn why the dependencies on MainPageViewModel were properties was to support recomposition. We don&#8217;t support recomposition on ctor params. There is a way to get there using a wrapper, but I didn&#8217;t want to go there.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2010/03/08/building-hellomef-part-v-refactoring-to-viewmodel/ ';
+	var disqus_identifier = '119 /blogs/glenn.block/archive/2010/03/07/building-hellomef-part-v-refactoring-to-viewmodel.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "Building HelloMEF – Part V – Refactoring to ViewModel";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=119');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2010\/03\/08\/building-hellomef-part-v-refactoring-to-viewmodel\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.316 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:09:30 -->
+<!-- super cache -->

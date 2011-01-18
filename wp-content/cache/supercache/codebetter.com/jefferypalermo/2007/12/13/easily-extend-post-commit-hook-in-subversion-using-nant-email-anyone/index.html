@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Easily extend post-commit hook in Subversion using NAnt &#8211; email anyone? | Jeffery Palermo</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jefferypalermo/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jefferypalermo/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jefferypalermo/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jefferypalermo/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeffery Palermo' href='http://codebetter.com/jefferypalermo/' />
+<link rel='start' title='ASP.NET 1.1 Request Validation.' href='http://codebetter.com/jefferypalermo/2004/04/16/asp-net-1-1-request-validation/' />
+<link rel='prev' title='MvcContrib now has IoC container support for &quot;the big 3&quot;' href='http://codebetter.com/jefferypalermo/2007/12/11/mvccontrib-now-has-ioc-container-support-for-quot-the-big-3-quot/' />
+<link rel='next' title='ASP.NET MVC podcast from .Net Rocks!' href='http://codebetter.com/jefferypalermo/2007/12/21/asp-net-mvc-podcast-from-net-rocks/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/' />
+<link rel='shortlink' href='http://codebetter.com/jefferypalermo/?p=592' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-592" class="post-592 post type-post status-publish format-standard hentry category-featured">
+					<h1 class="entry-title">Easily extend post-commit hook in Subversion using NAnt &#8211; email anyone?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jefferypalermo/author/jefferypalermo/" title="View all posts by jefferypalermo">jefferypalermo</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/" title="10:23 pm" rel="bookmark"><span class="entry-date">December 13, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jefferypalermo/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jefferypalermo/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jefferypalermo/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>There are several scripts floating around the Net regarding publishing an email to the development list every time someone commits a revision to Subversion.</p>
+<p>In other cases, you may want to post the commit log entry directly to your project tracking system, such as trac, Rally, Gemini, Mingle, etc.&nbsp; Anything under the sun can be coded into a post-commit action with Subversion.</p>
+<p><strong>Here&#8217;s how it works.&nbsp; Here is how to send post commit email from Subversion while running on Windows:</strong></p>
+<p>In your subversion repository, there is a <strong>hooks</strong> folder.&nbsp; This contains some template files for you.&nbsp; On a Windows system, you&#8217;ll want a file called <strong>post-commit.bat.&nbsp; </strong>This batch command will be run immediately after Subversion commits a transactional revision to the repository.&nbsp; You can do work on other events, but I&#8217;ll focus on post-commit for this post.</p>
+<p><strong>Here is my post-commit.bat file that will call NAnt (which is placed inside the hooks folder for simplicity):</strong></p>
+<p>&nbsp;</p>
+<div>
+<pre style="padding-right: 0px;padding-left: 0px;font-size: 8pt;padding-bottom: 0px;margin: 0em;overflow: visible;width: 100%;color: black;border-top-style: none;line-height: 12pt;padding-top: 0px;font-family: consolas, 'Courier New', courier, monospace;border-right-style: none;border-left-style: none;background-color: #f4f4f4;border-bottom-style: none">pushd .
+cd DRIVELETTER:\svnrepositories\repositoryname\hooks
+nant\nant.exe -buildfile:postcommitemail.build -D:path.repository=%1 -D:revision=%2 &gt; lastpostcommitrun.txt
+popd</pre>
+</div>
+<p>&nbsp;</p>
+<p><strong>Notice how we are merely calling nant.exe.</strong>&nbsp; The rest of the interesting work is done by NAnt.&nbsp; Now that we are within NAnt, we can script out any action we might need.&nbsp; In this case, I&#8217;m going to use some SVN command line tools to build up a simple email that with send developers what was included in the last commit:</p>
+<p><strong></strong>&nbsp;</p>
+<pre><span class="kwrd">&lt;?</span><span class="html">xml</span> <span class="attr">version</span><span class="kwrd">="1.0"</span> <span class="attr">encoding</span><span class="kwrd">="utf-8"</span>?<span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">project</span> <span class="attr">name</span><span class="kwrd">="commit"</span> <span class="attr">default</span><span class="kwrd">="build"</span> <span class="attr">xmlns</span><span class="kwrd">="http://nant.sf.net/release/0.85/nant.xsd"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">target</span> <span class="attr">name</span><span class="kwrd">="build"</span><span class="kwrd">&gt;</span>
+
+        <span class="kwrd">&lt;</span><span class="html">exec</span> <span class="attr">program</span><span class="kwrd">="svnlook"</span> <span class="attr">commandline</span><span class="kwrd">="author ${path.repository} -r ${revision}"</span> <span class="attr">output</span><span class="kwrd">="author.txt"</span><span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">exec</span> <span class="attr">program</span><span class="kwrd">="svnlook"</span> <span class="attr">commandline</span><span class="kwrd">="info ${path.repository} -r ${revision}"</span> <span class="attr">output</span><span class="kwrd">="message.txt"</span><span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">echo</span> <span class="attr">message</span><span class="kwrd">=" "</span> <span class="attr">file</span><span class="kwrd">="message.txt"</span> <span class="attr">append</span><span class="kwrd">="true"</span><span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">exec</span> <span class="attr">program</span><span class="kwrd">="svnlook"</span> <span class="attr">commandline</span><span class="kwrd">="changed ${path.repository} -r ${revision}"</span> <span class="attr">output</span><span class="kwrd">="message.txt"</span> <span class="attr">append</span><span class="kwrd">="true"</span> <span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">exec</span> <span class="attr">program</span><span class="kwrd">="svnlook"</span> <span class="attr">commandline</span><span class="kwrd">="diff ${path.repository} -r ${revision} --no-diff-deleted --no-diff-added"</span> <span class="attr">output</span><span class="kwrd">="message.txt"</span> <span class="attr">append</span><span class="kwrd">="true"</span><span class="kwrd">/&gt;</span>
+
+        <span class="kwrd">&lt;</span><span class="html">loadfile</span> <span class="attr">file</span><span class="kwrd">="author.txt"</span> <span class="attr">property</span><span class="kwrd">="author"</span><span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">loadfile</span> <span class="attr">file</span><span class="kwrd">="message.txt"</span> <span class="attr">property</span><span class="kwrd">="message"</span><span class="kwrd">/&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">mail</span> <span class="attr">tolist</span><span class="kwrd">=jeffrey@mydomain.com</span>
+            <span class="attr">from</span><span class="kwrd">=build@mydomain.com</span>
+            <span class="attr">subject</span><span class="kwrd">="SVN ${path.repository} - ${author}"</span>
+            <span class="attr">message</span><span class="kwrd">="${message}"</span>
+            <span class="attr">mailhost</span><span class="kwrd">="smtp.mydomain.com"</span><span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">target</span><span class="kwrd">&gt;</span>
+
+<span class="kwrd">&lt;/</span><span class="html">project</span><span class="kwrd">&gt;</span></pre>
+<p>
+.csharpcode, .csharpcode pre<br />
+{<br />
+	font-size: small;<br />
+	color: black;<br />
+	font-family: consolas, &#8220;Courier New&#8221;, courier, monospace;<br />
+	background-color: #ffffff;<br />
+	/*white-space: pre;*/<br />
+}<br />
+.csharpcode pre { margin: 0em; }<br />
+.csharpcode .rem { color: #008000; }<br />
+.csharpcode .kwrd { color: #0000ff; }<br />
+.csharpcode .str { color: #006080; }<br />
+.csharpcode .op { color: #0000c0; }<br />
+.csharpcode .preproc { color: #cc6633; }<br />
+.csharpcode .asp { background-color: #ffff00; }<br />
+.csharpcode .html { color: #800000; }<br />
+.csharpcode .attr { color: #ff0000; }<br />
+.csharpcode .alt<br />
+{<br />
+	background-color: #f4f4f4;<br />
+	width: 100%;<br />
+	margin: 0em;<br />
+}<br />
+.csharpcode .lnum { color: #606060; }</p>
+<p>That&#8217;s all it takes.&nbsp; I can write anything I need to in order to perform custom actions when things happen with my Subversion repository.&nbsp; In this case, I&#8217;m sending email to a list, and the email contains the last commit.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jefferypalermo/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/" title="Permalink to Easily extend post-commit hook in Subversion using NAnt &#8211; email anyone?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/feed/" title="Comments RSS to Easily extend post-commit hook in Subversion using NAnt &#8211; email anyone?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-592 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jefferypalermo/2007/12/11/mvccontrib-now-has-ioc-container-support-for-quot-the-big-3-quot/" rel="prev"><span class="meta-nav">&larr;</span> MvcContrib now has IoC container support for &quot;the big 3&quot;</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jefferypalermo/2007/12/21/asp-net-mvc-podcast-from-net-rocks/" rel="next">ASP.NET MVC podcast from .Net Rocks! <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">8 Responses to <em>Easily extend post-commit hook in Subversion using NAnt &#8211; email anyone?</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2191">
+		<div id="comment-2191">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dotnet.org.za/scott' rel='external nofollow' class='url'>Scott Dukes</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2191">January 8, 2008 at 1:25 pm</a></div>
+
+		<div class="comment-body"><p>Have you had a look at Captain Hook [https://sourceforge.net/projects/captainhook/] which is a simple plugin framework for writing Subversion hooks using .NET written by Phil Haack.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2190">
+		<div id="comment-2190">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mckechney.com' rel='external nofollow' class='url'>Mike</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2190">January 4, 2008 at 1:57 pm</a></div>
+
+		<div class="comment-body"><p>I have created a Subversion hook tool that allows you to configure both pre- and post-commit e-mail messages on a per-repository folder level. For the pre-commit, you can enforce commit message regular expressions to make sure that you have &#8220;good&#8221; commit messages. If will also tie into a Bugzilla instance to ensure that the bug you&#8217;re committing against is open and valid. It can also lock down specific repro paths and file types. The post commit allows you to send nicely formatted e-mails out to whomever you choose.<br />
+You can check out the details at <a href="http://mckechney.com/SubversionNotifyForWindows" rel="nofollow">http://mckechney.com/SubversionNotifyForWindows</a> and then download it from SourceForge.net</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2189">
+		<div id="comment-2189">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dominic.cronin.nl' rel='external nofollow' class='url'>Dominic Cronin</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2189">December 16, 2007 at 2:01 pm</a></div>
+
+		<div class="comment-body"><p>BTW &#8211; your comments form doesn&#8217;t work with Javascript disabled.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2188">
+		<div id="comment-2188">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dominic.cronin.nl' rel='external nofollow' class='url'>Dominic Cronin</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2188">December 16, 2007 at 1:59 pm</a></div>
+
+		<div class="comment-body"><p>Looks pretty useful. Did you realise that PUSHD will take care of the CD for you, so you could just write: </p>
+<p>pushd DRIVELETTER:\svnrepositories\repositoryname\hooks<br />
+nant\nant.exe -buildfile:postcommitemail.build -D:path.repository=%1 -D:revision=%2 > lastpostcommitrun.txt<br />
+popd</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2187">
+		<div id="comment-2187">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.rmkitson.net' rel='external nofollow' class='url'>Rob Kitson</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2187">December 14, 2007 at 10:56 pm</a></div>
+
+		<div class="comment-body"><p>Great timing!  Setting up the commit emails was first on my todo list today.</p>
+<p>Tweaked your .bat file a little so that I could pass in a project name which gets placed in subject instead of the repo folder name.</p>
+<p>I added<br />
+-D:ProjectName=&#8221;ProjectName&#8221;<br />
+to the call to nant.exe before the<br />
+> lastpostcommitrun.txt</p>
+<p>Then I changed the subject in the email that the build file sends to<br />
+subject=&#8221;SVN &#8211; ${ProjectName} &#8211; ${revision} &#8211; ${author}&#8221;</p>
+<p>Works nicely!  Thanks!</p>
+<p>PS &#8211; I noticed you didn&#8217;t put quotes around either of the email addresses in your <mail> task.  I got an unexpected token error when I tried to run that build file.</mail></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2186">
+		<div id="comment-2186">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Gary Brunton</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2186">December 14, 2007 at 4:47 pm</a></div>
+
+		<div class="comment-body"><p>You may want to take a look at a product called Scmbug.</p>
+<p>From the website:<br />
+scmbug integrates software configuration management (SCM) with bug-tracking. It aims to solve the integration problem once and for all. It will glue any source code version control system (such as CVS/CVSNT, Subversion, Git) with any bug-tracking system (such as Bugzilla, Mantis, Request Tracker, Test Director).</p>
+<p>I use it and it works great.  It is completely configurable and also handles post-commit emails (as well as many other things such as pre-commit requirements).</p>
+<p><a href="http://www.mkgnu.net/?q=scmbug" rel="nofollow">http://www.mkgnu.net/?q=scmbug</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2185">
+		<div id="comment-2185">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2185">December 14, 2007 at 12:11 am</a></div>
+
+		<div class="comment-body"><p>@Jeremy,<br />
+You absolutely can, but it&#8217;s a bit more work with CCNet.  CCNet offers the build notification email very nicely, and we definitely use that, but the nice diff of what the commit contains requires a bit more work.  I&#8217;m giving email as an example because there are lots of folks searching for a way to send post-commit emails from Subversion on Windows, and I&#8217;m sure only a fraction of them are using CCNet.  </p>
+<p>Once you get into NAnt, the possibilities are endless.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2184">
+		<div id="comment-2184">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/jeremy.miller' rel='external nofollow' class='url'>Jeremy D. Miller</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#comment-2184">December 13, 2007 at 10:39 pm</a></div>
+
+		<div class="comment-body"><p>You could just let CC.Net do this as well.  It might be easier.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/jefferypalermo/2007/12/13/easily-extend-post-commit-hook-in-subversion-using-nant-email-anyone/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/jefferypalermo/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fjefferypalermo%2F2007%2F12%2F13%2Feasily-extend-post-commit-hook-in-subversion-using-nant-email-anyone%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.293 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:02:37 -->
+<!-- super cache -->

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Foundations of Programming &#8211; Part 6 &#8211; NHibernate | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='Foundations of Programming &#8211; pt 7 (sorta) &#8211; ActiveRecord' href='http://codebetter.com/karlseguin/2007/12/28/foundations-of-programming-pt-7-sorta-activerecord/' />
+<link rel='next' title='Foundations of Programming &#8211; PDF' href='http://codebetter.com/karlseguin/2008/01/03/foundations-of-programming-pdf/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=114' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-114" class="post-114 post type-post status-publish format-standard hentry category-featured category-foundations">
+					<h1 class="entry-title">Foundations of Programming &#8211; Part 6 &#8211; NHibernate</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/" title="1:52 pm" rel="bookmark"><span class="entry-date">January 2, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In part 3 we took our first stab at bridging the data and object world by hand-writing our own data access layer and mapper. The approach turned out to be rather limited and required quite a bit of repetitive code (although it was useful in demonstrating the basics). Adding more object and more functionality would bloat our DAL into an enormously unmaintainable violation of DRY (don&#8217;t repeat yourself). In this section we&#8217;ll look at an actual O/R Mapping framework to do all the heavy lifting for us. Specifically, we&#8217;ll look at the popular open-source NHibernate framework (<a href="http://www.hibernate.org/343.html">http://www.hibernate.org/343.html</a>).</p>
+<p>The single greatest barrier preventing people from adopting domain driven design is the issue of persistence. My own adoption of O/R mappers came with great trepidation and doubt. You&#8217;ll essentially be asked to trade in your knowledge of a tried and true method for something that seems a little too magical. A leap of faith may be required.</p>
+<p>The first thing to come to terms with is that O/R mappers generate your SQL for you. I know, it sounds like it&#8217;s going to be slow, insecure and inflexible, especially since you probably figured that it&#8217;ll have to use inline SQL. But if you can push those fears out of your mind for a second, you have to admit that it could save you a lot of time and result in a lot less bugs. Remember, we want to focus on building behavior, not worry about plumbing (and if it makes you feel any better, a good O/R mapper will provide simple ways for you to circumvent the automated code generation and execute your own SQL or stored procedures).</p>
+<p><strong>Infamous Inline SQL vs Stored Procedure Debate</strong><br />
+Over the years, there&#8217;s been some debate between inline SQL and stored procedures. This debate has been very poorly worded, because when people hear inline SQL, they think of badly written code like:</p>
+<pre>public int GetUserIdByCredentials(string userName, string password)
+{
+   string sql = @"SELECT UserId FROM Users
+                  WHERE UserName = '" + userName + "' AND Password = '" + password + "'";
+   using (SqlCommand command = new SqlCommand(sql))
+   {
+      //todo
+      return 0;
+   }
+}
+</pre>
+<p>If you stop and think about it though, and compares apples to apples, I think you&#8217;ll agree that neither is particularly better than the other. Let me help you out.</p>
+<p><em>Stored Procedures are more Secure</em><br />
+Inline SQL should be written using parameterized queries just like you do with stored procedures. For example, the correct way to write the above code in order to eliminate the possibility of an SQL injection attack is:
+</p>
+<pre>public int GetUserIdByCredentials(string userName, string password)
+{
+   string sql = @"SELECT UserId FROM Users
+                  WHERE UserName = @UserName AND Password = @Password";
+   using (SqlCommand command = new SqlCommand(sql))
+   {
+      command.Parameters.Add("@UserName", SqlDbType.VarChar, 64).Value = userName;
+      command.Parameters.Add("@Password", SqlDbType.VarChar, 64).Value = password;
+      //todo
+      return 0;
+   }
+}
+</pre>
+<p><em>Stored procedures provide an abstraction to the underlying schema</em><br />
+Whether you&#8217;re using inline SQL or stored procedures, what little abstraction you can put in a SELECT statement is the same. If any substantial changes are made, your stored procedures are going to break and there&#8217;s a good chance you&#8217;ll need to change the calling code to deal with the issue. O/R Mappers on the other side, generally provide much better abstraction.</p>
+<p><em>If I make a change, I don&#8217;t have to recompile the code</em><br />
+Somewhere, somehow, people got it in their head that code compilations should be avoided at all cost (maybe this comes from the days where projects could take hours to compile). If you change a stored procedure, you still have to re-run your unit and integration tests and deploy a change to production. It genuinely scares and puzzles me that developers consider a change to a stored procedure or XML trivial compared to a similar change in code.</p>
+<p><em>Stored Procedures reduce network traffic</em><br />
+Who cares? In most cases your database is sitting on a GigE connection with your servers and you aren&#8217;t paying for that bandwidth. You&#8217;re literally talking fractions of milliseconds. On top of that, a well configured O/R mapper can save round-trips via identify map implementations, caching and lazy loading.</p>
+<p><em>Stored procedures are faster</em><br />
+This is the excuse I held onto the longest. Write a reasonable/common SQL statement inline and then write the same thing in a stored procedure and time them. Go ahead. In most cases there&#8217;s little or no difference. In some cases, stored procedures will be slower because a cached execution plan will not be efficient given a certain parameter. Jeff Atwood called using stored procedures for the sake of better performance a fairly extreme case of premature optimization. He&#8217;s right. The proper approach is to take the simplest possible approach (let a tool generate your SQL for you), and optimize specific queries when/if bottlenecks are identified.</p>
+<p>It took a while, but after a couple years, I realized that the debate between inline and stored procedures was as trivial and meaningless as the one about C# and VB.NET. Of course, since the differences are practically non-existing; why not just use stored procedures? If you aren&#8217;t willing to adopt an O/R mapper, that&#8217;s certainly what I would suggest – there&#8217;s no sense in dynamically creating your own inline SQL. However, O/R mappers, which rely on inline SQL, provide three very important benefits (there are more, but with respect to maintainability, I think these are the most important:
+</p>
+<ol>
+<li>You end up writing a lot less code – which obviously results in a more maintainable system,</li>
+<li>You gain a true level of abstraction from the underlying data source – both because you&#8217;re querying the O/R mapper for your data directly (and it converts that into the appropriate SQL), and because you&#8217;re providing mapping information between your table schemas and domain objects,</li>
+<li>If your impedance mismatch is low, they save you from having to write a lot of repetitive code; however, if your impedance mismatch is high, you&#8217;ll be able to design your database the way it should be, and your domain layer the way it should be, without having to create an uncomfortable compromise – the O/R mapper will handle the mismatch for you.</li>
+</ol>
+<p>In the end, this really comes down to building the simplest solution upfront. After a few iterations, you can spend time profiling your code, and only if you detect an actual problem do you have to address that specific case. It might not sound so much simpler because you have to learn a fairly complex framework upfront, but that&#8217;s the reality of our profession.</p>
+<p>Remember, our goal is to widen our knowledge base by looking at different ways to build systems in order to provide our clients with greater value. While we may be specifically talking about NHibernate, the goal is really to introduce to concept of O/R mappers, and try to correct the blind faith .NET developers have put into stored procedures and ADO.NET.</p>
+<p><strong>NHibernate</strong><br />
+Of the frameworks and tools we&#8217;ve looked at so far, NHibernate is the most complex. This complexity is certainly something you should take into account when deciding on a persistence solution, but once you do find a project that allows for some R&amp;D time, the payoff will be well worth it in future projects. The nicest thing about NHibernate, and a major design goal of the framework, is that it&#8217;s completely transparent – your domain objects aren&#8217;t forced to inherit a specific base class and you don&#8217;t have to use a bunch of decorator attributes. This makes unit testing your domain layer possible – if you&#8217;re using a different persistent mechanism, say typed datasets, the tight coupling between domain and data makes it hard/impossible to properly unit test.</p>
+<p>At a very high level, you configure NHibernate by telling it how your database (tables and columns) map to your domain objects, use the NHibernate API and NHibernate Query Language to talk to your database, and let it do the low level ADO.NET and SQL work.</p>
+<p>In previous parts we focused on a system for a car dealership – specifically focusing on cars and upgrades. In this part we&#8217;ll change perspective slightly and look at car sales (sales, models and sales people).The domain model is simple – a SalesPerson has zero or more Sales which reference a specific Model.</p>
+<p>I&#8217;ve also included a VS.NET solution that contains sample code and annotations – you can find a link at the end of this article. All you need to do to get it running is create a new database, execute the provide SQL script (a handful of create tables), and configure the connection string. The sample, along with the rest of this article, is meant to help you get started with NHibernate – a topic too often overlooked.</p>
+<p>You might also be interested in the excellent <a href="http://www.hibernate.org/hib_docs/nhibernate/1.2/reference/en/html_single/">NHibernate Reference Manual</a> as well as <a href="http://www.manning.com/kuate/">Manning&#8217;s NHibernate in Action</a> book.</p>
+<p><strong>Configuration</strong><br />
+The secret to NHibernate&#8217;s amazing flexibility lies in its configurability. Initially it can be rather daunting to set it up, but after a coupe project it becomes rather natural. The first step is to configure the NHibernate itself. The simplest such configuration, which must be added to your app.config or web.config, looks like:</p>
+<pre>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;configuration&gt;
+  &lt;configSections&gt;
+    &lt;section name="hibernate-configuration" type="NHibernate.Cfg.ConfigurationSectionHandler, NHibernate" /&gt;
+  &lt;/configSections&gt;
+  &lt;hibernate-configuration xmlns="urn:nhibernate-configuration-2.2"&gt;
+    &lt;session-factory&gt;
+      &lt;property name="hibernate.dialect"&gt;NHibernate.Dialect.MsSql2005Dialect&lt;/property&gt;
+      &lt;property name="hibernate.connection.provider"&gt;NHibernate.Connection.DriverConnectionProvider&lt;/property&gt;
+      &lt;property name="hibernate.connection.connection_string"&gt;Server=SERVER;Initial Catalog=DATABASE;User Id=USER;Password=PASSWORD;&lt;/property&gt;
+      &lt;mapping assembly="CodeBetter.Foundations" /&gt;
+    &lt;/session-factory&gt;
+  &lt;/hibernate-configuration&gt;
+&lt;/configuration&gt;
+</pre>
+<p>Of the four values, dialect is the most interesting. This tells NHibernate what specific language our database speaks. If, later on, we ask NHibernate to return a paged result of Cars and our dialect is set to SQL Server 2005, NHibernate will issue an SQL SELECT utilizing the ROW_NUMBER() ranking function. However, if the dialect is set to MySQL, NHibernate will issue a SELECT with a LIMIT. In most cases, you&#8217;ll set this once and forget about it, but it does provide some insight into the capabilities provide by a layer that generates all of your data access code.</p>
+<p>In our configuration, we also told NHibernate that our mapping files were located in the CodeBeter.Foundations assembly. Mapping files are embedded XML files which tell NHibernate how each class is persisted. With this information, NHibernate is capable of returning a Car object when you ask for one, as well as saving it. The general convention is to have a mapping file per domain object, and for them to be placed inside a Mappings folder. The mapping file for our Model object, name Model.hbm.xml, looks like: </p>
+<pre>&lt;hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="CodeBetter.Foundations" namespace="CodeBetter.Foundations"&gt;
+  &lt;class name="Model" table="Models" lazy="true" proxy="Model"&gt;
+    &lt;id name="Id" column="Id" type="int" access="field.lowercase-underscore"&gt;
+      &lt;generator class="native" /&gt;
+    &lt;/id&gt;
+    &lt;property name="Name" column="Name" type="string" not-null="true" length="64" /&gt;
+    &lt;property name="Description" column="Description" type="string" not-null="true" /&gt;
+    &lt;property name="Price" column="Price" type="double" not-null="true" /&gt;
+  &lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+</pre>
+<p>
+(it&#8217;s important to make sure the &#8220;Build Action&#8221; for all mapping files is set to &#8220;Embedded Resources&#8221;)</p>
+<p>
+This file tells NHibernate that the Model class maps to rows in the Models table, and that the 4 properties Id, Name, Description and Price map to the Id, Name, Description and Price columns. The extra information around the Id property specifies that the value is generated by the database (as opposed to NHibernate itself (for clustered solutions), or our own algorithm) and that there&#8217;s no setter, so it should be accessed by the field with the specified naming convention (we supplied Id as the name, and lowercase-underscore as the naming strategy, so it&#8217;ll use a field named _id).
+</p>
+<p>
+With the mapping file set up, we can start interacting with the database:
+</p>
+<pre>//Let's add a new car model
+Model model = new Model();
+model.Name = "Hummbee";
+model.Description = "Great handling, built-in GPS to always find your way back home, Hummbee2Hummbe(tm) communication";
+model.Price = 50000.00;
+ISession session = _sessionFactory.OpenSession();
+session.Save(model);
+
+//Let's discount the x149
+Model model = session.CreateQuery("from Model model where model.Name = ?").SetString(0, "X149").UniqueResult&lt;Model&gt;();
+model.Price -= 5000;
+ISession session = _sessionFactory.OpenSession();
+session.Update(model);
+</pre>
+<p>
+The above example shows how easy it is to persist new objects to the database, retrieve them and update them – all without any ADO.NET or SQL.</p>
+<p>
+You may be wondering where the _sessionFactory object comes from, and exactly what an ISession is. The _sessionFactory (of type ISessionFactory) is a global thread-safe object that you&#8217;d likely create on application start. You&#8217;ll typically need one per database your application is using (which means you&#8217;ll typically only need one), and its job, like most factories, is to create a preconfigured object: an ISession. The ISession has no ADO.NET equivalent, but it does map loosely to a database connection. However, creating an ISession doesn&#8217;t necessarily open up a connection. Instead, ISessions smartly manage connections and command objects for you. Unlike connections which should be opened late and closed early, you needn&#8217;t worry about having ISessions stick around for a while (although they aren&#8217;t thread-safe). If you&#8217;re building an ASP.NET application, you could safely open an ISession on BeginRequest and close it on EndRequest (or better yet, lazy-load it in case the specific request doesn&#8217;t require an ISession).</p>
+<p>
+ITransaction is another piece of the puzzle which is created by calling BeginTransaction on an ISession. It&#8217;s common for .NET developers to ignore the need for transactions within their applications. This is unfortunate because it can lead to unstable and even unrecoverable states in the data. An ITransaction is used to keep track of the unit of work – tracking what&#8217;s changed, been added or deleted, figuring out what and how to commit to the database, and providing the capability to rollback should an individual step fail.</p>
+<p><strong>Relationships</strong><br />
+In our system, it&#8217;s important that we track sales – specifically with respect to sales people, so that we can provide some basic reports. We&#8217;re told that a sale can only ever belong to a single sales person, and thus set up a one to many relationship – that is, a sales person can have multiple sales, and a sales can only belong to a single sales person. In our database, this relationship is represented as a SalesPersonId column in the Sales table (a foreign key). In our domain, the SalesPerson class has a Sales collection and the Sales class has a SalesPerson property (references).</p>
+<p>Both ends of the relationship needs to be setup in the appropriate mapping file. On the Sales end, which maps a single property, we use a glorified property element called many-to-one:
+</p>
+<pre>...
+&lt;many-to-one name="SalesPerson" class="SalesPerson" column="SalesPersonId" not-null="true"/&gt;
+...
+</pre>
+<p>
+We&#8217;re specifying the name of the property, the type/class, and the foreign key column name. We&#8217;re also specifying an extra constraint, that is, when we add a new Sales object, the SalesPerson property can&#8217;t be null.
+</p>
+<p>
+The other side of the relationship, the collection of sales a sales person has, is slightly more complicated – namely because NHibernate&#8217;s terminology isn&#8217;t standard .NET lingo. To set up a collection we use a set, list, map, bag or array element. Your first inclination might be to use list, but NHibernate requires that you have a column that specifies the index. In other words, the NHibernate team sees a list as a collection where the index is important, and thus must be specified. What most .NET developers think of as a list, NHibernate calls a bag. Confusingly, whether you use a list or a bag element, your domain type must be an IList (or its generic IList equivalent).  This is because .NET doesn&#8217;t have an IBag object. In short, for your every day collection, you use the bag element and make your property type an IList.
+</p>
+<p>
+The other interesting collection option is the set. A set is a collection that cannot contain duplicates – a common scenario for enterprise application (although it is rarely explicitly stated). Oddly, .NET doesn&#8217;t have a set collection, so NHibernate uses the Iesi.Collection.ISet interface. There are four specific implementations, the ListSet which is really fast for very small collections (10 or less items), the SortedSet which can be sorted, the HashedSet which is fast for larger collections and the HybridSet which initially uses a ListSet and automatically switches itself to a HashedSet as your collection grows.
+</p>
+<p>
+For our system we&#8217;ll use a bag (even though we can&#8217;t have duplicate sales, it&#8217;s just a little more straightforward right now), so we declare our Sales collection as an IList:
+</p>
+<pre>private IList&lt;Sale&gt; _sales;
+public IList&lt;Sale&gt; Sales
+{
+   get { return _sales;}
+}
+</pre>
+<p>And add our  element to the SalesPerson mapping file:</p>
+<pre>...
+&lt;bag name="Sales" access="field.lowercase-underscore" table="Sales" inverse="true" cascade="all"&gt;
+   &lt;key column="SalesPersonId" /&gt;
+   &lt;one-to-many class="Sale" /&gt;
+&lt;/bag&gt;
+...
+</pre>
+<p>Again, if you look at each element/attribute, it isn&#8217;t as complicated as it first might seem. We identify the name of our property, specify the access strategy (we don&#8217; t have a setter, so tell it to use the field with our naming convention), the table and column holding the foreign key, and the type/class of the items in the collection.</p>
+<p>
+We&#8217;ve also set the cascade attribute to all which means that when we call Update on a sales person, any changes made to his or her sales collection (additions, removals, changes to existing sales) will automatically be persisted. Cascading can be a real time saver as your system grows in complexity.
+</p>
+<p><strong>Querying</strong><br />
+NHibernate supports two different querying approaches: Hibernate Query Language (HQL) and Criteria Queries (you can also query in actual SQL, but lose portability when doing so). HQL is the easier of two as it looks a lot like SQL – you use from, where, aggregates, order by, group by, etc. However, rather than querying against your tables, you write queries against your domain – which means HQL supports OO principles like inheritance and polymorphism. Either query methods are abstractions on top of SQL, which means you get total portability – all you need to do to target a different database is change your dialect configuration.
+</p>
+<p>
+HQL works off of the IQuery interface, which is created by calling CreateQuery on your session. With the IQuery you can return individual entities, collections, substitute parameters and more. Here are some example:
+</p>
+<pre>string lastName = "allen";
+ISession session = _sessionFactory.OpenSession();
+
+//retrieve a salesperson by last name
+IQuery query = session.CreateQuery("from SalesPerson p where p.LastName = 'allen'");
+SalesPerson p = query.UniqueResult&lt;SalesPerson&gt;();
+
+//same as above but in 1 line, and with the last name as a variable
+SalesPerson p = session.CreateQuery("from SalesPerson p where p.LastName = ?").SetString(0, lastName).UniqueResult&lt;SalesPerson&gt;();
+
+//people with few sales
+IList&lt;SalesPerson&gt; slackers = session.CreateQuery("from SalesPerson person where size(person.Sales) &lt; 5").List&lt;SalesPerson&gt;();
+</pre>
+<p>This is just a subset of what can be accomplished with HQL (the downloadable sample has slightly more complicated examples).</p>
+<p><strong>Lazy Loading</strong><br />
+When we load a sales person, say by doing: <em>SalesPerson person = session.Get(1);</em> the Sales collection won&#8217;t be loaded. That&#8217;s because, by default, collections are lazily loaded. That is, we won&#8217;t hit the database until the information is specifically requested (i.e., we access the Sales property). We can override the behavior by setting lazy=&#8221;false&#8221; on the bag element.</p>
+<p>
+The other, more interesting, lazy load strategy implemented by NHibernate is on entities themselves. You&#8217;ll often want to add a reference to an object without having to load the actual object from the database. For example, when we add a sales to a sales person, we need to specify the model, but don&#8217;t want to load all the model information – all we really want to do is get the Id so we can store  it in the ModelId column of the Sales table. When you use session.Load(id) NHibernate will load a proxy of the actual object (unless you specify lazy=&#8221;false&#8221; in the class element). As far as you&#8217;re concerned, the proxy behaves exactly like the actual object, but none of the data will be retrieved from the database until the first time you ask for it. This makes it possible to write the following code:
+</p>
+<pre>Sale sale = new Sale(session.Load&lt;Model&gt;(1), DateTime.Now, 46000.00);
+salesPerson.AddSales(sale);
+session.SaveOrUpdate(salesPerson);
+</pre>
+<p>without ever having to actually hit the database to load the model.</p>
+<p><strong>Download</strong><br />
+I&#8217;ve included a download which&#8217;ll hopefully provide a base for you to start playing with NHibernate. The code is well documented &#8211; take special care to read the annotations withint he mapping files. To get it running:
+   </p>
+<ol>
+<li>Create a new database and run the CREATE TABLE commands located in CREATE_TABLES.sql,</li>
+<li>Modify the hibernate.connection.connection_string property within the app.config so that it can connect to your newly created database</li>
+</ol>
+<p>Once configured, take a look at the Run method within Sample.cs and walk through each call one at a time.</p>
+<p><a href="http://codebetter.com/files/folders/codebetter_downloads/entry172562.aspx">Download Project</a></p>
+<p><strong>Conclusion</strong><br />
+We&#8217;ve only touched the tip of what you can do with NHibernate. We haven&#8217;t looked at its Criteria Queries (which is a query API tied even closer to your domain than HQL), its caching capabilities, filtering of collections, performance optimizations, logging, or native SQL abilities. Beyond NHibernate the tool, hopefully you&#8217;ve learnt more about object relational mapping, and alternative solutions to the limited toolset baked into .NET. It is hard to let go of hand written SQL statement, but looking beyond the bias of what&#8217;s comfortable, it&#8217;s impossible to rationalize doing all that work upfront.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>, <a href="http://codebetter.com/karlseguin/category/foundations/" title="View all posts in Foundations" rel="category tag">Foundations</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/" title="Permalink to Foundations of Programming &#8211; Part 6 &#8211; NHibernate" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/feed/" title="Comments RSS to Foundations of Programming &#8211; Part 6 &#8211; NHibernate" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-114 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2007/12/28/foundations-of-programming-pt-7-sorta-activerecord/" rel="prev"><span class="meta-nav">&larr;</span> Foundations of Programming &#8211; pt 7 (sorta) &#8211; ActiveRecord</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2008/01/03/foundations-of-programming-pdf/" rel="next">Foundations of Programming &#8211; PDF <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">21 Responses to <em>Foundations of Programming &#8211; Part 6 &#8211; NHibernate</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-1036">
+		<div id="comment-1036">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1036">October 31, 2008 at 10:14 pm</a></div>
+
+		<div class="comment-body"><p>Bob:<br />
+I just redownloaded it and tried with no problem. Maybe give the ID property a setter and remove the access=&#8221;field.lowercase-underscore&#8221; from the model.id mapping.  Not sure why that would solve it though.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1035">
+		<div id="comment-1035">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Bob Lawson</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1035">October 31, 2008 at 2:25 pm</a></div>
+
+		<div class="comment-body"><p>When I run the nHibernate example solution in visual studio, i get the following PropertyAccessException:</p>
+<p>could not get a field value by reflection getter of CodeBetter.Foundations.Model._id</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1034">
+		<div id="comment-1034">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Lee</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1034">May 2, 2008 at 6:23 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for the article. It&#8217;s nice to have rebuttals to all the pro-stored proc arguments in one convenient place.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1033">
+		<div id="comment-1033">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Louise a.k.a. Mom</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1033">April 9, 2008 at 12:07 am</a></div>
+
+		<div class="comment-body"><p>great work Karl !!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1032">
+		<div id="comment-1032">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1032">April 7, 2008 at 10:21 pm</a></div>
+
+		<div class="comment-body"><p>Vladimir: No, it&#8217;s all the same in terms of security.</p>
+<p>Karl</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1031">
+		<div id="comment-1031">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://pro-thoughts.blogspot.com/' rel='external nofollow' class='url'>Vladimir Kelman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1031">April 7, 2008 at 2:34 pm</a></div>
+
+		<div class="comment-body"><p>Hi Karl!<br />
+You use SqlParameterCollection.Add(String, SqlDbType, Int32) method.<br />
+Is it better  / safer in terms of a possibility of an SQL injection attack, then using SqlParameterCollection.AddWithValue(String, Object) method?<br />
+Is it safer than SqlParameterCollection.Add(String, SqlDbType) method?</p>
+<p>Thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1030">
+		<div id="comment-1030">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vkelman.com' rel='external nofollow' class='url'>Vladimir Kkelman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1030">February 28, 2008 at 6:19 pm</a></div>
+
+		<div class="comment-body"><p>Paul,</p>
+<p>I think what you said is entirely correct. There should be security measures taken on a database level. It could be using Windows authentication as well. But &#8211; and I agree with you here  as well &#8211; it doesn&#8217;t prevent us from using DAL / O/RM, etc. in any way. NHibernate should probably be working with simple stored procedures instead of seeing tables directly&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1029">
+		<div id="comment-1029">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Paul S</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1029">February 15, 2008 at 6:14 pm</a></div>
+
+		<div class="comment-body"><p>Hello,</p>
+<p>No offense but I think your totally missing the point on the &#8220;Security&#8221; section.  </p>
+<p>Your point on &#8220;Stored Procedures are more secure&#8221; basically is from the point of the developer.  You are &#8220;coding&#8221; up your commands using parameters and a style that is blessed by the developer community.  That in itself seems like a fine implementation.  What you&#8217;re missing is that data access can come from things outside the little application that you&#8217;re writing.  </p>
+<p>If you grant read and write access to your tables (which you will need to do with your implementation) then you are also granting anyone with the userid&#8217;s password those same rights.  This means that anybody that figures out your passwords (that will never happen right?) will have all of the access they need to own your database.  A hacker (and I&#8217;m using hacker here to mean anyone accessing the db that is not accessing it via your application whether it be an internal person wanting to view the data or an outsider performing malicious functions) could feel like deleting all of the data in a table, or maybe even read a whole list of credit card numbers for a side project that he/she is working on&#8230;</p>
+<p>What I&#8217;m trying to get at is that you are crippling the natural security measures of a database that have been put in place specifically to protect it.  Even worse is that you are also crippling the security measure put in place to protect your developers who are not intending to do malicious things but will by accident.  </p>
+<p>Have you ever had a developer forget a &#8220;WHERE&#8221; clause?  If not, it will happen.  Dynamically created content can easy forget to include that even if you are trying to trap for it.</p>
+<p>Anyway, in summary, I am totally on board with ORM&#8217;s and DAL&#8217;s and would not build a system that did not think about their value.  I would not, however, allow my database to circumvent &#8220;all&#8221; security measure and &#8220;trust&#8221; that the developers can hit home runs at every at bat to never make any mistakes.  Further, I would not want to be the DBA on that team that is responsible for the &#8220;data&#8221; when these types of commands are not filtered through procedures that I can monitor and profile against and can ensure that they comply with what is expected of the data steward.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1028">
+		<div id="comment-1028">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1028">February 12, 2008 at 11:47 pm</a></div>
+
+		<div class="comment-body"><p>vkelman:</p>
+<p>It depends which MSDN way you&#8217;re going to adopt. If you go all-out MSDN then you&#8217;ll be using datasets and your domain and DAL will be tightly coupled&#8230;I think in this case it&#8217;ll be hard to accomplish what you want. (Of couse, this very coupling is why you shouldn&#8217;t adopt this approach, but you already know that).</p>
+<p>Recently though, even the MSDN way has slowly moved towards a purer form of OO, specifically with the introduction of LINQ. In this case, yes, I think it would be easily doable.</p>
+<p>It really comes down to whether you&#8217;re going to be using &#8220;custom entities&#8221; (aka, domain object, aka POJOs aka POCOs) or not&#8230;if you are, then your DAL is just another layer, another service. If you aren&#8217;t, then you&#8217;ll be too tightly coupled.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1027">
+		<div id="comment-1027">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vkelman.com' rel='external nofollow' class='url'>vkelman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1027">February 12, 2008 at 10:28 pm</a></div>
+
+		<div class="comment-body"><p>Hi Karl! I&#8217;ve just finished reading your excellent series. Thanks a lot, it opened my eyes on many new approaches. We&#8217;re currently starting to convert or old ASP + MS Access Intranet application, which implements really complicated company&#8217;s business rules, to a brand-new  ASP.NET + SQL Server version. We&#8217;re writing new version from scratch using VS2008, .NET 3.5 and SQL Server 2005 (possible 2008).<br />
+Our team believes in using N-Tier approach (DAL, Business Layer == domain, UI), but I doubt I could convince my manager and co-developers to use NHibernate. Personally, I feel it much more natural and easier than using standard MSDN data adapters, data sets, etc. Do you think it&#8217;s doable to put calls from domain classes to DAL into some wrapper class implementing a common interface for getting and saving data (like you showed in DI section of article)  and use DI with StructureMap to switch between MSDN and NHibernate ways of working with data? It could help me to learn NHibernate and convince co-workers. Also, it might allow to switch to MS Entity Framework (as ORM tool) later on&#8230; What is your opinion?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1026">
+		<div id="comment-1026">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ken Bagwell</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1026">January 18, 2008 at 5:11 pm</a></div>
+
+		<div class="comment-body"><p>Nice work Karl. The whole series is great. Introduced me to a whole new world of programming. Many thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1025">
+		<div id="comment-1025">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1025">January 12, 2008 at 6:05 pm</a></div>
+
+		<div class="comment-body"><p>frjan, the<br />
+<map> element maps to an IDictionary<t , K>&#8230;it&#8217;s similar to any other collection, except you must also specify an <index> element, which specifies the column name and type of the dictionaries key.</p>
+<p>Just because you get an &#8220;could not initialize a collection&#8221; error, does NOT mean you have an error in your collection mapping &#8211; it could very well be in the individual entity you are trying to map (in other words, it might not be your User.Roles collection, bur rather than actually Role entity).</p>
+<p>I have a class called Asset which contains a map of UserAssetDetails&#8230;the UserId, so my mapping looks like:</p>
+<map name="UserAssetDetail" table="UserAssets"  access="field.camelcase-underscore">
+      <key column="AssetId" /><br />
+      <index column="UserId" type="int" /><br />
+      <one -to-many class="UserAssetDetail" /><br />
+    </map>
+<p>Hope this helps,<br />
+Karl</index></t></map>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1024">
+		<div id="comment-1024">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://Francis' rel='external nofollow' class='url'>frjan.janssens@hotmail.com</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1024">January 11, 2008 at 3:59 pm</a></div>
+
+		<div class="comment-body"><p>I am searching for a good example with a<br />
+<map> element. (not bag or set).  Also what to use in the entity ( i tried Ilist , idictionary etc )  but i still get an error &#8220;could not initialize a collection&#8221;.</map>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1023">
+		<div id="comment-1023">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">mkuczara</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1023">January 10, 2008 at 12:51 pm</a></div>
+
+		<div class="comment-body"><p>Stop thinking and do it. You wont back to ado, trust me. If you care about unit testing (and you should) move to Nhibernate (or whatever good ORM).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1022">
+		<div id="comment-1022">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.alvinashcraft.com/' rel='external nofollow' class='url'>Alvin A.</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1022">January 2, 2008 at 8:52 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for another great post Karl. This is a fantastic overview of NHibernate. I&#8217;ve just started looking into using it, and you&#8217;ve clarified a few things for me.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1021">
+		<div id="comment-1021">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.e-Crescendo.com' rel='external nofollow' class='url'>jdn</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1021">January 2, 2008 at 8:03 pm</a></div>
+
+		<div class="comment-body"><p>That worked, thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1020">
+		<div id="comment-1020">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">mkuczara</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1020">January 2, 2008 at 7:56 pm</a></div>
+
+		<div class="comment-body"><p>I remember when our team moved from datasets to using NHibernate. It was like we have discovered just something amazing. From that time we never looked back to datasets etc.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1019">
+		<div id="comment-1019">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1019">January 2, 2008 at 7:25 pm</a></div>
+
+		<div class="comment-body"><p>jdn:<br />
+if you&#8217;re having problems downloading the sample project, try from:<br />
+<a href="http://openmymind.net/CodeBetter.Foundations.zip" rel="nofollow">http://openmymind.net/CodeBetter.Foundations.zip</a><br />
+Lemme know.</p>
+<p>Chris:<br />
+I&#8217;ve straddled the line between tool and foundations throughout the series&#8230;but you&#8217;re right, OR Mapping might have been a better title.</p>
+<p>Karl</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1018">
+		<div id="comment-1018">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.e-Crescendo.com' rel='external nofollow' class='url'>jdn</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1018">January 2, 2008 at 6:52 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m getting a download failure at:</p>
+<p><a href="http://codebetter.com/files/folders/172562/download.aspx" rel="nofollow">http://codebetter.com/files/folders/172562/download.aspx</a></p>
+<p>The XML page cannot be displayed<br />
+Cannot view XML input using style sheet. Please correct the error and then click the Refresh button, or try again later. </p>
+<p>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</p>
+<p>An invalid character was found in text content. Error processing resource &#8216;http://codebetter.com/files/folders/172562/downl&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1017">
+		<div id="comment-1017">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://elegantcode.com' rel='external nofollow' class='url'>Chris Brandsma</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1017">January 2, 2008 at 6:39 pm</a></div>
+
+		<div class="comment-body"><p>Very good.  Though I would say that using an ORM is a foundation &#8212; rather than NHibernate itself.  But that is more of a personal thing, since I prefer SubSonic anyway (SubSonic also uses ActiveRecord).  </p>
+<p>I tend to work in a lot of small shops for a short amount of time (ah, the life of a consultant and team trainer), and it is much easier to explain how subsonic works, and how to keep it up to date, than all of the stuff required for NHibernate.</p>
+<p>Basically, until there are some better code generators for NHibernate, you have to have an NHibernate expert/super user on staff to use NHibernate.  If you don&#8217;t have that, use SubSonic.  If you do: great, carry on.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1016">
+		<div id="comment-1016">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/01/02/foundations-of-programming-part-6-nhibernate/#comment-1016">January 2, 2008 at 6:10 pm</a></div>
+
+		<div class="comment-body"><p>Great intro Karl!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.571 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 15:21:43 -->
+<!-- super cache -->

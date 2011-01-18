@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Vanilla Yet Composable HTTP Services With WCF 4 and Windsor | Howard Dierking</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/howarddierking/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/howarddierking/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/howarddierking/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/howarddierking/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/howarddierking/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Howard Dierking' href='http://codebetter.com/howarddierking/' />
+<link rel='start' title='Is this thing on?' href='http://codebetter.com/howarddierking/2009/03/04/is-this-thing-on/' />
+<link rel='prev' title='New Machine Parts List' href='http://codebetter.com/howarddierking/2010/01/10/new-machine-parts-list/' />
+<link rel='next' title='Building Umbraco 4.5.2 From Source Code' href='http://codebetter.com/howarddierking/2010/09/09/building-umbraco-4-5-2-from-source-code/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/howarddierking/2010/01/19/vanilla-yet-composable-http-services-with-wcf-4-and-windsor/' />
+<link rel='shortlink' href='http://codebetter.com/howarddierking/?p=27' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/howarddierking/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/howarddierkingoncodebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/howarddierking/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-27" class="post-27 post type-post status-publish format-standard hentry category-architecture category-ioc category-wcf category-windsor">
+					<h1 class="entry-title">Vanilla Yet Composable HTTP Services With WCF 4 and Windsor</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/howarddierking/author/howarddierking/" title="View all posts by Howard Dierking">Howard Dierking</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/howarddierking/2010/01/19/vanilla-yet-composable-http-services-with-wcf-4-and-windsor/" title="7:30 am" rel="bookmark"><span class="entry-date">January 19, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/howarddierking/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/howarddierking/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/howarddierking/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Recently in my team, there&rsquo;s been a lot of discussion about how we should go about implementing a service layer for various orthogonal behaviors.&nbsp; At the center of the conversation is the question of whether or not we should develop this layer using MVC or WCF.&nbsp; On first look, MVC paints a pretty compelling picture &ndash; particularly since the majority of our services will be consumed in a simple HTTP services fashion (Note: I&rsquo;m intentionally avoiding the term RESTful service because these services will not necessarily be resource/noun focused &ndash; however, they will be plain old JSON or XML over HTTP &ndash; not something that requires a proxy in order to work with it).&nbsp; Specifically, here are the some of the things that makes MVC look appealing:</p>
+<ul>
+<li>It&rsquo;s really easy &ndash; just create a controller and action method </li>
+<li>Friendly URLs ala core routing </li>
+<li>IIS hosted </li>
+<li>JSON formatting is as simple as returning the JSON action result from the action method </li>
+<li>It&rsquo;s easy to leverage an IoC container &ndash; simply create/plug in a custom controller factory </li>
+</ul>
+<p>So that&rsquo;s a pretty good list.&nbsp; However, even with all of those benefits, I kept coming back to a couple problems with using MVC as a general purpose service layer.</p>
+<ul>
+<li>It tightly couples your service to a specific host (IIS) </li>
+<li>It tightly couples your service to protocol (HTTP) </li>
+<li>it tightly couples your service to an addressing scheme (URL) </li>
+</ul>
+<p>Now I know that some of you are reading this and calling YAGNI on me &ndash; and that may be fair to some degree.&nbsp; However, for what will be publically facing services (which implies that there needs to be some degree of longevity), I&rsquo;m hesitant to take a dependency on an underlying &ldquo;service platform&rdquo; (in quotes since MVC wasn&rsquo;t really meant to be this) that takes so many dependencies on things that I consider to be an architectural style (remember, it wasn&rsquo;t that long ago that SOAP was the last thing we would ever need &ndash; and DCOM/CORBA before that).&nbsp; And technically, I&rsquo;m not really talking about building anything based on unknown future requirements, but on choosing a platform on which to take a dependency.</p>
+<p>Philosophically, I&rsquo;m a big fan of WCF because as one of its key characteristics, it decouples the programming model (the service definition) from both the networking stack that exposes and pipes data into the service and from the process that hosts and manages the service.&nbsp; However, the initial versions of WCF provided all of this philosophical goodness at a cost &ndash; and that cost was complexity &ndash; particularly in the area of the host and network stack configuration.&nbsp; And that complexity grew pretty significantly the further off the path you traveled.</p>
+<p>That said, with each successive release of WCF, the level of complexity in configuration has been shrinking &ndash; to the point where as of WCF 4, the configuration piece has dwindled away to almost nothing.</p>
+<p>At any rate, like I mentioned, I wanted to see whether I could build simple JSON over HTTP services in a way that leveraged all of WCF&rsquo;s philosophical goodness but would give me the simplicity of development that I would find doing it in MVC.&nbsp; More specifically, here&rsquo;s what I was testing for:</p>
+<ul>
+<li>Standard WCF programming model </li>
+<li>JSON by configuration </li>
+<li>Use of IoC to resolve the service graph </li>
+<li>Hosted in IIS </li>
+<li>Friendly URLs </li>
+</ul>
+<p>Jumping right in, WCF has a really straightforward programming model.&nbsp; It centers around the use of .NET interfaces decorated with a few attributes &ndash; these (along with some configuration around address and network stack) are exposed as WCF endpoints &ndash; and classes that implement one or more of those interfaces &ndash; these are WCF services and are the smallest units when it comes to hosting.&nbsp; The big idea here is that by using plain old .NET constructs, you can completely decouple your service logic and even contracts from all the details around hosting it and exposing it to the network.&nbsp; I started out in developing my service against this standard programming model.</p>
+<pre>[ServiceContract(Namespace = "urn:Spikes-WCF-JSONTests:IPersonService")]
+public interface IPersonService
+{
+    [OperationContract]
+    [WebGet(UriTemplate = "Find/{firstName}", BodyStyle = WebMessageBodyStyle.Bare, ResponseFormat = WebMessageFormat.Json)]
+    Person FindPerson(string firstName);
+}</pre>
+<p>&nbsp;</p>
+<p>As you can see, I&rsquo;ve got a standard service contract with one operation.&nbsp; The WebGetAttribute allows me to specify a URI template with parameter placeholders.&nbsp; It&rsquo;s worth noting here that this doesn&rsquo;t give us complete MVC-ish friendly URLs &ndash; this is still relative to the service address, which if it&rsquo;s hosted in IIS is that *.svc file.&nbsp; However, as I&rsquo;ll show in a second, WCF 4 helps us remedy this little bit of trailing ugliness.&nbsp; Additionally, I&rsquo;ve declared my message formatting in the WebGetAttribute class.&nbsp; I suspect that this can actually be externalized to config, but I haven&rsquo;t figured out how to do this yet, and and attribute is still less invasive than returning a JsonActionResult in MVC &ndash; so for now, that&rsquo;s what I&rsquo;m going with.</p>
+<p>The service itself is a pretty straightforward implementation of this interface &ndash; with one exception..</p>
+<pre>[AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
+[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
+public class PersonService : IPersonService
+{
+    readonly IPersonRepository _personRepository;
+
+    public PersonService(IPersonRepository personRepository) {
+        _personRepository = personRepository;
+    }
+
+    public Person FindPerson(string firstName) {
+        return _personRepository.GetPeople().FirstOrDefault(p =&gt; p.FirstName == firstName);
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>Notice that I have added a parameter to my constructor which declares that my service has a dependency on a concrete implementation of IPersonRepository.&nbsp; One of the things that I love about MVC is how straightforward it is to create a custom ControllerFactory that can use an IoC container to resolve a controller&rsquo;s entire dependency graph.&nbsp; As such, I wanted to make sure that I could do the same thing in WCF.&nbsp; Early on in my searching, I was very fortunate to come across a <a href="http://weblogs.asp.net/fabio/archive/2009/03/24/inversion-of-control-with-wcf-and-unity.aspx">2 part blog series</a> on doing just this.&nbsp; I have adapted the source just a bit to use Windsor and to account for a thing or 2 in WCF 4, but the bulk of the code (and my sincerest thanks) go to <a href="http://weblogs.asp.net/fabio/">Fabio Cozzolino</a>.</p>
+<p>In short, the ControllerFactory equivalent in WCF is called the instance provider, and it&rsquo;s any class that implements IInstanceProvider.&nbsp; Here&rsquo;s an instance provider that&rsquo;s built to use a Windsor container:</p>
+<pre>class WindorInstanceProvider : IInstanceProvider
+{
+    readonly WindsorContainer _container;
+    readonly Type _contractType;
+
+    public WindorInstanceProvider(WindsorContainer container, Type contractType) {
+        _container = container;
+        _contractType = contractType;
+    }
+
+    public object GetInstance(InstanceContext instanceContext) {
+        return GetInstance(instanceContext, null);
+    }
+
+    public object GetInstance(InstanceContext instanceContext, Message message) {
+        return _container.Resolve(_contractType);
+    }
+
+    public void ReleaseInstance(InstanceContext instanceContext, object instance) {
+        _container.Release(instance);
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>I would elaborate, but there&rsquo;s just not that much of interest going on here.&nbsp; The instance provider is constructed with the container itself and the service type.&nbsp; When asked, it turns around and asks the container to resolve the dependency graph and create an instance of the service type.&nbsp; What&rsquo;s more interesting is how the instance provider gets plugged in so that it can do its thing.</p>
+<p>In the same way that ASP.NET (and MVC by extension) has a request pipeline, WCF has a channel stack.&nbsp; However, unlike the case of ASP.NET, the WCF channel stack was meant to work across a myriad number of protocols and network topologies &ndash; as such, it&rsquo;s a great deal more extensible &ndash; and that extensibility can sometimes bring with it some additional complexity.&nbsp; In this case, that complexity exists in the form of a couple extra points of indirection &ndash; the first of which is a service behavior.</p>
+<pre>public class WindsorServiceBehavior : IServiceBehavior
+{
+    readonly WindsorContainer _container;
+
+    public WindsorServiceBehavior(WindsorContainer container) {
+        _container = container;
+    }
+
+    public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase) {}
+
+    public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase,
+                                     Collection&lt;ServiceEndpoint&gt; endpoints,
+                                     BindingParameterCollection bindingParameters) {}
+
+    public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase) {
+        foreach (ChannelDispatcher channelDispatcher in serviceHostBase.ChannelDispatchers)
+            foreach (var endpointDispatcher in channelDispatcher.Endpoints) {
+                if (endpointDispatcher.ContractName == "IMetadataExchange" || endpointDispatcher.ContractName == "IHttpGetHelpPageAndMetadataContract")
+                    return;
+                string contractName = endpointDispatcher.ContractName;
+                ServiceEndpoint serviceEndpoint =
+                    serviceDescription.Endpoints.FirstOrDefault(e =&gt; e.Contract.Name == contractName);
+                endpointDispatcher.DispatchRuntime.InstanceProvider =
+                    new WindorInstanceProvider(_container, serviceEndpoint.Contract.ContractType);
+            }
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>The purpose of my service behavior is simply to iterate through each endpoint in my service and set the endpoint&rsquo;s instance provider to a new instance of my WindsorInstanceProvider, passing it an instance of my container (which I supply in the behavior&rsquo;s constructor).&nbsp; I&rsquo;m only doing this for custom endpoints &ndash; not for the metadata endpoint sometimes added somewhat transparently by a different behavior.&nbsp; It&rsquo;s also worth pointing out that with WCF 4, I need to add a second type of metadata endpoint, IHttpGetHelpPageAndMetadataContract (I fully expect that we&rsquo;ll see interface names that are complete sentences before long), to the exclusions list.</p>
+<p>So you can now see where the instance provider comes from, but what about the container itself?&nbsp; And where is the behavior wired up.&nbsp; Enter the custom service host and custom service host factory&nbsp; First the factory:</p>
+<pre>public class WindsorServiceHostFactory : WebServiceHostFactory
+{
+    readonly WindsorContainer _container;
+
+    public WindsorServiceHostFactory() {
+        _container = new WindsorContainer(new XmlInterpreter(new ConfigResource("castle")));
+    }
+
+    public override ServiceHostBase CreateServiceHost(string constructorString, Uri[] baseAddresses) {
+        //ctor string is the qualified serviceType name
+        var t = Type.GetType(constructorString);
+        if (t == null)
+            throw new ArgumentNullException("Could not resolve type '" + constructorString + "'");
+        return CreateServiceHost(t, baseAddresses);
+    }
+
+    protected override ServiceHost CreateServiceHost(Type serviceType, Uri[] baseAddresses) {
+        var serviceHost = new WindsorServiceHost(_container, serviceType, baseAddresses);
+        return serviceHost;
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>As you can see, this is the point at which I&rsquo;m actually creating the container.&nbsp; When asked to create the service host, I simply create and return an instance of my custom service host and pass my container to it.&nbsp; My service host, then, takes care of wiring up the behavior and you already know the rest of that story.</p>
+<pre>public class WindsorServiceHost : WebServiceHost
+{
+    readonly WindsorContainer _container;
+
+    public WindsorServiceHost(WindsorContainer container, Type serviceType, params Uri[] baseAddresses)
+        : base(serviceType, baseAddresses) {
+        _container = container;
+    }
+
+    protected override void OnOpening() {
+        if (Description.Behaviors.Find&lt;WindsorServiceBehavior&gt;() == null)
+            Description.Behaviors.Add(new WindsorServiceBehavior(_container));
+
+        base.OnOpening();
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>So, the chief complaint that I&rsquo;ve heard about WCF is how painful the XML configuration is &ndash; here&rsquo;s the great part &ndash; in WCF 4, the configuration is insanely straightforward &ndash; here&rsquo;s the configuration to get this all up and going (keep in mind that I would actually like to externalize more of my current sample into configuration &ndash; but this should give you a pretty good sense of how much has been improved in this area).</p>
+<pre>&lt;system.serviceModel&gt;
+  &lt;serviceHostingEnvironment aspNetCompatibilityEnabled="true" /&gt;
+  &lt;standardEndpoints&gt;
+    &lt;webHttpEndpoint&gt;
+      &lt;standardEndpoint name="" helpEnabled="true" automaticFormatSelectionEnabled="true"/&gt;
+    &lt;/webHttpEndpoint&gt;
+  &lt;/standardEndpoints&gt;
+&lt;/system.serviceModel&gt;</pre>
+<p>&nbsp;</p>
+<p>So deploying to IIS is as simple as building this into an *.svc file and writing a directive to point to my custom service host factory.&nbsp; But then I still end up with odd-looking URLs like http://localhost/SimpleWCFTestHost/PersonService.svc/Find/Howard.&nbsp; It would be even better if I could just drop that *.svc file and have completely clean URLs &ndash; just like I can do with MVC.&nbsp; Firstly, remember that MVC doesn&rsquo;t actually give you clean URLs &ndash; it simply plugs into the new core routing engine that&rsquo;s backed into ASP.NET 4.&nbsp; And that&rsquo;s exactly the capability that WCF 4 gives you as well.&nbsp; To light this up, all I had to do was add this to my global.asax.cs file.</p>
+<pre>public class Global : HttpApplication{
+    protected void Application_Start(object sender, EventArgs e) {
+        RegisterRoutes(RouteTable.Routes);
+    }
+
+    static void RegisterRoutes(RouteCollection routes) {
+        routes.Add(new ServiceRoute("", new WindsorServiceHostFactory(), typeof(PersonService)));
+    }
+}</pre>
+<p>&nbsp;</p>
+<p>This simple entry and I now have the ability to address my service as http://localhost/SimpleWCFTestHost/Find/Howard.&nbsp;&nbsp; Had I wanted to give the service its own path segment, I could have specified my desired segment name as the first parameter to the ServiceRoute constructor.</p>
+<p>After this experiment, WCF is at this point in time the more natural choice in my mind for building a general service layer.&nbsp; Note &ndash; I&rsquo;m not saying that you shouldn&rsquo;t use MVC to create services for the AJAX components on your pages.&nbsp; Just that if those services grow in scope such that they have other clients than your view, it might be time to look at a truer service platform &ndash; with WCF 4, it&rsquo;s not *that* much more complicated. </p>
+<p>Finally, I stumbled across a multi-part series that&rsquo;s currently being developed on this topic over at <a href="http://blogs.msdn.com/endpoint/">The .NET Endpoint</a> &ndash; It looks like they are just on part 4 of 12, so that&rsquo;s only around the first 30 minutes of the movie &ndash; there&rsquo;s still plenty of great stuff to come!</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://0.gravatar.com/avatar/859e318f8403226ff4b912edf77fba2a?s=60&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Howard Dierking</h2>
+							I like technology...a lot...							<div id="author-link">
+								<a href="http://codebetter.com/howarddierking/author/howarddierking/" title="View all posts by Howard Dierking">View all posts by Howard Dierking &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/howarddierking/category/architecture/" title="View all posts in architecture" rel="category tag">architecture</a>, <a href="http://codebetter.com/howarddierking/category/ioc/" title="View all posts in IoC" rel="category tag">IoC</a>, <a href="http://codebetter.com/howarddierking/category/wcf/" title="View all posts in WCF" rel="category tag">WCF</a>, <a href="http://codebetter.com/howarddierking/category/windsor/" title="View all posts in Windsor" rel="category tag">Windsor</a>. Bookmark the <a href="http://codebetter.com/howarddierking/2010/01/19/vanilla-yet-composable-http-services-with-wcf-4-and-windsor/" title="Permalink to Vanilla Yet Composable HTTP Services With WCF 4 and Windsor" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/howarddierking/2010/01/19/vanilla-yet-composable-http-services-with-wcf-4-and-windsor/feed/" title="Comments RSS to Vanilla Yet Composable HTTP Services With WCF 4 and Windsor" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-27 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/howarddierking/2010/01/10/new-machine-parts-list/" rel="prev"><span class="meta-nav">&larr;</span> New Machine Parts List</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/howarddierking/2010/09/09/building-umbraco-4-5-2-from-source-code/" rel="next">Building Umbraco 4.5.2 From Source Code <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-75">
+					<div id="dsq-comment-header-75" class="dsq-comment-header">
+						<cite id="dsq-cite-75">
+	http://mikehadlow.blogspot.com/							<span id="dsq-author-user-75">Mike Hadlow</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-75" class="dsq-comment-body">
+						<div id="dsq-comment-message-75" class="dsq-comment-message"><p>You might want to check out the Windsor WCF Facility. It integrates WCF with Windsor and provides an elegant fluent API for WCF configuration. The documentation is limited, but it&#8217;s a really nice piece of work.</p>
+<p>I&#8217;ve written a series of posts about it:<br />
+<a href="http://mikehadlow.blogspot.com/2009/05/multi-tenanted-services-with-windsor.html" rel="nofollow">http://mikehadlow.blogspot.com/2009/05/multi-tenanted-services-with-windsor.html</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-76">
+					<div id="dsq-comment-header-76" class="dsq-comment-header">
+						<cite id="dsq-cite-76">
+	http://www.kenegozi.com/blog							<span id="dsq-author-user-76">Ken Egozi</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-76" class="dsq-comment-body">
+						<div id="dsq-comment-message-76" class="dsq-comment-message"><p>ha ha ha<br />
+I was just about to link to Mike Hadlow&#8217;s post series on the WCF Facility <img src='http://codebetter.com/howarddierking/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-77">
+					<div id="dsq-comment-header-77" class="dsq-comment-header">
+						<cite id="dsq-cite-77">
+	http://kozmic.pl							<span id="dsq-author-user-77">Krzysztof Kozmic</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-77" class="dsq-comment-body">
+						<div id="dsq-comment-message-77" class="dsq-comment-message"><p>I just clicked to mention WCF Facility, but I guess there&#8217;s no need at this point.</p>
+<p>It has poor documentation, I admit, but in the following days I set of to improve it so keep looking here: <a href="http://using.castleproject.org/display/IoC/Windsor+WCF+integration+facility" rel="nofollow">http://using.castleproject.org/display/IoC/Windsor+WCF+integration+facility</a></p>
+<p>There will hopefully be a lot of useful content here quite soon.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-78">
+					<div id="dsq-comment-header-78" class="dsq-comment-header">
+						<cite id="dsq-cite-78">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-78">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-78" class="dsq-comment-body">
+						<div id="dsq-comment-message-78" class="dsq-comment-message"><p>On our project we are using WCF for a RESTful Web Services layer and MVC for our Web apps. We needed that architecture and tech choices were made early on, but my point is I&#8217;ve done a good bit of work with them both.</p>
+<p>So on to your discussion advantages of WCF, first is protocol independence. The question is whether its useful, <a href="http://www.markbaker.ca/blog/2004/10/protocol-independence/" rel="nofollow">http://www.markbaker.ca/blog/2004/10/protocol-independence/</a>. </p>
+<p>Some questions I&#8217;d have on it are:</p>
+<p>* Is your IPersonService really independent of URIs and HTTP? If you did decide to move from HTTP/URI would that interface stay or would you need to rethink?<br />
+* How about the implementation, the code inside the PersonService? To keep it independent of the application protocol we&#8217;d need to consider abstracting the request/response headers, the HTTP status codes, all the caching functionality. Is that sensible?<br />
+* How about linking (and HATEOAS), which involves URIs, do we skip that?<br />
+* And then there&#8217;s the fact that if we want to take advantage of features of HTTP, such as its great caching support, then we have to be prepared to have it influence our resource/service design directly. Do we skip that because we might want to expose this service in a different way in the future?  </p>
+<p>Personally I don&#8217;t want to skip key features of REST/HTTP, they are too useful. Same goes for messaging/EDA, when using them I think you are better using something like NServiceBus which embraces that style. </p>
+<p>The question then becomes is building RESTful services on top of WCF a joy, the answer is no. You end up putting in ridiculous amounts of work (<a href="http://colinjack.blogspot.com/2009/09/wcf-and-rest.html" rel="nofollow">http://colinjack.blogspot.com/2009/09/wcf-and-rest.html</a>) just to get simple things working. I&#8217;m slightly hopeful about WCF4 though, fingers crossed they&#8217;ve made the right choices this time.</p>
+<p>On the extensibility story, other frameworks do seem to be setting out for a good extensibility story these days and anyway we&#8217;ve found the WCF extensibility approach a bit clunky and inappropriate in some cases.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-79">
+					<div id="dsq-comment-header-79" class="dsq-comment-header">
+						<cite id="dsq-cite-79">
+	http://www.infovark.com							<span id="dsq-author-user-79">Dean Thrasher</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-79" class="dsq-comment-body">
+						<div id="dsq-comment-message-79" class="dsq-comment-message"><p>I haven&#8217;t begun working with WCF 4, but I&#8217;ve found MVC to be many times more productive an environment than WCF. </p>
+<p>Besides, what are the chances that someone will ask you to make your service layer run on something _other_ than TCP/IP in the next five years?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-80">
+					<div id="dsq-comment-header-80" class="dsq-comment-header">
+						<cite id="dsq-cite-80">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-80">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-80" class="dsq-comment-body">
+						<div id="dsq-comment-message-80" class="dsq-comment-message"><p>@Dean<br />
+Yeah WCF can be a real pain, the WCF Facility is great but there&#8217;s still a lot of friction and I&#8217;m not really sure how useful 90%+ of the WCF &#8220;features&#8221; are for this sort of service. </p>
+<p>Just on running on a transport protocol other than TCP/IP, remember HTTP and TCP/IP are not the same thing, but yeah I agree with your point. It is unlikely you&#8217;ll have to move from HTTP, in addition if you do its likely to be an architectural change such as embracing EDA, and even if that isn&#8217;t the case the WCF approach isn&#8217;t isolating you effectively. The key thing is to ensure key business logic/workflow is kept outside the layer that is coupled to HTTP, but I think thats good design anyway.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-81">
+					<div id="dsq-comment-header-81" class="dsq-comment-header">
+						<cite id="dsq-cite-81">
+								<span id="dsq-author-user-81">Ed Blackburn</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-81" class="dsq-comment-body">
+						<div id="dsq-comment-message-81" class="dsq-comment-message"><p>If you&#8217;re evaluating options, take a look at <a href="http://openrasta.com" rel="nofollow">http://openrasta.com</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-82">
+					<div id="dsq-comment-header-82" class="dsq-comment-header">
+						<cite id="dsq-cite-82">
+								<span id="dsq-author-user-82">Wil</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-82" class="dsq-comment-body">
+						<div id="dsq-comment-message-82" class="dsq-comment-message"><p>What is the WebServiceHost and WebServiceHostFactory?  Do I need it for hosting in WAS? Can I just extend ServiceHostFactory and ServiceHost?</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/howarddierking/2010/01/19/vanilla-yet-composable-http-services-with-wcf-4-and-windsor/ ';
+	var disqus_identifier = '27 /blogs/howard.dierking/archive/2010/01/18/vanilla-yet-composable-http-services-with-wcf-4-and-windsor.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'howarddierkingoncodebetter';
+	var disqus_title = "Vanilla Yet Composable HTTP Services With WCF 4 and Windsor";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=27');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/howarddierking/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/howarddierking\/2010\/01\/19\/vanilla-yet-composable-http-services-with-wcf-4-and-windsor\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: none;"><img alt='' src='http://0.gravatar.com/avatar/859e318f8403226ff4b912edf77fba2a?s=96&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>I like technology...a lot...
+</li><li id="tag_cloud-3" class="widget-container widget_tag_cloud"><h3 class="widget-title">Categories</h3><div class="tagcloud"><a href='http://codebetter.com/howarddierking/category/ado-net-data-services/' class='tag-link-4922' title='5 topics' style='font-size: 22pt;'>ADO.NET Data Services</a>
+<a href='http://codebetter.com/howarddierking/category/alt-net/' class='tag-link-1362' title='1 topic' style='font-size: 8pt;'>ALT.NET</a>
+<a href='http://codebetter.com/howarddierking/category/architecture/' class='tag-link-2588' title='4 topics' style='font-size: 19.6666666667pt;'>architecture</a>
+<a href='http://codebetter.com/howarddierking/category/auto-tagging/' class='tag-link-4908' title='1 topic' style='font-size: 8pt;'>auto tagging</a>
+<a href='http://codebetter.com/howarddierking/category/bdd/' class='tag-link-2123' title='4 topics' style='font-size: 19.6666666667pt;'>BDD</a>
+<a href='http://codebetter.com/howarddierking/category/ddd/' class='tag-link-1717' title='1 topic' style='font-size: 8pt;'>DDD</a>
+<a href='http://codebetter.com/howarddierking/category/fluent-nhibernate/' class='tag-link-4911' title='1 topic' style='font-size: 8pt;'>Fluent NHibernate</a>
+<a href='http://codebetter.com/howarddierking/category/hardware/' class='tag-link-4927' title='1 topic' style='font-size: 8pt;'>hardware</a>
+<a href='http://codebetter.com/howarddierking/category/home-network/' class='tag-link-4909' title='1 topic' style='font-size: 8pt;'>Home Network</a>
+<a href='http://codebetter.com/howarddierking/category/international/' class='tag-link-9201' title='1 topic' style='font-size: 8pt;'>International</a>
+<a href='http://codebetter.com/howarddierking/category/ioc/' class='tag-link-1361' title='1 topic' style='font-size: 8pt;'>IoC</a>
+<a href='http://codebetter.com/howarddierking/category/msdn-magazine/' class='tag-link-4919' title='5 topics' style='font-size: 22pt;'>MSDN Magazine</a>
+<a href='http://codebetter.com/howarddierking/category/mspec/' class='tag-link-2130' title='2 topics' style='font-size: 13.25pt;'>MSpec</a>
+<a href='http://codebetter.com/howarddierking/category/my-setup/' class='tag-link-4926' title='1 topic' style='font-size: 8pt;'>my setup</a>
+<a href='http://codebetter.com/howarddierking/category/nhibernate/' class='tag-link-2527' title='1 topic' style='font-size: 8pt;'>NHibernate</a>
+<a href='http://codebetter.com/howarddierking/category/performance/' class='tag-link-4925' title='2 topics' style='font-size: 13.25pt;'>performance</a>
+<a href='http://codebetter.com/howarddierking/category/pivot/' class='tag-link-4931' title='4 topics' style='font-size: 19.6666666667pt;'>Pivot</a>
+<a href='http://codebetter.com/howarddierking/category/r/' class='tag-link-4916' title='3 topics' style='font-size: 16.75pt;'>R#</a>
+<a href='http://codebetter.com/howarddierking/category/refactoring/' class='tag-link-4737' title='1 topic' style='font-size: 8pt;'>Refactoring</a>
+<a href='http://codebetter.com/howarddierking/category/ssis/' class='tag-link-4921' title='5 topics' style='font-size: 22pt;'>SSIS</a>
+<a href='http://codebetter.com/howarddierking/category/tortoisesvn/' class='tag-link-4923' title='1 topic' style='font-size: 8pt;'>TortoiseSVN</a>
+<a href='http://codebetter.com/howarddierking/category/uncategorized/' class='tag-link-1044' title='5 topics' style='font-size: 22pt;'>Uncategorized</a>
+<a href='http://codebetter.com/howarddierking/category/virtualization/' class='tag-link-4918' title='1 topic' style='font-size: 8pt;'>virtualization</a>
+<a href='http://codebetter.com/howarddierking/category/wcf/' class='tag-link-4928' title='1 topic' style='font-size: 8pt;'>WCF</a>
+<a href='http://codebetter.com/howarddierking/category/web/' class='tag-link-5485' title='1 topic' style='font-size: 8pt;'>Web</a>
+<a href='http://codebetter.com/howarddierking/category/windows-7/' class='tag-link-4917' title='1 topic' style='font-size: 8pt;'>Windows 7</a>
+<a href='http://codebetter.com/howarddierking/category/windsor/' class='tag-link-4930' title='1 topic' style='font-size: 8pt;'>Windsor</a></div>
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/howarddierking/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/10/' title='October 2010'>October 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/03/' title='March 2009'>March 2009</a></li>
+		</ul>
+</li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.257 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:12:29 -->
+<!-- super cache -->

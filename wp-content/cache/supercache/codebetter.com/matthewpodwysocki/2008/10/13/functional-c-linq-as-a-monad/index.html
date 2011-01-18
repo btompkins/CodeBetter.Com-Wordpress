@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Functional .NET &#8211; LINQ or Language Integrated Monads? | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Richmond Code Camp 2008.2 &#8211; Functional C# Recap' href='http://codebetter.com/matthewpodwysocki/2008/10/07/richmond-code-camp-2008-2-recap/' />
+<link rel='next' title='Functional C# &#8211; Implementing Async Computations in C#' href='http://codebetter.com/matthewpodwysocki/2008/10/15/functional-c-implementing-async-computations-in-c/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/10/13/functional-c-linq-as-a-monad/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=69' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-69" class="post-69 post type-post status-publish format-standard hentry category-c category-f category-functional-programming">
+					<h1 class="entry-title">Functional .NET &#8211; LINQ or Language Integrated Monads?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/10/13/functional-c-linq-as-a-monad/" title="9:53 pm" rel="bookmark"><span class="entry-date">October 13, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>As part of my talk at the Richmond Code Camp earlier in October, I had the opportunity to talk about how to implement functional aspects in C# 3.0.&#160; This talk revolved around such concepts as from mutable to immutable, from inheritance to functional composition, and the mind shift that is required.&#160; Part of this discussion involved very briefly a talk about monads.&#160; It&#8217;s a very misunderstood part of computer science and one of the most powerful concepts to learn.&#160; Much like continuation passing style, this style is often maligned as a result.&#160; But, let&#8217;s work to change that.</p>
+<p>&#160;</p>
+<h2>What Is a Monad?</h2>
+<p><a href="http://en.wikipedia.org/wiki/Monad_(category_theory)">Monads</a> come to us originally from category theory.&#160; When <a href="http://en.wikipedia.org/wiki/Monad_(functional_programming)">monads</a> applied to functional programming, they simply are a construction, given an underlying type system, embeds a corresponding monadic type system.&#160; Simply put, the values you have become amplified values that are to be interpreted by the matching monadic type.&#160; </p>
+<p>The formulation of a monad comes in three parts:</p>
+<ol>
+<li>A type construction that defines for every underlying type, how to obtain a corresponding monadic type.&#160; If the given type in F# is &#8216;a, then the corresponding monadic type for an Identity monad would be I&lt;&#8217;a&gt;.&#160; I&#8217;ll cover more of what that means below. </li>
+<li>A unit function that maps the underlying type to a value in the corresponding monadic type.&#160; In F# parlance, this maps to a Return function. </li>
+<li>A binding operation of polymorphic type, in F# parlance, (I&lt;&#8217;a&gt;) =&gt; (&#8216;a =&gt; I&lt;&#8217;b&gt;) =&gt; (I&lt;&#8217;b&gt;).&#160; This maps to a Bind function given your monad builder.&#160; If you look carefully at the signature of this, you might also note that the LINQ SelectMany follows this syntax.&#160; Gee, what could that mean?&#160; The bind operation follows four steps:
+<ol>
+<li>The monadic structure exposes the underlying value of type &#8216;a. </li>
+<li>The given function is applied to the underlying value to obtain values of type I&lt;&#8217;b&gt; </li>
+<li>The monadic structure exposes the underlying value of type &#8216;b. </li>
+<li>The monadic structure is reassembled over the results, given a single value of type I&lt;&#8217;b&gt; </li>
+</ol>
+</li>
+</ol>
+<p>Simply put, a monad, unlike your normal function results, stores function results and side-effect representations. This allows side effects to be propagated through the return values of functions without breaking the pure functional model.&#160; This is what makes it so powerful that it is a way to manage side effects.&#160; Given a pure language such as Haskell, this is the way that any side effecting operation should be done.&#160; Granted, there are impure ways of doing IO, but let&#8217;s not go there.</p>
+<p>There are some good sources of information on what monads are, including some great stuff from Brian Beckman:</p>
+<ul>
+<li><a href="http://channel9.msdn.com/posts/Charles/Brian-Beckman-Monads-Monoids-and-Mort/">Channel9 &#8211; Brian Beckman: Monads, Monoids and Mort</a> </li>
+<li><a href="http://channel9.msdn.com/shows/Going+Deep/Brian-Beckman-Dont-fear-the-Monads/">Channel9 &#8211; Brian Beckman: Don&#8217;t fear the Monads</a> </li>
+<li><a href="http://blogs.msdn.com/wesdyer/archive/2008/01/11/the-marvels-of-monads.aspx">Wes Dyer &#8211; Marvel of Monads</a> </li>
+</ul>
+<p>Some examples of monads that are used frequently are such things as the maybe monad, identity monad, IO, collections and so on.&#160; Let&#8217;s move onto implementing some of these monads in .NET, whether it be F# or even C#.</p>
+<p>&#160;</p>
+<h2>Implementing in .NET</h2>
+<p>To implement the above mentioned monads, we&#8217;ll take examples in both F# and C# to see that both can do the job.&#160; Although I&#8217;ll admit my preference for F#, C# can monads quite nicely using LINQ syntax.&#160; But that sometimes means that the from and select keywords might be confusing.&#160; But what people might not realize is that you are not limited to IEnumerable&lt;T&gt; inside LINQ.&#160; Instead, you could have any backing type you want.&#160; For example, I could have the identity type, maybe type, async type and so on.&#160; We&#8217;ll cover each one of those in detail in the following sections.</p>
+<p>Anyhow, let&#8217;s get started with the identity monad.</p>
+<p>&#160;</p>
+<h2>The Identity Monad</h2>
+<p>The easiest monad to understand is the identity monad.&#160; This attaches no information to the underlying value, and instead only returns and transforms it.&#160; </p>
+<p>&#160;</p>
+<h3>Implementing in F#</h3>
+<p>To implement in F#, we need to remember what&#8217;s required for any monad builder.&#160; That is the Bind, Return, Delay and Let functions.&#160; Let&#8217;s define our builder first with the given functions.</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>     </p>
+<p><span style="color: blue">type</span> I&lt;&#8217;a&gt; = &#8216;a     </p>
+<p><span style="color: blue">let</span> bindI i f = f i     <br /><span style="color: blue">let</span> resultI i = i     <br /><span style="color: blue">let</span> delayI f = f<span style="color: blue">(</span><span style="color: blue">)</span>     </p>
+<p><span style="color: blue">type</span> IdentityBuilder<span style="color: blue">(</span><span style="color: blue">)</span> =     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Bind<span style="color: blue">(</span>i, f<span style="color: blue">)</span> = bindI i f     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Return<span style="color: blue">(</span>i<span style="color: blue">)</span> = resultI i     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Delay<span style="color: blue">(</span>f<span style="color: blue">)</span> = delayI f     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Let<span style="color: blue">(</span>i, f<span style="color: blue">)</span> = bindI <span style="color: blue">(</span>resultI i<span style="color: blue">)</span> f </div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that our builder is defined, F# has a special way of representing monads in that you wrap them in curly braces with the given instance name of the monad builder.&#160; In this case, I&#8217;ll call it ident.</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> ident = IdentityBuilder<span style="color: blue">(</span><span style="color: blue">)</span>&#160; <br /><span style="color: blue">let</span> iValue = ident <span style="color: blue">{</span>&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! x = <span style="color: maroon">5</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! y = <span style="color: maroon">42</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">return</font>! x + y&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">}</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br />printfn <span style="color: maroon">&quot;%i&quot;</span> iValue     </div>
+<p>The above code allows me to define x and y and add them together.&#160; The end result ends up being 47.&#160; This looks pretty simple using this syntax, although this is what it ends up being behind the scenes:</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> iValue = ident<span style="color: blue">.</span>Delay<span style="color: blue">(</span><span style="color: blue">fun</span>&#160;<span style="color: blue">(</span><span style="color: blue">)</span>&#160;<span style="color: blue">-&gt;</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ident<span style="color: blue">.</span>Bind<span style="color: blue">(</span><span style="color: maroon">5</span>, <span style="color: blue">fun</span> x <span style="color: blue">-&gt;</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ident<span style="color: blue">.</span>Bind<span style="color: blue">(</span><span style="color: maroon">42</span>, <span style="color: blue">fun</span> y <span style="color: blue">-&gt;</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ident<span style="color: blue">.</span>Return<span style="color: blue">(</span>x + y<span style="color: blue">)</span><span style="color: blue">)</span><span style="color: blue">)</span><span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>As you can see, the syntax is much more simplified with the syntactic sugar that they give us.&#160; This almost looks like LINQ in a way.</p>
+<p>&#160;</p>
+<h3>Implementing in C# 3.0</h3>
+<p>Now, what about C#?&#160; What can we do there?&#160; Actually, the answer is, that it&#8217;s quite simple.&#160; If you notice one thing about LINQ is the signature of the SelectMany method.&#160; Let&#8217;s look at the definition on the Enumerable class.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">static</span> IEnumerable&lt;U&gt; SelectMany&lt;T, U&gt;(     <br />&#160; <span style="color: blue">this</span> IEnumerable&lt;T&gt; s,     <br />&#160; Func&lt;T, IEnumerable&lt;U&gt;&gt; f) </div>
+<div style="font-family: courier new">&#160;</div>
+<p>And if you look at the bind syntax that we used in our F# example, it&#8217;s exactly the same signature.&#160; That should tell us something that LINQ expressions can indeed be monads.&#160; Now, let&#8217;s implement the identity monad by first identifying the class and then the extension methods that make this work.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">class</span> Identity&lt;T&gt;     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span> Identity(T value) { Value = value; }     <br />&#160;&#160;&#160; <span style="color: blue">public</span> T Value { <span style="color: blue">get</span>; <span style="color: blue">private</span>&#160;<span style="color: blue">set</span>; }     <br />}     </p>
+<p><span style="color: blue">public</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">class</span> IdentityExtensions     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Identity&lt;T&gt; ToIdentity&lt;T&gt;(<span style="color: blue">this</span> T value)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span>&#160;<span style="color: blue">new</span> Identity&lt;T&gt;(value);     <br />&#160;&#160;&#160; }&#160; </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Identity&lt;U&gt; SelectMany&lt;T, U&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">this</span> Identity&lt;T&gt; id,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, Identity&lt;U&gt;&gt; k)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> k(id.Value);     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Identity&lt;V&gt; SelectMany&lt;T, U, V&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">this</span> Identity&lt;T&gt; id,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, Identity&lt;U&gt;&gt; k,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, U, V&gt; s)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> id.SelectMany(x =&gt; k(x).SelectMany(y =&gt; s(x, y).ToIdentity()));     <br />&#160;&#160;&#160; }     <br />}     </div>
+<p>When we implement things for LINQ, we must be cognizant for the need of two SelectMany methods for various performance reasons to allow us to combine values.&#160; Now that we&#8217;ve defined these methods, we can now use LINQ expressions to express our identity monad.</p>
+<div style="font-family: courier new">var identResult = <font color="#0000ff">from</font> x <span style="color: blue">in</span>&#160;<span style="color: maroon">5</span>.ToIdentity()&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">from</font> y <span style="color: blue">in</span>&#160;<span style="color: maroon">42</span>.ToIdentity()&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">select</font> x + y;&#160; <br />Console.WriteLine(identResult.Value);</div>
+<div style="font-family: courier new">&#160;</div>
+<p>As above the answer comes out to 47.&#160; Let&#8217;s move onto the maybe monad. </p>
+<h2>The Maybe Monad</h2>
+<p>The maybe monad is another popular monad type.&#160; A maybe monad is very similar to the identity, yet a value may be missing.&#160; In F# parlance, this translates to the Option&lt;&#8217;a&gt; type.&#160; Let&#8217;s go ahead and implement this in F# using our given option type.</p>
+<p>&#160;</p>
+<h3>Implementing in F#</h3>
+<p>Implementing the maybe monad is very similar to the identity monad.&#160; The only difference being is the to differentiate between some value and no value specified.&#160; We will determine that through pattern matching, as always.</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>     </p>
+<p><span style="color: blue">type</span> M&lt;&#8217;a&gt; = option&lt;&#8217;a&gt;     <br />&#160; <br /><span style="color: blue">let</span> bindM d f =&#160; <br />&#160; <span style="color: blue">match</span> d <span style="color: blue">with</span>     <br />&#160;&#160;&#160; <span style="color: blue">|</span> None <span style="color: blue">-&gt;</span> None     <br />&#160;&#160;&#160; <span style="color: blue">|</span> Some<span style="color: blue">(</span>v<span style="color: blue">)</span>&#160;<span style="color: blue">-&gt;</span> f v     <br /><span style="color: blue">let</span> resultM v = Some<span style="color: blue">(</span>v<span style="color: blue">)</span>     <br /><span style="color: blue">let</span> delayM&#160; f = f<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&#160; <br /><span style="color: blue">type</span> MaybeBuilder<span style="color: blue">(</span><span style="color: blue">)</span> =     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Bind<span style="color: blue">(</span>v, d<span style="color: blue">)</span> = bindM v d     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Return<span style="color: blue">(</span>v<span style="color: blue">)</span>&#160; = resultM v     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Delay<span style="color: blue">(</span>f<span style="color: blue">)</span>&#160;&#160; = delayM f&#160; <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Let<span style="color: blue">(</span>v, f<span style="color: blue">)</span>&#160; = bindM <span style="color: blue">(</span>resultM v<span style="color: blue">)</span> f&#160; <br />&#160;&#160; </div>
+<p>Once defined, we can now use our MaybeBuilder to define a simple use of our maybe monad.&#160; Let&#8217;s make sure we use None to denote that we are missing a value.</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> maybe = MaybeBuilder<span style="color: blue">(</span><span style="color: blue">)</span>&#160;&#160; <br /><span style="color: blue">let</span> mValue = maybe <span style="color: blue">{</span>&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! x = Some<span style="color: blue">(</span><span style="color: maroon">5</span><span style="color: blue">)</span>&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! y = None&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">return</font> x + y&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">}</span>&#160;&#160; <br /><span style="color: blue">let</span> option_to_string = <span style="color: blue">function</span>&#160; <br />&#160; <span style="color: blue">|</span> None <span style="color: blue">-&gt;</span>&#160;<span style="color: maroon">&quot;Undefined&quot;</span>&#160; <br />&#160; <span style="color: blue">|</span> Some v <span style="color: blue">-&gt;</span> v<span style="color: blue">.</span>ToString<span style="color: blue">(</span><span style="color: blue">)</span>&#160; <br />printfn <span style="color: maroon">&quot;%s&quot;</span>&#160;<span style="color: blue">(</span>mValue <span style="color: blue">|</span>&gt; option_to_string<span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>The result of course is &quot;Undefined&quot; because our y value is the None option type.&#160; But, how might this work in C#?&#160; </p>
+<p>&#160;</p>
+<h3>Implementing in C# 3.0</h3>
+<p>We can reuse a lot of our ideas from implementing this via extension methods.&#160; I will go ahead and use the Option type that I&#8217;ve defined in my <a href="http://code.msdn.microsoft.com/FunctionalCSharp">Functional C# project</a> on MSDN Code Gallery.&#160; From there, we can implement our SelectMany operations.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">class</span> MaybeExtensions     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Option&lt;T&gt; ToMaybe&lt;T&gt;(<span style="color: blue">this</span> T value)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> Option&lt;T&gt;.Some(value);     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Option&lt;U&gt; SelectMany&lt;T, U&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">this</span> Option&lt;T&gt; m,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, Option&lt;U&gt;&gt; k)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> !m.IsNone ? Option&lt;U&gt;.None : k(m.Value);     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Option&lt;V&gt; SelectMany&lt;T, U, V&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">this</span> Option&lt;T&gt; m,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, Option&lt;U&gt;&gt; k,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Func&lt;T, U, V&gt; s)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> m.SelectMany(x =&gt; k(x).SelectMany(y =&gt; s(x, y).ToMaybe()));     <br />&#160;&#160;&#160; }     <br />}     </div>
+<p>Now that we defined our binding operations, we can move onto actually using the maybe monad.&#160; Let&#8217;s use the template that we defined up above for our identity monad and craft it to use our maybes.</p>
+<div style="font-family: courier new"><font color="#0000ff">var</font> maybeResult = <font color="#0000ff">from</font> x <span style="color: blue">in</span>&#160;<span style="color: maroon">5</span>.ToMaybe()&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">from</font> y <span style="color: blue">in</span> Option&lt;<span style="color: blue">int</span>&gt;.None&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">select</font> x + y;&#160; <br />Console.WriteLine(     <br />&#160; maybeResult.IsSome ? maybeResult.Value.ToString() : <span style="color: maroon">&quot;Undefined&quot;</span>);</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Once again, our result will be undefined as our y value has no real value at all.&#160; Clear so far?&#160; Let&#8217;s move onto the List Monad.</p>
+<p>&#160;</p>
+<h2>The Collection Monad</h2>
+<p>The collection monad is another important monad type.&#160; This monad is the heart and soul of LINQ and the way we use it to compute our lazily evaluated lists.&#160; This monad strikes home as one of the most important to .NET developers.&#160; Using LINQ to SQL, XML and such uses collections of various sorts to transform the data into other forms. </p>
+<p>&#160;</p>
+<h3>Implementing in F#</h3>
+<p>As before, we need to define our basic bind, let, return and delay functions in order for the monad to work in F#.&#160; Let&#8217;s define the list monad to use seq&lt;&#8217;a&gt;.&#160; This way, I can lazily evaluate my results and yield them when I need to.&#160; For the bind and result statements, I&#8217;m using a sequence expression to yield the appropriate values.</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>     </p>
+<p><span style="color: blue">let</span> bindL l f =&#160; <br />&#160; seq<span style="color: blue">{</span><span style="color: blue">for</span> x <span style="color: blue">in</span> l <span style="color: blue">do</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">for</span> y <span style="color: blue">in</span> f x <span style="color: blue">do</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; yield y<span style="color: blue">}</span>     <br /><span style="color: blue">let</span> resultL l = seq<span style="color: blue">{</span> yield l <span style="color: blue">}</span>     <br /><span style="color: blue">let</span> delayL f = f<span style="color: blue">(</span><span style="color: blue">)</span>     </p>
+<p><span style="color: blue">type</span> SeqBuilder<span style="color: blue">(</span><span style="color: blue">)</span> =&#160; <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Bind<span style="color: blue">(</span>l, f<span style="color: blue">)</span> = bindL l f     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Return<span style="color: blue">(</span>l<span style="color: blue">)</span> = resultL l     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Delay<span style="color: blue">(</span>f<span style="color: blue">)</span> = delayL f     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Let<span style="color: blue">(</span>l, f<span style="color: blue">)</span> = bindL <span style="color: blue">(</span>resultL l<span style="color: blue">)</span> f</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that we&#8217;ve defined our monad builder, let&#8217;s implement this to add the values from each collection to each other.</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> seqMonad = <span style="color: blue">new</span> SeqBuilder<span style="color: blue">(</span><span style="color: blue">)</span>     <br /><span style="color: blue">let</span> sValue = seqMonad <span style="color: blue">{</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! x = <span style="color: blue">{</span><span style="color: maroon">1</span><span style="color: blue">.</span><span style="color: maroon">.3</span><span style="color: blue">}</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! y = <span style="color: blue">{</span><span style="color: maroon">4</span><span style="color: blue">.</span><span style="color: maroon">.6</span><span style="color: blue">}</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">return</font> x + y     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">}</span>     <br />sValue <span style="color: blue">|</span>&gt; Seq<span style="color: blue">.</span>iter<span style="color: blue">(</span><span style="color: blue">fun</span> x <span style="color: blue">-&gt;</span> printfn <span style="color: maroon">&quot;%i&quot;</span> x<span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>Our results will be the addition of each number in each list to each other.&#160; So, in turn, I will get 9 numbers in total with a value of 5 6 7 6 7 8 7 8 9.</p>
+<p>&#160;</p>
+<h3>Implementing in C# 3.0</h3>
+<p>To view the bind methods, simply open the Enumerable class to view the SelectMany implementations.&#160; This will get us started in looking at a C# equivalent to the list monad we did above.&#160; A simple representation might look like this.</p>
+<div style="font-family: courier new"><font color="#0000ff">var</font> sValues = <font color="#0000ff">from</font> x <span style="color: blue">in</span> Enumerable.Range(<span style="color: maroon">1</span>, <span style="color: maroon">3</span>)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">from</font> y <span style="color: blue">in</span> Enumerable.Range(<span style="color: maroon">4</span>, <span style="color: maroon">3</span>)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">select</font> x + y;     <br /><span style="color: blue">foreach</span> (<font color="#0000ff">var</font> sValue <span style="color: blue">in</span> sValues) Console.WriteLine(sValue);</div>
+<div style="font-family: courier new">&#160;</div>
+<p>And we now realize the answers between the two are exactly the same.&#160; No special magic required for list monads.</p>
+<p>&#160;</p>
+<h2>The Asynchronous Monad</h2>
+<p>One of the most often used monads in F# is the asynchronous computation expression.&#160; This allows us to use non-blocking calls to download resources, whether it be files, web request, WCF calls and so on.&#160; This is where monads become really useful for .NET developers who want to explore a little outside the box in ways of thinking about monads.&#160; </p>
+<p>&#160;</p>
+<h3>Implementing in F#</h3>
+<p>We get the asynchronous computation expressions out of the box with F#.&#160; This allows us to easily create asynchronous computation expressions which I talked about earlier <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/08/05/adding-async-operations-to-asynchronous-computation-expressions-in-f.aspx">here</a>.&#160; But, let&#8217;s look at one example of downloading the HTML from various web sites in parallel with non-blocking calls.&#160; What might that look like?</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>&#160; </p>
+<p><span style="color: blue">open</span> System<span style="color: blue">.</span>IO&#160; <br /><span style="color: blue">open</span> System<span style="color: blue">.</span>Net&#160; <br /><span style="color: blue">open</span> Microsoft<span style="color: blue">.</span>FSharp<span style="color: blue">.</span>Control&#160; <br /><span style="color: blue">open</span> Microsoft<span style="color: blue">.</span>FSharp<span style="color: blue">.</span>Control<span style="color: blue">.</span>CommonExtensions&#160; </p>
+<p><span style="color: blue">let</span> get_html_async <span style="color: blue">(</span>url<span style="color: blue">:</span><span style="color: blue">string</span><span style="color: blue">)</span> =&#160; <br />&#160; async <span style="color: blue">{</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span> request = WebRequest<span style="color: blue">.</span>Create<span style="color: blue">(</span>url<span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! response = request<span style="color: blue">.</span>AsyncGetResponse<span style="color: blue">(</span><span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span> stream = response<span style="color: blue">.</span>GetResponseStream<span style="color: blue">(</span><span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span> reader = <span style="color: blue">new</span> StreamReader<span style="color: blue">(</span>stream<span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! text = reader<span style="color: blue">.</span>AsyncReadToEnd<span style="color: blue">(</span><span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">return</font> text&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">}</span>&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br /><span style="color: blue">let</span> urls = <span style="color: blue">[</span><span style="color: maroon">&quot;http://live.com&quot;</span>; <span style="color: maroon">&quot;http://google.com&quot;</span>; <span style="color: maroon">&quot;http://codebetter.com&quot;</span><span style="color: blue">]</span>&#160; <br /><span style="color: blue">let</span> textResults =&#160;&#160; <br />&#160; Async<span style="color: blue">.</span>Run<span style="color: blue">(</span>Async<span style="color: blue">.</span>Parallel <span style="color: blue">[</span><span style="color: blue">for</span> url <span style="color: blue">in</span> urls <span style="color: blue">-&gt;</span> get_html_async url<span style="color: blue">]</span><span style="color: blue">)</span>&#160; <br />textResults <span style="color: blue">|</span>&gt; Seq<span style="color: blue">.</span>iter<span style="color: blue">(</span><span style="color: blue">fun</span> textResult <span style="color: blue">-&gt;</span> printfn <span style="color: maroon">&quot;%s&quot;</span> textResult<span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>As you can see, we&#8217;re creating a request, getting the response, creating a reader, and reading all the way to the end asynchronously.&#160; As you may note, there is a difference between let! and let.&#160; The let! uses the Bind method whereas the let uses the Let method of AsyncBuilder.&#160; What I&#8217;m able to do here is take three websites, and download their HTML and display within a short amount of time.&#160; Imagine if I had to write that using IAsyncResult classes and such.&#160; That wouldn&#8217;t be ideal!&#160; But, can C# partake in this?</p>
+<p>&#160;</p>
+<h3>Implementing in C# 3.0</h3>
+<p>The question I asked is that can we take advantage of the F# asynchronous computation expressions in C#?&#160; The answer, surprisingly is YES!&#160; I had the opportunity to talk to F# developer, <a href="http://lorgonblog.spaces.live.com/">Brian McNamara</a>, on this very subject.&#160; Back in May, he posted <a href="http://lorgonblog.spaces.live.com/blog/cns!701679AD17B6D310!208.entry">a quick example of using the F# libraries from C</a>#.&#160; There is a bit of work required to do this, but it pays off handily.&#160; I&#8217;ll cover the exact details in my next post of how to do it.&#160; But, in the mean time, imagine if we could download HTML from three websites simultaneously using LINQ?&#160; Here&#8217;s what the code that does exactly that looks like.</p>
+<div style="font-family: courier new">Func&lt;<span style="color: blue">string</span>, Async&lt;<span style="color: blue">string</span>&gt;&gt; get_html_async = url =&gt;     <br />&#160;&#160; <font color="#0000ff">from</font> _ <span style="color: blue">in</span> AsyncExtensions.StartWorkflow     <br />&#160;&#160; <font color="#0000ff">from</font> request <span style="color: blue">in</span> WebExtensions.AsyncCreateWebRequest(url)     <br />&#160;&#160; <font color="#0000ff">from</font> response <span style="color: blue">in</span> request.AsyncGetResponse()     <br />&#160;&#160; <span style="color: blue">let</span> reader = <span style="color: blue">new</span> StreamReader(response.GetResponseStream())     <br />&#160;&#160; <font color="#0000ff">from</font> urlText <span style="color: blue">in</span> reader.AsyncReadToEnd()     <br />&#160;&#160; <font color="#0000ff">select</font> urlText;     </p>
+<p><font color="#0000ff">var</font> urls = <span style="color: blue">new</span>[] { <span style="color: maroon">&quot;http://live.com/&quot;</span>, <span style="color: maroon">&quot;http://www.google.com/&quot;</span>, <span style="color: maroon">&quot;http://codebetter.com/&quot;</span> };     <br /><font color="#0000ff">var</font> urlTexts = Async.Run(     <br />&#160;&#160;&#160; Async.Parallel(<font color="#0000ff">from</font> url <span style="color: blue">in</span> urls <font color="#0000ff">select</font> get_html_async(url)), Option&lt;<span style="color: blue">int</span>&gt;.None, Option&lt;<span style="color: blue">bool</span>&gt;.None);     <br />Array.ForEach(urlTexts, Console.WriteLine);</div>
+<div style="font-family: courier new">&#160;</div>
+<p><font face="Trebuchet MS">How simple is that?&#160; Well, we have to put some backing to some of these methods in order to make them asynchronous, and I will cover exactly what that is in the next post.</font></p>
+<p>&#160;</p>
+<h2>Wrapping it Up</h2>
+<p>What about such things as the IO monad?&#160; Well, that&#8217;s more of a language construct that is enforced by the compiler.&#160; I would like to see something similar to this in F# going forward, so that we could better manage our side effects.&#160; Using such technologies as Spec# to statically verify the behavior is important.&#160; But, once again, that&#8217;s another post.</p>
+<p>I hope I helped to alleviate some of the confusion around monads.&#160; More importantly, I hope you know more of how and when to use them.&#160; In the next post, I&#8217;ll follow up with the actual implementation of the asynchronous computation expressions in C# 3.0.&#160; Giving us the ability to have parity with F# is really powerful and attests to the power of LINQ (and monads of course).&#160; Stay tuned!</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/10/13/functional-c-linq-as-a-monad/" title="Permalink to Functional .NET &#8211; LINQ or Language Integrated Monads?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/10/13/functional-c-linq-as-a-monad/feed/" title="Comments RSS to Functional .NET &#8211; LINQ or Language Integrated Monads?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-69 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/10/07/richmond-code-camp-2008-2-recap/" rel="prev"><span class="meta-nav">&larr;</span> Richmond Code Camp 2008.2 &#8211; Functional C# Recap</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/10/15/functional-c-implementing-async-computations-in-c/" rel="next">Functional C# &#8211; Implementing Async Computations in C# <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-153">
+					<div id="dsq-comment-header-153" class="dsq-comment-header">
+						<cite id="dsq-cite-153">
+								<span id="dsq-author-user-153">Andy Herrman</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-153" class="dsq-comment-body">
+						<div id="dsq-comment-message-153" class="dsq-comment-message"><p>In your C# example for the Identity monad, why are you using extension methods?  If you&#8217;re already defining the class, wouldn&#8217;t it be simpler to just include those methods within the class itself?  What do you gain by using extension methods?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-154">
+					<div id="dsq-comment-header-154" class="dsq-comment-header">
+						<cite id="dsq-cite-154">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-154">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-154" class="dsq-comment-body">
+						<div id="dsq-comment-message-154" class="dsq-comment-message"><p>@Andy</p>
+<p>I am using extension methods here because I didn&#8217;t consider the ToIdentity a key part of the class definition.  Instead, like the Option<t> type, I keep those features that are only used by LINQ off in extension methods to keep the class size clutter down.  It&#8217;s more of a principle than a practical use for this example.</p>
+<p>Matt</t></p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/10/13/functional-c-linq-as-a-monad/ ';
+	var disqus_identifier = '69 /blogs/matthew.podwysocki/archive/2008/10/13/functional-c-linq-as-a-monad.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Functional .NET &#8211; LINQ or Language Integrated Monads?";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=69');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/10\/13\/functional-c-linq-as-a-monad\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.326 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:11:26 -->
+<!-- super cache -->

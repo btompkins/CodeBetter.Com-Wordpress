@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Should I use MEF for my general IoC needs? | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='The spirit of MVVM (ViewModel), it’s not a code counting exercise.' href='http://codebetter.com/glennblock/2009/08/03/the-spirit-of-mvvm-viewmodel-it-s-not-a-code-counting-exercise/' />
+<link rel='next' title='Herding code on MVVM and other presentation patterns in WPF and Silverlight' href='http://codebetter.com/glennblock/2009/08/20/herding-code-on-mvvm-and-other-presentation-patterns-in-wpf-and-silverlight/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2009/08/16/should-i-use-mef-for-my-general-ioc-needs/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=99' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-99" class="post-99 post type-post status-publish format-standard hentry category-mef">
+					<h1 class="entry-title">Should I use MEF for my general IoC needs?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2009/08/16/should-i-use-mef-for-my-general-ioc-needs/" title="7:37 pm" rel="bookmark"><span class="entry-date">August 16, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><strong><span style="text-decoration: underline">Disclaimer: This is not an encouragement to use MEF&nbsp;to replace your IoC container, these are guidelines&nbsp;to help those who are considering it&#8217;s use.</span></strong></p>
+<p>This has been a question we hear again and again both internally and externally.&nbsp; MEF in V1 is targetting third-party extensibility scenarios, or open-systems which discover their components rather than having them explicitly configured. This is why our attributed model was crafted in the fashion that it was.&nbsp; Now that doesn&rsquo;t answer the question, &ldquo;Can I use MEF today for my general IoC needs?&rdquo;. Like all things in software, it depends <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> , in this case on what your IoC needs are. </p>
+<p><strong>Update: The list has been updated based on feedback from my team.</strong></p>
+<p>On first glance, MEF may seem to be very similar to your favorite IoC container. However as they say, the devil is in the details. Here are a few details to consider which should help you in your decision and set proper expectations about using MEF:</p>
+<ul>
+<li>If you&nbsp; need/want centralized configuration of plain old CLR objects (POCOs) then MEF is not the right choice.
+<ul>
+<li>We do have TypeCatalogs which allow you pick and choose which Types you have in the container, but those types <span style="text-decoration: underline">still have to attributed</span>, thus the configuration mechanism is configuring which attributed MEF parts show up. This is because our attributed model is really optimized around discovery of a set of unknown components vs configuring a pre-defined set. </li>
+<li>As we don&#8217;t have a central configuration mechanism, we also have no explict way to pipe configuration settings like &#8220;Port&#8221; or &#8220;Uri&#8221; into a specific part.</li>
+</ul>
+</li>
+<li>If you need AOP/Interception like injecting logging, or automatic transcation management then MEF doesn&rsquo;t include any native support for this. </li>
+<li>Open generics support (register IRepository&lt;&gt; which can handle all IRepository&lt;T&gt; dependencies) is not baked in. </li>
+<li>If you need custom lifetime support such as per-thread, per-session MEF includes only two lifetime models, shared and non-shared. To get more complex lifetimes requires manually setting up container hierarchies. It is doable, but requires work. </li>
+<li>If you need paramterized construction, that is creating a part where specific imports are passed in at the time of construction, then this is also not supported.</li>
+</ul>
+<p>In enterprise applications with a large number of different types of components, the above list will probably be more significant. However, if none of the above are core concerns then MEF might be fine for your needs.&nbsp;&nbsp;&nbsp; MEF does an excellent job of decoupling implementations and assembling component hierarchies, but it is tailored today for implicit composition and discovery.</p>
+<p>In the next version of MEF that will ship post .NET 4.0,&nbsp; we are planning to focus more on explicit composition, and will be addressing many of the items on the above list. Until then, it is likely that there will be some great community implementations such as <a href="http://mefcontrib.codeplex.com">MEF Contrib</a> which will address many of these concerns, but these are not part of MEF itself.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/mef/" title="View all posts in MEF" rel="category tag">MEF</a>. Bookmark the <a href="http://codebetter.com/glennblock/2009/08/16/should-i-use-mef-for-my-general-ioc-needs/" title="Permalink to Should I use MEF for my general IoC needs?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2009/08/16/should-i-use-mef-for-my-general-ioc-needs/feed/" title="Comments RSS to Should I use MEF for my general IoC needs?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-99 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2009/08/03/the-spirit-of-mvvm-viewmodel-it-s-not-a-code-counting-exercise/" rel="prev"><span class="meta-nav">&larr;</span> The spirit of MVVM (ViewModel), it’s not a code counting exercise.</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2009/08/20/herding-code-on-mvvm-and-other-presentation-patterns-in-wpf-and-silverlight/" rel="next">Herding code on MVVM and other presentation patterns in WPF and Silverlight <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-416">
+					<div id="dsq-comment-header-416" class="dsq-comment-header">
+						<cite id="dsq-cite-416">
+	http://blog.noop.se							<span id="dsq-author-user-416">Magnus Martensson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-416" class="dsq-comment-body">
+						<div id="dsq-comment-message-416" class="dsq-comment-message"><p>You&#8217;re right &#8211; it depends. In a large proj we used an IoC + MEF but for small projs I use MEF alone as an IoC + for extensibility.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-417">
+					<div id="dsq-comment-header-417" class="dsq-comment-header">
+						<cite id="dsq-cite-417">
+								<span id="dsq-author-user-417">Steve Py</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-417" class="dsq-comment-body">
+						<div id="dsq-comment-message-417" class="dsq-comment-message"><p>er&#8230; Ok, my head almost popped but I think the pressure stabilized&#8230;.</p>
+<p>Wasn&#8217;t the whole point of discerning MEF from &#8220;just&#8221; an IoC was that it was targetted at very large enterprise applications where the availability or configuration of components could be managed, and that it wasn&#8217;t really designed to be another IoC.</p>
+<p>I didn&#8217;t see any features in MEF that seemed remotely useful for small projects that I couldn&#8217;t do with Windsor or Autofac.</p>
+<p>pressure building again&#8230; clock, clock, which one is a clock again?  &#8230; *pop*</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-418">
+					<div id="dsq-comment-header-418" class="dsq-comment-header">
+						<cite id="dsq-cite-418">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-418">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-418" class="dsq-comment-body">
+						<div id="dsq-comment-message-418" class="dsq-comment-message"><p>Steve</p>
+<p>Glad we didn&#8217;t have a head-popping scene <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>The distinguishing characterestic about MEF vs IoC is MEF&#8217;s suitability and optimization toward third-party extensibility and discovery.</p>
+<p>The point of this post is not to tell you to use MEF over Castle, Autofac, etc. Even if I wanted to say that (which I wouldn&#8217;t), Nick and Hamilton on my team would never let me get away with it <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>Instead the point is to set expectations on MEF&#8217;s usage for more general needs other than extensibility. In some applications it may be fine, in other&#8217;s it won&#8217;t be. I&#8217;ve given the list of some of the key driving factors to consider. For example if poco is at the top of your list, then you&#8217;ve already made your decision.</p>
+<p>This is for those who are considering MEF&#8217;s usage for these cases. In general we have been very clear at not recommending to replace your  favorite IoC with MEF. If you are happy with using your favorite (mine these days is Autofac) then rock-on.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-419">
+					<div id="dsq-comment-header-419" class="dsq-comment-header">
+						<cite id="dsq-cite-419">
+	http://www.joefuture.com							<span id="dsq-author-user-419">Joe</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-419" class="dsq-comment-body">
+						<div id="dsq-comment-message-419" class="dsq-comment-message"><p>The thing that&#8217;s bugging me about MEF so far (and maybe I&#8217;m just not using it properly) is that if my plugins have dependencies on any internal app interfaces, then I have to MEF&#8217;ify those too.  For example, I&#8217;m trying to use MEF to locate plugins for a web application. If those plugins take an IFooRepository, then IFooRepository needs to have MEF attributes too so when the ImportingConstructor is called, MEF can auto-create the dependencies.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-420">
+					<div id="dsq-comment-header-420" class="dsq-comment-header">
+						<cite id="dsq-cite-420">
+	http://smellegantcode.wordpress.com/							<span id="dsq-author-user-420">Daniel Earwicker</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-420" class="dsq-comment-body">
+						<div id="dsq-comment-message-420" class="dsq-comment-message"><p>&#8220;Explicit composition&#8221; &#8211; any likelihood of that linking up with XAML? It seems like if you want to explicitly state exactly how a hierarchy of components should be assembled, XAML already provides an answer to that, and is there to be used as a &#8220;configuration format&#8221;.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-421">
+					<div id="dsq-comment-header-421" class="dsq-comment-header">
+						<cite id="dsq-cite-421">
+								<span id="dsq-author-user-421">Ronald S Woan</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-421" class="dsq-comment-body">
+						<div id="dsq-comment-message-421" class="dsq-comment-message"><p>Thanks! Just what I was looking for, that clears things up for us.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-422">
+					<div id="dsq-comment-header-422" class="dsq-comment-header">
+						<cite id="dsq-cite-422">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-422">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-422" class="dsq-comment-body">
+						<div id="dsq-comment-message-422" class="dsq-comment-message"><p>Hi Joe</p>
+<p>I was planning a follow up post on &#8220;Should I use MEF with another IoC container&#8221; which will cover this. Yes, this is a very valid concern if you are using both. There are several approaches on getting the two to work together such that you can mix and match components from each.</p>
+<p>IoC containers can be enabled to talk to MEF catalogs where there is only one container present. Basically this means the container also understands how to read MEF&#8217;s attributes model, though it uses parts of MEF to do it. Nick Blumhardt has a post on how this is possible here: <a href="http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx" rel="nofollow">http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx</a></p>
+<p>The other pattern is to have two containers that are wired to talk to each other. Piotr has put together a Unity integration layer that takes advantage of extension points in both Unity and MEF to create a bridge between the two. In this model, MEF&#8217;s container is hidden behind the scenes but handles providing MEF components. You can read about that here: <a href="http://pwlodek.blogspot.com/2009/05/unity-mef-integration-layer.html" rel="nofollow">http://pwlodek.blogspot.com/2009/05/unity-mef-integration-layer.html</a></p>
+<p>Look for more on this in the future.</p>
+<p>Regards<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-423">
+					<div id="dsq-comment-header-423" class="dsq-comment-header">
+						<cite id="dsq-cite-423">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-423">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-423" class="dsq-comment-body">
+						<div id="dsq-comment-message-423" class="dsq-comment-message"><p>Ronald, glad it helped. I made a few updates to the list btw.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-424">
+					<div id="dsq-comment-header-424" class="dsq-comment-header">
+						<cite id="dsq-cite-424">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-424">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-424" class="dsq-comment-body">
+						<div id="dsq-comment-message-424" class="dsq-comment-message"><p>Hi Daniel</p>
+<p>By XAML, do you mean declaring MEF parts in XAML? Or having elements within XAML get composed with MEF imports, as I mentioned here: <a href="http://codebetter.com/blogs/glenn.block/archive/2009/07/18/mef-and-xaml-integration-self-composition.aspx?" rel="nofollow">http://codebetter.com/blogs/glenn.block/archive/2009/07/18/mef-and-xaml-integration-self-composition.aspx?</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-425">
+					<div id="dsq-comment-header-425" class="dsq-comment-header">
+						<cite id="dsq-cite-425">
+								<span id="dsq-author-user-425">TT</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-425" class="dsq-comment-body">
+						<div id="dsq-comment-message-425" class="dsq-comment-message"><p>Not sure why there is such a need to separate the two?<br />
+Both have the goal to choose an implementation of your interfaces. The thing separating them is how you configure what implementation to pick. I use MEF as a IoC container on several websites and I have never had any problems with it.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2009/08/16/should-i-use-mef-for-my-general-ioc-needs/ ';
+	var disqus_identifier = '99 /blogs/glenn.block/archive/2009/08/16/should-i-use-mef-for-my-general-ioc-needs.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "Should I use MEF for my general IoC needs?";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=99');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2009\/08\/16\/should-i-use-mef-for-my-general-ioc-needs\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.247 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:02:20 -->
+<!-- super cache -->

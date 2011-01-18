@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Eventual Consistency and Set Validation | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='Upcoming online classes' href='http://codebetter.com/gregyoung/2010/08/05/upcoming-online-classes/' />
+<link rel='next' title='Idempotency vs Distibuted Transactions' href='http://codebetter.com/gregyoung/2010/08/12/idempotency-vs-distibuted-transactions/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=153' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-153" class="post-153 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Eventual Consistency and Set Validation</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/" title="2:29 pm" rel="bookmark"><span class="entry-date">August 12, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I was just writing an email to the cqrs group&nbsp;<a href="http://groups.google.com/group/dddcqrs">http://groups.google.com/group/dddcqrs</a> and figured it might be useful to put it up here as well as its a very common question I get.</p>
+<p>The initial question was</p>
+<p style="padding-left: 30px">
+Here&#8217;s the example I&#8217;m using:<br />A system that handles user registration for 2 million+ active users. These users should be able to login with their email address and password. They should also be able to change their associated email.</p>
+<p>I have the following design:&nbsp;</p>
+<p>Entities:<br />User(Guid Id, string email, string hashedPassword)</p>
+<p>Events:<br />UserRegistered(Guid Id, string email, string hashedPassword)<br />UserEmailAddressUpdated(Guid Id, string email)</p>
+<p>Commands:<br />RegisterUser(Guid Id, string email, string hashedPassword)<br />UpdateEmailAddressForUser(Guid Id, string email)</p>
+<p>ViewCaches:<br />RegisteredEmailAddresses(emailAddress) &#8211; Used for client side validation on email prior to sending a RegisterUser command</p>
+<p>When processing a RegisterUser command, I need to validate that no other user has registered with that email. How can I do that without loading every user in the system? I could use a view cache like the client side, but then I would have business logic outside of my domain. Any suggestions?</p>
+<p>&nbsp;</p>
+<p>This is a very common question. There were many responses with various suggestions. Mine follows.</p>
+<p>&nbsp;</p>
+<p style="padding-left: 30px">
+I am just replying to the last one on the list after reading through.</p>
+<p>To me the most important concepts have been completely missed in this<br />thread and they are a big part of why eventual consistency is so cool<br />(it makes you think about things).</p>
+<p>*What is the business impact of having a failure*</p>
+<p>This is the key question we need to ask and it will drive our solution<br />in how to handle this issue as we have many choices of varying degrees<br />of difficulty.</p>
+<p>Most of the time the business impact of such a failure is low and the<br />probability of it happening is low. If we query the eventually<br />consistent store at the time of submission (either from client or from<br />server as this is a big part of how one-way commands work) then our<br />probability of receiving a duplication is directly calculable based on<br />the amount of eventual consistency. We can drive this probability down<br />by lowering our SLA very often this is enough.</p>
+<p>We can detect asynchronously if we broke our invariant. Imagine an<br />eventhandler that inserts into a table with a constraint. If it gets<br />an exception, we broke the constraint (note this is not really the<br />&#8220;read model&#8221; but the same db can be used if convenient, it is<br />important to note the distinction as if we scale to have 5 read models<br />we don&#8217;t have 5 of these &#8230;).</p>
+<p>What do we do if we break the constraint? We need to come back to that<br />business impact statement above. For most circumstances, just raising<br />an alert to an admin etc is enough, these things are very low<br />probability of happening and are often not worth the time/cost of<br />implementing automatic recovery. Just imagine 1 username create out of<br />1,000,000 fails this way. How long would it take to automate the<br />process of handling the situation? Consider discussions with domain<br />experts etc. 5 minutes of admin time once a year is much better ROI in<br />most of these situations than a week of developer time to automate.</p>
+<p>Continuing along it has now been decided that this has large enough<br />impact that it should be automated. The said process that finds the<br />duplicates could either raise an event DuplicateUsernameDetected or<br />directly call a command ResolveDuplicateUsername (which involves more<br />discussion). It is important to note that in either of these cases we<br />are discussing the &#8220;What&#8221; not the &#8220;How&#8221; it would never issue a command<br />&#8220;DeleteUser&#8221; etc, how to handle these situations is core domain logic<br />and should be modeled within the domain. In the username example<br />perhaps ResolveDuplicateUsername marks the user as not being able to<br />login (and as a duplicate) and it sends an email to the user saying<br />&#8220;Hey we screwed up but its your lucky day! you get to create a new<br />username &#8230;&#8221;</p>
+<p>But even after all of this if from a business perspective the impact<br />is too high we can still make things consistent. We could drop in a<br />service to the domain that deals with a consistent set. This would of<br />course be the last resort as its the most complicated of these<br />solutions and brings with it many limiting factors in terms of our<br />architecture.</p>
+<p>Udi had a great example of this in his explanation of 1-way commands.<br />It was an ATM that would spit out money having only read your balance<br />from an eventually consistent read model. The reason this can work is<br />that from a business perspective the risk is low (and it is built into<br />the business model itself). You have a bank account with me, I know<br />your SS# and all of your information. For people who overdraw their<br />accounts I will recover atleast 90% of the money that has been<br />overdrawn. On top of that I charge a fee for each overdraw that<br />occurs. For these reasons the business impact of such a problem is<br />low.</p>
+<p>To sum up I just want to reiterate that this is a *good* thing.<br />Eventual consistency is forcing us to learn more about our domain. It<br />is forcing us to ask questions that are otherwise often not asked.</p>
+<p>Consistency is over-rated.</p>
+<p>&nbsp;</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/" title="Permalink to Eventual Consistency and Set Validation" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/feed/" title="Comments RSS to Eventual Consistency and Set Validation" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-153 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2010/08/05/upcoming-online-classes/" rel="prev"><span class="meta-nav">&larr;</span> Upcoming online classes</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2010/08/12/idempotency-vs-distibuted-transactions/" rel="next">Idempotency vs Distibuted Transactions <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">12 Responses to <em>Eventual Consistency and Set Validation</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-3077">
+		<div id="comment-3077">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3077">September 7, 2010 at 11:25 am</a></div>
+
+		<div class="comment-body"><p>@bob </p>
+<p>also what is the lesser of two evils? by adding 2 seconds of eventual consistency we can pretty much assure availability. Would you rather have a bad user experience for people who attempt to game the system or be pretty much constantly available for normal users (enough 9s to the point that its not probable to be down for the lifetime of the system?)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3076">
+		<div id="comment-3076">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3076">September 7, 2010 at 11:23 am</a></div>
+
+		<div class="comment-body"><p>@bob </p>
+<p>Are you suggesting the user has no role in this? Where is their personal responsibility in this? but&#8230;.</p>
+<p>Let&#8217;s say its 2 seconds eventual consistency&#8230; How exactly would a user overdraw their account unless they are making duplicate cards?  Yes I am perfectly willing to have a bad experience for users who try to game the system. No normal user will get into problems, it will seem perfectly consistent to them as it takes more than 2 seconds to withdraw money from an ATM</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-3075">
+		<div id="comment-3075">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Bob</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3075">September 6, 2010 at 6:50 pm</a></div>
+
+		<div class="comment-body"><p>Are you serious with your ATM example?  Basically you&#8217;re saying it&#8217;s ok to screw the user with overdraft fees because you architectured a system using eventual consistency.  Eventual consistency is fine for FaceBook and Twitter but not for ATM bank transactions and definitely not when the customer has to suffer because of bad system design decisions.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3074">
+		<div id="comment-3074">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3074">August 19, 2010 at 3:13 pm</a></div>
+
+		<div class="comment-body"><p>@Remi I think there are a few ways of doing this but an easy way of doing this would be to pull back the user based on username and password (assuming you are also salting passwords with something other than username the probabilities of getting a failure would be astronomical). Also if you sent an email you would know the userid at the time of sending the email.</p>
+<p>Make sense?</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-3073">
+		<div id="comment-3073">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Remi Despres-Smyth</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3073">August 17, 2010 at 4:03 pm</a></div>
+
+		<div class="comment-body"><p>Seems to me the main problem with this solution is that once the first account&#8217;s been updated, you have two identical usernames which cannot be distinguished.</p>
+<p>> we could also mark him for the next time he tried to login to bring him to the change username screen the same as the email would have brought him to.</p>
+<p>How do you distinguish which of the two users is logging in, and which should be redirected to change their email address?</p>
+<p>Remi.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3072">
+		<div id="comment-3072">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Remi Despres-Smyth</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3072">August 17, 2010 at 3:52 pm</a></div>
+
+		<div class="comment-body"><p>Seems to me the main problem with this solution is that once the first account&#8217;s been updated, you have two identical usernames which cannot be distinguished.</p>
+<p>> we could also mark him for the next time he tried to login to bring him to the change username screen the same as the email would have brought him to.</p>
+<p>How do you distinguish which of the two users is logging in, and which should be redirected to change their email address?</p>
+<p>Remi.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-3071">
+		<div id="comment-3071">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3071">August 12, 2010 at 7:18 pm</a></div>
+
+		<div class="comment-body"><p>a wag yes a very poorly designed system could do that. I prefer to not consider what harm very poorly designed systems can possibly harm but prefer to instead focus on what a reasonable design leads to <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  That sounds like a case of &#8220;Dr it hurts when I do this&#8221;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3070">
+		<div id="comment-3070">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">a wag</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3070">August 12, 2010 at 6:30 pm</a></div>
+
+		<div class="comment-body"><p>You would have a short period in which you could sign up under someone else&#8217;s already existing username, right? Then if the server set the auth cookie off the username, you could log in as the first user.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-3069">
+		<div id="comment-3069">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://aspcode.net' rel='external nofollow' class='url'>Stefan Holmberg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3069">August 12, 2010 at 5:59 pm</a></div>
+
+		<div class="comment-body"><p>>>note this is not really the &#8220;read model&#8221; </p>
+<p>good you cleared that up, thats one fatal design mistake I have to correct in my system asap where I do have a case like  this</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3068">
+		<div id="comment-3068">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.lucisferre.net' rel='external nofollow' class='url'>Chris Nicola</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3068">August 12, 2010 at 5:50 pm</a></div>
+
+		<div class="comment-body"><p>Very well put, there is huge value in actually understanding the problem and context of the problem when designing any solution.  Seems like common sense, but it is surprisingly uncommon.</p>
+<p>This scenario, and it&#8217;s subsequent solution, is the exact sort of thing that turns a lot of businesses away from the CQRS model as they feel it is far too risky to design a data store in this way.  Mind you, this is entirely driven by an irrational fear of uncertainty people get from &#8216;eventual consistency&#8217; but it is still a reality that is difficult for developers encouraging CQRS to confront.  In the end I suspect most lose the argument once someone starts to invoke their need for things to be &#8216;ACID&#8217;.</p>
+<p>The very suggestion that we can just submit an invalid username to the database and deal with it later would probably paralyze most BA&#8217;s and product managers.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-3067">
+		<div id="comment-3067">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3067">August 12, 2010 at 5:12 pm</a></div>
+
+		<div class="comment-body"><p>we could also mark him for the next time he tried to login to bring him to the change username screen the same as the email would have brought him to.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-3066">
+		<div id="comment-3066">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">noobie</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#comment-3066">August 12, 2010 at 4:45 pm</a></div>
+
+		<div class="comment-body"><p>Erm, forgive me if I miss something here,<br />
+but since in the example the user&#8217;s email IS the username, and the user could have mistyped his email address (he could have written <a href="mailto:joe@somewhere.com">joe@somewhere.com</a> instead of <a href="mailto:joe2@somewhere.com">joe2@somewhere.com</a>), thereby generating a duplicate email(username) address, how would you be able to send him an email as a correcting/compensating action in the first place?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2010/08/12/eventual-consistency-and-set-validation/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2010%2F08%2F12%2Feventual-consistency-and-set-validation%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.280 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 16:11:31 -->
+<!-- super cache -->

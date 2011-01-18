@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Build your own CAB Part #9 &#8211; Domain Centric Validation with the Notification Pattern | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='We are so spoiled' href='http://codebetter.com/jeremymiller/2007/06/12/we-are-so-spoiled/' />
+<link rel='next' title='StructureMap is 3 years old' href='http://codebetter.com/jeremymiller/2007/06/17/structuremap-is-3-years-old/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=363' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-363" class="post-363 post type-post status-publish format-standard hentry category-build-your-own-cab category-design-patterns category-featured">
+					<h1 class="entry-title">Build your own CAB Part #9 &#8211; Domain Centric Validation with the Notification Pattern</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern/" title="12:28 pm" rel="bookmark"><span class="entry-date">June 13, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Buckle up, because this is going to be a long post with more pedantry than you can shake a stick at.&nbsp; As I was writing this I found some&nbsp;good&nbsp;examples of some of the design principles&nbsp;related to <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/01/08/Orthogonal-Code.aspx">Orthogonal Code</a>, so I made some digressions just to bring up these concepts in the context of real code.&nbsp; The majority of the sample code is the very validation code we&#8217;re using on my current project for generic validation, so it better damn well work.&nbsp; I&#8217;m pretty happy with&nbsp;this solution&nbsp;so far, and it&#8217;s made the validation easy to implement and test.&nbsp; I promise to make up for the absurd length of this post by taking about&nbsp;a week off from posting starting right now.</p>
+<p>First, here&#8217;s the preceding posts:</p>
+<ol>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/21/build-your-own-cab-part-1-the-preamble.aspx">Preamble</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">The Humble Dialog Box</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/30/build-your-own-cab-part-4-the-passive-view.aspx">Passive View</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/03/build-your-own-cab-part-5-the-presentation-model.aspx">Presentation Model</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication.aspx">View to Presenter Communication</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-answering-some-questions.aspx">Answering some questions</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-part-7-what-s-the-model.aspx">What&#8217;s the Model?</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup.aspx">Assigning Responsibilities in a Model View Presenter Architecture</a></li>
+</ol>
+<p>And for that matter, <a href="http://weblogs.asp.net/bsimser/archive/2007/06/04/extending-the-notification-pattern-example.aspx">Bil Simser took a different tack on this exact subject last week</a>.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>Domain Centric Validation</h4>
+<p>As I said in <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup.aspx">the last post</a>, it&#8217;s highly advantageous to put the validation rules into the Model classes.&nbsp; Just to recap, I&#8217;ll rattle off&nbsp;four reasons why I want my validation rules in my Model classes:</p>
+<ol>
+<li>Validation is mostly a business logic function anyway, and&nbsp;purely for the sake of cohesion it&nbsp;makes sense to put business rules into business classes.&nbsp; As much as possible, I want&nbsp;related business rules in a single place rather than scattered about my code.  </li>
+<li>Since it&#8217;s fairly common to have a single Model class edited in multiple screens, I want to reuse the validation logic consistently across these different screens.&nbsp; More importantly, I want to eliminate duplicated logic between these screens.&nbsp; It&#8217;s going to be much easier to avoid duplication by placing this functionality in the Model than it would be to put it in each Presenter or View.&nbsp; I know somebody is going to bring up the idea of drag n&#8217;drop validator&#8217;s, but even those are potentially easy to use, the potential duplication can easily become a tax &#8212; especially as your validation rules change.  </li>
+<li>By decoupling the validation logic from the View and the backend, we&#8217;ve made these validation rules easy to test.&nbsp; The easiest possible type of unit testing is simple state based testing.&nbsp; Push a couple values into a single object and check the return value with no interaction with anything else.&nbsp; Clear sailing ahead.  </li>
+<li>I&#8217;m going to content that It&#8217;s easier to read the validation logic.&nbsp; The downsides of Rapid Application Development (RAD)&nbsp;approaches are widely known, but for me the worst part is that I think RAD designers and wizards obscure the meaning of code and camouflage the functionality in design time goo.</li>
+</ol>
+<p>Ok, that&#8217;s a lot of hot air about why we want to do domain centric validation, but how do I do it?&nbsp; My current project is doing domain centric validation, and so far I&#8217;m thrilled with how it&#8217;s turning out.&nbsp; Here&#8217;s our secret sauce (ok, it&#8217;s not that secret because it&#8217;s a documented design pattern):</p>
+<p>&nbsp;</p>
+<h4>The Notification Pattern</h4>
+<p>In doing validation on user input there are two main tasks:</p>
+<ol>
+<li>Perform the validation and create meaningful validation messages.  </li>
+<li>Display these validation messages to the user on the screen in a meaningful way.&nbsp; In WinForms development we&#8217;ve got the handy <a href="http://msdn2.microsoft.com/en-us/library/system.windows.forms.errorprovider.aspx">ErrorProvider</a> class that probably meets the needs of most scenarios.</li>
+</ol>
+<p>Let me emphasize this a little bit more, we have two separate concerns:&nbsp; validation rules and screen presentation of validation failures.&nbsp; As always, we can make our development simpler by tackling one problem at a time.&nbsp; The advantage in testability, reuse, and understandability&nbsp;I mentioned&nbsp;above is&nbsp;largely predicated on&nbsp;separating the validation logic from the screen machinery.&nbsp; </p>
+<p>Assuming you&#8217;ve accepted my advice to separate the two tasks and make the validation&nbsp;logic completely independent of the presentation machinery,&nbsp;we can move onto the next question.&nbsp; How&nbsp;can we marshal the validation messages to the View in a way&nbsp;to&nbsp;simplify the presentation of validation messages?&nbsp; In other words, how does a validation message get put into the screen at the right place?&nbsp; There is a ready made answer for us, just use the Notification pattern as a convenient way to package up validation messages.</p>
+<p>From Martin Fowler, the <a href="http://www.martinfowler.com/eaaDev/Notification.html">Notification pattern</a> is a</p>
+<blockquote><p><i>An object that collects together information about errors and other information in the domain layer and communicates it to the </i><i>presentation.</i></p>
+</blockquote>
+<p>Let&#8217;s take a look at my project&#8217;s Notification structure.&nbsp; The first piece&nbsp;is a class called NotificationMessage (the code below is somewhat elided)&nbsp;that&#8217;s simply a single validation error consisting of the message itself and the&nbsp;name of the Property&nbsp;on the Model that the message applies to:</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">NotificationMessage</span> : <span style="color: teal">IComparable</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">string</span> _fieldName;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">string</span> _message;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> NotificationMessage(<span style="color: blue">string</span> fieldName, <span style="color: blue">string</span> message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _fieldName = fieldName;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _message = message;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">string</span> FieldName</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span> { <span style="color: blue">return</span> _fieldName; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span> { _fieldName = <span style="color: blue">value</span>; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">string</span> Message</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span> { <span style="color: blue">return</span> _message; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span> { _message = <span style="color: blue">value</span>; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Override the Equals method to make declarative testing easy</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">override</span> <span style="color: blue">bool</span> Equals(<span style="color: blue">object</span> obj)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (<span style="color: blue">this</span> == obj) <span style="color: blue">return</span> <span style="color: blue">true</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">NotificationMessage</span> notificationMessage = obj <span style="color: blue">as</span> <span style="color: teal">NotificationMessage</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (notificationMessage == <span style="color: blue">null</span>) <span style="color: blue">return</span> <span style="color: blue">false</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> Equals(_fieldName, notificationMessage._fieldName) &amp;&amp; Equals(_message, notificationMessage._message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">//&nbsp;Override the ToString() method to create more descriptive messages within</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// xUnit testing assertions</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">override</span> <span style="color: blue">string</span> ToString()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> <span style="color: blue">string</span>.Format(<span style="color: maroon">&#8220;Field {0}:&nbsp; {1}&#8221;</span>, _fieldName, _message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>For reasons that will be clear in the section on consuming a Notification, it&#8217;s very useful to tie the messages directly to the property names.&nbsp; The second part is the Notification class itself.&nbsp; It&#8217;s not much more than a collection of NotificationMessage objects:</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">Notification</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: blue">readonly</span> <span style="color: blue">string</span> REQUIRED_FIELD = <span style="color: maroon">&#8220;Required Field&#8221;</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: blue">readonly</span> <span style="color: blue">string</span> INVALID_FORMAT = <span style="color: maroon">&#8220;Invalid Format&#8221;</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">List</span>&lt;<span style="color: teal">NotificationMessage</span>&gt; _list = <span style="color: blue">new</span> <span style="color: teal">List</span>&lt;<span style="color: teal">NotificationMessage</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">bool</span> IsValid()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> _list.Count == 0;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> RegisterMessage(<span style="color: blue">string</span> fieldName, <span style="color: blue">string</span> message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _list.Add(<span style="color: blue">new</span> <span style="color: teal">NotificationMessage</span>(fieldName, message));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">string</span>[] GetMessages(<span style="color: blue">string</span> fieldName)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">List</span>&lt;<span style="color: teal">NotificationMessage</span>&gt; messages = _list.FindAll(<span style="color: blue">delegate</span>(<span style="color: teal">NotificationMessage</span> m) { <span style="color: blue">return</span> m.FieldName == fieldName; });</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span>[] returnValue = <span style="color: blue">new</span> <span style="color: blue">string</span>[messages.Count];</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> (<span style="color: blue">int</span> i = 0; i &lt; messages.Count; i++)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; returnValue[i] = messages[i].Message;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> returnValue;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: teal">NotificationMessage</span>[] AllMessages</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _list.Sort();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> _list.ToArray();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">bool</span> HasMessage(<span style="color: blue">string</span> fieldName, <span style="color: blue">string</span> messageText)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">NotificationMessage</span> message = <span style="color: blue">new</span> <span style="color: teal">NotificationMessage</span>(fieldName, messageText);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> _list.Contains(message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Easy enough right?&nbsp; You&#8217;ve got everything you need to do domain centric validation &#8212; except for all the stuff around the Notification class that does all the real work.&nbsp; Details.&nbsp; Or as my Dad&#8217;s construction crew will say&nbsp;after day one on a new project, &#8220;all we lack is finishing up.&#8221;</p>
+<p>&nbsp;</p>
+<h4>Filling up the&nbsp;Notification</h4>
+<p>The first&nbsp;design goal&nbsp;is simply to come up with a way for a&nbsp;Model object to create Notification objects.&nbsp; Most validation rules are very simple and take one of a handful of forms, so it&#8217;s worth our while to make the implementation of these simple rules as quick and declarative as possible.&nbsp; We also need to relate any and all validation messages to the proper field.&nbsp; Since this is .Net, the easiest usage scenario is simple attributes that we can use to decorate property declarations.&nbsp; Using attributes comes with the great advantage of quickly tying a validation rule to a particular property.</p>
+<p>Using attributes always requires some sort of bootstrapping code that finds and acts on the attributes decorating code, but I&#8217;m going follow my own &#8220;<a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/05/30/145752.aspx">Test Small Before Testing Big</a>&#8221; rule.&nbsp; Let&#8217;s put off the overall validation calculation to tackle the very small goal of creating validation attributes.&nbsp; Once we have the shape of the attributes and maybe the Model class down, the validation coordination code largely falls out.</p>
+<p>Don&#8217;t use the attributes as just markers though.&nbsp; The actual validation logic should reside in the attribute itself to allow for easier expansion of our validation rules.&nbsp;&nbsp;This is a good&nbsp;example of the <a href="http://en.wikipedia.org/wiki/Open/closed_principle">Open/Closed Principle</a>.&nbsp; We can create all new validation logic by implementing a whole new&nbsp;ValidationAttribute without&nbsp;having to modify any existing code.&nbsp; That&#8217;s good stuff.&nbsp; I think&nbsp;this is&nbsp;also an example of <a href="http://www.craiglarman.com/articles/The%20Importance%20of%20Being%20Closed%20-%20Larman%20-%20IEEE%20Software.pdf">Craig Larman&#8217;s Protected Variations</a> concept.</p>
+<p>All of our validation attributes inherit from the ValidationAttribute shown below:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: teal">AttributeUsage</span>(<span style="color: teal">AttributeTargets</span>.Property)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">abstract</span> <span style="color: blue">class</span> <span style="color: teal">ValidationAttribute</span> : <span style="color: teal">Attribute</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">PropertyInfo</span> _property;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> Validate(<span style="color: blue">object</span> target, <span style="color: teal">Notification</span> notification)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">object</span> rawValue = _property.GetValue(target, <span style="color: blue">null</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; validate(target, rawValue, notification);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Helper method to write validation messages to a Notification</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// object with the correct Property name</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">protected</span> <span style="color: blue">void</span> logMessage(<span style="color: teal">Notification</span> notification, <span style="color: blue">string</span> message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; notification.RegisterMessage(Property.Name, message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// A Template Method for the actual validation logic</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">protected</span> <span style="color: blue">abstract</span> <span style="color: blue">void</span> validate(<span style="color: blue">object</span> target, <span style="color: blue">object</span> rawValue, <span style="color: teal">Notification</span> notification);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// The Property of the targeted class</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// that&#8217;s being validated</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: teal">PropertyInfo</span> Property</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span> { <span style="color: blue">return</span> _property; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span> { _property = <span style="color: blue">value</span>; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">string</span> PropertyName</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> _property.Name;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>Attributes don&#8217;t find themselves, so we&#8217;ll need to &#8220;push&#8221; the correct&nbsp;actual System.Reflection.PropertyInfo object to the ValidationAttribute objects, so there&#8217;s an open getter/setter for the PropertyInfo.&nbsp; The validation will work by first finding all of the special validation attributes, attaching the proper PropertyInfo&#8217;s, and looping through each&nbsp;ValidationAttribute and calling the Validate(target, notification) method.&nbsp; All the ValidationAttribute classes do is register messages on&nbsp;a Notification object, so there&#8217;s absolutely no coupling to either the server or the user interface.</p>
+<p>To actually build a specific ValidationAttribute you simply inherit from ValidationAttribute and override the validate(target, rawValue, notification) <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/04/11/142665.aspx">Template Method</a>.&nbsp; The simplest case for a simple required field validation is shown below:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: teal">AttributeUsage</span>(<span style="color: teal">AttributeTargets</span>.Property)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">RequiredAttribute</span> : <span style="color: teal">ValidationAttribute</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">protected</span> <span style="color: blue">override</span> <span style="color: blue">void</span> validate(<span style="color: blue">object</span> target, <span style="color: blue">object</span> rawValue, <span style="color: teal">Notification</span> notification)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (rawValue == <span style="color: blue">null</span>)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; logMessage(notification, <span style="color: teal">Notification</span>.REQUIRED_FIELD);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>In real life you&#8217;d have to enhance this a bit to handle primitive types that aren&#8217;t nullable, but right now this is doing everything my project needs.&nbsp; Using this little monster is as simple as marking a Property like this;</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Required</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">string</span> Name</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span> { <span style="color: blue">return</span> _name; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span> { _name = <span style="color: blue">value</span>; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>or combine attributes:</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Required</span>, <span style="color: teal">GreaterThanZero</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">double</span>? BaseAmount</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">get</span> { <span style="color: blue">return</span> _baseAmount; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span> { _baseAmount = <span style="color: blue">value</span>; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>Of course, some rules are going to be too complex or simply too rare to justify building an attribute (think about rules that only apply in a certain state or involve many fields).&nbsp; To allow for these more complex cases, I chose to use a simple marker interface called IValidated.</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: teal">IValidated</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> Validate(<span style="color: teal">Notification</span> notification);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>A Model class can implement this interface as a kind of hook to perform any sort of complex validation that just doesn&#8217;t fit into the attribute-based validation.&nbsp; There&#8217;s a bit of a design point I&#8217;d like to make here.&nbsp; This little IValidated interface is an example of the <a href="http://www.pragmaticprogrammer.com/ppllc/papers/1998_05.html">Tell, Don&#8217;t Ask principle</a> in action.&nbsp; Rather than querying the attributes and the validated object to decide what rules to enforce, we can create far more variations and allow for far more extension by just telling the object being validated and each attribute class&nbsp;to add it&#8217;s messages to the Notification object.&nbsp; </p>
+<p>A quick side note.&nbsp; If you&#8217;re going to build something like this for yourself, I&#8217;d recommend building the first couple specific cases, then doing an <a href="http://www.refactoring.com/catalog/extractSuperclass.html">Extract Superclass</a> refactoring to &#8220;lift&#8221; the common template into a superclass.&nbsp; Starting by designing the abstract class can sometimes lead into a black hole.&nbsp; When I built this code I created the RequiredFieldAttribute first then used ReSharper to create the Supertype.</p>
+<p>And yes, I do know about the <a href="http://www.codeplex.com/VAB/">Validation Application Block</a>, but it&#8217;s kind of fun and fairly&nbsp;easy&nbsp;to write our own to do exactly what we want.&nbsp; Besides, I&#8217;m not sure how well the Validation Block plays in the Notification scenario.&nbsp; My real inspiration here is the Notification-style validation baked into&nbsp;<a href="http://jroller.com/page/thuss?entry=validation_belongs_in_the_domain">ActiveRecord in Ruby on Rails</a>.&nbsp; The same kind of thing that we did with attributes in C# is potentially more declarative in a Rails model.&nbsp; Just coincidentally, Steve Eichert has a cool writeup on this subject at <a href="http://iqueryable.com/2007/06/13/CreateDDDStyleSpecificationsInRubyWithActiveSpec.aspx">Create DDD style specifications in Ruby with ActiveSpec</a>.</p>
+<p>&nbsp;</p>
+<h4>Putting the Notification Together</h4>
+<p>We&#8217;ve got the Notification class,&nbsp;some working ValidationAttribute classes, and the IValidated hook interface.&nbsp; Now we need a Controller class of some kind to glue all of these pieces together.&nbsp;&nbsp;With my nearly infinite creativity, I&#8217;ve named this class in our system &#8220;Validator.&#8221;&nbsp; The&nbsp;next task is&nbsp;simply to&nbsp;scan a Type and create&nbsp;a list of ValidationAttribute objects for each declared attribute.&nbsp; That&#8217;s done with this static method:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Find all the ValidationAttribute&#8217;s for a given Type, and connect</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// each ValidationAttribute to the correct Property</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: teal">List</span>&lt;<span style="color: teal">ValidationAttribute</span>&gt; FindAttributes(<span style="color: teal">Type</span> type)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">List</span>&lt;<span style="color: teal">ValidationAttribute</span>&gt; atts = <span style="color: blue">new</span> <span style="color: teal">List</span>&lt;<span style="color: teal">ValidationAttribute</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">foreach</span> (<span style="color: teal">PropertyInfo</span> property <span style="color: blue">in</span> type.GetProperties())</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Attribute</span>[] attributes = <span style="color: teal">Attribute</span>.GetCustomAttributes(property, <span style="color: blue">typeof</span> (<span style="color: teal">ValidationAttribute</span>));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">foreach</span> (<span style="color: teal">ValidationAttribute</span> attribute <span style="color: blue">in</span> attributes)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; attribute.Property = property;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; atts.Add(attribute);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> atts;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Once that method is unit tested, we can move onto the core task of validating an object.&nbsp; That&#8217;s accomplished with the method below.</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: teal">Notification</span> ValidateObject(<span style="color: blue">object</span> target)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Find all the ValidationAttribute&#8217;s attached to the properties</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// of the target Type</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">List</span>&lt;<span style="color: teal">ValidationAttribute</span>&gt; atts = scanType(target.GetType());</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Notification</span> notification = <span style="color: blue">new</span> <span style="color: teal">Notification</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Iterate through each ValidationAttribute and give each</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// a chance to add validation messages</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">foreach</span> (<span style="color: teal">ValidationAttribute</span> att <span style="color: blue">in</span> atts)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; att.Validate(target, notification);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// And if the target implements IValidated, call the </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Validate(Notification) method to do the special cases</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (target <span style="color: blue">is</span> <span style="color: teal">IValidated</span>)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ((<span style="color: teal">IValidated</span>)target).Validate(notification);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> notification;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>I&#8217;ve elided the code here for brevity, but the first thing ValidateObject(object) does is to call its scanType(Type) method to find the list of ValidationAttribute&#8217;s declared for target.GetType().&nbsp; Since Reflection isn&#8217;t the fastest operation in the world, I do cache the list of ValidationAttribute objects for each Type on the first access for that Type.&nbsp; </p>
+<p>Once we have the ValidationAttribute list everything else just falls out.</p>
+<h4>Testing Validation Logic</h4>
+<p>One of the best things about this approach is how easy automated testing of the validation logic becomes.&nbsp; Just create the class under test, pump in some property values, create a Notification from its current state, and finally compare the Notification object to the expected results.&nbsp; One of Jeremy&#8217;s Laws of TDD is to &#8220;go declarative whenever possible&#8221; in testing.&nbsp; We&#8217;re using Fit tests[LINK] to perform declarative testing of our validation rules, and this is exactly the kind of scenario where Fit shines.&nbsp;&nbsp;I will often&nbsp;embed bits of Fit tests directly into NUnit tests for developer tests, especially for set based functionality.&nbsp;&nbsp;This might not be very interesting to you unless you already&nbsp;use the&nbsp;<a href="http://fitnesse.org/FitNesse.DotNet">FitnesseDotNet</a>&nbsp;engine, but we create and define the state of one of&nbsp;our Model objects inside a Fit table, then turn around and check the validation messages produced for the input.&nbsp; The Fit test itself&nbsp;looks something like this:</p>
+<p>&nbsp;</p>
+<pre>	!|UserFixture|	|Create New|	|Name       |Jeremy|	|Birthday   |BLANK |	|PhoneNumber|BLANK |	|The Validation Messages Are|<b><font color="#ff0000">	|FieldName|Message       |	|Name     |Field Required|	|Birthday |Field Required|</font></b>
+</pre>
+<p>The actual UserFixture class would inherit from DoFixture and provide methods to set each public property (we codegen these Fixture classes from reflecting over the targeted classes, i.e. the code generator creates a UserFixture class for User).&nbsp; Once the desired state of the object is configured, the validation logic is tested&nbsp;by comparing the actual validation messages against the expected messages.&nbsp; At the bottom of the Fit test above we simply make a declaration that the expected&nbsp;validation messages are the values in the nested table (the bolded, red text).&nbsp; The Fit engine has a facility called the RowFixture that makes this type of set comparison very easy.&nbsp; The RowFixture to check&nbsp;the validation messages&nbsp;is triggered by this method on the UserFixture class:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: teal">Fixture</span> TheValidationMessagesForFieldAre(<span style="color: blue">string</span> fieldName)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Notification</span> notification = <span style="color: teal">Validator</span>.ValidateObject(CurrentTrade);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span>[] messages = notification.GetMessages(fieldName);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> <span style="color: blue">new</span> <span style="color: teal">StringArrayFixture</span>(messages);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>This section might not be all that useful to you if you&#8217;re not familiar with the&nbsp;mechanics of Fit testing, but then again, you might want to go give Fit another try.&nbsp; It&#8217;s goofy alright, but it&#8217;s very useful in the right spot.</p>
+<h4>Consuming Notifications</h4>
+<p>Alrighty then!&nbsp; We&#8217;ve got ourselves a Notification object that relates all the user input failure messages to the relevant properties of the Model.&nbsp; Now we&#8217;ve just got to get these messages to the right place on the screen.&nbsp;In your best Church Lady voice &#8212; who knows about both&nbsp;the field names and the controls that edit those fields?&nbsp; Could it be&#8230;.&nbsp;&nbsp; &#8230;<strike>Satan!</strike>&nbsp; The data binding!&nbsp; I&#8217;m not going to show it here because I suspect the code would be nasty, but you could do a recursive search through all the child Control&#8217;s and check the DataBindings collection of each child control to see if it&#8217;s bound to any property of the object being validated.&nbsp; </p>
+<p>Alternatively, you ditch the designer for data binding and put just a small Facade over the BindingDataSource class.&nbsp; If you build just a tiny class that wraps BindingDataSource with something like &#8220;BindControlToProperty(control, propertyName)&#8221; you could capture a Dictionary of the controls by field name along that way that could make attaching the errors much simpler.&nbsp; One of the themes I was trying to get across with my WinForms patterns talk at DevTeach was that sometimes a codecentric solution can be much more efficient than the equivalent work with designers.</p>
+<p>Or, if that sounds as nasty to you as it does to me, you could just write your own synchronization mechanism that bakes in the functionality to attach validation messages to controls.&nbsp; If you thought I was nuts to suggest that mere mortals could write their own CAB analogue, you&#8217;ll really flip out once I admit that I&#8217;ve written a replacement for WinForms data binding to do screen synchronization (so far the <a href="http://fitnesse.org/FitNesse.DotNet">Crackpot idea</a> is working out fairly well).&nbsp; I&#8217;ll give it a much better treatment in the post on MicroController, but for now, here&#8217;s a sneak peek at the code we use to&nbsp;attach validation messages to the proper screen&nbsp;element with&nbsp;an ErrorProvider.</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ShowErrorMessages(<span style="color: teal">Notification</span> notification)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">foreach</span> (<span style="color: teal">IScreenElement</span> element <span style="color: blue">in</span> _elements)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span>[] messages = notification.GetMessages(element.FieldName);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; element.SetErrors(messages);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Each IScreenElement is what I call a &#8220;MicroController&#8221; that governs the behavior and binding of a single control element.&nbsp; Each IScreenElement already&nbsp;&#8221;knows&#8221; the ErrorProvider for the form or control by this point, so it just needs to turn around and use the ErrorProvider to attach messages to its internal control.</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/build-your-own-cab/" title="View all posts in Build your own CAB" rel="category tag">Build your own CAB</a>, <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>, <a href="http://codebetter.com/jeremymiller/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern/" title="Permalink to Build your own CAB Part #9 &#8211; Domain Centric Validation with the Notification Pattern" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern/feed/" title="Comments RSS to Build your own CAB Part #9 &#8211; Domain Centric Validation with the Notification Pattern" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-363 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/06/12/we-are-so-spoiled/" rel="prev"><span class="meta-nav">&larr;</span> We are so spoiled</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/06/17/structuremap-is-3-years-old/" rel="next">StructureMap is 3 years old <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2199">
+					<div id="dsq-comment-header-2199" class="dsq-comment-header">
+						<cite id="dsq-cite-2199">
+	http://blogs.meetandplay.com/wpierce/							<span id="dsq-author-user-2199">Bill Pierce</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2199" class="dsq-comment-body">
+						<div id="dsq-comment-message-2199" class="dsq-comment-message"><p>Lovin&#8217; it, as usual.  Use what works until it doesn&#8217;t.  I think this works most of the time but I&#8217;ll put a plug in here for putting your validation logic in a separate class.  </p>
+<p>Our app is purchased by several organizations that use it internally.  Using your example fields&#8230; some of them want PhoneNumber to be required, some of them don&#8217;t, some of them want PhoneNumber validated against a national phone number database, a custom regex string, an XML file with valid company extensions, &#8230; you get the point.  By having the validation logic in a separate class we can easily code a custom validator on a case by case basis (and extrapolate common customizations into configuration in v.Next) and have it injected through DI.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2200">
+					<div id="dsq-comment-header-2200" class="dsq-comment-header">
+						<cite id="dsq-cite-2200">
+								<span id="dsq-author-user-2200">D Rapp</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2200" class="dsq-comment-body">
+						<div id="dsq-comment-message-2200" class="dsq-comment-message"><p>All looks vaguely familiar&#8230;  Though I&#8217;m not a fan of the IValidated interface.  Then validation logic exists in two locations and moreover you need to manually input the corresponding property names into the Notification object in your validate() method.  Thinking out loud, for complex validations, is there a way to integrate generics throughout the notification and validator code to inject strongly typed objects into the custom validation attributes?  Then you can compare multiple properties together with ease&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2201">
+					<div id="dsq-comment-header-2201" class="dsq-comment-header">
+						<cite id="dsq-cite-2201">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2201">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2201" class="dsq-comment-body">
+						<div id="dsq-comment-message-2201" class="dsq-comment-message"><p>@Derrick,</p>
+<p>It should look familiar since you wrote it big guy.  The logic is declared all in one place though.   The only time the manual property declaration comes into play is for the special IValidated method.  We&#8217;re codegen&#8217;ing off constants for the field names to eliminate the soft strings.  If the property names change, the [Class]Fields class constants change and the new code would break at compile time.  </p>
+<p>Rubyesque symbols would be very nice here too.</p>
+<p>For multi-field validations, we are doing it by pushing in a property name.  Your suggestion about generics is worth looking into.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2202">
+					<div id="dsq-comment-header-2202" class="dsq-comment-header">
+						<cite id="dsq-cite-2202">
+	http://www.arcware.net							<span id="dsq-author-user-2202">Dave Donaldson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2202" class="dsq-comment-body">
+						<div id="dsq-comment-message-2202" class="dsq-comment-message"><p>Don&#8217;t know if you know about it, but EViL is out there as well for validation attributes (<a href="http://www.codeplex.com/evil" rel="nofollow">http://www.codeplex.com/evil</a>).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2203">
+					<div id="dsq-comment-header-2203" class="dsq-comment-header">
+						<cite id="dsq-cite-2203">
+	http://codebetter.com/blogs/john.papa							<span id="dsq-author-user-2203">John Papa</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2203" class="dsq-comment-body">
+						<div id="dsq-comment-message-2203" class="dsq-comment-message"><p>Dave &#8230; I have used EViL a bit and found it very useful. Nice to reuse those basic validation rules.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2204">
+					<div id="dsq-comment-header-2204" class="dsq-comment-header">
+						<cite id="dsq-cite-2204">
+	http://codebetter.com/blogs/gregyoung							<span id="dsq-author-user-2204">Greg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2204" class="dsq-comment-body">
+						<div id="dsq-comment-message-2204" class="dsq-comment-message"><p>Jeremy I like the work but one thing in it throws a big red flag for me, the attributes and the objects themselves controlling their validation. I like the attributes in that they are simple and easily readable through metadata which also allows for a richer domain language.</p>
+<p>Often times however a single domain is reused in many contexts (especially shared areas of a domain) and if this were to happen to a domain with its logic implemented as above it would be doomed because there is no good way to say this rule only applies in situation X. </p>
+<p>What I see happenning if this occurred (providing someone tried to stay within the model for cost or intelligence reasons) would be two-fold, first the attributes would slowly disappear on all rules that were variant; my guess is that they would be moved into the objects Validate method as hard coded code or there would be some kind ofhokey new attribute RequiredWhen(SomeGlobalCondition) would appear. Either way this type of branching is generally frowned upon in comparison with the alternative of injecting IRule objects and having them actually generate the notifications.</p>
+<p>The next issue obviously applies within the validate method itself and is similar things like if(IShouldDoThisValidation) { }.</p>
+<p>Perhaps some of what you are presenting here could be built on top of a architecture more like that where for common cases this is used but it is used only as metadata to populate an IRule type architecture (i.e. in generating the rules to be run for an object and caching them you also allow attributes where the attributes meet the IRule interface)</p>
+<p>Also in my experience the ability to create composite rules is quite useful and allows for a much more dynamic system to be created.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2205">
+					<div id="dsq-comment-header-2205" class="dsq-comment-header">
+						<cite id="dsq-cite-2205">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2205">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2205" class="dsq-comment-body">
+						<div id="dsq-comment-message-2205" class="dsq-comment-message"><p>Greg,</p>
+<p>There&#8217;s no doubt that this little solution is really limited to simpler systems with invariant rules, but it&#8217;s working great for my current project that meets that criteria.</p>
+<p>I would certainly agree with injecting IRule strategy classes of some kind for branching or conditional logic, especially if you need extensibility or client specific rules.</p>
+<p>Wire it together with StructureMap and that sounds like an awesome approach to me.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2206">
+					<div id="dsq-comment-header-2206" class="dsq-comment-header">
+						<cite id="dsq-cite-2206">
+	http://weblogs.asp.net/kdente							<span id="dsq-author-user-2206">Kevin Dente</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2206" class="dsq-comment-body">
+						<div id="dsq-comment-message-2206" class="dsq-comment-message"><p>Nice. But how would you handle the case, like with ASP.NET form validation, where (some of) the validation logic lives on a separate tier than the domain objects (in client-side Javascript, specifically)?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2207">
+					<div id="dsq-comment-header-2207" class="dsq-comment-header">
+						<cite id="dsq-cite-2207">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2207">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2207" class="dsq-comment-body">
+						<div id="dsq-comment-message-2207" class="dsq-comment-message"><p>Kevin,</p>
+<p>Don&#8217;t know.  For server side validation the response message could contain a Notification or something easily transmittable to the very same Notification that we use to attach the messages to the UI.</p>
+<p>I don&#8217;t know offhand what I&#8217;d do in a web development environment.  You&#8217;ve got a different set of tricks to play with Javascript and DHTML as well.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2208">
+					<div id="dsq-comment-header-2208" class="dsq-comment-header">
+						<cite id="dsq-cite-2208">
+								<span id="dsq-author-user-2208">Blake</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2208" class="dsq-comment-body">
+						<div id="dsq-comment-message-2208" class="dsq-comment-message"><p>I&#8217;m stuck on displaying lists in grid controls (i.e. WinForms&#8217;s DataGridView).  How can you resolve a field name to a specific item in the list?  For example, if you have a list named &#8216;Names&#8217; that exposes &#8216;Name&#8217; objects that have &#8216;FirstName&#8217; and &#8216;LastName&#8217; properties, an error might reference the &#8216;Names.FirstName&#8217; field, but how would you know which item in the &#8216;Names&#8217; list the error actually refers to?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2209">
+					<div id="dsq-comment-header-2209" class="dsq-comment-header">
+						<cite id="dsq-cite-2209">
+								<span id="dsq-author-user-2209">FZelle</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2209" class="dsq-comment-body">
+						<div id="dsq-comment-message-2209" class="dsq-comment-message"><p>I Know it is late, but why don&#8217;t you use the IDataErrorInfo that is used in the FW?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2210">
+					<div id="dsq-comment-header-2210" class="dsq-comment-header">
+						<cite id="dsq-cite-2210">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2210">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2210" class="dsq-comment-body">
+						<div id="dsq-comment-message-2210" class="dsq-comment-message"><p>@FZelle,</p>
+<p>Well, the main reason is that I had to go look up &#8220;IDataErrorInfo&#8221; after your comment.  I think I did research that  last spring, but passed on it for some reason.  Even so, in the system that I stole this sample from, the Model classes in the UI were the actual Domain Model classes.  I didn&#8217;t want to have to put any kind of IPropertyNotifyChanged/IBindingList/IDataErrorInfo classes on these classes.</p>
+<p>So yes, you could use IDataErrorInfo for getting the error messages to the screen elements, but this post was really about a way to put the validation messages onto the Model classes in the first place.  You could do both the validation scheme I showed up above (which is basically what EntLib and a couple others do to) and expose the IDataErrorInfo interface for data binding support.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2211">
+					<div id="dsq-comment-header-2211" class="dsq-comment-header">
+						<cite id="dsq-cite-2211">
+								<span id="dsq-author-user-2211">Oswaldo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2211" class="dsq-comment-body">
+						<div id="dsq-comment-message-2211" class="dsq-comment-message"><p>Hey, Jeremy I believe that you should check out the early draft of Java&#8217;s Bean Validation Framework as I believe that it adresses some of the concerns expressed by FZelle</p>
+<p>Links:<br />
+<a href="http://in.relation.to/Bloggers/BeanValidationSneakPeekPartI" rel="nofollow">http://in.relation.to/Bloggers/BeanValidationSneakPeekPartI</a><br />
+<a href="http://jcp.org/en/jsr/detail?id=303" rel="nofollow">http://jcp.org/en/jsr/detail?id=303</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2212">
+					<div id="dsq-comment-header-2212" class="dsq-comment-header">
+						<cite id="dsq-cite-2212">
+								<span id="dsq-author-user-2212">Oswaldo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2212" class="dsq-comment-body">
+						<div id="dsq-comment-message-2212" class="dsq-comment-message"><p>Sorry I meant Greg instead of FZelle</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2213">
+					<div id="dsq-comment-header-2213" class="dsq-comment-header">
+						<cite id="dsq-cite-2213">
+								<span id="dsq-author-user-2213">Matt</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2213" class="dsq-comment-body">
+						<div id="dsq-comment-message-2213" class="dsq-comment-message"><p>Jeremy,</p>
+<p>I know this is an ancient post now, but I have a question that still applies to this series.</p>
+<p>How would you &#8220;bubble up&#8221; these validation concerns to a presentation model or view model? I&#8217;m specifically thinking about ASP.NET MVC at the moment.</p>
+<p>If I need a view model for a page that composites portions of information together from 2 or more entities, how can I keep my validation logic in one place, yet pull just the logic pieces I need to validate the view model for the page on the client?</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern/ ';
+	var disqus_identifier = '363 /blogs/jeremy.miller/archive/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Build your own CAB Part #9 &#8211; Domain Centric Validation with the Notification Pattern";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=363');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/06\/13\/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://codeofrob.com/' rel='external nofollow' class='url'>Rob Ashton</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6752">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://www.best-registrycleaner.net' rel='external nofollow' class='url'>Best Registry Cleaner</a> on <a href="http://codebetter.com/jeremymiller/2009/01/20/create-your-own-auto-registration-convention-with-structuremap/#comment-6747">Create your own Auto Registration Convention with StructureMap</a></li><li class="recentcomments">Eric Turnbow on <a href="http://codebetter.com/jeremymiller/2005/11/07/using-the-chain-of-responsibility-pattern/#comment-6745">Using the Chain of Responsibility Pattern</a></li><li class="recentcomments"><a href='http://twitter.com/lazycoder' rel='external nofollow' class='url'>Scott Koon</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6744">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://thezendev.com' rel='external nofollow' class='url'>Dan Martin</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6743">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.365 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-18 10:08:25 -->
+<!-- super cache -->
