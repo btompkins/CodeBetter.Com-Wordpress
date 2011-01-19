@@ -28,7 +28,7 @@
 	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 	<?php wp_head(); ?>
-	<style type="text/css">body { padding-top:0px !important; }</style>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
 
 </head>
 
