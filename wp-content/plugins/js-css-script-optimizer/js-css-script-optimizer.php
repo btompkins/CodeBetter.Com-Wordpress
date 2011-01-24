@@ -2,7 +2,7 @@
 /*
   Plugin Name: JS & CSS Script Optimizer
   Plugin URI: http://4coder.info/en/wordpress-js-css-optimizer/
-  Version: 0.1.8
+  Version: 0.2.0
   Author: Evgeniy Kotelnitskiy
   Author URI: http://4coder.info/en/
   Description: Features: Combine all scripts into the single file, Pack scripts using <a href="http://joliclic.free.fr/php/javascript-packer/en/">PHP version of the Dean Edwards's JavaScript Packer</a>, Move all JavaScripts to the bottom, Combine all CSS scripts into the single file, Pack CSS files (remove comments, tabs, spaces, newlines).
@@ -32,6 +32,9 @@ class evScriptOptimizer {
             self::$upload_path = ABSPATH . 'wp-content/uploads/';
             self::$upload_url = site_url('/wp-content/uploads/');
         }
+		if (substr(self::$upload_path, -1) != '/') self::$upload_path .= '/';
+		if (substr(self::$upload_url, -1) != '/') self::$upload_url .= '/';
+		
         self::$plugin_path = dirname(__FILE__);
         self::$cache_directory = self::$upload_path . 'spacker-cache/';
         self::$cache_url = self::$upload_url . 'spacker-cache/';
@@ -305,7 +308,7 @@ class evScriptOptimizer {
                 $fileId = 0;
                 if (! $script['external']) {
                     $path = ABSPATH . str_replace($home, '', $script['src']);
-                    $fileId = filemtime($path);
+                    $fileId = @filemtime($path);
                 }
                 $cache_name = md5($handle);
                 $cache_file_path = self::$cache_directory . $cache_name . '.js';
@@ -376,7 +379,7 @@ class evScriptOptimizer {
             foreach ($auto_compress_styles[$media] as $handle => $script) {
                 if (! $script['external']) {
                     $path = ABSPATH . str_replace($home, '', $script['src']);
-                    $fileId += filemtime($path);
+                    $fileId += @filemtime($path);
                 }
             }
 
@@ -421,7 +424,7 @@ class evScriptOptimizer {
                 $fileId = 0;
                 if (! $script['external']) {
                     $path = ABSPATH . str_replace($home, '', $script['src']);
-                    $fileId = filemtime($path);
+                    $fileId = @filemtime($path);
                 }
                 $cache_name = md5($handle);
                 $cache_file_path = self::$cache_directory . $cache_name . '.css';

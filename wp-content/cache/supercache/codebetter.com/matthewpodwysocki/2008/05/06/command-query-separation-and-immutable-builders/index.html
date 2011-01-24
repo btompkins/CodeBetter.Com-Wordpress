@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Command-Query Separation and Immutable Builders | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Adventures in F# &#8211; F# 101 Part 9 (Control Flow)' href='http://codebetter.com/matthewpodwysocki/2008/05/02/adventures-in-f-f-101-part-9-control-flow/' />
+<link rel='next' title='Your API Fails, Who is at Fault?' href='http://codebetter.com/matthewpodwysocki/2008/05/08/your-api-fails-who-is-at-fault/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/05/06/command-query-separation-and-immutable-builders/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=12' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-12" class="post-12 post type-post status-publish format-standard hentry category-c category-dbc category-f category-spec category-tddbdd">
+					<h1 class="entry-title">Command-Query Separation and Immutable Builders</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/05/06/command-query-separation-and-immutable-builders/" title="9:59 pm" rel="bookmark"><span class="entry-date">May 6, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In one of my <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/05/01/side-effecting-functions-are-code-smells-revisited.aspx">previous posts</a> about <a href="http://martinfowler.com/bliki/CommandQuerySeparation.html">Command-Query Separation (CQS)</a> and side effecting functions being code smells, it was <a href="http://nat.truemesh.com/archives/000724.html">pointed out to me again</a> about immutable builders.&nbsp; For the most part, this has been one area of CQS that I&#8217;ve been willing to let break.&nbsp; I&#8217;ve been following <a href="http://www.martinfowler.com/dslwip/MethodChaining.html">Martin Fowler&#8217;s advice</a> on method chaining and it has worked quite well.&nbsp; But, revisiting an item like this never hurts.&nbsp; Immutability is something you&#8217;ll see me harping on time and time again now and in the future.&nbsp; The standard rules I usually do is immutable and side effect free when you can, mutable state where you must.&nbsp; I like the opt-in mutability of functional languages such as <a href="http://research.microsoft.com/fsharp/fsharp.aspx">F#</a> which I&#8217;ll cover at some point in the near future instead of the opt-out mutability of imperative/OO languages such as C#.</p>
+<p><span style="font-weight: bold">Typical Builders</span></p>
+<p>The idea of the standard builder is pretty prevalent in most applications we see today with fluent interfaces.&nbsp; Take for example most Inversion of Control (IoC) containers when registering types and so on:</p>
+<p>UnityContainer container = new UnityContainer();<br />
+container<br />
+&nbsp;&nbsp;&nbsp; .RegisterType&lt;ILogger, DebugLogger&gt;(&#8220;logger.Debug&#8221;)<br />
+&nbsp;&nbsp;&nbsp; .RegisterType&lt;ICustomerRepository, CustomerRepository&gt;();</p>
+<p>Let&#8217;s take a naive medical claims processing system and building up and aggregate root of a claim.&nbsp; This claim contains such things as the claim information, the lines, the provider, recipient and so on.&nbsp; This is a brief sample and not meant to be the real thing, but just a quick example.&nbsp; After all, I&#8217;m missing things such as eligibility and so on.</p>
+<p>&nbsp;&nbsp;&nbsp; public class Claim<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string ClaimId { get; set; }&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public DateTime ClaimDate { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public List&lt;ClaimLine&gt; ClaimLines { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Recipient ClaimRecipient { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public Provider ClaimProvider { get; set; }<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public class ClaimLine<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public int ClaimLineId { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string ClaimCode { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public double Quantity { get; set; }<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public class Recipient<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string RecipientId { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string FirstName { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string LastName { get; set; }<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public class Provider<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string ProviderId { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string FirstName { get; set; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public string LastName { get; set; }<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>Now our standard builders use method chaining as shown below.&nbsp; As you note, we&#8217;ll return the instance each and every time.&nbsp; </p>
+<p>public class ClaimBuilder<br />
+{<br />
+&nbsp;&nbsp;&nbsp; private string claimId;<br />
+&nbsp;&nbsp;&nbsp; private DateTime claimDate;<br />
+&nbsp;&nbsp;&nbsp; private readonly List&lt;ClaimLine&gt; claimLines = new List&lt;ClaimLine&gt;();<br />
+&nbsp;&nbsp;&nbsp; private Provider claimProvider;<br />
+&nbsp;&nbsp;&nbsp; private Recipient claimRecipient;</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder() {}</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimId(string claimId)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.claimId = claimId;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimDate(DateTime claimDate)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.claimDate = claimDate;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return new ClaimBuilder(this);<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimLine(ClaimLine claimLine)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimLines.Add(claimLine);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithProvider(Provider claimProvider)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.claimProvider = claimProvider;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithRecipient(Recipient claimRecipient)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; this.claimRecipient = claimRecipient;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return this;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public Claim Build()<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return new Claim<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimId = claimId,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimDate = claimDate,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimLines = claimLines,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimProvider = claimProvider,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimRecipient = claimRecipient<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public static implicit operator Claim(ClaimBuilder builder)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return new Claim<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimId = builder.claimId,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimDate = builder.claimDate,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimLines = builder.claimLines,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimProvider = builder.claimProvider,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimRecipient = builder.claimRecipient<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; };<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}</p>
+<p>What we have above is a violation of the CQS because we&#8217;re mutating the current instance as well as returning a value.&nbsp; Remember, that CQS states: </p>
+<ul>
+<li><span style="font-weight: bold">Commands </span>- Methods that perform an action or change the state of the system should not return a value.</li>
+<li><span style="font-weight: bold">Queries</span> &#8211; Return a result and do not change the state of the system (aka side effect free)</li>
+</ul>
+<p>But, we&#8217;re violating that because we&#8217;re returning a value as well as mutating the state.&nbsp; For the most part, that hasn&#8217;t been a problem.&nbsp; But what about sharing said builders?&nbsp; The last thing we&#8217;d want to do is have our shared builders mutated by others when we&#8217;re trying to build up our aggregate roots.</p>
+<p><span style="font-weight: bold">Immutable Builders or ObjectMother or Cloning?</span></p>
+<p>When we&#8217;re looking to reuse our builders, the last thing we&#8217;d want to do is allow mutation of the state.&nbsp; So, if I&#8217;m working on the same provider and somehow change his eligibility, then that would be reflected against all using the same built up instance.&nbsp; That would be bad.&nbsp; We have a couple options here really.&nbsp; One would be to follow an ObjectMother approach to build up shared ones and request a new one each time, or the other would be to enforce that we&#8217;re not returning this each and every time we add something to our builder.&nbsp; Or perhaps we can take one at a given state and just clone it.&nbsp; Let&#8217;s look at each.</p>
+<p>public static class RecipientObjectMother<br />
+{<br />
+&nbsp;&nbsp;&nbsp; public static RecipientBuilder RecipientWithLimitedEligibility()<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RecipientBuilder builder = new ProviderBuilder()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .WithRecipientId(&#8220;xx-xxxx-xxx&#8221;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .WithFirstName(&#8220;Robert&#8221;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .WithLastName(&#8220;Smith&#8221;)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // More built in stuff here for setting up eligibility<br />
+&nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}</p>
+<p>This allows me to share my state through pre-built builders and then when I&#8217;ve finalized them, I&#8217;ll just call the Build method or assign them to the appropriate type.&nbsp; Or, I could just make them immutable instead and not have to worry about such things.&nbsp; Let&#8217;s modify the above example to take a look at that.</p>
+<p>public class ClaimBuilder<br />
+{<br />
+&nbsp;&nbsp;&nbsp; private string claimId;<br />
+&nbsp;&nbsp;&nbsp; private DateTime claimDate;<br />
+&nbsp;&nbsp;&nbsp; private readonly List&lt;ClaimLine&gt; claimLines = new List&lt;ClaimLine&gt;();<br />
+&nbsp;&nbsp;&nbsp; private Provider claimProvider;<br />
+&nbsp;&nbsp;&nbsp; private Recipient claimRecipient;</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder() {}</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder(ClaimBuilder builder)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimId = builder.claimId;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimDate = builder.claimDate;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimLines.AddRange(builder.claimLines);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimProvider = builder.claimProvider;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; claimRecipient = builder.claimRecipient;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimId(string claimId)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimBuilder builder = new ClaimBuilder(this) {claimId = claimId};<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimDate(DateTime claimDate)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimBuilder builder = new ClaimBuilder(this) { claimDate = claimDate };<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithClaimLine(ClaimLine claimLine)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimBuilder builder = new ClaimBuilder(this);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; builder.claimLines.Add(claimLine);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithProvider(Provider claimProvider)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimBuilder builder = new ClaimBuilder(this) { claimProvider = claimProvider };<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; public ClaimBuilder WithRecipient(Recipient claimRecipient)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClaimBuilder builder = new ClaimBuilder(this) { claimRecipient = claimRecipient };<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return builder;<br />
+&nbsp;&nbsp;&nbsp; }</p>
+<p>&nbsp;&nbsp;&nbsp; // More code here for building<br />
+}</p>
+<p>So, what we&#8217;ve had to do is provide a copy-constructor to initialize the object in the right state.&nbsp; And here I thought I could leave those behind since my C++ days.&nbsp; After each assignment, I then create a new ClaimBuilder and pass in the current instance to initialize the new one, thus copying over the old state.&nbsp; This then makes my class suitable for sharing.&nbsp; Side effect free programming is the way to do it if you can.&nbsp; Of course, realizing that it creates a few objects on the stack as you&#8217;re initializing your aggregate root, but for testing purposes, I haven&#8217;t really much cared.&nbsp; </p>
+<p>Of course I could throw <a href="http://research.microsoft.com/specsharp/">Spec#</a> into the picture once again as enforcing immutability on said builders.&nbsp; To be able to mark methods as being Pure makes it apparent to both the caller and the callee what the intent of the method is.&nbsp; Another would be using <a href="http://www.ndepend.com/">NDepend</a> as <a href="http://codebetter.com/blogs/patricksmacchia/">Patrick Smacchia</a> talked about <a href="http://codebetter.com/blogs/patricksmacchia/archive/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain.aspx">here</a>.</p>
+<p>The other way is just to provide a clone method which would just copy the current object so that you can go ahead and feel free to modify a new copy.&nbsp; This is a pretty easy approach as well.</p>
+<p>public ClaimBuilder(ClaimBuilder builder)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; claimId = builder.claimId;<br />
+&nbsp;&nbsp;&nbsp; claimDate = builder.claimDate;<br />
+&nbsp;&nbsp;&nbsp; claimLines.AddRange(builder.claimLines);<br />
+&nbsp;&nbsp;&nbsp; claimProvider = builder.claimProvider;<br />
+&nbsp;&nbsp;&nbsp; claimRecipient = builder.claimRecipient;<br />
+}</p>
+<p>public ClaimBuilder Clone()<br />
+{<br />
+&nbsp;&nbsp;&nbsp; return new ClaimBuilder(this);<br />
+}</p>
+<p><span style="font-weight: bold">Conclusion</span></p>
+<p>Obeying the CQS is always an admirable thing to do especially when managing side effects.&nbsp; Not all of the time is it required such as with builders, but if you plan on sharing these builders, it might be a good idea to really think hard about the side effects you are creating.&nbsp; As we move more towards multi-threaded, multi-machine processing, we need to be aware of our side effecting a bit more.&nbsp; But, at the end of the day, I&#8217;m not entirely convinced that this violates the true intent of CQS since we&#8217;re not really querying, so I&#8217;m not sure how much this is buying me.&nbsp; What are your thoughts?</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/dbc/" title="View all posts in DBC" rel="category tag">DBC</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/spec/" title="View all posts in Spec#" rel="category tag">Spec#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/tddbdd/" title="View all posts in TDD/BDD" rel="category tag">TDD/BDD</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/05/06/command-query-separation-and-immutable-builders/" title="Permalink to Command-Query Separation and Immutable Builders" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/05/06/command-query-separation-and-immutable-builders/feed/" title="Comments RSS to Command-Query Separation and Immutable Builders" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-12 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/05/02/adventures-in-f-f-101-part-9-control-flow/" rel="prev"><span class="meta-nav">&larr;</span> Adventures in F# &#8211; F# 101 Part 9 (Control Flow)</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/05/08/your-api-fails-who-is-at-fault/" rel="next">Your API Fails, Who is at Fault? <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-33">
+					<div id="dsq-comment-header-33" class="dsq-comment-header">
+						<cite id="dsq-cite-33">
+								<span id="dsq-author-user-33">Greg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-33" class="dsq-comment-body">
+						<div id="dsq-comment-message-33" class="dsq-comment-message"><p>I don&#8217;t think your immutable example is immutable (due to the support for the intializer). It creates the object then mutates it after creation.</p>
+<p>I have some quite verbose examples </p>
+<p><a href="http://codebetter.com/blogs/gregyoung/archive/2008/04/15/dddd-5-messages-have-fluent-builders.aspx" rel="nofollow">http://codebetter.com/blogs/gregyoung/archive/2008/04/15/dddd-5-messages-have-fluent-builders.aspx</a></p>
+<p><a href="http://codebetter.com/blogs/gregyoung/archive/2008/04/16/dddd-6-fluent-builders-alternate-ending.aspx" rel="nofollow">http://codebetter.com/blogs/gregyoung/archive/2008/04/16/dddd-6-fluent-builders-alternate-ending.aspx</a></p>
+<p>To be honest they are kind of annoying unless you codegen them (which I do) but I also have moved to the camp of saying well its ok to break CQS here&#8230;</p>
+<p>Greg</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-34">
+					<div id="dsq-comment-header-34" class="dsq-comment-header">
+						<cite id="dsq-cite-34">
+	http://codebetter.com/blogs/matthew.podwysocki							<span id="dsq-author-user-34">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-34" class="dsq-comment-body">
+						<div id="dsq-comment-message-34" class="dsq-comment-message"><p>@Greg</p>
+<p>Blame it on the head cold.  I fixed said post after I realized that very issue.  But, I&#8217;m not convinced either, which is why I&#8217;d give it a try anyways to see which felt more right.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-35">
+					<div id="dsq-comment-header-35" class="dsq-comment-header">
+						<cite id="dsq-cite-35">
+								<span id="dsq-author-user-35">MWA van de Wijdeven</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-35" class="dsq-comment-body">
+						<div id="dsq-comment-message-35" class="dsq-comment-message"><p>Isn&#8217;t it downright impossible to combine Method Chaining with CQS? For method chaining to work the methods must have a return value and, as such, have to be queries. However the parameter values inserted into the method don&#8217;t die upon return which means the method must be a command.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-36">
+					<div id="dsq-comment-header-36" class="dsq-comment-header">
+						<cite id="dsq-cite-36">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-36">Matthew Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-36" class="dsq-comment-body">
+						<div id="dsq-comment-message-36" class="dsq-comment-message"><p>@MWA</p>
+<p>It would be a query since I&#8217;m returning a value and not modifying the state of the existing object.  That would classify it not as a command, but a query.  A command alters the state of the object and returns no value.  But as you can see with an immutable builder, I&#8217;m returning a new instance each and every time, therefore not altering state.</p>
+<p>As for method chaining, there&#8217;s nothing wrong with returning a new object every single time as you&#8217;re building your object.  I don&#8217;t see the objection.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-37">
+					<div id="dsq-comment-header-37" class="dsq-comment-header">
+						<cite id="dsq-cite-37">
+								<span id="dsq-author-user-37">MWA van de Wijdeven</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-37" class="dsq-comment-body">
+						<div id="dsq-comment-message-37" class="dsq-comment-message"><p>I agree that this method does not alter the state of just the builder object. However, it does alter the state of the program as a whole. After executing one of the With* functions a value will be present in the state that wasn&#8217;t there before (i.e. the provided parameter didn&#8217;t die after function termination). The fact that a new object is now surrounding this value doesn&#8217;t really change anything in my mind.</p>
+<p>In fact, every time you call the method a new object is returned which means the question changes the anwser. Of course, that doesn&#8217;t matter at all in this particular case. The anwser is still always the same from a practical point of view. It just rubbed me the wrong way from a strict theoretical point of view. That&#8217;s why I mentioned it.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/05/06/command-query-separation-and-immutable-builders/ ';
+	var disqus_identifier = '12 /blogs/matthew.podwysocki/archive/2008/05/06/command-query-separation-and-immutable-builders.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Command-Query Separation and Immutable Builders";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=12');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/05\/06\/command-query-separation-and-immutable-builders\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.244 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:52:16 -->
+<!-- super cache -->

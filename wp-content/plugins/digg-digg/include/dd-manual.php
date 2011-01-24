@@ -64,10 +64,6 @@ $dd_manual_code = array(
 		"Normal" => "dd_delicious_generate('Normal')",
 		"Compact" => "dd_delicious_generate('Compact')"
 	),
-	"Sphinn" => array(
-		"Normal" => "dd_sphinn_generate('Normal')",
-		"Compact" => "dd_sphinn_generate('Compact')"
-	),
 	"Google Buzz" => array(
 		"Normal" => "dd_gbuzz_generate('Normal')",
 		"Compact" => "dd_gbuzz_generate('Compact')"

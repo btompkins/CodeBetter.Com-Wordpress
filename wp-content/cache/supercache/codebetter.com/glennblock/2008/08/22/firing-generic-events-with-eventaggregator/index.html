@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Firing generic events with EventAggregator | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='ForEach, a simple but very useful extension method' href='http://codebetter.com/glennblock/2008/08/19/foreach-a-simple-but-very-useful-extension-method/' />
+<link rel='next' title='Building Composite apps with Silverlight' href='http://codebetter.com/glennblock/2008/08/31/building-composite-apps-with-silverlight/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2008/08/22/firing-generic-events-with-eventaggregator/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=51' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-51" class="post-51 post type-post status-publish format-standard hentry category-composite-application-guidance category-composite-wpf category-prism">
+					<h1 class="entry-title">Firing generic events with EventAggregator</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2008/08/22/firing-generic-events-with-eventaggregator/" title="10:08 am" rel="bookmark"><span class="entry-date">August 22, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>It&#8217;s been a while since i posted anything on Prism. When I left p&amp;p, i said you would see more posts on Prism on my blog. I&#8217;ve been pretty immersed in MEF since leaving and haven&#8217;t done any posts on Prism yet. Today, I got inspired (albeit late in the evening) based on a post on the forums to actually do that, so here I am <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> . The post was from TSChaena about using EventAggregator to fire generic events similar to the way we did things with EventBroker in CAB. Using EventBroker allows you to dynamically define events in your application that are identified through a topic name rather than needing to define a strongly typed class as you do with the EventAggregator. There are several advantages to not using the approach in EB which I have identified in this <A href="http://codebetter.com/blogs/glenn.block/archive/2008/01/07/spiking-around-notification-and-generic-notifiers-part-i.aspx">post</A>. However, there are times when you want to do a dynamic eventing system. The good news is that there actually is a solution for doing this with our EventAggreator though it is not exactly the same as the way we did it in EB.</P><br />
+<H2>CompositeWPFEvent</H2><br />
+<P>Before we look at the solution I came up with, lets talk quickly about CompositeWPFEvent. CompositeWPFEvent is a generic class that contains one type parameter TPayload. TPayload defines the payload that will be passed into the event when it is fired. The subscriber also uses the payload to provide filters for the subscription. For example if TPayload is a FundOrder as in the EventAggregator QuickStart, then you can supply a lambda such as fundOrder=&gt;fundOrder.CustomeriD == customerID for example to filter on only events that are received for a specific customer. The common pattern you will see for defining such events is to create a class that inherits from CompositeWPFEvent for each event that is typed to the specific paramers. For example below is the definition for the FundOrderAdded event.</P><br />
+<DIV><PRE><SPAN>public</SPAN> <SPAN>class</SPAN> FundOrderAdded : CompositeWpfEvent&lt;FundOrderAdded&gt; {}</PRE></DIV><br />
+<P>This event is then retrieved from the EventAggregator by calling the GetEvent method passing FundOrderAdded as the event. Now, although this is the common pattern, there is nothing about the EventAggregator that requires you to create a new event class for each event. CompositeWPFEvent is not an abstract class, so you can simply &#8220;use&#8221; it as you will, even in a generic case. For example you can do the following.</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>   1:</SPAN> <SPAN>public</SPAN> <SPAN>class</SPAN> ThrowsEvents {</PRE><PRE><SPAN>   2:</SPAN>   <SPAN>public</SPAN> ThrowsEvents(IEventAggregator eventAgg) {</PRE><PRE><SPAN>   3:</SPAN>     eventAgg.GetEvent&lt;CompositeWPFEvent&lt;<SPAN>string</SPAN>&gt;&gt;().Publish(<SPAN>&#8220;SomethingEvent&#8221;</SPAN>)</PRE><PRE><SPAN>   4:</SPAN>     eventAgg.GetEvent&lt;CompositeWPFEvent&lt;<SPAN>string</SPAN>&gt;&gt;().Publish(<SPAN>&#8220;SomethingElseEvent&#8221;</SPAN>)</PRE><PRE><SPAN>   5:</SPAN>   }</PRE><PRE><SPAN>   6:</SPAN> }</PRE><PRE><SPAN>   7:</SPAN>&nbsp; </PRE><PRE><SPAN>   8:</SPAN> <SPAN>public</SPAN> <SPAN>class</SPAN> HandlesEvents {</PRE><PRE><SPAN>   9:</SPAN>   <SPAN>public</SPAN> HandlesEvents(IEventAggregator eventAgg) {</PRE><PRE><SPAN>  10:</SPAN>     CompositeWPFEvent genericEvent = eventAgg.GetEvent&lt;CompositeWPFEvent&lt;<SPAN>string</SPAN>&gt;&gt;();</PRE><PRE><SPAN>  11:</SPAN>     genericEvent.Subscribe(action=&gt;Console.WriteLine(<SPAN>&#8220;SomethingEvent fired&#8221;</SPAN>, ThreadOption.UIThread, </PRE><PRE><SPAN>  12:</SPAN>       <SPAN>false</SPAN>, e=&gt;e == <SPAN>&#8220;SomethingEvent&#8221;</SPAN>);</PRE><PRE><SPAN>  13:</SPAN>     genericEvent.Subscribe(action=&gt;Console.WriteLine(<SPAN>&#8220;SomethingElseEvent fired&#8221;</SPAN>, ThreadOption.UIThread, </PRE><PRE><SPAN>  14:</SPAN>       <SPAN>false</SPAN>, e=&gt;e == <SPAN>&#8220;SomethingElseEvent&#8221;</SPAN>);</PRE><PRE><SPAN>  15:</SPAN>   } </PRE><PRE><SPAN>  16:</SPAN> }</PRE></DIV></DIV><br />
+<P>If you look at the above code, you&#8217;ll notice that we are using CompositeWPFEvent event directly, rather than creating a specific inheritor. When we call for the event from the aggregator, we are passing in a param of type string which represents the EventName / Topic. I am then using our event subscription mechanism to subscribe two different handlers to the same &#8220;event&#8221; by using the eventName as the filter. So here we have the basics of doing generic event publication and subscription. However, we are missing something important&#8230;.that payload <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> . To handle this, you could instead create your own custom class that carries two parameters, EventName, and Value. With that approach, you can pass both the event name and the value, still filter on the event, and you can pass a value along. For example the above code passing&nbsp; a value would look like the following.</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>   1:</SPAN> <SPAN>public</SPAN> <SPAN>class</SPAN> SomeEventParams {</PRE><PRE><SPAN>   2:</SPAN>   <SPAN>public</SPAN> SomeEventParams(<SPAN>string</SPAN> eventName, <SPAN>object</SPAN> <SPAN>value</SPAN>) {</PRE><PRE><SPAN>   3:</SPAN>     EventName = eventName;</PRE><PRE><SPAN>   4:</SPAN>     Value = <SPAN>value</SPAN>;</PRE><PRE><SPAN>   5:</SPAN>   }</PRE><PRE><SPAN>   6:</SPAN>   </PRE><PRE><SPAN>   7:</SPAN>   <SPAN>public</SPAN> <SPAN>string</SPAN> EventName {get;<SPAN>private</SPAN> set;}</PRE><PRE><SPAN>   8:</SPAN>   <SPAN>public</SPAN> <SPAN>object</SPAN> Value {get; <SPAN>private</SPAN> set;}</PRE><PRE><SPAN>   9:</SPAN> }</PRE><PRE><SPAN>  10:</SPAN>&nbsp; </PRE><PRE><SPAN>  11:</SPAN>&nbsp; </PRE><PRE><SPAN>  12:</SPAN> <SPAN>public</SPAN> <SPAN>class</SPAN> ThrowsEvents {</PRE><PRE><SPAN>  13:</SPAN>&nbsp; </PRE><PRE><SPAN>  14:</SPAN>   <SPAN>public</SPAN> ThrowsEvents(IEventAggregator eventAgg) {</PRE><PRE><SPAN>  15:</SPAN>     eventAgg.GetEvent&lt;CompositeWPFEvent&lt;SomeEventParams&gt;&gt;().Publish(<SPAN>new</SPAN> SomeEventParams(<SPAN>&#8220;SomethingEvent&#8221;</SPAN>,<SPAN>&#8220;SomeValue&#8221;</SPAN>));</PRE><PRE><SPAN>  16:</SPAN>     eventAgg.GetEvent&lt;CompositeWPFEvent&lt;SomeEventParams&gt;&gt;().Publish(<SPAN>new</SPAN> SomeEventParams(<SPAN>&#8220;SomethingElseEvent&#8221;</SPAN>, <SPAN>&#8220;SomeOtherValue&#8221;</SPAN>));</PRE><PRE><SPAN>  17:</SPAN>   }</PRE><PRE><SPAN>  18:</SPAN> }</PRE><PRE><SPAN>  19:</SPAN>&nbsp; </PRE><PRE><SPAN>  20:</SPAN> <SPAN>public</SPAN> <SPAN>class</SPAN> HandlesEvents {</PRE><PRE><SPAN>  21:</SPAN>   <SPAN>public</SPAN> HandlesEvents(IEventAggregator eventAgg) {</PRE><PRE><SPAN>  22:</SPAN>     CompositeWPFEvent genericEvent = eventAgg.GetEvent&lt;CompositeWPFEvent&lt;<SPAN>string</SPAN>&gt;&gt;();</PRE><PRE><SPAN>  23:</SPAN>     genericEvent.Subscribe(action=&gt;Console.WriteLine(<SPAN>&#8220;SomethingEvent fired&#8221;</SPAN> + action.Value, ThreadOption.UIThread, </PRE><PRE><SPAN>  24:</SPAN>       <SPAN>false</SPAN>, e=&gt;e.EventName == <SPAN>&#8220;SomethingEvent&#8221;</SPAN>);</PRE><PRE><SPAN>  25:</SPAN>     genericEvent.Subscribe(action=&gt;Console.WriteLine(<SPAN>&#8220;SomethingElseEvent fired&#8221;</SPAN> + action.Value, ThreadOption.UIThread, </PRE><PRE><SPAN>  26:</SPAN>       <SPAN>false</SPAN>, e=&gt;e.EventName == <SPAN>&#8220;SomethingElseEvent&#8221;</SPAN>);</PRE><PRE><SPAN>  27:</SPAN>   } </PRE><PRE><SPAN>  28:</SPAN> }</PRE></DIV></DIV><br />
+<P>That&#8217;s OK, except now the parameters are simply object. That means we are losing the type safety that the EventAgg was built for in the first place! Now you can further refactor and make SomeEventParams a generic type that accepts a type param for the value. The only downside of this, is the code will get much more verbose and harder to read. For example retrieving the event to publish will now look like&#8230;</P><br />
+<DIV><PRE>eventAgg.GetEvent&lt;CompositeWPFEvent&lt;SomeEventParams&lt;<SPAN>string</SPAN>&gt;&gt;().Publish&#8230;</PRE></DIV><br />
+<P>Suboptimal. I bet your thinking you could refactor this a bit more..yes, you can. This is what led me to a GenericEvent.</P><br />
+<H2></H2><br />
+<H3></H3><br />
+<H2>GenericEvent</H2><br />
+<P>If we keep refactoring, we can get rid of alot of the DRY behavior, by creating an inheritor of CompositeWPFEvent, GenericEvent. The event and associated parameters class looks like this</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>public</SPAN> <SPAN>class</SPAN> EventParameters&lt;TValue&gt;</PRE><PRE>{</PRE><PRE>  <SPAN>public</SPAN> <SPAN>string</SPAN> Topic { get; <SPAN>private</SPAN> set; }</PRE><PRE>  <SPAN>public</SPAN> TValue Value { get; <SPAN>private</SPAN> set; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;</PRE><PRE>  <SPAN>public</SPAN> EventParameters(<SPAN>string</SPAN> topic, TValue <SPAN>value</SPAN>)</PRE><PRE>  {</PRE><PRE>    Topic = topic;</PRE><PRE>    Value = <SPAN>value</SPAN>;</PRE><PRE>  }</PRE><PRE>}</PRE><PRE>&nbsp;</PRE><PRE><SPAN>public</SPAN> <SPAN>class</SPAN> GenericEvent&lt;TValue&gt; : CompositeWpfEvent&lt;EventParameters&lt;TValue&gt;&gt; {}</PRE></DIV></DIV><br />
+<P>Subscribing and publishing is now easier as well. The previous GetEvent code now looks like</P><br />
+<DIV><PRE>eventAgg.GetEvent&lt;GenericEvent&lt;<SPAN>string</SPAN>&gt;().Publish&#8230;</PRE></DIV><br />
+<P>Because I have strongly typed my Value, I know have back my strongly typed filters and delegates. </P><br />
+<H2>Putting the rubber to the road with the EventAggregation QuickStart.</H2><br />
+<P>In order to test this out, I took a copy of the EventAggregaton QuickStart that is included with the Prism bits, and I modified it to use the new GenericEvent. I also added a Remove button to the QS in order to demonstrate using more than one event. The new Quickstart looks like the following.</P><br />
+<P><A href="http://codebetter.com/blogs/glenn.block/WindowsLiveWriter/FiringgenericeventswithEventAggregator_2A11/image_4.png"><IMG height="526" alt="image" src="http://codebetter.com/blogs/glenn.block/WindowsLiveWriter/FiringgenericeventswithEventAggregator_2A11/image_thumb_1.png" width="689" border="0"></A>&nbsp;</P><br />
+<P>In the new version of the Quickstart, the FundOrderAddedEvent is removed. Instead, I have added two constants to define the different events.</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>public</SPAN> <SPAN>class</SPAN> Events</PRE><PRE>{</PRE><PRE>  <SPAN>public</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> FundAdded = <SPAN>&#8220;FundAdded&#8221;</SPAN>;</PRE><PRE>  <SPAN>public</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> FundRemoved = <SPAN>&#8220;FundRemoved&#8221;</SPAN>;</PRE><PRE>}</PRE></DIV></DIV><br />
+<P>I added a RemoveFund method to the AddFundPresenter as well as refactored the AddFund method as follows.</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>void</SPAN> RemoveFund(<SPAN>object</SPAN> sender, EventArgs e)</PRE><PRE>{</PRE><PRE>    FundOrder fundOrder = <SPAN>new</SPAN> FundOrder();</PRE><PRE>    fundOrder.CustomerId = View.Customer;</PRE><PRE>    fundOrder.TickerSymbol = View.Fund;</PRE><PRE>&nbsp;</PRE><PRE>    <SPAN>if</SPAN> (!<SPAN>string</SPAN>.IsNullOrEmpty(fundOrder.CustomerId) &amp;&amp; !<SPAN>string</SPAN>.IsNullOrEmpty(fundOrder.TickerSymbol))</PRE><PRE>        eventAggregator.GetEvent&lt;GenericEvent&lt;FundOrder&gt;&gt;().</PRE><PRE>          Publish(<SPAN>new</SPAN> EventParameters&lt;FundOrder&gt;(Events.FundRemoved, fundOrder));</PRE><PRE>    </PRE><PRE>}</PRE><PRE>&nbsp;</PRE><PRE><SPAN>void</SPAN> AddFund(<SPAN>object</SPAN> sender, EventArgs e)</PRE><PRE>{</PRE><PRE>    FundOrder fundOrder = <SPAN>new</SPAN> FundOrder();</PRE><PRE>    fundOrder.CustomerId = View.Customer;</PRE><PRE>    fundOrder.TickerSymbol = View.Fund;</PRE><PRE>&nbsp;</PRE><PRE>    <SPAN>if</SPAN> (!<SPAN>string</SPAN>.IsNullOrEmpty(fundOrder.CustomerId) &amp;&amp; !<SPAN>string</SPAN>.IsNullOrEmpty(fundOrder.TickerSymbol))</PRE><PRE>        eventAggregator.GetEvent&lt;GenericEvent&lt;FundOrder&gt;&gt;().</PRE><PRE>          Publish(<SPAN>new</SPAN> EventParameters&lt;FundOrder&gt;(Events.FundAdded, fundOrder));</PRE><PRE>}</PRE></DIV></DIV><br />
+<P>Finally, I refactored the ActivityPresenter in a similar fashion</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>public</SPAN> <SPAN>string</SPAN> CustomerId</PRE><PRE>{</PRE><PRE>    get { <SPAN>return</SPAN> _customerId; }</PRE><PRE>    set</PRE><PRE>    {</PRE><PRE>        _customerId = <SPAN>value</SPAN>;</PRE><PRE>&nbsp;</PRE><PRE>        GenericEvent&lt;FundOrder&gt; fundOrderEvent = eventAggregator.GetEvent&lt;GenericEvent&lt;FundOrder&gt;&gt;();</PRE><PRE>&nbsp;</PRE><PRE>        <SPAN>if</SPAN> (fundAddedSubscriptionToken != <SPAN>null</SPAN>)</PRE><PRE>        {</PRE><PRE>            fundOrderEvent.Unsubscribe(fundAddedSubscriptionToken);</PRE><PRE>            fundOrderEvent.Unsubscribe(fundRemovedSubscriptionToken);</PRE><PRE>            </PRE><PRE>        }</PRE><PRE>&nbsp;</PRE><PRE>        fundAddedSubscriptionToken = fundOrderEvent.Subscribe(FundAddedEventHandler, ThreadOption.UIThread, <SPAN>false</SPAN>,</PRE><PRE>                                                     parms =&gt; parms.Topic == Events.FundAdded &amp;&amp; parms.Value.CustomerId == _customerId);</PRE><PRE>&nbsp;</PRE><PRE>        fundRemovedSubscriptionToken = fundOrderEvent.Subscribe(FundRemovedEventHandler, ThreadOption.UIThread, <SPAN>false</SPAN>,</PRE><PRE>                                                     parms =&gt; parms.Topic == Events.FundRemoved &amp;&amp; parms.Value.CustomerId == _customerId);</PRE><PRE>&nbsp;</PRE><PRE>        View.Title = <SPAN>string</SPAN>.Format(CultureInfo.CurrentCulture, Resources.ActivityTitle, CustomerId);</PRE><PRE>    }</PRE><PRE>}</PRE></DIV></DIV><br />
+<P>Notice how in the subscription I am now filteirng on the event Topic in addition to the value. This is the result of moving to a generic event.</P><br />
+<H2></H2><br />
+<H2>Wrapping Up</H2><br />
+<P>Using the approach show in this post, we&#8217;ve seen how you can utilize the existing EventAggregator infrastructure to do generic eventing similar to the way EventBroker in CAB functions. </P><br />
+<P>Personally I think using strongly typed specific events is more maintainable. The reasoning is because the event payload type is intrinsically defined to the event wheras in this model they are not. For example with generic events I might have an event that publishes passing a customer, but on the receiving side I have&nbsp; defined it as a string. This event will never get handled, because the susbscriber and publisher don&#8217;t match. If you use strongly typed events that is not the case, as the type is the match <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' />  However there are scenarios where it may make sense to have something more dynamic, for example if you have a metadata driven system that needs to do dynamic wiring.</P><br />
+<P>In the link below, you&#8217;ll find the code for my modified version of the QuickStart. Let me know if this works for you. Now time to get some sleep <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P><A href="http://tinyurl.com/GenericEventAgg-zip">h<STRONG>ttp://tinyurl.com/GenericEventAgg-zip</A></STRONG></P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/composite-application-guidance/" title="View all posts in Composite Application Guidance" rel="category tag">Composite Application Guidance</a>, <a href="http://codebetter.com/glennblock/category/composite-wpf/" title="View all posts in Composite WPF" rel="category tag">Composite WPF</a>, <a href="http://codebetter.com/glennblock/category/prism/" title="View all posts in prism" rel="category tag">prism</a>. Bookmark the <a href="http://codebetter.com/glennblock/2008/08/22/firing-generic-events-with-eventaggregator/" title="Permalink to Firing generic events with EventAggregator" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2008/08/22/firing-generic-events-with-eventaggregator/feed/" title="Comments RSS to Firing generic events with EventAggregator" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-51 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2008/08/19/foreach-a-simple-but-very-useful-extension-method/" rel="prev"><span class="meta-nav">&larr;</span> ForEach, a simple but very useful extension method</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2008/08/31/building-composite-apps-with-silverlight/" rel="next">Building Composite apps with Silverlight <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-175">
+					<div id="dsq-comment-header-175" class="dsq-comment-header">
+						<cite id="dsq-cite-175">
+	http://weblogs.asp.net/sfeldman							<span id="dsq-author-user-175">Sean Feldman</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-175" class="dsq-comment-body">
+						<div id="dsq-comment-message-175" class="dsq-comment-message"><p>Is there a road map for Prism project? Would be interestng to know where are you heading with it. Thank you.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-176">
+					<div id="dsq-comment-header-176" class="dsq-comment-header">
+						<cite id="dsq-cite-176">
+	http://www.UdiDahan.com							<span id="dsq-author-user-176">Udi Dahan: The Software Simplist</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-176" class="dsq-comment-body">
+						<div id="dsq-comment-message-176" class="dsq-comment-message"><p>I&#8217;ve got to say that the fact that the definition of the event (const string) is separate from the parameter definition is&#8230; unfortunate.</p>
+<p>I think it would be simpler to keep the definition of events/commands in one place like this:</p>
+<p>public static class DomainEvents<br />
+{<br />
+      public static readonly DomainEvent<iproduct> ProductReportedLost = new DomainEvent</iproduct><iproduct>;</p>
+<p>      public static readonly DomainEvent<icart> CartIsFull = new DomainEvent</icart><icart>;<br />
+}</p>
+<p>This holds for composite client commands and server-side domain model events.</p>
+<p>I&#8217;ve got the infrastructure that supports this up on my post <a href="http://www.udidahan.com/2008/08/25/domain-events-take-2/">Domain Events &#8211; Take 2</a>.</p>
+<p>Thoughts?</icart></iproduct></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-177">
+					<div id="dsq-comment-header-177" class="dsq-comment-header">
+						<cite id="dsq-cite-177">
+	http://www.UdiDahan.com							<span id="dsq-author-user-177">Udi Dahan: The Software Simplist</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-177" class="dsq-comment-body">
+						<div id="dsq-comment-message-177" class="dsq-comment-message"><p>Fixing the link in the previous comment:</p>
+<p><a href="http://www.udidahan.com/2008/08/25/domain-events-take-2/" rel="nofollow">http://www.udidahan.com/2008/08/25/domain-events-take-2/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-178">
+					<div id="dsq-comment-header-178" class="dsq-comment-header">
+						<cite id="dsq-cite-178">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-178">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-178" class="dsq-comment-body">
+						<div id="dsq-comment-message-178" class="dsq-comment-message"><p>@Udi, the event implementation we shipped with Prism actually does bind the two. CompositeWpfEvent<t> is bound to the parameters. </p>
+<p>This implementation (which needs a bunch of cleaning) is for dynamically creating an event from a string.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-179">
+					<div id="dsq-comment-header-179" class="dsq-comment-header">
+						<cite id="dsq-cite-179">
+								<span id="dsq-author-user-179">Berch</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-179" class="dsq-comment-body">
+						<div id="dsq-comment-message-179" class="dsq-comment-message"><p>Hi Glenn</p>
+<p>It seems like the attached zip is corrupt&#8230;. <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_sad.gif' alt=':-(' class='wp-smiley' /><br />
+And it looks just like what i need. Can you pleeeeeezzzz check it ? maybe I&#8217;m doing something wrong ??<br />
+many thx</p>
+<p>Hai<br />
+<a href="mailto:haib@innovashare.com">haib@innovashare.com</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-180">
+					<div id="dsq-comment-header-180" class="dsq-comment-header">
+						<cite id="dsq-cite-180">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-180">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-180" class="dsq-comment-body">
+						<div id="dsq-comment-message-180" class="dsq-comment-message"><p>Hi Berch</p>
+<p>You are right, it is corrupted <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  Seems like it may have been that way for a long time. I tried updating another zip and the same thing happened.</p>
+<p>Anyway, luckily I still have the original. I went and uploaded it to a skydrive. You can get it at the link below (which I also added to my post).</p>
+<p><a href="http://tinyurl.com/GenericEventAgg-zip" rel="nofollow">http://tinyurl.com/GenericEventAgg-zip</a></p>
+<p>Thanks</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-181">
+					<div id="dsq-comment-header-181" class="dsq-comment-header">
+						<cite id="dsq-cite-181">
+								<span id="dsq-author-user-181">Berch</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-181" class="dsq-comment-body">
+						<div id="dsq-comment-message-181" class="dsq-comment-message"><p>Nope, Thank you !!</p>
+<p>=-}</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-182">
+					<div id="dsq-comment-header-182" class="dsq-comment-header">
+						<cite id="dsq-cite-182">
+								<span id="dsq-author-user-182">Chakshu Shah</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-182" class="dsq-comment-body">
+						<div id="dsq-comment-message-182" class="dsq-comment-message"><p>I still am not able to download the code attached with this link. It says &#8216;Page not found&#8217;.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-183">
+					<div id="dsq-comment-header-183" class="dsq-comment-header">
+						<cite id="dsq-cite-183">
+	http://codebetter.com/members/vgupta/default.aspx							<span id="dsq-author-user-183">vgupta</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-183" class="dsq-comment-body">
+						<div id="dsq-comment-message-183" class="dsq-comment-message"><p>Hi Glenn,<br />
+I had a implementation for threading Using EventAggregator. Can you please review it at <a href="http://stackoverflow.com/questions/2190178/can-prism-eventaggregator-be-used-for-threading-needs" rel="nofollow">http://stackoverflow.com/questions/2190178/can-prism-eventaggregator-be-used-for-threading-needs</a><br />
+Please guide me if this could be a possible implementation using EventAggregator</p>
+<p>Thanks</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2008/08/22/firing-generic-events-with-eventaggregator/ ';
+	var disqus_identifier = '51 /blogs/glenn.block/archive/2008/08/22/firing-generic-events-with-eventaggregator.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "Firing generic events with EventAggregator";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=51');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2008\/08\/22\/firing-generic-events-with-eventaggregator\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.291 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:11:11 -->
+<!-- super cache -->

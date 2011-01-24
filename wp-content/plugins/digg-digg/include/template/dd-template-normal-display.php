@@ -120,7 +120,7 @@ function checkCategory(){
 	
 	<div class="dd-block">
 		<div class="dd-title">
-			<h2>Support Digg Digg</h2>
+			<h2>Digg Digg</h2>
 		</div>
 		<div class="dd-insider">
 			<p>

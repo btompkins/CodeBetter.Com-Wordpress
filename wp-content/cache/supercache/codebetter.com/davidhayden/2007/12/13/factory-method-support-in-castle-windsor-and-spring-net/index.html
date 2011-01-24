@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Factory Method Support in Castle Windsor and Spring.Net | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Day of Patterns &amp; Practices in Tampa Florida' href='http://codebetter.com/davidhayden/2007/12/04/day-of-patterns-amp-practices-in-tampa-florida/' />
+<link rel='next' title='BareBones Service Locator and AOP Using Policy Injection Application Block' href='http://codebetter.com/davidhayden/2007/12/13/barebones-service-locator-and-aop-using-policy-injection-application-block/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=235' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-235" class="post-235 post type-post status-publish format-standard hentry category-featured category-ioc">
+					<h1 class="entry-title">Factory Method Support in Castle Windsor and Spring.Net</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/" title="3:55 pm" rel="bookmark"><span class="entry-date">December 13, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><H1>Factory Method Support in Castle Windsor and Spring.Net</H1><br />
+<P>by <A class="" title="David Hayden" href="http://www.davidhayden.com/">David Hayden</A></P><br />
+<P>&nbsp;</P><br />
+<P>Most of the time when using Windsor I simply map a service provider to a service contract as such programmatically or in a configuration file:</P><br />
+<P>&nbsp;</P><PRE><SPAN>&lt;</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepository</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        service</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Sample.ICustomerRepository, Sample</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Sample.CustomerRepository, Sample</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        lifestyle</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>singleton</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>and request the service as follows:</P><br />
+<P>&nbsp;</P><PRE><SPAN>ioc.Resolve</SPAN><SPAN>&lt;</SPAN><SPAN>ICustomerRepository</SPAN><SPAN>&gt;</SPAN><SPAN>();</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>which will then just return the type mapped to <STRONG>ICustomerRepository</STRONG> which in this case is the <STRONG>CustomerRepository</STRONG> Class. This works because I know the service provider ahead of time, CustomerRepository, and add it to the configuration file.</P><br />
+<P>However, what if it isn&#8217;t that easy? What if CustomerRepository won&#8217;t always be the service provider for ICustomerRepository? What if the&nbsp;chosen service provider&nbsp;is based on other runtime factors that need to be taken into consideration during runtime? This is when we use the <STRONG>Factory Method</STRONG> support in Windsor and Spring.NET.</P><br />
+<P>&nbsp;</P><br />
+<H2>Factory Method</H2><br />
+<P>When service or object&nbsp;instantiation is</P><br />
+<OL><br />
+<LI><br />
+<DIV>A&nbsp;little more complicated than calling <STRONG>new</STRONG></DIV></LI><br />
+<LI><br />
+<DIV>Based on a number of runtime factors</DIV></LI><br />
+<LI><br />
+<DIV>Volatile and you want to loosely-couple&nbsp;creation from the caller</DIV></LI></OL><br />
+<P>a <A class="" title="Factory Method" href="http://davidhayden.com/blog/dave/archive/2005/04/02/923.aspx">Factory Method</A> is a pretty decent choice of hiding object creation behind a method call.</P><br />
+<P>Here is a defintion from Design Patterns in C#</P><br />
+<P>&#8220;When you develop a class, you usually provide class constructors to let clients of you class instantiate it.&nbsp; There are times, though, when a client that needs an object does not or should not know which of several possible classes to instantiate. The FACTORY METHOD pattern lets a class developer define the interface for creating an object while retaining control of which class to instantiate. [Design Patterns in C#, Steven John Metsker, p. 171]&#8220;</P><br />
+<P><A class="" title="Enterprise Library" href="http://www.pnpguidance.net/Category/EnterpriseLibrary.aspx">Enterprise Library</A>, for example,&nbsp;is smothered in Factory Methods, because it is based on a provider model and the actual provider&nbsp;chosen is determined&nbsp;at runtime by configuration settings in a configuration file. Here is an example from the <A class="" title="Data Access Application Block" href="http://davidhayden.com/blog/dave/archive/2005/03/14/867.aspx">Data Access Application Block</A>:</P><br />
+<P>&nbsp;</P><PRE><SPAN>Database</SPAN><SPAN> db </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory</SPAN><SPAN>.CreateDatabase();</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Database</STRONG> is an <STRONG>Abstract Class</STRONG> and several classes, like <STRONG>SqlDatabase</STRONG> and <STRONG>OracleDatabase</STRONG>, could be returned by <STRONG>DatabaseFactory.CreateDatabase()</STRONG> depending on whether your configuration settings specify you want to connect to SQL Server or Oracle. Instantiation details are hidden behind the CreateDatabase Factory Method because the actual provider returned is based on runtime configuration settings.</P><br />
+<P>&nbsp;</P><br />
+<H2>Using Factory Method Support in Castle Windsor</H2><br />
+<P>As mentioned above, Castle Windsor will normally provide you a service provider based on the type mapped to a service contract, but you have the option of specifying a Factory Method in your code to instantiate the service provider.</P><br />
+<P>Instead of mapping the CustomerRepository Class to ICustomerRepository in the Windsor Configuration, I will instead create a Factory Method on a class that returns an ICustomerRepository:</P><br />
+<P>&nbsp;</P><br />
+<DIV><br />
+<P><SPAN>public</SPAN> <SPAN>class</SPAN> <SPAN>CustomerRepositoryFactory</SPAN></P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>ICustomerRepository</SPAN> Create()</P><br />
+<P>&nbsp;&nbsp;&nbsp; {</P><br />
+<P>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>return</SPAN> <SPAN>new</SPAN> <SPAN>CustomerRepository</SPAN>();</P><br />
+<P>&nbsp;&nbsp;&nbsp; }</P><br />
+<P>}</P></DIV><br />
+<P>&nbsp;</P><br />
+<P>Here I have just hardcoded new CustomerRepository(), but in reality I would be interrogating various runtime configuration and context settings to determine the actual provider for ICustomerRepository Services.</P><br />
+<P>In my Windsor Configuration File, I can now tell Windsor to call the <STRONG>Create</STRONG> Method ( Factory Method ) on <STRONG>CustomerRepositoryFactory</STRONG> and return its results when the application requests ICustomerRepository. Notice the <STRONG>FactorySupport Facility</STRONG> which extends the container to provide Factory Method Support. Also notice that on the CustomerRepository Component we now have <STRONG>factoryid</STRONG> and <STRONG>factoryCreate</STRONG> options which specify which type and method to call to instantiate the ICustomerRepository Provider.</P><br />
+<P>&nbsp;</P><PRE><SPAN>&lt;</SPAN><SPAN>facilities</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>facility<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>factory.support</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Castle.Facilities.FactorySupport.FactorySupportFacility, Castle.MicroKernel</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;/</SPAN><SPAN>facilities</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.CustomerRepositoryFactory, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepository</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        service</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.ICustomerRepository, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.CustomerRepository, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factoryId</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factoryCreate</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Create</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;/</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>You can also pass dependencies into the Factory Method. Let&#8217;s change the CustomerRepositoryFactory Create Method to require an external service and pretend we actually use it to determine which ICustomerRepository to instantiate:</P><br />
+<P>&nbsp;</P><br />
+<DIV><br />
+<P><SPAN>public</SPAN> <SPAN>class</SPAN> <SPAN>CustomerRepositoryFactory</SPAN></P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>ICustomerRepository</SPAN> Create(<SPAN>IExternalService</SPAN> service)</P><br />
+<P>&nbsp;&nbsp;&nbsp; {</P><br />
+<P>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>return</SPAN> <SPAN>new</SPAN> <SPAN>CustomerRepository</SPAN>();</P><br />
+<P>&nbsp;&nbsp;&nbsp; }</P><br />
+<P>}</P></DIV><br />
+<P>&nbsp;</P><br />
+<P>All we have to do is add the dependency into the Windsor Configuration File and it will provide it to the method:</P><br />
+<P>&nbsp;</P><PRE><SPAN>&lt;</SPAN><SPAN>facilities</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>facility<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>factory.support</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Castle.Facilities.FactorySupport.FactorySupportFacility, Castle.MicroKernel</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;/</SPAN><SPAN>facilities</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ExternalService</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        service</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.IExternalService, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.ExternalService, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.CustomerRepositoryFactory, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>component<br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepository</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        service</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.ICustomerRepository, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.CustomerRepository, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factoryId</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factoryCreate</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Create</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;/</SPAN><SPAN>components</SPAN><SPAN>&gt;</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>Pretty slick. The use of a Factory Method does not change the interface for requesting services via Castle Windsor. The following works as expected in my sample:</P><br />
+<P>&nbsp;</P><br />
+<DIV><br />
+<P><SPAN>WindsorContainer</SPAN> ioc = <SPAN>new</SPAN> <SPAN>WindsorContainer</SPAN>(<SPAN>&#8220;../../Windsor.config&#8221;</SPAN>);</P><br />
+<P><SPAN>ICustomerRepository</SPAN> repository = ioc.Resolve&lt;<SPAN>ICustomerRepository</SPAN>&gt;();</P><br />
+<P>repository.Add(<SPAN>new</SPAN> <SPAN>Customer</SPAN>());</P></DIV><br />
+<P>&nbsp;</P><br />
+<H2>Using Factory Method Support in Spring.NET</H2><br />
+<P>Spring.NET supports the Factory Method as well. We just have changes in the configuration file and client code, and the CustomerRepositoryFactory stays the same.</P><br />
+<P>The configuration file is as follows. Notice the <STRONG>factory-object</STRONG> and <STRONG>factory-method</STRONG> options to specify the type and factory method that will be called to instantiate the service. Also notice the <STRONG>constructor-arg</STRONG> for providing the IExternalService to the method.</P><br />
+<P>&nbsp;</P><PRE><SPAN>&lt;</SPAN><SPAN>objects xmlns</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>http://www.springframework.net</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>object</SPAN><SPAN><br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ExternalService</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.ExternalService, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>object</SPAN><SPAN><br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ConsoleApplication2.CustomerRepositoryFactory, ConsoleApplication2</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    </SPAN><SPAN>/&gt;</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>&lt;</SPAN><SPAN>object</SPAN><SPAN><br />
+        id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepository</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factory</SPAN><SPAN>-</SPAN><SPAN>method</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Create</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        factory</SPAN><SPAN>-</SPAN><SPAN>object</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>CustomerRepositoryFactory</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+            </SPAN><SPAN>&lt;</SPAN><SPAN>constructor</SPAN><SPAN>-</SPAN><SPAN>arg name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>service</SPAN><SPAN>&#8220;</SPAN><SPAN>  </SPAN><SPAN>ref</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>ExternalService</SPAN><SPAN>&#8220;</SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>&lt;/</SPAN><SPAN>object</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p></SPAN><SPAN>&lt;/</SPAN><SPAN>objects</SPAN><SPAN>&gt;</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;and the client code I used for my sample is:</P><br />
+<P>&nbsp;</P><br />
+<DIV><br />
+<P><SPAN>IResource</SPAN> input = <SPAN>new</SPAN> <SPAN>FileSystemResource</SPAN>(<SPAN>&#8220;../../Spring.config&#8221;</SPAN>);</P><br />
+<P><SPAN>IObjectFactory</SPAN> factory = <SPAN>new</SPAN> <SPAN>XmlObjectFactory</SPAN>(input);</P><br />
+<P><SPAN>ICustomerRepository</SPAN> repository = (<SPAN>ICustomerRepository</SPAN>)factory.GetObject(<SPAN>&#8220;CustomerRepository&#8221;</SPAN>);</P><br />
+<P>repository.Add(<SPAN>new</SPAN> <SPAN>Customer</SPAN>());</P></DIV><br />
+<P>&nbsp;</P><br />
+<P>Very cool!</P><br />
+<P>&nbsp;</P><br />
+<H2>Conclusion</H2><br />
+<P>Both Caste Windsor and Spring.NET have wonderful support for Factory Methods when service instantiation needs to be delegated to a factory method in your application. For those of you using the <A class="" title="Policy Injection Application Block" href="http://www.pnpguidance.net/Tag/PolicyInjectionApplicationBlock.aspx">Policy Injection Application Block</A>, one might consider calling <STRONG>PolicyInjection.Wrap&lt;ICustomerRepository&gt;(&#8230;)</STRONG> in the factory method for a bit of AOP Services Enterprise Library style. This is just one option of course to get the Policy Injection Application Block to work with these containers. Of course, Windsor and&nbsp;Spring.NET have AOP services as well.</P><br />
+<P>&nbsp;</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>, <a href="http://codebetter.com/davidhayden/category/ioc/" title="View all posts in IOC" rel="category tag">IOC</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/" title="Permalink to Factory Method Support in Castle Windsor and Spring.Net" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/feed/" title="Comments RSS to Factory Method Support in Castle Windsor and Spring.Net" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-235 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2007/12/04/day-of-patterns-amp-practices-in-tampa-florida/" rel="prev"><span class="meta-nav">&larr;</span> Day of Patterns &amp; Practices in Tampa Florida</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2007/12/13/barebones-service-locator-and-aop-using-policy-injection-application-block/" rel="next">BareBones Service Locator and AOP Using Policy Injection Application Block <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">5 Responses to <em>Factory Method Support in Castle Windsor and Spring.Net</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-662">
+		<div id="comment-662">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#comment-662">December 15, 2007 at 3:01 pm</a></div>
+
+		<div class="comment-body"><p>Steve,</p>
+<p>Great point. It sounds very wise to me as it should offer better maintainability and more consistency. I haven&#8217;t been doing that when the object I create doesn&#8217;t have other dependencies, but I should probably be doing it all the time when I am in control of object creation.</p>
+<p>The only time you couldn&#8217;t do that is when using various objects from frameworks that come with their own facades and factories for object creation. In those cases, I have to call their factory or facade and then wrap the object using the adapter design pattern if necessary.</p>
+<p>Thanks for the excellent comment!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-661">
+		<div id="comment-661">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blogger.forgottenskies.com' rel='external nofollow' class='url'>SteveG</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#comment-661">December 14, 2007 at 8:07 pm</a></div>
+
+		<div class="comment-body"><p>Thanks David.</p>
+<p>Question, suspose the following:</p>
+<p>public class CustomerRepositoryFactory<br />
+{<br />
+    public ICustomerRepository Create(string repositoryCustomerId)<br />
+    {<br />
+        return ioc.Resolve<icustomerrepository>(&#8220;component.repository1&#8243;)<br />
+    }<br />
+}</p>
+<p>In other words, your using the factory to determine which CustomerRepository.  ie. you have two customerrepository objects in your windsor config  with id&#8217;s of &#8220;component.repository1&#8243; and &#8220;component.respository2&#8243;</p>
+<p>Would you provide something perhaps like this in order to keep object creation in the container:</p>
+<p>ICustomerRepository repository = ioc.Resolve</icustomerrepository><icustomerrepository>(&#8220;component.repository1&#8243;);<br />
+or<br />
+ICustomerRepository repository = ioc.Resolve</icustomerrepository><icustomerrepository>(&#8220;component.repository2&#8243;);</p>
+<p>Is this wise?</icustomerrepository></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-660">
+		<div id="comment-660">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#comment-660">December 14, 2007 at 4:59 pm</a></div>
+
+		<div class="comment-body"><p>Another example would be B2B Service Availability.</p>
+<p>I use this approach when a web application is dependent on a web service from a 3rd party provider. When the preferred provider goes down or is loaded with requests, we can check its status / availability and switch to a backup provider or strategy on demand.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-659">
+		<div id="comment-659">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">CB</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#comment-659">December 14, 2007 at 4:23 pm</a></div>
+
+		<div class="comment-body"><p>Do you have a quick real world example?  I always come up with needed context info about the user to drive this scenario.. any others?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-658">
+		<div id="comment-658">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/sfeldman' rel='external nofollow' class='url'>Sean Feldman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#comment-658">December 13, 2007 at 10:02 pm</a></div>
+
+		<div class="comment-body"><p>Thank you for showing this. I was wondering how to do it and also was too lazy to dig the documentation.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2007/12/13/factory-method-support-in-castle-windsor-and-spring-net/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='235' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="f97e30f3b4" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.296 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:15:54 -->
+<!-- super cache -->

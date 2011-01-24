@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Code metrics on Coupling, Dead Code, Design flaws and Re-engineering  | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='Layering, the Level metric and the Discourse of Method' href='http://codebetter.com/patricksmacchia/2008/02/10/layering-the-level-metric-and-the-discourse-of-method/' />
+<link rel='next' title='Iterators, LINQ deferred execution and prime numbers computation' href='http://codebetter.com/patricksmacchia/2008/02/22/iterators-linq-deferred-execution-and-prime-numbers-computation/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=38' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-38" class="post-38 post type-post status-publish format-standard hentry category-afferent-coupling category-code-metrics category-cohesion category-coupling category-dead-code category-efferent-coupling">
+					<h1 class="entry-title">Code metrics on Coupling, Dead Code, Design flaws and Re-engineering</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering/" title="3:15 pm" rel="bookmark"><span class="entry-date">February 15, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" alt="Share/Bookmark" width="171" border="0" height="16" /></a></p>
+<p class="MsoNormal"><span>There is a whole range of interesting code<br />
+metrics relative to coupling. The simplest ones are named <b>Afferent Coupling</b> (<b>Ca</b>)<br />
+and <b>Efferent Coupling</b> (<b>Ce</b>). Basically, the <span style="font-weight: bold">Ca</span> for a code<br />
+element is the number of code elements that use it and the <span style="font-weight: bold">Ce</span> is the number of<br />
+code elements that it uses.</span></p>
+<p class="MsoNormal">
+<p>  <!--[if !mso]--></p>
+<p><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia/CaCe/CaCeIllustration.PNG?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992089&amp;Signature=zTWLJXOXdLBFadsEmhAlE9Ff6uI%3d" /></p>
+<p class="MsoNormal"><span>You can define <span style="font-weight: bold">Ca</span> and <span style="font-weight: bold">Ce</span> for the graph of<br />
+assemblies dependencies, the graph of namespaces </span><span>dependencies</span><span>, the graph of types </span><span>dependencies </span><span>and the graph of<br />
+methods </span><span>dependencies </span><span>of a code base. You can also define the <span style="font-weight: bold">Ca</span> metric on the fields of a<br />
+program as the number of methods that access the field. This leads to 9 metrics<br />
+all supported by the tool <a href="http://www.NDepend.com" target="_blank">NDepend.<br />
+</a>We precise that when computing <span style="font-weight: bold">Ce</span>, NDepend takes account of code elements<br />
+defined in tier code such as the code of the .NET framework.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>With NDepend, if you wish to know which methods<br />
+of your program are massively used you can write the following <a href="http://www.ndepend.com/Features.aspx#CQL" target="_blank">CQL Query</a><br />
+:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">METHODS</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">ORDER</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">BY</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">MethodCa</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">DESC</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Being used a lot is not necessarily a problem.<br />
+However it is still interesting to know which part of your code base is used a<br />
+lot. For example, if we apply the CQL query below to the core of the .NET<br />
+framework (i.e mscorlib, System, System.Core, System.Xml&hellip;) we obtain the<br />
+following 10 methods:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<table class="MsoNormalTable" style="border: 1pt outset white" border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">methods</span></b></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%"><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">Afferent<br />
+coupling at method level (MethodCa)</span></b></td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Environment.GetResourceString(String)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">2632</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Object..ctor()</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">2416</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.ArgumentNullException..ctor(String)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">2368</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.String.get_Length()</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1795</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Type.GetTypeFromHandle(RuntimeTypeHandle)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1762</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.IDisposable.Dispose()</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1119</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.SR.GetString(String)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1115</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.InvalidOperationException..ctor(String)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1101</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Object.ToString()</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1056</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.ArgumentException..ctor(String)</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">1010</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="font-size: 18pt;line-height: 115%">High Efferent Coupling and<br />
+design flaws</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>If you wish to know which types of your program<br />
+are heavy users of other types you just have to write:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">ORDER</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">BY</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">TypeCe</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">DESC</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>High <span style="font-weight: bold">Ce</span> might reveal a design problem. Types<br />
+with high <span style="font-weight: bold">Ce</span> are entangled with many other implementations. The higher the <span style="font-weight: bold">Ce</span>,<br />
+the higher the number of responsibilities the type has. If we apply the CQL query<br />
+above to the core of the .NET framework we obtain the following list:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<table class="MsoNormalTable" style="border: 1pt outset white" border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%"><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">types</span></b></td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">Efferent<br />
+coupling at type level (TypeCe)</span></b></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">Microsoft.CSharp.CSharpCodeGenerator</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">172</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">Microsoft.VisualBasic.VBCodeGenerator</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">161</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Net.HttpWebRequest</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">138</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Net.Sockets.Socket</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">137</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.AppDomain</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">131</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.RuntimeType</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">128</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Xml.Xsl.XsltOld.Compiler</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">125</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Xml.Xsl.Xslt.QilGenerator</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">124</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Xml.Serialization.XmlSchemaImporter</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">120</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Diagnostics.Process</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">116</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>As expected this list contains high level<br />
+classes such as <span style="font-weight: bold">AppDomain</span>, <span style="font-weight: bold">Process</span> or <span style="font-weight: bold">Socket</span>. This sort of classes with high <span style="font-weight: bold">Ce</span><br />
+are needed to implement complex concepts that spawn numerous concerns. For<br />
+example, by selecting the 131 types used by the <span style="font-weight: bold">AppDomain</span> class I can tell that<br />
+<span style="font-weight: bold">AppDomain</span> is concerned by assembly security (Code Access Security, strong<br />
+naming&hellip;), Windows users and file security, OS environment info, .NET Remoting, .NET<br />
+Reflection, Threading and globalization.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Could the <span style="font-weight: bold">AppDomain</span> class be split into several<br />
+smaller classes? I guess no because this is such an essential class. But this<br />
+is the exception. Generally, classes with high <span style="font-weight: bold">Ce</span> would be more like the<br />
+<span style="font-weight: bold">CSharpCodeGenerator</span> class which represent alone a component. I can see that the<br />
+class <span style="font-weight: bold">CSharpCodeGenerator</span> deals with a lot of implementation detail of the C#<br />
+language such as exception, type casting, all sorts of members (method, field,<br />
+event, property&hellip;), comment, indentation etc. This sounds good as long as each<br />
+details has its own implementation the class <span style="font-weight: bold">CSharpCodeGenerator</span> <span></span>acts as a high level mediator. But if I dig<br />
+further and decompile some methods I can see that the class <span style="font-weight: bold">CSharpCodeGenerator</span><br />
+also cops with file management and contains a lot of logic (&gt;1000 Lines of<br />
+Code) to handle some <span style="font-weight: bold">CodeDOM</span> details. This is likely an indication that this<br />
+code could have been better designed with the help of several smaller collaborating<br />
+classes.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="font-size: 18pt;line-height: 115%">Afferent Coupling and Dead<br />
+Code</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span><span style="font-weight: bold">Ce</span> values are meaningful values<br />
+when it comes to assessing some design and when you have to re-engineer code. <span style="font-weight: bold">Ca</span> values<br />
+are also useful, especially when equal to 0. A <span style="font-weight: bold">Ca</span> value equals to 0 indicates a<br />
+potential dead code element. A dead code element is an element that can be<br />
+discarded because it is not used by the program anymore. Pruning dead code is a<br />
+necessary task to make sure that your code is rationalized. Here also the tool <span style="font-weight: bold">NDepend</span><br />
+can help you because it knows about <span style="font-weight: bold">Ca</span>. However things get more complicated<br />
+here because there are numerous cases where a zero <span style="font-weight: bold">Ca</span> doesn&rsquo;t mean dead code. For<br />
+example, entry points (i.e Main methods), class constructors or finalizers<br />
+represent some methods that will always have a zero <span style="font-weight: bold">Ca</span>. However these methods<br />
+are not dead code because the CLR will call them at runtime.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Here is the CQL rule that we provide by<br />
+default to detect dead methods:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// &lt;Name&gt;Potentially unused<br />
+methods&lt;/Name&gt;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WARN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IF</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">Count</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> &gt; </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">METHODS</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">MethodCa</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> == </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Ca=0 -&gt; No Afferent Coupling -&gt; The method&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">is<br />
+not used </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">in the context of this </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // application.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsPublic</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Public methods might be used by<br />
+client&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">applications of </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">your assemblies.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsEntryPoint</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Main() method is not used<br />
+by-design.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsExplicitInterfaceImpl</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// The IL code never explicitely calls&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">explicit interface </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">methods<br />
+implementation.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsClassConstructor</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// The IL code never explicitely<br />
+calls class </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // constructors.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">IsFinalizer</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: green">// The IL code never explicitely<br />
+calls </span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // finalizers.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Notice how we consider that public methods<br />
+should be not considered as dead code in the general case. This rule generally matches a lot of false positive because when statically analyzing the<br />
+IL code, we can see that often overridden implementations are not statically<br />
+linked. Hence to get a first evaluation of dead code it is worth adding the restricting<br />
+condition </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">AND </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black">!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">Is</span><span style="font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">Virtual</span><span>.<br />
+This particular issue will be addressed by further versions of NDepend.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Things gets more easy and efficient when it comes to detect<br />
+dead fields and dead types. Here are the 2 CQL rules we propose by<br />
+default and their particular conditions to avoid false positive:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// &lt;Name&gt;Potentially unused<br />
+fields&lt;/Name&gt;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WARN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IF</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">Count</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> &gt; </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">FIELDS</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">FieldCa</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> == </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Ca=0 -&gt; No Afferent Coupling -&gt; The field is<br />
+not used<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">in the </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">context of this application.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsPublic</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Although not recommended,<br />
+public fields might be used<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">by client </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">applications of your assemblies.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsLiteral</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// The IL code never explicitely<br />
+uses literal fields.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsEnumValue</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// The IL code never explicitely<br />
+uses enumeration value.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">NameIs</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #a31515">&#8220;value__&#8221;</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Field named &#8216;value__&#8217; are relative to<br />
+enumerations&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">and the </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">IL code never explicitely uses them.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// &lt;Name&gt;Potentially unused<br />
+types&lt;/Name&gt;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WARN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IF</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">Count</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> &gt; </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">IN</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">TypeCa</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> == </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black">0</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Ca=0 -&gt; No Afferent Coupling -&gt; The type is<br />
+not&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">used in the </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">context of this application.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">IsPublic</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">// Public types might be used by<br />
+client&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">applications of your </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">assemblies.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;</span>!</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #000064">NameIs</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: #a31515">&#8220;Program&#8221;</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><span>&nbsp;&nbsp;<br />
+</span></span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">//<br />
+Generally, types named Program contain a Main()&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">entry-point </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">method and this<br />
+condition avoid&nbsp;<br /> </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">to consider such type as </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">unused code.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: green">&nbsp;</span></p>
+<p class="MsoNormal"><span>Notice how easy it is to customize these<br />
+rules thanks to CQL facilities such as <b>NameIs</b>, <b>NameLike</b>, <b>SELECT OUT<br />
+OF/FROM</b> etc&hellip;</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="font-size: 18pt;line-height: 115%">Ranking<br />
+Metrics</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Since with NDepend, we have an efficient in-memory<br />
+representation of internal dependencies of a code base, we got the idea of<br />
+implementing the famous <a href="http://en.wikipedia.org/wiki/PageRank" target="_blank">Google Page Rank</a><br />
+algorithm to the graph of methods and the graph of types. As a consequence, the<br />
+2 metrics <b>TypeRank </b>and <b>MethodRank </b>indicate which types and which methods of a<br />
+code base are the most <i>important</i>. As<br />
+a web page with <b>Google</b>, a code element is considered as important if it is used<br />
+by numerous code elements that themselves are considered more or less<br />
+important. </span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>When discovering a code base knowing which types and methods are<br />
+important is -<i>well</i>- important, because they likely represent the cornerstone of<br />
+the code base, the ones that you will have to understand first in order to<br />
+dig into the program structure. If you have the chance to be educated on the code base by<br />
+one of its developer, she will likely talk to you first about these important<br />
+code elements in order to give you the basics. What is cool is that you can<br />
+know automatically and objectively about this information thanks to the ranking<br />
+metrics. </span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>For example, suppose if you were a complete beginner in .NET<br />
+programming, what would be the top 10 most important types to know about?<br />
+<b>Integer</b>? <b>String</b>? <b>Object</b>? <b>Bool</b>? Let&rsquo;s see what the <b>TypeRank </b>metric has to say about<br />
+the top 10 most important types of the .NET framework:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TOP</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: yellow none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black">10</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">ORDER</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">BY</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: #000064">TypeRank</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">DESC</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<table class="MsoNormalTable" style="border: 1pt outset white" border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 12pt;font-family: 'Times New Roman','serif'"><span></span></span><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">types</span></b></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #b3b3b3 none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><b><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif'">Type<br />
+Rank</span></b></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Runtime.InteropServices.ComVisibleAttribute</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">409.03</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Object</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">380.89</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Runtime.InteropServices.ClassInterfaceAttribute</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">329.73</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Void</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">281.02</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.CLSCompliantAttribute</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">189.13</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Int32</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">170.17</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Boolean</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">168.88</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Runtime.InteropServices.GuidAttribute</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">153.64</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.String</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #eaeaea none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">145.63</span></p>
+</td>
+</tr>
+<tr>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">System.Runtime.InteropServices.InterfaceTypeAttribute</span></p>
+</td>
+<td style="border: 1pt inset white;padding: 2.25pt;background: #dbdbdb none repeat scroll 0% 50%">
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span style="font-size: 10pt;font-family: 'Trebuchet MS','sans-serif';color: #000055">143.32</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Hopefully we find the types that we considered<br />
+important, but we also get some interesting finds that show how the COM and<br />
+interop things such as <b>ComVisibleAttribute </b>or <b>GuidAttribute </b>are so pervasive<br />
+inside the .NET framework MS implementation.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>We also precise that code that is considered<br />
+important deserves even more attention than the rest in terms of test code<br />
+coverage and design.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>NDepend supports also several others code<br />
+metrics relative to coupling such the <a href="http://www.ndepend.com/Metrics.aspx#ABC" target="_blank">Association Between Classes</a>,<br />
+the <a href="http://www.ndepend.com/Metrics.aspx#LCOM" target="_blank">Lack Of Cohesion of Methods</a> (LCOM)<a href="http://www.ndepend.com/Metrics.aspx#LCOM"></a>&nbsp;<span></span>and the <a href="http://www.ndepend.com/Metrics.aspx#MetricsOnAssemblies" target="_blank">Robert C.Martin metrics</a> on<br />
+assemblies<a href="http://www.ndepend.com/Metrics.aspx#MetricsOnAssemblies"></a>.<br />
+I will certainly write some thoughts on all these on future posts. Meantime you<br />
+can read their definition and try them on your own code base. You can also have<br />
+a glance and print the great <a href="http://www.hanselman.com/blog/content/binary/NDepend%20metrics%20placemats%201.1.pdf" target="_blank">NDepend Poster Metrics</a>&nbsp;<a href="http://www.hanselman.com/blog/content/binary/NDepend%20metrics%20placemats%201.1.pdf"></a>done by <a href="http://www.ferncrk.com/blog" target="_blank">Stuart Celarier</a>,<br />
+<a href="http://www.cauldwell.net/patrick/blog/" target="_blank">Patrick Cauldwell</a>&nbsp;<a href="http://www.cauldwell.net/patrick/blog/"></a>and <a href="http://www.hanselman.com/blog/" target="_blank">Scott Hanselman</a>&nbsp;.</span></p>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p>
+<a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" alt="Share/Bookmark" width="171" border="0" height="16" /></a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/afferent-coupling/" title="View all posts in Afferent Coupling" rel="category tag">Afferent Coupling</a>, <a href="http://codebetter.com/patricksmacchia/category/code-metrics/" title="View all posts in Code metrics" rel="category tag">Code metrics</a>, <a href="http://codebetter.com/patricksmacchia/category/cohesion/" title="View all posts in Cohesion" rel="category tag">Cohesion</a>, <a href="http://codebetter.com/patricksmacchia/category/coupling/" title="View all posts in coupling" rel="category tag">coupling</a>, <a href="http://codebetter.com/patricksmacchia/category/dead-code/" title="View all posts in Dead Code" rel="category tag">Dead Code</a>, <a href="http://codebetter.com/patricksmacchia/category/efferent-coupling/" title="View all posts in Efferent Coupling" rel="category tag">Efferent Coupling</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering/" title="Permalink to Code metrics on Coupling, Dead Code, Design flaws and Re-engineering" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering/feed/" title="Comments RSS to Code metrics on Coupling, Dead Code, Design flaws and Re-engineering" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-38 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2008/02/10/layering-the-level-metric-and-the-discourse-of-method/" rel="prev"><span class="meta-nav">&larr;</span> Layering, the Level metric and the Discourse of Method</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2008/02/22/iterators-linq-deferred-execution-and-prime-numbers-computation/" rel="next">Iterators, LINQ deferred execution and prime numbers computation <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-145">
+					<div id="dsq-comment-header-145" class="dsq-comment-header">
+						<cite id="dsq-cite-145">
+	http://colinjack.blogspot.com/							<span id="dsq-author-user-145">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-145" class="dsq-comment-body">
+						<div id="dsq-comment-message-145" class="dsq-comment-message"><p>I was wondering how I can change this assembly to ignore dependencies from certain assemblies or from framework assemblies:</p>
+<p>SELECT TOP 10 TYPES ORDER BY TypeCe DESC</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-146">
+					<div id="dsq-comment-header-146" class="dsq-comment-header">
+						<cite id="dsq-cite-146">
+	http://colinjack.blogspot.com/							<span id="dsq-author-user-146">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-146" class="dsq-comment-body">
+						<div id="dsq-comment-message-146" class="dsq-comment-message"><p>Just to correct myself, I meant&#8230;.</p>
+<p>I was wondering how I can change this assembly to ignore dependencies to certain assemblies or to framework assemblies:</p>
+<p>SELECT TOP 10 TYPES ORDER BY TypeCe DESC</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-147">
+					<div id="dsq-comment-header-147" class="dsq-comment-header">
+						<cite id="dsq-cite-147">
+	http://www.NDepend.com							<span id="dsq-author-user-147">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-147" class="dsq-comment-body">
+						<div id="dsq-comment-message-147" class="dsq-comment-message"><p>Colin, do you mean you need to write something like:<br />
+SELECT TOP 10 TYPES OUT OF ASSEMBLIES  &#8220;Asm1&#8243;, &#8220;Asm2&#8243;&#8230; ORDER BY TypeCe DESC</p>
+<p>or do you mean that you want to tweak the Ce values to ignore some assemblies?<br />
+In this last scenario, for now, you need to discard the unwanted assemblies from your NDepend project.<br />
+However, I estimate that this particular task could be better done by using the Dependencies Matrix and just keeping the assemblies you are interested in, in the matrix headers.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-148">
+					<div id="dsq-comment-header-148" class="dsq-comment-header">
+						<cite id="dsq-cite-148">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-148">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-148" class="dsq-comment-body">
+						<div id="dsq-comment-message-148" class="dsq-comment-message"><p>Thanks for replying and its the latter case. </p>
+<p>I&#8217;ll try and exclude the assemblies in question (framework assemblies and some of our abstract assemblies) but to be honest I&#8217;ve not had a lot of success getting that sort of approach to work in other situations.</p>
+<p>It would be useful if NDepend allowed you to tweak things like TypeCe, for example when viewing TypeCe I&#8217;m not overly worried on dependencies on things like IEnumerable.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-149">
+					<div id="dsq-comment-header-149" class="dsq-comment-header">
+						<cite id="dsq-cite-149">
+								<span id="dsq-author-user-149">Pham Huy Anh</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-149" class="dsq-comment-body">
+						<div id="dsq-comment-message-149" class="dsq-comment-message"><p>Unused code: Hi experts.<br />
+Could you please tell me a little more about Unused/Dead code? </p>
+<p>Can it discover stupid code such as</p>
+<p>final boolean test = false;<br />
+if (test) doSomething();</p>
+<p>or just explicit unreferenced/called variable/method</p>
+<p>Thanks,<br />
+huyanh</p>
+<p>Anyway, I am talking about Xdepend for Java.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-150">
+					<div id="dsq-comment-header-150" class="dsq-comment-header">
+						<cite id="dsq-cite-150">
+								<span id="dsq-author-user-150">Pham Huy Anh</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-150" class="dsq-comment-body">
+						<div id="dsq-comment-message-150" class="dsq-comment-message"><p>Unused code: Hi experts.<br />
+Could you please tell me a little more about Unused/Dead code? </p>
+<p>Can it discover stupid code such as</p>
+<p>final boolean test = false;<br />
+if (test) doSomething();</p>
+<p>or just explicit unreferenced/called variable/method</p>
+<p>Thanks,<br />
+huyanh</p>
+<p>Anyway, I am talking about Xdepend for Java.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering/ ';
+	var disqus_identifier = '38 /blogs/patricksmacchia/archive/2008/02/15/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Code metrics on Coupling, Dead Code, Design flaws and Re-engineering";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=38');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2008\/02\/15\/code-metrics-on-coupling-dead-code-design-flaws-and-re-engineering\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.323 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:50:36 -->
+<!-- super cache -->

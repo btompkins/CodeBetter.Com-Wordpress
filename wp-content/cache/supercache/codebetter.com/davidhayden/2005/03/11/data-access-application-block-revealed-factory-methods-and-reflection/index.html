@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Data Access Application Block Revealed &#8211; Factory Methods and Reflection | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices' href='http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/' />
+<link rel='next' title='Updater Application Block &#8211; Version 2.0 Released' href='http://codebetter.com/davidhayden/2005/03/11/updater-application-block-version-2-0-released/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=20' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-20" class="post-20 post type-post status-publish format-standard hentry category-application-blocks category-c">
+					<h1 class="entry-title">Data Access Application Block Revealed &#8211; Factory Methods and Reflection</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/" title="2:06 pm" rel="bookmark"><span class="entry-date">March 11, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>The other day I talked about the <A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/09/59533.aspx">Data Access Application Block</A>&nbsp;and how you can use it in your applications to assist you with ADO.NET.</P><br />
+<P>In particular, I briefly discussed this piece of code:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Data Access Application Block</LEGEND><PRE><SPAN>Database db </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();</p>
+<p></SPAN><SPAN>string</SPAN><SPAN> query </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Select * from Customers Where CustomerID = @CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>DBCommandWrapper command </SPAN><SPAN>=</SPAN><SPAN> db.GetSqlStringCommandWrapper(query);</p>
+<p>command.AddInParameter(</SPAN><SPAN>&#8220;</SPAN><SPAN>@CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>, DbType.String, id);</p>
+<p></SPAN><SPAN>using</SPAN><SPAN> (IDataReader reader </SPAN><SPAN>=</SPAN><SPAN> db.ExecuteReader(command))<br />
+{<br />
+    </SPAN><SPAN>//</SPAN><SPAN> Do Something&#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>One of the statements worth understanding a bit better is</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Factory Method</LEGEND><PRE><SPAN>Database db </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();<br />
+</SPAN></PRE><PRE><SPAN><BR>Defers the decision of which class to instantiate.</SPAN></PRE></FIELDSET><br />
+<P></P><br />
+<P>&nbsp;</P><br />
+<P>If you take a peek at the DAAB source code, that statement is fairly involved on the surface.&nbsp; It tosses you around to a number of classes and overloaded methods that could be difficult to figure out if you are new to .NET and object-oriented programming.&nbsp; There is some pretty cool stuff going on there, so I thought I would mimic this statement with an example that is easier to understand.</P><br />
+<P>In the DAAB, <STRONG>Database</STRONG> is an <STRONG>abstract class</STRONG>.&nbsp; As any abstract class, you cannot create an instance of it.&nbsp; You can only create concrete classes that derive from Database.&nbsp; The DAAB currently has 2 such concrete classes: <STRONG>SqlDatabase</STRONG> and <STRONG>OracleDatabase</STRONG>.</P><br />
+<P>So given this piece of knowledge, we can infer that the <STRONG>DatabaseFactory.CreateDatabase()</STRONG> static method will probably return an object of <STRONG>SqlDatabase</STRONG> or <STRONG>OracleDatabase</STRONG> which will be assigned to <STRONG>db</STRONG>.&nbsp; The actual concrete class will probably be created on-the-fly based on some logic (in this case the settings in the DAAB configuration file).&nbsp; This type of method is called a <STRONG>Factory Method</STRONG> as it defers the decision of which class to instantiate.</P><br />
+<P>Let&#8217;s mimic this concept by building our own classes and factory method using an example that is closely related.&nbsp; First our database classes.&nbsp; Although they are on a much simpler scale, the classes below follow the same pattern as in the DAAB.&nbsp; We have an abstract class, called <STRONG>Database</STRONG>, and two concrete classes, called <STRONG>SqlServer</STRONG> and <STRONG>Oracle</STRONG>, which derive from our base class of <STRONG>Database</STRONG>.&nbsp; I have one simple abstract method in <STRONG>Database</STRONG>, called <STRONG>GetManufacturer()</STRONG>.&nbsp; As an abstract method, all derived classes are <STRONG>required</STRONG> to implement this method and has been done so accordingly.</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Database Classes</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>abstract</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>abstract</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer();<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SqlServer : Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> SqlServer() {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Microsoft</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Oracle : Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> Oracle() {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Oracle</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Now we need to create a Factory Method on a class that creates an instance of <STRONG>SqlServer</STRONG> or <STRONG>Oracle</STRONG> on the fly.&nbsp; Let&#8217;s do it similar to the DAAB, but with only one class for simplicity.</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Class Factory</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>sealed</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> DatabaseFactory<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> DatabaseFactory () {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> Database CreateDatabase()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> CreateDatabase(</SPAN><SPAN>&#8220;</SPAN><SPAN>SqlServer</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> Database CreateDatabase(</SPAN><SPAN>string</SPAN><SPAN> databaseName)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (databaseName.Equals(</SPAN><SPAN>&#8220;</SPAN><SPAN>SqlServer</SPAN><SPAN>&#8220;</SPAN><SPAN>) </SPAN><SPAN>||</SPAN><SPAN> databaseName.Equals(</SPAN><SPAN>&#8220;</SPAN><SPAN>Oracle</SPAN><SPAN>&#8220;</SPAN><SPAN>))<br />
+        {<br />
+            </SPAN><SPAN>//</SPAN><SPAN> Find the class</SPAN><SPAN><br />
+</SPAN><SPAN>            Type database </SPAN><SPAN>=</SPAN><SPAN> Type.GetType(databaseName);</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Get its constructor</SPAN><SPAN><br />
+</SPAN><SPAN>            ConstructorInfo constructor </SPAN><SPAN>=</SPAN><SPAN> database.GetConstructor(</SPAN><SPAN>new</SPAN><SPAN> Type[] {});</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Invoke its constructor, which returns and instance.</SPAN><SPAN><br />
+</SPAN><SPAN>            Object createdObject </SPAN><SPAN>=</SPAN><SPAN> constructor.Invoke(</SPAN><SPAN>null</SPAN><SPAN>);</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Pass back the instance as a Database</SPAN><SPAN><br />
+</SPAN><SPAN>            </SPAN><SPAN>return</SPAN><SPAN> createdObject </SPAN><SPAN>as</SPAN><SPAN> Database;<br />
+        }<br />
+        </SPAN><SPAN>else</SPAN><SPAN><br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentException(</SPAN><SPAN>&#8220;</SPAN><SPAN>Never heard of the database </SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>+</SPAN><SPAN> databaseName);<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The class is <STRONG>sealed</STRONG> so nobody derives from it and has a <STRONG>private constructor</STRONG> so nobody can&nbsp;create an instance of&nbsp;it.&nbsp; This is pretty common for these types of classes.</P><br />
+<P>We have essentially two static factory methods on this class, <STRONG>CreateDatabase()</STRONG> and <STRONG>CreateDatabase(string databaseName)</STRONG>, both of which return an object of type <STRONG>Database</STRONG>. If you don&#8217;t specify a database, you get the default database, which is &#8220;SqlServer&#8221;.&nbsp; This is sort of like the DAAB, but the DAAB looks in the configuration file to find the default database.&nbsp; In this case, I just hardcoded it for simplicity.</P><br />
+<P>Now the cool stuff is in the second method, <STRONG>CreateDatabase(string databaseName)</STRONG>.&nbsp; The <STRONG>databaseName</STRONG> parameter is the name of the class type we want to create on-the-fly.&nbsp; In our case, it either has to be <STRONG>SqlServer</STRONG> or <STRONG>Oracle</STRONG>, the two concrete classes we created that derive from <STRONG>Database</STRONG>.</P><br />
+<P>The rest is simple <STRONG>reflection</STRONG>&nbsp;similar to how&nbsp;it is done in the DAAB.&nbsp; The comments above really tell it all.&nbsp; We find the type requested in <STRONG>databaseName</STRONG>&nbsp;(SqlServer or Oracle), get its default constructor, and then invoke its default constructor which passes back an instance of the type.&nbsp; We then just cast the object to type Database and return it back to the calling program.</P><br />
+<P>Here is code you can run to test all our classes:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Testing Our Classes</LEGEND><PRE><SPAN>using</SPAN><SPAN> System;<br />
+</SPAN><SPAN>using</SPAN><SPAN> System.Reflection;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>abstract</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>abstract</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer();<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SqlServer : Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> SqlServer() {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Microsoft</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Oracle : Database<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> Oracle() {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetManufacturer()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Oracle</SPAN><SPAN>&#8220;</SPAN><SPAN>;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>sealed</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> DatabaseFactory<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> DatabaseFactory () {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> Database CreateDatabase()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> CreateDatabase(</SPAN><SPAN>&#8220;</SPAN><SPAN>SqlServer</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> Database CreateDatabase(</SPAN><SPAN>string</SPAN><SPAN> databaseName)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (databaseName.Equals(</SPAN><SPAN>&#8220;</SPAN><SPAN>SqlServer</SPAN><SPAN>&#8220;</SPAN><SPAN>) </SPAN><SPAN>||</SPAN><SPAN> databaseName.Equals(</SPAN><SPAN>&#8220;</SPAN><SPAN>Oracle</SPAN><SPAN>&#8220;</SPAN><SPAN>))<br />
+        {<br />
+            </SPAN><SPAN>//</SPAN><SPAN> Find the class</SPAN><SPAN><br />
+</SPAN><SPAN>            Type database </SPAN><SPAN>=</SPAN><SPAN> Type.GetType(databaseName);</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Get it&#8217;s constructor</SPAN><SPAN><br />
+</SPAN><SPAN>            ConstructorInfo constructor </SPAN><SPAN>=</SPAN><SPAN> database.GetConstructor(</SPAN><SPAN>new</SPAN><SPAN> Type[] {});</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Invoke it&#8217;s constructor, which returns and instance.</SPAN><SPAN><br />
+</SPAN><SPAN>            Object createdObject </SPAN><SPAN>=</SPAN><SPAN> constructor.Invoke(</SPAN><SPAN>null</SPAN><SPAN>);</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN> Pass back the instance as a Database</SPAN><SPAN><br />
+</SPAN><SPAN>            </SPAN><SPAN>return</SPAN><SPAN> createdObject </SPAN><SPAN>as</SPAN><SPAN> Database;<br />
+        }<br />
+        </SPAN><SPAN>else</SPAN><SPAN><br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentException(</SPAN><SPAN>&#8220;</SPAN><SPAN>Never heard of the database </SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>+</SPAN><SPAN> databaseName);<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> TestClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        </SPAN><SPAN>//</SPAN><SPAN> Default is Sql Server</SPAN><SPAN><br />
+</SPAN><SPAN>        Database defaultDatabase </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();<br />
+        Console.WriteLine(defaultDatabase.GetManufacturer());<br />
+        Console.ReadLine();</p>
+<p>        </SPAN><SPAN>//</SPAN><SPAN> Asking explicitly for Oracle</SPAN><SPAN><br />
+</SPAN><SPAN>        Database oracle </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase(</SPAN><SPAN>&#8220;</SPAN><SPAN>Oracle</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+        Console.WriteLine(oracle.GetManufacturer());<br />
+        Console.ReadLine();<br />
+    }<br />
+}</SPAN></PRE></LEGEND></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Hopefully the above code will illuminate what is going on in the DAAB when you make a call to <STRONG>DatabaseFactory.CreateDatabase()</STRONG>.&nbsp; Although we are doing it on a much simpler scale, it is the same technique&nbsp;and one&nbsp;you can use in your applications.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/application-blocks/" title="View all posts in Application Blocks" rel="category tag">Application Blocks</a>, <a href="http://codebetter.com/davidhayden/category/c/" title="View all posts in C#" rel="category tag">C#</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/" title="Permalink to Data Access Application Block Revealed &#8211; Factory Methods and Reflection" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/feed/" title="Comments RSS to Data Access Application Block Revealed &#8211; Factory Methods and Reflection" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-20 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/" rel="prev"><span class="meta-nav">&larr;</span> Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/03/11/updater-application-block-version-2-0-released/" rel="next">Updater Application Block &#8211; Version 2.0 Released <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">4 Responses to <em>Data Access Application Block Revealed &#8211; Factory Methods and Reflection</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-47">
+		<div id="comment-47">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/#comment-47">March 14, 2005 at 2:09 pm</a></div>
+
+		<div class="comment-body"><p>I am not sure how they can dynamically create an instance of a class they don&#8217;t know until runtime without using reflection.</p>
+<p>You&#8217;re right that they don&#8217;t need reflection if they are only ever going to have two database providers: SqlDatabase and OracleDatabase.</p>
+<p>However, I think the PAG wanted to leave the opportunity for others to either override the existing classes or create their own and be able to plug them in.  Since these would probably exist in another assembly in the bin directory, the only way to access those types to my knowledge is via reflection.</p>
+<p>There is a performance hit to using reflection, but I think the idea here is that the gain in extensibility more than outweighs any performance hit. Rocky Lhotka (of CSLA fame) would also try to convince you that the delay in using reflection is insignificant compared to the actual delay in the database call and is hence a moot point.  </p>
+<p>I am right with you though. Reflection is often overused and if not done properly can impact the usability and scalability of your applications.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-46">
+		<div id="comment-46">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dotnetjunkies.com/Weblog/MarkBonafe/' rel='external nofollow' class='url'>Mark Bonafe</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/#comment-46">March 14, 2005 at 9:57 am</a></div>
+
+		<div class="comment-body"><p>A good explanation of the DAAB.  I never liked all the reflection, though.  Why not just create methods to create what is need without the reflection?  Sure, it&#8217;s a little more code, but it&#8217;s much more effecient than using reflection.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-45">
+		<div id="comment-45">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/#comment-45">March 11, 2005 at 8:20 pm</a></div>
+
+		<div class="comment-body"><p>Those are the Fieldset and Legend HTML Tags.</p>
+<p>I don&#8217;t think I can shown the tags well via this comment area so check here for an example:</p>
+<p><a target="_new" href="http://www.w3.org/TR/REC-html40/interact/forms.html#edef-LEGEND">http://www.w3.org/TR/REC-html40/interact/forms.html#edef-LEGEND</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-44">
+		<div id="comment-44">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/jeff.lynch/' rel='external nofollow' class='url'>Jeff Lynch</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/#comment-44">March 11, 2005 at 7:59 pm</a></div>
+
+		<div class="comment-body"><p>Dave,</p>
+<p>How do you get the cool little &quot;boxes&quot; around your sample code man?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='20' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="df8caf908d" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.316 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:10:40 -->
+<!-- super cache -->

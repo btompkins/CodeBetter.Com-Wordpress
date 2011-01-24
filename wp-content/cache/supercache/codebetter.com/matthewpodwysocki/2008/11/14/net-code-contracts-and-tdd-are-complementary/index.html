@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>.NET Code Contracts and TDD Are Complementary | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='KaizenConf&#8217;08 Functional Programming Presentation Video' href='http://codebetter.com/matthewpodwysocki/2008/11/13/kaizenconf-08-functional-programming-presentation-video/' />
+<link rel='next' title='Functional .NET 4.0 &#8211; Tuples and Zip' href='http://codebetter.com/matthewpodwysocki/2008/11/16/functional-net-4-0-tuples-and-zip/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/11/14/net-code-contracts-and-tdd-are-complementary/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=80' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-80" class="post-80 post type-post status-publish format-standard hentry category-c category-spec category-tddbdd">
+					<h1 class="entry-title">.NET Code Contracts and TDD Are Complementary</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/11/14/net-code-contracts-and-tdd-are-complementary/" title="11:00 pm" rel="bookmark"><span class="entry-date">November 14, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>After my <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/11/08/code-contracts-and-net-4-0-spec-comes-alive.aspx">recent post</a> on the introduction of <a href="http://research.microsoft.com/contracts/">Code Contracts in .NET 4.0</a>, I got some strong reaction that they would rather rely on TDD, or the better term, Example Driven Development specifications to ensure correctness.&#160; Instead, it&#8217;s my intent to talk about how they can complement each other in some rather powerful ways, such as having contracts bound to interfaces instead of class instances to ensure uniform interaction.&#160; When we combine these two things together, the edge cases of our behaviors quickly melt away.</p>
+<p>&#160;</p>
+<h2>Design by Contract Basics</h2>
+<p> In order to understand how it can help, it&#8217;s best to understand more about what Design by Contract can do for us.&#160; The basic idea revolves around three questions:</p>
+<ul>
+<li>What does it expect? (Pre-conditions)</li>
+<li>What does it guarantee? (Post-conditions)</li>
+<li>What does it maintain? (Invariants)</li>
+</ul>
+<p>Now, to map that to actual software terms, these constraints are enforced at the method level.&#160; Listed below are the basic rules for how contracts work:</p>
+<ul>
+<li>Pre-conditions may be weakened and not strengthened by subclasses</li>
+<li>Post-conditions may be strengthened and not weakened by subclasses</li>
+<li>Invariants may be strengthened and not weakened by classes</li>
+</ul>
+<p>The intent of DbC and using contracts, your program must never try to verify the contract conditions and instead fail hard, with the contract verification being your safety net.&#160; This fail hard technique makes reading and understanding this code easier because the intended behavior is clearly specified.&#160; When using the .NET Code Contracts, these hard failures are enforced either through the Debug.Assert or the Environment.FailFast implementations, depending on the build configuration.</p>
+<p>&#160;</p>
+<h2>TDD and Contracts Strategies</h2>
+<p>We have a couple of options when we talk about Code Contracts and TDD.&#160; Either way, the tests always come first.&#160; Then what comes next is up to interpretation.</p>
+<p>We have the option of:</p>
+<ol>
+<li>Defining the contract implementation after the test, to narrow the behavior of the code under test, then write the code required to pass.&#160; </li>
+<li>Defining the code to achieve a passing test, then refactor the code to a contract implementation. </li>
+</ol>
+<p>It really depends on the application as to which style might work better.&#160; For most applications, I would recommend that you go with the second option where you define the code first to pass, and then refactor to an evolving contract design.&#160; For those creating frameworks with predefined behaviors, the first option would probably work best.</p>
+<p>One thing that Code Contracts gives us is the ability apply intrinsic behavior to interfaces.&#160; At that point, I no longer really call them interfaces, but abstract contracts is a better term for them.&#160; I favor their use as much as possible to achieve uniform behavior across implementations and really becomes a powerful tool to enforce Don&#8217;t Repeat Yourself (DRY).</p>
+<p>&#160;</p>
+<h2>Red &#8211; Yellow &#8211; Green Refactor</h2>
+<p>One analogy that can be adapted here is the original idea of Red, Green, Refactor.&#160; Let&#8217;s take this a step further to use a phrase that Greg Young uses, which is Red, Yellow, Green, Refactor.&#160; This is to say that we first implement the test, fail with a red light because no code actually exists for it to compile or work.&#160; Then we implement the contract and our code to a point where it can at least compile, which would be yellow.&#160; After that, we then pass our test with green after implementing the right amount of code to satisfy our contract.&#160; We can refactor our contracts and code to clean it up a bit more, and move onto the next test.</p>
+<p>&#160;</p>
+<h2>BDD for the Business and DbC for the Minutia</h2>
+<p>Another argument that can be made is that we could make is that we treat BDD for the business and Design by Contract for the minutia.&#160; This idea is that we can continue to use the BDD syntax that we normally do, and then use contracts to enforce the edge constraints, to narrow our definitions.&#160; This would allow us to focus on the business at the high level using BDD, and then the low level enforcement using Code Contracts.</p>
+<p>&#160;</p>
+<h2>Domain Driven Design and Design by Contract</h2>
+<p>One of the topics mentioned in the hallmark book Domain Driven Design, Eric Evans covers Design by Contract in Chapter 10 on Supple Design.&#160; In this chapter, he states:</p>
+<blockquote><p>State post-conditions of operations and invariants of classes and aggregates.&#160; If assertions cannot be coded directly into your programming language, write automated unit tests fort them.&#160; Write them into documentation or diagrams where it its the style of the project&#8217;s development status.</p>
+<p>Seek models with coherent sets of concepts, which lead a developer to infer the intended assertions, accelerating the learning curve and reducing the risk of contradictory code.</p>
+</blockquote>
+<p>What is interesting is that he talks about putting assertions into our code.&#160; Given that Code Contracts are available to us to use, we can take advantage of exactly what he states.&#160; These contracts then become part of the documentation of our code, with an intention revealing interface of what the behavior of this code is.</p>
+<p>Further, he states:</p>
+<blockquote><p>Even though many object oriented languages don&#8217;t currently support assertions directly, assertions are still a powerful way of thinking about a design.&#160; Automated unit tests can partially compensate for lack of language support.&#160; Because assertions are all in the term of states, rather than procedures, they make tests easy to write.&#160; The test setup puts the preconditions in place; then, after execution, the tests check whether the post-conditions hold.</p>
+<p>Clearly stated invariants and pre- and post-conditions allow for a developer to understand the consequences of using an operation or object&#8230;.&#160; so it&#8217;s important to find models that make sense to people as well as satisfying the needs of the application.</p>
+</blockquote>
+<p>This states the case rather succinctly for using code contracts when the language supports them.&#160; Indeed, to be able to statically enforce these constraints and prove their success or failure is key.&#160; Enough though of the talk about DbC and Domain Driven Design, let&#8217;s actually walk through an example of how to work these in conjunction together.</p>
+<p>&#160;</p>
+<h2>Walking Through an Example</h2>
+<p>Let&#8217;s walk through a simple example to demonstrate how these two may work together.&#160; In this example, we will define an immutable generic list that is optimized for recursion.&#160; This implementation would be fairly similar to an implementation done by the F# team as part of the immutable collections.&#160; I&#8217;ll be going into that a bit later in a different post.</p>
+<p>The first example we want to give is for an empty list.&#160; For the success criteria for this example, we will say that for a given empty list, an is empty flag should be true, the length is 0, and there should be exceptional behavior for checking the list head and tail.</p>
+<div style="font-family: courier new">[Fact]    <br /><span style="color: blue">public</span>&#160;<span style="color: blue">void</span> EmptyList_ShouldBeEmpty()     <br />{     <br />&#160;&#160;&#160; <span style="color: green">// Act </span>     <br />&#160;&#160;&#160; IImmutableList&lt;<span style="color: blue">int</span>&gt; list = ImmutableList&lt;<span style="color: blue">int</span>&gt;.Empty;     </p>
+<p>&#160;&#160;&#160; <span style="color: green">// Assert </span>     <br />&#160;&#160;&#160; Assert.True(list.IsEmpty);     <br />&#160;&#160;&#160; Assert.True(list.Length == <span style="color: maroon">0</span>);     <br />&#160;&#160;&#160; Assert.Throws&lt;ArgumentException&gt;(</div>
+<div style="font-family: courier new">&#160;&#160;&#160;&#160;&#160;&#160;&#160; () =&gt; { <font color="#0000ff">var</font> i = list[<span style="color: maroon">0</span>]; });     <br />&#160;&#160;&#160; Assert.Throws&lt;InvalidOperationException&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; () =&gt; { <font color="#0000ff">var</font> head = list.Head; });     <br />&#160;&#160;&#160; Assert.Throws&lt;InvalidOperationException&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; () =&gt; { <font color="#0000ff">var</font> tail = list.Tail; });     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that the empty list example has been defined, let&#8217;s actually work to implement the behavior through the use of a contract.&#160; We&#8217;re going to follow the first option enumerated above on defining a contract first, and then create the code to implement the feature, because this is more of a framework piece than it is for any standard line of business application code.&#160; In order to create code contracts on interfaces, we need to create a ContractClass that contains our contracts and decorate our interface for it.&#160; I will have to define later a class that implements the code contract class.</p>
+<p>In my test above, I need to define a few items on my interface for success, which is an empty flag, a length, the head and the tail of the list.&#160; Below is the definition of this interface.</p>
+<div style="font-family: courier new">[ContractClass(<span style="color: blue">typeof</span>(IImmutableList_Contract&lt;&gt;))]&#160; <br /><span style="color: blue">public</span>&#160;<span style="color: blue">interface</span> IImmutableList&lt;T&gt; : IEnumerable&lt;T&gt;&#160; <br />{&#160; <br />&#160;&#160;&#160; <span style="color: blue">bool</span> IsEmpty { [Pure] <span style="color: blue">get</span>; }&#160; <br />&#160;&#160;&#160; <span style="color: blue">int</span> Length { [Pure] <span style="color: blue">get</span>; }&#160; <br />&#160;&#160;&#160; T Head { [Pure] <span style="color: blue">get</span>; }&#160; <br />&#160;&#160;&#160; IImmutableList&lt;T&gt; Tail { [Pure] <span style="color: blue">get</span>; }&#160; <br />&#160;&#160;&#160; T <span style="color: blue">this</span>[<span style="color: blue">int</span> index] { [Pure] <span style="color: blue">get</span>; }&#160; <br />}&#160; </div>
+<div style="font-family: courier new">&#160;</div>
+<p>Once this is defined, we can now create our contract class.&#160; This must implement the IImmutableList&lt;T&gt; interface as well as mark it with an attribute stating that it is the contract class for the given interface.&#160; Each method in turn must be implemented with their given pre-conditions, post-conditions and invariants.&#160; Each method must also return the result from the comutation by using the CodeContract.Result&lt;T&gt;() method.&#160; </p>
+<div style="font-family: courier new">[ContractClassFor(<span style="color: blue">typeof</span>(IImmutableList&lt;&gt;))]     <br /><span style="color: blue">internal</span>&#160;<span style="color: blue">sealed</span>&#160;<span style="color: blue">class</span> IImmutableList_Contract&lt;T&gt; : IImmutableList&lt;T&gt;     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span> IEnumerator&lt;T&gt; GetEnumerator()     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Ensures(IsEmpty ?     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">null</span> == CodeContract.Result&lt;IEnumerator&lt;T&gt;&gt;() :     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">null</span> != CodeContract.Result&lt;IEnumerator&lt;T&gt;&gt;());     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> CodeContract.Result&lt;IEnumerator&lt;T&gt;&gt;();     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> GetEnumerator();     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">bool</span> IsEmpty     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; [Pure]     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">get</span> { <span style="color: blue">return</span> CodeContract.Result&lt;<span style="color: blue">bool</span>&gt;(); }     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">int</span> Length     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; [Pure]     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">get</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Ensures(<span style="color: maroon">0</span> &lt;= CodeContract.Result&lt;<span style="color: blue">int</span>&gt;());     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> CodeContract.Result&lt;<span style="color: blue">int</span>&gt;();     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; }     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span> T Head     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; [Pure]     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">get</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Requires(!IsEmpty);     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> CodeContract.Result&lt;T&gt;();     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; }     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span> IImmutableList&lt;T&gt; Tail     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; [Pure]     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">get</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Requires(!IsEmpty);     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> CodeContract.Result&lt;IImmutableList&lt;T&gt;&gt;();     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; }     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span> T <span style="color: blue">this</span>[<span style="color: blue">int</span> index]     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; [Pure]     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">get</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Requires(!IsEmpty);     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; CodeContract.Requires(<span style="color: maroon">0</span> &lt;= index &amp;&amp; Length &lt; index);     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> CodeContract.Result&lt;T&gt;();     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; }     <br />&#160;&#160;&#160; }     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now there is enough code to satisfy my preconditions.&#160; Moving onto the actual implementation, there is a bit of code required to get this code to pass.&#160;&#160; Let&#8217;s implement the bare bones code that would be required to get the test to pass.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">abstract</span>&#160;<span style="color: blue">class</span> ImmutableList&lt;T&gt; : IImmutableList&lt;T&gt;     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">class</span> _Empty : ImmutableList&lt;T&gt; { }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">class</span> _Cons : ImmutableList&lt;T&gt;     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">public</span> T _Head { <span style="color: blue">get</span>; <span style="color: blue">internal</span>&#160;<span style="color: blue">set</span>; }     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">public</span> ImmutableList&lt;T&gt; _Tail { <span style="color: blue">get</span>; <span style="color: blue">internal</span>&#160;<span style="color: blue">set</span>; }     </p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">internal</span> _Cons(T head, ImmutableList&lt;T&gt; tail)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; _Head = head;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; _Tail = tail;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; }     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">private</span>&#160;<span style="color: blue">static</span> IImmutableList&lt;T&gt; empty =     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">new</span> _Empty();     <br />&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span> IImmutableList&lt;T&gt; Empty&#160; <br />&#160;&#160;&#160; { <span style="color: blue">get</span> { <span style="color: blue">return</span> empty; } }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">bool</span> IsEmpty     <br />&#160;&#160;&#160; { [Pure] <span style="color: blue">get</span> { <span style="color: blue">return</span>&#160;<span style="color: blue">this</span>&#160;<span style="color: blue">is</span> _Empty; } }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">int</span> Length     <br />&#160;&#160;&#160; { [Pure] <span style="color: blue">get</span> { <span style="color: blue">return</span>&#160;<span style="color: maroon">0</span>; } }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span> T Head     <br />&#160;&#160;&#160; { [Pure] <span style="color: blue">get</span> { <span style="color: blue">return</span> ((_Cons)<span style="color: blue">this</span>)._Head; } }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span> IImmutableList&lt;T&gt; Tail     <br />&#160;&#160;&#160; { [Pure] <span style="color: blue">get</span> { <span style="color: blue">return</span> ((_Cons)<span style="color: blue">this</span>)._Tail; } }     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br />&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">this</span>[<span style="color: blue">int</span> index]     <br />&#160;&#160;&#160; { [Pure] <span style="color: blue">get</span> { <span style="color: blue">return</span>&#160;<span style="color: blue">default</span>(T) } }     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that we got enough code to compile, we have another problem when we run the tests?&#160; What is it?&#160; Well, our exceptional cases go away, because the system will fail hard should you violate them by either calling Debug.Assert or Environment.FailFast.&#160; Therefore, the test needs to be rewritten slightly to leave off those exceptional cases.</p>
+<div style="font-family: courier new">[Fact]&#160; <br /><span style="color: blue">public</span>&#160;<span style="color: blue">void</span> EmptyList_ShouldBeEmpty()&#160; <br />{&#160; <br />&#160;&#160;&#160; <span style="color: green">// Act&#160; </span>     <br />&#160;&#160;&#160; IImmutableList&lt;<span style="color: blue">int</span>&gt; list = ImmutableList&lt;<span style="color: blue">int</span>&gt;.Empty;&#160; </p>
+<p>&#160;&#160;&#160; <span style="color: green">// Assert&#160; </span>     <br />&#160;&#160;&#160; Assert.True(list.IsEmpty);&#160; <br />&#160;&#160;&#160; Assert.True(list.Length == <span style="color: maroon">0</span>);&#160; <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now the test, as written should compile and succeed.&#160; What we have gained here is quite a bit.&#160; With static proving, and the ability to encapsulate behavior in our interfaces, we have saved ourselves from DRY for subsequent implementations of this interface.&#160; Given the success of this, we are now able to move on to our next test which is when we have items in the list, we should have a head, a tail, not empty and a length of 10.</p>
+<p>&#160;</p>
+<div style="font-family: courier new">[Fact]    <br /><span style="color: blue">public</span>&#160;<span style="color: blue">void</span> NonEmptyList_ShouldShowProperCount()     <br />{     <br />&#160;&#160;&#160; <span style="color: green">// Arrange</span>     <br />&#160;&#160;&#160; var range = Enumerable.Range(<span style="color: maroon">1</span>, <span style="color: maroon">10</span>);     </p>
+<p>&#160;&#160;&#160; <span style="color: green">// Act</span>     <br />&#160;&#160;&#160; IImmutableList&lt;<span style="color: blue">int</span>&gt; list =&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; ImmutableList&lt;<span style="color: blue">int</span>&gt;.FromIEnumerator(range.GetEnumerator());     </p>
+<p>&#160;&#160;&#160; <span style="color: green">// Assert</span>     <br />&#160;&#160;&#160; Assert.True(list.Length == <span style="color: maroon">10</span>);     <br />&#160;&#160;&#160; Assert.False(list.IsEmpty); </div>
+<div style="font-family: courier new">&#160;&#160;&#160; Assert.True(list[0] == <span style="color: maroon">1</span>); </div>
+<div style="font-family: courier new">&#160;&#160;&#160; Assert.True(list.Head == <span style="color: maroon">1</span>);     <br />&#160;&#160;&#160; Assert.True(list.Tail != <span style="color: blue">null</span>);     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>As we define more tests or examples as we call them, we further refine the contract to include the proper bounds checks and add more functionality to the interface and to the list implementation.&#160; What&#8217;s nice about this implementation is that our contracts don&#8217;t litter our code, but instead are enforced at the interface level.&#160; That&#8217;s not to say that we can&#8217;t later on add more invariants, pre-conditions and post-conditions to our class implementations itself instead of the interface level.</p>
+<p>&#160;</p>
+<h2>Checked Exceptions All Over Again?</h2>
+<p>Some people may look at this and start to wonder if this is checked exceptions all over again.&#160; It&#8217;s not for some simple reasons.&#160; First off, the code contract implementation does not force you to handle the exceptions in any way.&#160; Instead, when this becomes part of the documentation, it states what the pre-conditions, post-conditions, and invariants are, and during compilation, they will be displayed back as warnings when you have violated the contracts, as well at runtime as hard failures.&#160; In the Java world, you are forced to handle the exceptions, even if you met the pre-conditions, which isn&#8217;t very helpful.</p>
+<p>&#160;</p>
+<h2>Wrapping It Up</h2>
+<p>We have covered quite a bit here today.&#160; I hope this overview can give you a brief understanding of how Design by Contract can work in conjunction with TDD to produce verifiable code.&#160; Given the ability to statically verify our contracts and behavior is important as our contracts then become part of the documentation for our system.&#160; In the next post in this series, we&#8217;re going to talk more about guidance on where you should compromise and where you should never compromise when it comes to Code Contracts.</p>
+<p>In the mean time, as always, download the latest version of the <a href="http://research.microsoft.com/contracts/">.NET Code Contracts</a> and give the team feedback.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/spec/" title="View all posts in Spec#" rel="category tag">Spec#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/tddbdd/" title="View all posts in TDD/BDD" rel="category tag">TDD/BDD</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/11/14/net-code-contracts-and-tdd-are-complementary/" title="Permalink to .NET Code Contracts and TDD Are Complementary" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/11/14/net-code-contracts-and-tdd-are-complementary/feed/" title="Comments RSS to .NET Code Contracts and TDD Are Complementary" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-80 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/11/13/kaizenconf-08-functional-programming-presentation-video/" rel="prev"><span class="meta-nav">&larr;</span> KaizenConf&#8217;08 Functional Programming Presentation Video</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/11/16/functional-net-4-0-tuples-and-zip/" rel="next">Functional .NET 4.0 &#8211; Tuples and Zip <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-200">
+					<div id="dsq-comment-header-200" class="dsq-comment-header">
+						<cite id="dsq-cite-200">
+	http://www.ejstembler.com							<span id="dsq-author-user-200">Edward J. Stembler</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-200" class="dsq-comment-body">
+						<div id="dsq-comment-message-200" class="dsq-comment-message"><p>Great article!</p>
+<p>If I may provide one suggestion&#8230; I would add a sidebar mentioning that &#8220;Design by Contract&#8221; originated from Bertrand Meyer and his Eiffel language which has built-in support.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-201">
+					<div id="dsq-comment-header-201" class="dsq-comment-header">
+						<cite id="dsq-cite-201">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-201">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-201" class="dsq-comment-body">
+						<div id="dsq-comment-message-201" class="dsq-comment-message"><p>@Edward</p>
+<p>I believe I covered that in one of my previous posts, but yes, the term did originate there and the Eiffel language was the language used to implement the constructs of DbC.</p>
+<p>There is still a bit yet to be covered here in terms of DbC, and I think it&#8217;s important to read Bertrad Meyer&#8217;s works to understand the concepts behind it, and when it makes sense to use it.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-202">
+					<div id="dsq-comment-header-202" class="dsq-comment-header">
+						<cite id="dsq-cite-202">
+	http://blog.dotnetwiki.org							<span id="dsq-author-user-202">Peli</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-202" class="dsq-comment-body">
+						<div id="dsq-comment-message-202" class="dsq-comment-message"><p>Now, you just need to add Pex to the mix to leverage even more your contracts.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-203">
+					<div id="dsq-comment-header-203" class="dsq-comment-header">
+						<cite id="dsq-cite-203">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-203">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-203" class="dsq-comment-body">
+						<div id="dsq-comment-message-203" class="dsq-comment-message"><p>@Peli</p>
+<p>That&#8217;s one angle we could take it.  First things first is to understand what contracts can do for us.  I recommend people watch the PDC video with Nikolai and Mike Barnett about how the two work together.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-204">
+					<div id="dsq-comment-header-204" class="dsq-comment-header">
+						<cite id="dsq-cite-204">
+	http://wizardsofsmart.net/author/riles/							<span id="dsq-author-user-204">Ryan Riley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-204" class="dsq-comment-body">
+						<div id="dsq-comment-message-204" class="dsq-comment-message"><p>How would you test that certain values throw an exception? Seems one may not test the Code Contract exceptions as they appear in the pop-up window, not in the Errors window.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-205">
+					<div id="dsq-comment-header-205" class="dsq-comment-header">
+						<cite id="dsq-cite-205">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-205">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-205" class="dsq-comment-body">
+						<div id="dsq-comment-message-205" class="dsq-comment-message"><p>@Ryan,</p>
+<p>Well, currently the libraries didn&#8217;t allow for such a thing and would fail hard.  I imagine in future iterations that might be fixed but I haven&#8217;t looked lately.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/11/14/net-code-contracts-and-tdd-are-complementary/ ';
+	var disqus_identifier = '80 /blogs/matthew.podwysocki/archive/2008/11/14/net-code-contracts-and-tdd-are-complementary.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = ".NET Code Contracts and TDD Are Complementary";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=80');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/11\/14\/net-code-contracts-and-tdd-are-complementary\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.260 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:14:23 -->
+<!-- super cache -->

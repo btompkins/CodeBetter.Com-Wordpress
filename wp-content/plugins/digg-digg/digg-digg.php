@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Digg Digg
-Version: 4.5.0.6
+Version: 4.5.0.7
 Plugin URI: http://www.mkyong.com/blog/digg-digg-wordpress-plugin
 Author: Yong Mook Kim
 Author URI: http://www.mkyong.com/

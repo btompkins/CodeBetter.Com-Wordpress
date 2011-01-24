@@ -53,6 +53,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	$wp_query->request = $querystr;
 	$pageposts = $wpdb->get_results($wp_query->request, OBJECT);	
 	$use_excerpt = False;
+ 
  ?>
  <?php if ($pageposts): ?>
   <?php foreach ($pageposts as $post): ?>

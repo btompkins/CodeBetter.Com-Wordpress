@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>ASP.NET Performance &#8211; Part 3 &#8211; Cache Busting | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='ASP.NET Performance &#8211; Part 2 &#8211; YSlow' href='http://codebetter.com/karlseguin/2010/01/08/asp-net-performance-part-2-yslow/' />
+<link rel='next' title='ASP.NET Performance &#8211; Part 4 &#8211; CDN' href='http://codebetter.com/karlseguin/2010/01/12/asp-net-performance-part-4-cdn/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=190' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-190" class="post-190 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">ASP.NET Performance &#8211; Part 3 &#8211; Cache Busting</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/" title="1:51 pm" rel="bookmark"><span class="entry-date">January 11, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In <a href="/blogs/karlseguin/archive/2010/01/08/asp-net-performance-part-2-yslow.aspx">part 2</a> of the series we looked at ways to tweak our headers to maximize performance. One of those tweaks was the addition of far-reaching expiry headers for static files (images, css, js). What happens though when you need to change those files? We can make a change to the file on the server, but clients that got the previous version won&#8217;t request the new file since the headers that came with the initial one told them not to.</p>
+<p>You may be thinking that a simple solution would be to set a shorter expiration time. But that only masks the problem while negating the benefits we&#8217;re after. What we&#8217;re after is a solution that&#8217;ll let us maximize caching yet allow us to update content on demand.</p>
+<p>HTTP caching works off the requested URL. The browser makes a request for a URL, and gets a response, which contains headers as well as the body. Any subsequent request to the same URL should follow any caching headers that were returned in the original request. To make matters better (or worse depending on your point of view), any proxy between you and the client can also follow this same logic. Thus, a user that visits your site might get original content, but subsequent visits by him or anyone else behind the same proxy requesting the same file, will get a cached version from the proxy. This is great because a far reaching expiry can really turn tends of thousands of hits into 1, but also means that we really do need to come up with a good cache-busting solution.</p>
+<p>(As a side note, since the cache is based off of the requested URL, you should really consider leveraging things like google&#8217;s javascript hosting. Instead of linking to jquery.js in your /js folder, you can link to <a href="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js">http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js</a>. By doing so, if a user has previously browsed a site which linked to the google version, then it&#8217;ll be in their cache when they visit your site and get faster loading. Google sets the expiry header to 1 year. On the down site, it decreases your sites availability by introducing another system that can break &#8211; google).</p>
+<p>You may be thinking that a good solution is to simply change the name of our file. For example, if you&#8217;re currently linking to <code>logo.png</code> and need to make some changes, you could switch it to <code>logo2.png</code>. This would work, but its a very manual and thus risky. What if you forget that a particular page is linking to your logo (like that HTML email template that gets sent out every now and again)?</p>
+<p>Instead, what&#8217;s typically done, and what we&#8217;ll do here, is to include some type of version in the querystring. And, instead of incrementing integers (which can be tricky to manage, even if we automate it), we&#8217;ll use a hash of the files content. So, instead of linking to <code>/images/logo.png</code>, we&#8217;ll actually link to <code>/images/logo.png?asdaslkj3918</code>.</p>
+<p>To achieve this, we&#8217;ll need to do two things. First we&#8217;ll have to generate a file hash for all of our assets and make that available to our system. Second we&#8217;ll need to read the list of hashes and use it whenever we create a link to an asset.</p>
+<p>Exactly how you implement the first part is up to you.  What I&#8217;ll show here is doing it as part of the build process &#8211; much like we saw in <a href="/blogs/karlseguin/archive/2008/12/29/compressing-js-files-as-part-of-your-build-process.aspx">Part 1</a>. The exact output of our first step is simply a text file that looks something like:</p>
+<pre>/Content/css/main.css|a5feab8f
+/Content/images/logo.png|fa80c7bc
+/Content/images/modal_close.png|a5722737
+/Content/images/modal_close_o.png|0ddd517d
+/Content/js/dd_roundies.js|955e9bc5</pre>
+<p>Our program will take three arguments, the root directory of our site, the asset folder, and the output file name. So, given the following parameters:</p>
+<pre>c:\projects\coolsite\ assets\ assethash.dat</pre>
+<p>our application will recurse through the <code>c:\projects\coolsite\assets\</code> folder and generate a file in the above format in <code>c:\projects\coolsite\assethash.dat</code></p>
+<p>Here&#8217;s the code:</p>
+<pre>internal class Program
+    {
+        private static IDictionary&lt;string, string&gt; _hashes;
+        private static void Main(string[] args)
+        {
+            var root = args[0];
+            var assetPath = args[1];
+            var outputFile = args[2];
+
+            _hashes = new Dictionary&lt;string, string&gt;();
+            ProcessDirectory(root, assetPath);
+            WriteFile(root + outputFile);
+        }
+
+        private static void ProcessDirectory(string root, string assetContainer)
+        {
+            foreach (var directory in Directory.GetDirectories(root + assetContainer))
+            {
+                if (directory.Contains(".svn"))  { continue; }
+                ProcessDirectory(root, directory.Remove(0, root.Length));
+            }
+            foreach (var file in Directory.GetFiles(root + assetContainer))
+            {
+                var assetName = file.Remove(0, root.Length - 1).Replace('\\', '/');
+                _hashes.Add(assetName, CreateSignature(file));
+            }
+        }
+
+        private static string CreateSignature(string file)
+        {
+            byte[] bytes;
+            using (var hash = new Crc32())
+            {
+                bytes = hash.ComputeHash(Encoding.ASCII.GetBytes(File.ReadAllText(file)));
+            }
+
+            var data = new StringBuilder();
+            Array.ForEach(bytes, b =&gt; data.Append(b.ToString("x2")));
+            return data.ToString();
+        }
+
+        private static void WriteFile(string path)
+        {
+            using (var sw = new StreamWriter(path))
+            {
+                foreach (var kvp in _hashes)
+                {
+                    sw.WriteLine("{0}|{1}", kvp.Key, kvp.Value);
+                }
+            }
+        }
+    }</pre>
+<p>First we build up a dictionary of paths (relative to the root of our asset folder) and hash values. For my &#8220;hash&#8221; I&#8217;m using a CRC32, specifically <a href="http://damieng.com/blog/2006/08/08/calculating_crc32_in_c_and_net">Damien Guard&#8217;s C# implementation</a>. The nice thing about CRC32 is that we end up with pretty small values. The downside is that collisions are far more likely (but still rather unlikely &#8211; I haven&#8217;t really tested this tough, so maybe using a true-collision resistant hash, like md5 (which can collide but only in extremely rare occasions) makes more sense). </p>
+<p>Next we dump the dictionary to our file &#8211; nothing much to explain there. </p>
+<p>This is our postbuild line:</p>
+<pre>$(SolutionDir)..\Tools\ContentSigner\CodeBetter.Web.ContentSigner.exe $(ProjectDir) assets\ assethash.dat</pre>
+<p>Now we need to use the generated file. First we&#8217;ll start off with three vanilla helper functions:</p>
+<pre>public static class HtmlAssetExtensions
+{
+    public static string IncludeCss(this HtmlHelper html, string name)
+    {
+        return string.Format("&lt;link href=\"/assets/styles/{0}.css\" rel=\"stylesheet\" type=\"text/css\"&gt;&lt;/link&gt;", name);
+    }
+    public static string IncludeJs(this HtmlHelper html, string name)
+    {
+        return string.Format("&lt;script src=\"/assets/js/{0}.js\" type=\"text/javascript\"&gt;&lt;/script&gt;", name);
+    }
+    public static string Image(this HtmlHelper html, string name, int width, int height, string alt)
+    {
+        return string.Format("&lt;img src=\"/assets/mages/{0}\" width=\"{1}\" height=\"{2}\" alt=\"{3}\" /&gt;", name, width, height, alt);
+    }
+}</pre>
+<p>First we&#8217;ll modify our helper to load the text file back into a dictionary (this could be handled in a separate class, but for simplicity, we&#8217;ll just stuff all the logic in here):</p>
+<pre>public static class HtmlAssetExtensions
+{
+    private static IDictionary&lt;string, string&gt; _assetHashes = LoadHashes();
+
+    private static IDictionary&lt;string, string&gt; LoadHashes()
+    {
+        var hashes = new Dictionary&lt;string, string&gt;(StringComparer.InvariantCultureIgnoreCase);
+        using (var sr = new StreamReader(HttpRuntime.AppDomainAppPath + "assethash.dat"))
+        {
+            while (sr.Peek() &gt;= 0)
+            {
+                var parts = sr.ReadLine().Split('|');
+                hashes.Add(parts[0], parts[1]);
+            }
+        }
+        return hashes;
+    }
+
+    ....
+}</pre>
+<p>Next we need to use the data:</p>
+<pre>public static string IncludeCss(this HtmlHelper html, string name)
+{
+    name = GetVersionedName(string.Format("/assets/styles/{0}.css", name));
+    return string.Format("&lt;link href=\"{0}\" rel=\"stylesheet\" type=\"text/css\"&gt;&lt;/link&gt;", name);
+}
+//...similar changes the for js and image method.
+
+private static string GetVersionedName(string name)
+{
+    string hash;
+    if (!_assetHashes.TryGetValue(name, out hash))
+    {
+        return name;
+    }
+    return string.Concat(name, '?', hash);
+}</pre>
+<p>And that, my dear reader, is all it takes. There is one problem with our implementation, changing our <code>assethash.dat</code> isn&#8217;t going to noticed by our application. That&#8217;s something I leave to you to figure out &#8211; though it isn&#8217;t too hard to implement (hint: you could just store the dictionary in the <code>HttpRuntime.Cache</code> with a file dependency).</p>
+<p>In the next [very short] part, we&#8217;ll make a single small tweak to our helper functions that&#8217;ll help address three other <a href="http://developer.yahoo.com/yslow/">YSlow</a> recommendations. Stay tuned.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/" title="Permalink to ASP.NET Performance &#8211; Part 3 &#8211; Cache Busting" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/feed/" title="Comments RSS to ASP.NET Performance &#8211; Part 3 &#8211; Cache Busting" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-190 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2010/01/08/asp-net-performance-part-2-yslow/" rel="prev"><span class="meta-nav">&larr;</span> ASP.NET Performance &#8211; Part 2 &#8211; YSlow</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2010/01/12/asp-net-performance-part-4-cdn/" rel="next">ASP.NET Performance &#8211; Part 4 &#8211; CDN <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">6 Responses to <em>ASP.NET Performance &#8211; Part 3 &#8211; Cache Busting</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2113">
+		<div id="comment-2113">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/karl/default.aspx' rel='external nofollow' class='url'>karl</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2113">January 12, 2010 at 11:04 pm</a></div>
+
+		<div class="comment-body"><p>@Dan:<br />
+Great catch. I&#8217;ve said it before, I blog more to learn than to teach. I&#8217;ll add a 6th part that will address that as part of the build process. Have it working here.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2112">
+		<div id="comment-2112">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.onemoretake.com' rel='external nofollow' class='url'>Dan Sargeant</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2112">January 12, 2010 at 9:46 pm</a></div>
+
+		<div class="comment-body"><p>Its a nice idea to use the hash of a file to determine when it was last updated, however the use of the html helper extensions only covers some of the references to the assets. In most websites, most of the images are referenced within the css and the helper function are of no use there.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2111">
+		<div id="comment-2111">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.robertbeal.com' rel='external nofollow' class='url'>Rob</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2111">January 12, 2010 at 2:57 pm</a></div>
+
+		<div class="comment-body"><p>@Herman</p>
+<p>Totally agree. In fact it&#8217;s not part of the true HTTP caching spec. Browsers like Firefox and IE (are bad) actually ignore this and still cache the file even with a querystring in it.</p>
+<p>However stricter clients (Opera?) ignore the querystring and hence don&#8217;t cache the file.</p>
+<p>It&#8217;s always better to be a bit harder, place it in the actual filename and use a rewrite rule.</p>
+<p>Ours all gets generated at build time. I wrote a piece of ruby that builds a hashtable of images containing the image path, and revision number. It also keeps track of the svn revision it last checked up to.</p>
+<p>Then it calls svn, gets all the changes from when it last checked. For each image change, it gets the svn revision and adds it to the hashtable.</p>
+<p>I then use the hashtable to go through all of our css files, and using a regex find the images, and modify their path, adding in the svn revision.</p>
+<p>We then use a rewrite rule to do the rest. Doesn&#8217;t take long once the initial run has been done. And it gives us per image caching.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2110">
+		<div id="comment-2110">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">av</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2110">January 12, 2010 at 1:01 pm</a></div>
+
+		<div class="comment-body"><p>great stuff, thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2109">
+		<div id="comment-2109">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bugwriter.me' rel='external nofollow' class='url'>Herman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2109">January 12, 2010 at 2:21 am</a></div>
+
+		<div class="comment-body"><p>Karl,</p>
+<p>I am afraid simply appending query string to a static resource is not going to solve the problem.  There are proxies out there that will not cache query string.  See it from the author of YSlow in this post: <a href="http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/" rel="nofollow">http://www.stevesouders.com/blog/2008/08/23/revving-filenames-dont-use-querystring/</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2108">
+		<div id="comment-2108">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Horses</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2010/01/11/asp-net-performance-part-3-cache-busting/#comment-2108">January 11, 2010 at 10:54 pm</a></div>
+
+		<div class="comment-body"><p>In the past, rather than using a hash of the file I&#8217;ve used File.GetLastWriteTime(&#8230;).Ticks.  It might not be quite as accurate as your method in tracking changes to files, but it&#8217;s far simpler.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.273 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:27:33 -->
+<!-- super cache -->

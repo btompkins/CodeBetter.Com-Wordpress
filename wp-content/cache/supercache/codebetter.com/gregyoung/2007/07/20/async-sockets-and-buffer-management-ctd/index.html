@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Async Sockets and Buffer Management [CTD] | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='Async Sockets and Buffer Management' href='http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/' />
+<link rel='next' title='How bad can it be?' href='http://codebetter.com/gregyoung/2007/07/26/how-bad-can-it-be/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=40' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-40" class="post-40 post type-post status-publish format-standard hentry category-featured">
+					<h1 class="entry-title">Async Sockets and Buffer Management [CTD]</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/" title="9:15 am" rel="bookmark"><span class="entry-date">July 20, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Recently I posted a&nbsp;<a href="http://codebetter.com/blogs/gregyoung/archive/2007/06/18/async-sockets-and-buffer-management.aspx">buffer manager for async sockets</a> quite a few people asked me to put up a fuller example of the code. Well here it is &#8230; You can download the associated project <a href="http://codebetter.com/files/folders/codebetter_downloads/entry165861.aspx">Here</a> (or here http://codebetter.com/files/folders/codebetter_downloads/entry166135.aspx) Sorry for the delay to those who were waiting.</p>
+<p>To start, I will go over what the code actually does, then I will show why the buffer manager improves the server. I then will pose a question or two to the readers as to my next post or two.</p>
+<p>Let us quickly take a side bar in how to get the included code working. If you have never changed it before the client app probably throws and exception saying &#8220;Only one usage of each socket address (protocol/network address/port) is normally permitted.&#8221; when it hits about 2500 connections. To get around this we need to tell windows to allow more ports to be used. Run regedit and in KEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters add a new item MaxUserPort with a value of 0&#215;4000 (this should be plenty of ports although you can go higher). You will need to reboot in order to have this change take affect.</p>
+<p>The solution layout consists of&nbsp;two projects; a client and a server.</p>
+<p>The code presented is quite simple, it is a basic client push only protocol (because BeginReceive is the main problem spot). The clients send data to the server in the form of &lt;STX&gt;data&lt;ETX&gt; (The parsing is handled by StxEtxChunker). The server in a real life scenario would probably do some form of processing upon this data thoughas of now it just kind of &#8220;pretends&#8221; to do such processing. The server at this time works with fixed size receive buffers; if people are curious how to implement dynamically sized receive buffers (as I discussed in the last post using the IList&lt;ArraySegment&lt;byte&gt;&gt; overload) just let me know and it will be another post. </p>
+<p>You may be asking &#8220;wait how come&nbsp;it only receives data&#8221;. Well the BeginReceive method is the one that is most notorious for pinning problems so I chose to isolate it. The same problems exist with BeginSend but tend to&nbsp;be more minor as the pinning is not as long lived (I can have a client connected who doesn&#8217;t send me anything for 45 minutes but it is quite rare that I send something and it takes more than a second to return as completed)</p>
+<p>Let&#8217;s get into some CODE!!</p>
+<p>The major difference in the code that the BufferManager changes is in the constructor:</p>
+<p>Example A: m_ReadBuffer = ApplicationContext.BufferProvider.CheckOut();
+</p>
+<p>in many systems this would be implemented as something like:
+</p>
+<p>Example B: m_ReadBuffer = new ArraySegment&lt;byte&gt;(new byte[4096]);
+</p>
+<p>The client code sends randomly sized packets at somewhat random intervals to the server to simulate a load on it.</p>
+<p>&nbsp;</p>
+<p>Now for some analysis; we are interested in a few things based upon the previous post.</p>
+<p>1) What is ourheap fragmentation</p>
+<p>2) Where does the memory live</p>
+<p>&nbsp;</p>
+<p>For the tests I will run the server and client until all clients are connected (when the client prints &#8220;All clients up press enter to exit&#8221;). We will then break into debug and look at what SOS has to say about our heaps. For the test and in the posted code I am running 10,000 clients with a buffer size of 4k so it is important that you see the above changes to the registry to duplicate these results.</p>
+<p>In the first example (Example B) which is the normal case and just creates an array to use we end up with the following output from SOS</p>
+<p>&nbsp;</p>
+<p>!EEHeap -gc<br />PDB symbol for mscorwks.dll not loaded<br />Number of GC Heaps: 1<br />generation 0 starts at 0x0c7286d4<br />generation 1 starts at 0x0c6bba44<br />generation 2 starts at 0x013c1000<br />ephemeral segment allocation context: none<br />segment begin allocated size<br />001a7c70 7a72c42c 7a74d308 0x00020edc(134876)<br />001966c8 790d5588 790f4b38 0x0001f5b0(128432)<br />013c0000 013c1000 023b7fe8 0x00ff6fe8(16740328)<br />03fc0000 03fc1000 04ed9b18 0x00f18b18(15829784)<br />057f0000 057f1000 0668b7ac 0x00e9a7ac(15312812)<br />08740000 08741000 0973e354 0x00ffd354(16765780)<br />06d40000 06d41000 07d2f1c8 0x00fee1c8(16703944)<br />0c1d0000 0c1d1000 0caef020 0x0091e020(9560096)<br />Large object heap starts at 0x023c1000<br />segment begin allocated size<br />023c0000 023c1000 023c5260 0&#215;00004260(16992)<br />Total Size 0x56f7ed4(91193044)<br />&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;<br />GC Heap Size 0x56f7ed4(91193044)
+</p>
+<p>!DumpHeap -type Free -stat<br />total 18455 objects<br />Statistics:<br />MT Count TotalSize Class Name<br />00153a70 18455 21495952 Free<br />Total 18455 objects
+</p>
+<p>For those not familiar with these outputs the key # we are looking at is the GC Heap Size vs the total Free size as it shows our fragmentation. In this example we get 91m/21m which doesn&#8217;t meet the common &#8220;30%&#8221; oh my god benchmark but it isn&#8217;t too far off. Essentially 1/4 of our heap is wasted. Let&#8217;s try running our buffer managerred server (example&nbsp;A) in the test and see how it performs.
+</p>
+<p>!EEHeap -gc<br />PDB symbol for mscorwks.dll not loaded<br />Number of GC Heaps: 1<br />generation 0 starts at 0x0bdd9ba0<br />generation 1 starts at 0x0bcd3970<br />generation 2 starts at 0x013c1000<br />ephemeral segment allocation context: none<br />segment begin allocated size<br />001a7c70 7a72c42c 7a74d308 0x00020edc(134876)<br />001966c8 790d5588 790f4b38 0x0001f5b0(128432)<br />013c0000 013c1000 023bcd40 0x00ffbd40(16760128)<br />06200000 06201000 070d8918 0x00ed7918(15563032)<br />0bb70000 0bb71000 0bedbef0 0x0036aef0(3583728)<br />Large object heap starts at 0x023c1000<br />segment begin allocated size<br />023c0000 023c1000 03365340 0x00fa4340(16401216)<br />049c0000 049c1000 059610e0 0x00fa00e0(16384224)<br />0a680000 0a681000 0ae51040 0x007d0040(8192064)<br />Total Size 0x4992e34(77147700)<br />&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;<br />GC Heap Size 0x4992e34(77147700)
+</p>
+<p>!DumpHeap -type Free -stat<br />total 9560 objects<br />Statistics:<br />MT Count TotalSize Class Name<br />00153a70 9560 3593904 Free<br />Total 9560 objects
+</p>
+<p>Or fragmentation has gone from 21mb to 3mb! This is a huge difference and far less waste. As we can see the BufferManager has done its job in helping to prevent our heap fragmentation. In most applications it will also help keep our % of time in GC down as it reuses the same buffers as opposed to creating new ones.
+</p>
+<p>The second question was with heap usage. Looking at the results above we can see very quickly that the BufferManager example does in fact put its buffers into the LOH (40977504 with the BufferManager (Example B) 16992 without (Example A)). The difference is made up in the normal heap which causes further strain on the GC as it moves our buffers from generation to generation; and further strain when compacting the gen2 heap where they finally end up.
+</p>
+<p>This brings us to the interesting part of this post; would you like me to continue this example? There are lots of other interesting things&nbsp;to show, like implementing SendQueues, Authentication, and even Encryption. It would seem to me that if this can scale over 4000 m/s with 10,000 connections on my LAPTOP that we have a good beginning to an example server. My initial thought is a chat server with a flash front end (or silverlight wink wink), what are yours? If you are a flash geek or someone playing with silverlight and want to help leave a comment.</p>
+<p>&nbsp;</p>
+<p>UPDATE: since people were having trouble with original download I have reupload here http://codebetter.com/files/folders/codebetter_downloads/entry166135.aspx&nbsp;</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/" title="Permalink to Async Sockets and Buffer Management [CTD]" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/feed/" title="Comments RSS to Async Sockets and Buffer Management [CTD]" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-40 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/" rel="prev"><span class="meta-nav">&larr;</span> Async Sockets and Buffer Management</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2007/07/26/how-bad-can-it-be/" rel="next">How bad can it be? <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">14 Responses to <em>Async Sockets and Buffer Management [CTD]</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-1808">
+		<div id="comment-1808">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Roman</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1808">September 15, 2009 at 5:21 am</a></div>
+
+		<div class="comment-body"><p>Hi! Do you know that it is impossible to download the sample project? Without this download the whole series is kind of useless&#8230; <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />  Thanks for fixing it (in advance!) <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1807">
+		<div id="comment-1807">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/gregyoung' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1807">December 12, 2007 at 7:44 pm</a></div>
+
+		<div class="comment-body"><p>Will do. I will queue a post about a class I had to rewrite from the framework for performance reasons and an explanation of why it was rewritten and why certain things were done.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1806">
+		<div id="comment-1806">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Peter</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1806">December 11, 2007 at 8:52 am</a></div>
+
+		<div class="comment-body"><p>Greg,</p>
+<p>Please do continue with these low-level, advanced concepts in building high performance server and client systems.  you bring a lot of value &#8211; I know myself and others who read your blog would gain a lot from your experience in this area.</p>
+<p>P.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1805">
+		<div id="comment-1805">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1805">September 25, 2007 at 9:24 pm</a></div>
+
+		<div class="comment-body"><p>Not sure I am understanding you Ken&#8230;.</p>
+<p>&#8220;About the only clean way to do this that I can think of is to use your 512 byte segment to create yet ANOTHER ArraySegment that refers to the same data. This involves the creation and eventual cleanup of another object.&#8221;</p>
+<p>ArraySegment is a struct that points into your array it doesn&#8217;t actually hold any storage &#8230; its also very small 4 bytes for a reference + 4 bytes for an offset + 4 bytes for a count + the normal overhead for a MT etc. There is no clean up to do with it because it is a struct.</p>
+<p>The easy way around your problem would be to just keep 2 lists &#8230;</p>
+<p>1) your actual buffers (so you can check them back in)<br />
+2) your &#8216;effective&#8217; buffers where you may have changed the count on one by replacing it with a different arraysegment</p>
+<p>More in general though since your socket has already checked out two 512 byte buffers why limit it to 600 bytes? Why not let it read 1024? The memory is going to be considered used anyways so why not just use it? You should be reading out of the socket then breaking up your messages so you can read/write more than 1 message at a time anyways <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1804">
+		<div id="comment-1804">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ken</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1804">September 25, 2007 at 4:25 pm</a></div>
+
+		<div class="comment-body"><p>The article was useful, but ArraySegments combined with BeginWrite/Begin read really blow.  For example, if your buffer is 600 bytes, but your segment is 512 bytes, you can&#8217;t just make a list of 2 segments, and send 512 with the first, and 88 with the second.  Similarly, if you know how much data you wish to receive, you can&#8217;t use that 512 byte segments to read say ONLY 600 bytes (assuming the stack has more).</p>
+<p>If you&#8217;re only sending/receiving less than your segment size, you can get the segment Array and use the byte[] versions of the SendReceive functions, but this may well mean that you need to drastically oversize buffers for the occasional large send/receive, or complicate the code by special casing these.</p>
+<p>If Microsoft had allowed an additional length parameter for send and receive, or had not made the segment Count parameter read only, it would be no problem.  </p>
+<p>About the only clean way to do this that I can think of is to use your 512 byte segment to create yet ANOTHER ArraySegment that refers to the same data.  This involves the creation and eventual cleanup of another object.</p>
+<p>And, of course, you can&#8217;t use an ArraySegment as a base for another, more useful class, and BeginSend/BeginReceive only accept lists of array segments&#8230;</p>
+<p>If anyone has a way around these limitations, I&#8217;d appreciate knowing what it is.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1803">
+		<div id="comment-1803">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Alex</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1803">July 31, 2007 at 1:07 pm</a></div>
+
+		<div class="comment-body"><p>Good article and sample Greg.</p>
+<p>Could you expand to handle both sends and receives of arbitrary size?</p>
+<p>Thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1802">
+		<div id="comment-1802">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>J&#243;n Trausti</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1802">July 26, 2007 at 8:46 pm</a></div>
+
+		<div class="comment-body"><p>The file only gets corrupt in IE 7 as far as I&#8217;m aware. Try to download it with FireFox or Opera.</p>
+<p>-Jon</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1801">
+		<div id="comment-1801">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1801">July 26, 2007 at 5:26 pm</a></div>
+
+		<div class="comment-body"><p>I just downloaded and extracted the file with winzip 8.0 (3105).</p>
+<p>If you have continued problems feel free to drop me an email gregoryyoung1 at that google email</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1800">
+		<div id="comment-1800">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Taylor</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1800">July 26, 2007 at 12:54 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for the interesting writeup Greg! </p>
+<p>The example zip file appears to be corrupted somehow.  I can&#8217;t open it.  I see another comment on the same page indicating that someone else had trouble as well.  Would you mind checking it out to make sure it got uploaded correctly?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1799">
+		<div id="comment-1799">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>Jon Trausti</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1799">July 22, 2007 at 12:23 am</a></div>
+
+		<div class="comment-body"><p>Oh duh! Thanks. Your BufferManager works like a charm. It would be interesting to see SendQueues system. Please do continue, I bet alot of people would love to read it. (including me). Thanks! <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  Oh, and it would be interesting to have a \0 parser. That way it would be easy to connect and parse text from XMLSocket.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1798">
+		<div id="comment-1798">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1798">July 20, 2007 at 10:54 pm</a></div>
+
+		<div class="comment-body"><p>the byte [] are used up until the point that the full message is processed. In this example server I used STX ETX framing of string messages.</p>
+<p>The StxEtxChunker will properly parse out messages from its buffer. If you wanted to deal with it in a string form its quite easy. In the OnMessageRead handler &#8230;</p>
+<p>        private void OnMessageRead(ArraySegment<byte> _Data)<br />
+        {<br />
+            //_Data is our message after dealing with framing if we wanted to do something with it like hmm actually parse it?<br />
+            //we will build a few random byte arrays to simulate something that would use up some space.<br />
+            Random r = new Random();<br />
+            for(int i=0;i&lt;5;i++) {<br />
+                byte [] bytes = new byte[r.Next(100, 500)];<br />
+                bytes[i] = 22;<br />
+                bytes[i + 1] = bytes[i];//make JIT think we are doing something with it so it doesn't get removed<br />
+            }<br />
+        }</p>
+<p>I did this just to simulate some level of processing by the server. </p>
+<p>You could quite easily just get the message as a string. Assuming the string is in ASCII encoding you would just issue.</p>
+<p>if(Data.Count > 2) //otherwise its an empty message just STX/ETX<br />
+string message = Encoding.ASCII.GetString(_Data.Array, _Data.Offset + 1, _Data.Count -1);</p>
+<p>message now contains the string version of your message.</p>
+<p>For simple comparisons you could also keep byte arrays of the data you were looking for and compare byte arrays directly (but the above is probably simpler to deal with)</p>
+<p>Cheers,</p>
+<p>Greg</byte></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1797">
+		<div id="comment-1797">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>J&amp;#243;n Trausti</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1797">July 20, 2007 at 10:44 pm</a></div>
+
+		<div class="comment-body"><p>Woops, I said Chris by an accident, I meant Greg sorry ;o) I was curious about one thing, I see that you use byte[] array alot, what would be a good way to parse the incoming data in a string format way, so I could check if (incomingData == &#8220;SomeString&#8221;). I&#8217;m not used to using byte all the time, so it creates a bit confusion for me, I&#8217;m afraid of allocating strings and thus ruining the whole concept of the BufferPool. Thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1796">
+		<div id="comment-1796">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1796">July 20, 2007 at 5:04 pm</a></div>
+
+		<div class="comment-body"><p>Yes you can use the XMLSocket (my thoughts exactly). The protocol is pretty basic (null terminated XML) . Could be a very useful example to have around.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1795">
+		<div id="comment-1795">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>J&amp;amp;#243;n Trausti</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#comment-1795">July 20, 2007 at 4:32 pm</a></div>
+
+		<div class="comment-body"><p>Hey Chris! Thank you for your example! I&#8217;d like to point out that  I&#8217;m working on a few games that are using C# as a server and Flash as a client.</p>
+<p>I&#8217;ve made a chat, chess and online pictionary games with Flash. With Flash you can use the XMLSocket to connect to a C# server (tcp/ip), very handy.</p>
+<p>I&#8217;m currently using a bit bugged BufferPool but I&#8217;m going to change to yours for a change. I&#8217;d love to make an example chat client in Flash that connects to a C# server, just comment if you&#8217;re interested.</p>
+<p>My current chat: <a href="http://icy.ice.is/spjall" rel="nofollow">http://icy.ice.is/spjall</a><br />
+My current chess: <a href="http://icy.ice.is/chess" rel="nofollow">http://icy.ice.is/chess</a><br />
+My current online pictionary: <a href="http://icy.ice.is/skissa" rel="nofollow">http://icy.ice.is/skissa</a></p>
+<p>Thanks,  Jón</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2007%2F07%2F20%2Fasync-sockets-and-buffer-management-ctd%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.253 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:55:50 -->
+<!-- super cache -->

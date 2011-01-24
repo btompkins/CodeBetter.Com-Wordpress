@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Composite keys are evil | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='The Programming Divide' href='http://codebetter.com/jeremymiller/2007/01/31/being-a-better-programmer/' />
+<link rel='next' title='Requirements Quote' href='http://codebetter.com/jeremymiller/2007/02/07/requirements-quote/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/02/01/composite-keys-are-evil/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=280' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-280" class="post-280 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Composite keys are evil</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/02/01/composite-keys-are-evil/" title="2:05 pm" rel="bookmark"><span class="entry-date">February 1, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>The title says it all.&nbsp;</p>
+<p>There&#039;s a section in Eric Evans&#039; DDD book where he spends about 3-5 pages saying that composite keys are bad and surrogate keys are good (without just coming out and saying that).&nbsp; At the time I thought he was being exceptionally wordy, but it&#039;s an awfully good point to drive home.&nbsp; Composite keys (multi column primary keys) make any kind of Object/Relational mapping and persistance in general harder.&nbsp; Life is so much easier with surrogate keys.&nbsp; You can always make unique constraints where it&#039;s necessary.&nbsp; </p>
+<p>When I&#039;ve used NHibernate against a legacy database, we just cut our losses and added autonumber columns with a unique constraint to act as the identifier for NHibernate and left the old key alone.&nbsp; It worked pretty well, but I don&#039;t think those classes had any relationships, so I don&#039;t know how that would work.&nbsp; I&#039;d like to recommend to my current client to quietly ditch their homegrown Java persistence tool in favor of Hibernate, but putting an O/R mapper on a legacy database is challenging.&nbsp; iBatis maybe, but I don&#039;t know much about it yet. </p>
+<p>&nbsp;</p>
+<p>From anybody older than me out there, why were Composite keys so widely used in older databases?&nbsp; Was there a real reason?&nbsp; All I&#039;ve ever seen from composite keys is pain.&nbsp;</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/02/01/composite-keys-are-evil/" title="Permalink to Composite keys are evil" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/02/01/composite-keys-are-evil/feed/" title="Comments RSS to Composite keys are evil" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-280 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/01/31/being-a-better-programmer/" rel="prev"><span class="meta-nav">&larr;</span> The Programming Divide</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/02/07/requirements-quote/" rel="next">Requirements Quote <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-1408">
+					<div id="dsq-comment-header-1408" class="dsq-comment-header">
+						<cite id="dsq-cite-1408">
+	http://adamv.com							<span id="dsq-author-user-1408">Adam Vandenberg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1408" class="dsq-comment-body">
+						<div id="dsq-comment-message-1408" class="dsq-comment-message"><p>I don&#8217;t know!<br />
+But there is a school of thought with a large following that database keys should be &#8220;natural&#8221; keys, as in, parts of the actual data, and not synthetic autonumber/identity columns.</p>
+<p>Peresonally, I have no idea why one would want a database with people keyed on &#8220;Name+SSN&#8221;, which isn&#8217;t even unique enough anyway.</p>
+<p>Though when doing ER, in the relation tables, I&#8217;ve been guilty of making composite keys out of the foreign primary keys, and not adding in an identity column. That was in the past, though.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1409">
+					<div id="dsq-comment-header-1409" class="dsq-comment-header">
+						<cite id="dsq-cite-1409">
+	http://www.jeffreypalermo.com							<span id="dsq-author-user-1409">jpalermo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1409" class="dsq-comment-body">
+						<div id="dsq-comment-message-1409" class="dsq-comment-message"><p>I think humans should use natural keys, and computers should use machine-generated surrogate keys.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1410">
+					<div id="dsq-comment-header-1410" class="dsq-comment-header">
+						<cite id="dsq-cite-1410">
+								<span id="dsq-author-user-1410">Jon Stonecash</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1410" class="dsq-comment-body">
+						<div id="dsq-comment-message-1410" class="dsq-comment-message"><p>Back in the day (and I am old enough to say that with some conviction), the data systems were manual or just recently converted from manual processing.  Creating an unique key was not nearly as simple as it is now.  It was much easier to construct a key from the composite elements that were at hand.  Some practices take a LONG TIME to die.  There are those who think that such traditions are a good thing.  I am not one of them.</p>
+<p>Jon</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1411">
+					<div id="dsq-comment-header-1411" class="dsq-comment-header">
+						<cite id="dsq-cite-1411">
+	http://www.damieng.com/blog/							<span id="dsq-author-user-1411">Damien Guard</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1411" class="dsq-comment-body">
+						<div id="dsq-comment-message-1411" class="dsq-comment-message"><p>Traditionally space was at a premium and people believed that some parts the data could be used as a key.  Today space isn&#8217;t a concern and we&#8217;ve all been hit by a scenario whereby the &#8220;data that never changes so can be part of the key&#8221; does just that.</p>
+<p>Composite keys are however still useful for scenarios where your tables contain logical sets of data that might be moved around &#8211; e.g. an invoicing system might have a primary key of companyno+invoiceid for invoices so that at a later date you could merge two physical databases into one without clashing on the invoiceids.</p>
+<p>As to why you might want to merge them &#8211; report writing and analysis tools don&#8217;t tend to like merging multiple db&#8217;s into a single report and reporting is a big part of many scenarios.</p>
+<p>[)amien</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1412">
+					<div id="dsq-comment-header-1412" class="dsq-comment-header">
+						<cite id="dsq-cite-1412">
+	http://www.chrisholmesonline.com							<span id="dsq-author-user-1412">Chris Holmes</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1412" class="dsq-comment-body">
+						<div id="dsq-comment-message-1412" class="dsq-comment-message"><p>Composite keys were used because of E.F. Codd, Relational Calculus and Relational Algebra. The problem was that most RDMS&#8217;s of the time weren&#8217;t mature enough to be able to handle changing key data. </p>
+<p>Keys &#8220;changing&#8221; isn&#8217;t supposed to be an issue. If you study the relational model keys are expected to change. Not one rule in relational modeling says &#8220;the key should never change&#8221;. That&#8217;s not why you choose a key. The whole point of a key is to uniquely identify a tuple in a table. Pick the right set of attributes to uniqely idenfify the entity and you&#8217;re golden. </p>
+<p>The real issue has always been the implementations. There&#8217;s a disconnect between the theory and the products that vendors provide. RDMS&#8217;s early on did not handle keys changing well, and I think that&#8217;s why this mindset developed that &#8220;keys shouldn&#8217;t change!&#8221; The fact is, all natural keys can change and nothing should prevent them from doing so. </p>
+<p>However, early on Cascade Update wasn&#8217;t around to make natural keys work well. But, developers tried their best to stick to the theory because it is sound. The hope being that someday vendors would give developers the RDMS&#8217;s to actually implement the relational model correctly, and make changing natural keys a reality.</p>
+<p>So, bottom line: it&#8217;s one of those issues where the theory is really sound, but the software available isn&#8217;t often good enough to make it work. So people move to surrogate keys to get things done, because making things work is how we all stay employed. </p>
+<p>The problem now is you get developers who actually think the surrogate key *is* the key, and they don&#8217;t understand what makes a tuple unique, or why or how you choose keys.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1413">
+					<div id="dsq-comment-header-1413" class="dsq-comment-header">
+						<cite id="dsq-cite-1413">
+	http://substantiality.net							<span id="dsq-author-user-1413">Sam Smoot</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1413" class="dsq-comment-body">
+						<div id="dsq-comment-message-1413" class="dsq-comment-message"><p>Bravo Chris!</p>
+<p>I&#8217;d like to add that lots of people take on a preference for natural-keys as a holy crusade pointing to extra indexes and that extra column as a performance problem.</p>
+<p>The truth is that my current employer uses MSSQL2K with partitioned tables to store *billions* of rows with little effort, and no real DBA&#8217;s to speak of (not that that&#8217;s a good thing, just saying it doesn&#8217;t take a lot of skill to pull it off). These rows are also pretty wide, with&#8230; let me count here&#8230; 45 columns in one example. Many of these columns are VARCHAR(2) for what should be CHAR(2), or VARCHAR(1) [y,n] for what should be BIT fields, etc.</p>
+<p>RDBMS engines, CPUs, RAM, it&#8217;s all amazingly fast these days, so the overhead of composite keys just isn&#8217;t very pragmatic I think. Sure there&#8217;s an exception for every rule, but if you&#8217;re using composites for most of your work, more than anything it&#8217;s probably just a bad habit that&#8217;s burning more money than you really need to _most of the time_.</p>
+<p>You still need to make sure you&#8217;re writing efficient queries of course, and that you&#8217;ve got halfway decent covering indexes.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1414">
+					<div id="dsq-comment-header-1414" class="dsq-comment-header">
+						<cite id="dsq-cite-1414">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-1414">jmiller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1414" class="dsq-comment-body">
+						<div id="dsq-comment-message-1414" class="dsq-comment-message"><p>I&#8217;m much more concerned about composite keys from the perspective  of writing persistence code, not so much performance.  Composite keys make persistence much harder.  Jeffrey&#8217;s comment pretty well hits it on the head for me.</p>
+<p>Jeremy</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1415">
+					<div id="dsq-comment-header-1415" class="dsq-comment-header">
+						<cite id="dsq-cite-1415">
+								<span id="dsq-author-user-1415">sergiopereira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1415" class="dsq-comment-body">
+						<div id="dsq-comment-message-1415" class="dsq-comment-message"><p>I can&#8217;t say I like composite keys. I&#8217;ve done my share of elbow-busting UI and persistence code to figure it doesn&#8217;t make our lifes any easier.<br />
+On the other hand, there&#8217;s one side-effect of using composite keys that I like: when you open a table that has FK&#8217;s to a few other tables you don&#8217;t need to stare in disgust at all those numeric entries without being able to tell what they mean, you don&#8217;t need to write a query with several joins to &#8220;see&#8221; what the data represents. I guess that&#8217;s what views are for.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1416">
+					<div id="dsq-comment-header-1416" class="dsq-comment-header">
+						<cite id="dsq-cite-1416">
+								<span id="dsq-author-user-1416">Mr_SQL</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1416" class="dsq-comment-body">
+						<div id="dsq-comment-message-1416" class="dsq-comment-message"><p>Older programmers didn&#8217;t mind slinging a little SQL instead of getting hung up on whiz bang O/R mappers.</p>
+<p>Newer programmers aren&#8217;t sure what SQL is.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1417">
+					<div id="dsq-comment-header-1417" class="dsq-comment-header">
+						<cite id="dsq-cite-1417">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-1417">jmiller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1417" class="dsq-comment-body">
+						<div id="dsq-comment-message-1417" class="dsq-comment-message"><p>Older programmers are missing the boat?  Is that what your saying?  I can write SQL and ADO.Net all day long, but I&#8217;ve paid my dues and I&#8217;d like to move onto producing functionality now;)</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1418">
+					<div id="dsq-comment-header-1418" class="dsq-comment-header">
+						<cite id="dsq-cite-1418">
+	http://www.e-Crescendo.com							<span id="dsq-author-user-1418">jdn</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1418" class="dsq-comment-body">
+						<div id="dsq-comment-message-1418" class="dsq-comment-message"><p><a href="http://blogs.ittoolbox.com/database/soup/archives/primary-keyvil-part-i-7327" rel="nofollow">http://blogs.ittoolbox.com/database/soup/archives/primary-keyvil-part-i-7327</a></p>
+<p>I&#8217;ve been working on a project where the vendor DB doesn&#8217;t use surrogate keys, and there&#8217;s a good reason for it.  The data has a natural key that crosses columns.</p>
+<p>Of course, a data architecture committee wanted us to add surrogate keys to every table.  &#8216;Easier joins&#8217; was one reason.</p>
+<p>Well, when we want to get the data we want, we will be querying the natural key columns anyway, so whether they are part of the join clause or part of the where clause is rather irrelevant.  The surrogate key wouldn&#8217;t do anything.</p>
+<p>Having said that, every database I&#8217;ve ever created has had an identity column as a primary key, so what do I know?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1419">
+					<div id="dsq-comment-header-1419" class="dsq-comment-header">
+						<cite id="dsq-cite-1419">
+								<span id="dsq-author-user-1419">Chris Teixeira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1419" class="dsq-comment-body">
+						<div id="dsq-comment-message-1419" class="dsq-comment-message"><p>Jeremy, </p>
+<p>I would like to start by saying that I enjoy your blog immensely.  Please keep up the great writing.</p>
+<p>With regard to composite keys &#8211; a few things to ponder:</p>
+<p>Most people that work with databases are familiar with the idea of an &#8220;associative entity&#8221;, sometimes called a &#8220;relationship table&#8221; or &#8220;linking table&#8221;.</p>
+<p>For example, consider Students, Classes, and Enrollments.  Each Student may be enrolled in some number of Classes, and each Class may have some number of Students, but no Student is enrolled in the same Class twice.  To model this relationally, we create an Enrollments entity.  This Enrollments entity has a foreign key that references the primary key of Classes, and a foreign key that references the primary key of Students.  These two attributes together make up the primary key of Enrollments, ensuring that the same Student may not be enrolled in a Class more than once; i.e. the Enrollment is unique.</p>
+<p>This is not a &#8216;legacy&#8217; approach; this is the way the relational model works, and is the correct or &#8216;normal&#8217; way to model this concept in a relational database.  The primary key models the functional dependency that  | Class,Student -> Enrollment |.  This can be read that &#8220;a class and a student determines an enrollment&#8221;, or &#8220;an enrollment is functionally dependent on a class and a student&#8221;.  This is not unlike a function that takes a Class and a Student as parameters, and returns an Enrollment as a result.  </p>
+<p>So this is not about space being at a premium, conversion of manual processes, performance, or some historic difficulty in creating unique scalar values.  When a relational database is designed properly, composite keys are likely to be part of the landscape; this is still the correct way to do it.</p>
+<p>An illustrative factiod: of the 5 original &#8220;normal forms&#8221;, 3 out of 5 only apply in situations dealing with composite keys (2NF, 4NF and 5NF).  </p>
+<p>This is why we are stuck with what has been called the &#8220;object-relational impedance mismatch&#8221;, and it is true that it is a pain in the neck to deal with these varying key structures, and most ORM tools cannot do it.  </p>
+<p>The best compromise is probably to keep the proper composite primary keys in place, and add a surrogate single-column key with a unique constraint on it. </p>
+<p>Regards,<br />
+Chris</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1420">
+					<div id="dsq-comment-header-1420" class="dsq-comment-header">
+						<cite id="dsq-cite-1420">
+	http://www.ayende.com/Blog							<span id="dsq-author-user-1420">Ayende Rahien</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1420" class="dsq-comment-body">
+						<div id="dsq-comment-message-1420" class="dsq-comment-message"><p>Because often enough, the people that build the DB hasn&#8217;t been educated with RDBMS practicalities long enough.<br />
+It is a lot more cumbersome to use composite keys than surrogate keys, both from the SQL point of view and from the user point of view.</p>
+<p>I have found the misappropriate choice of keys can really ruin your week. Specifically, I would really like to be abolish DateTime as a PK / Composite Key for ever.</p>
+<p>At any rate, NHibernate does have good support for legacy databases, I am using it on a 30 years data model that was originally developed for a mainframe. To say that it is horrible would be high praise.<br />
+It took some work, but it is working well now.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1421">
+					<div id="dsq-comment-header-1421" class="dsq-comment-header">
+						<cite id="dsq-cite-1421">
+	http://www.ayende.com/Blog							<span id="dsq-author-user-1421">Ayende Rahien</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1421" class="dsq-comment-body">
+						<div id="dsq-comment-message-1421" class="dsq-comment-message"><p>@Chris,<br />
+You example of Student / Class is merely an assoication table.<br />
+There is usually no problem with those.<br />
+Now let us turn Enrollment into an entity, add the date the user registered for the class, link a forth table, for the grades of the tests, and what you have now is a more complex model,  you now have:<br />
+/* by the same logic, we can only take one type of test in an enrollment */<br />
+create table test_results(<br />
+student_id int,<br />
+class_id int,<br />
+test_id int,<br />
+grade int<br />
+);</p>
+<p>Now, if a student fails a class, and he wants to take it again, how are you going to handle that. Suddenly the change is not just in a single table, but in two.</p>
+<p>For myself, I believe that I should avoid repeating myself, even in the DB. I find that it is easier with surrogate keys than with composite keys.<br />
+I usually create a set of views that give me the data in a human readable form, but the model behind it is using surrogate keys.<br />
+Frankly, I would like to know about why NOT use surrogate keys.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1422">
+					<div id="dsq-comment-header-1422" class="dsq-comment-header">
+						<cite id="dsq-cite-1422">
+	http://www.chrisholmesonline.com							<span id="dsq-author-user-1422">Chris Holmes</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1422" class="dsq-comment-body">
+						<div id="dsq-comment-message-1422" class="dsq-comment-message"><p>&#8220;I&#8217;m much more concerned about composite keys from the perspective  of writing persistence code, not so much performance.  Composite keys make persistence much harder.&#8221;</p>
+<p>And that&#8217;s the real issue; I agree with you Jeremy. I come from the E.F.Codd/Relational Calculus school of DB thought. But at the same time, real work has to get done, and as a developer/architect anything I can do to make the code base easier to work with, then that&#8217;s the road I&#8217;m going to travel. </p>
+<p>That said, I&#8217;d like to know in more detail what has caused you the biggest pains when working with natural keys. Is it when key values change? Because that&#8217;s an implementation issue on the part of the RDBMS, from my point of view. Or is it something else? </p>
+<p>Where I work, we use LLBLGenPro as our O/R mapper, so all our tables have surrogate keys. I haven&#8217;t tried to use it on a test database written using natural keys yet, but that&#8217;s on my To-Do list. But the question I have is, what makes surrogate keys easier in terms of persistance? I find the O/R mapper is what makes my life easier, not the keys. Half the time I wish I wasn&#8217;t using surrogate keys, because any query on an actual value requires one or more table joins before I can use it in a &#8220;where&#8221; clause. </p>
+<p>Just curious what your major headaches were with natural keys. I don&#8217;t dispute you have them, but I&#8217;m curious &#8211; more information would probably really shine a light on in my head <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1423">
+					<div id="dsq-comment-header-1423" class="dsq-comment-header">
+						<cite id="dsq-cite-1423">
+	http://www.chrisholmesonline.com							<span id="dsq-author-user-1423">Chris Holmes</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1423" class="dsq-comment-body">
+						<div id="dsq-comment-message-1423" class="dsq-comment-message"><p>@ Ayende Rahien,</p>
+<p>I don&#8217;t want to nitpick, but your example is flawed. The tuples you&#8217;ve listed aren&#8217;t enough to make a row in test_results unique. You&#8217;d need to include the date the test was taken in that table to make a row truly unique. </p>
+<p>If you&#8217;re modeling your entities correctly, then it shouldn&#8217;t matter if you use a composite key or a surrogate key. If it matters, then something in your design is wrong, and you don&#8217;t really have a &#8220;surrogate&#8221; key. </p>
+<p>&#8220;Frankly, I would like to know about why NOT use surrogate keys.&#8221;</p>
+<p>If a db developer is using surrogate keys correctly, then there is no problem. All they&#8217;ve done is take a natural key and created a surrogate for it, which can make many things easier to do in development. </p>
+<p>The problem comes when developers haven&#8217;t been exposed to the relational model and then they start thinking the surrogate key *is* the primary key. Then they design systems using MUCK tables (massively unified code-key tables) and other such database &#8220;anti&#8221;-patterns. That&#8217;s when you run into problems.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1424">
+					<div id="dsq-comment-header-1424" class="dsq-comment-header">
+						<cite id="dsq-cite-1424">
+								<span id="dsq-author-user-1424">Jacob Eggleston</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1424" class="dsq-comment-body">
+						<div id="dsq-comment-message-1424" class="dsq-comment-message"><p>It seems to me that the problems people experience with persistence are more a fault of the O/R mapper than the type of PKs used in the tables. A join is a join, no matter how many key fields are involved. A good O/R framework *should* handle composite keys in exactly the same way as surrogate keys. I&#8217;ve really never understood why some frameworks treat them differently.</p>
+<p>So I think it&#8217;s not so much that &#8220;composite keys are evil&#8221; as it is a case of there still being some room for improvement on the tools side.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1425">
+					<div id="dsq-comment-header-1425" class="dsq-comment-header">
+						<cite id="dsq-cite-1425">
+								<span id="dsq-author-user-1425">Chris Teixeira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1425" class="dsq-comment-body">
+						<div id="dsq-comment-message-1425" class="dsq-comment-message"><p>Ayende,</p>
+<p>I believe I introduced the Student/Class example as an associative entity.  And I agree, it is easily handled, just as it is, with a composite primary key.  As far as your extension of the data model to handle test scores &#8211; the Class in the model should be identified by Course-Section-Semester (Or Trimester, or Period, or whatever).  Then it is not a problem for the student to repeat a class.  Oops!  Another composite key!  Now the test scores table has Course-Section-Semester-Student-Test as a primary key!  It may seem awkward, but it&#8217;s exactly the way the relational model works, based on functional dependency.  | Course,Section,Semester,Student,Test -> Score |  Plus, when you query the test scores table, look Ma! No joins to get at most of the interesting information.</p>
+<p>I think that the reluctance to use composite keys in a data model is not unlike the fear of adding classes to an object model:  it leads to &#8220;simplexity&#8221;.</p>
+<p>To address the question of changing key values &#8211; this is not a problem because of shortcomings of the RDBMS tool:  In the logical model, a primary key should be defined against durable attributes of the entity.  If there are no durable candidates, an artificial key should be used.  Most databases need to use artificial keys in at least some tables &#8211; consider a Sales table; there is usually not a natural key available in this case.  </p>
+<p>I agree with Jacob; really it is the ORM framework that needs to be able to map relational models to object models: that is it&#8217;s job.  The forehead-bashing usually comes up when you encounter the ORM tool&#8217;s shortcomings.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1426">
+					<div id="dsq-comment-header-1426" class="dsq-comment-header">
+						<cite id="dsq-cite-1426">
+	http://www.chrisholmesonline.com							<span id="dsq-author-user-1426">Chris Holmes</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1426" class="dsq-comment-body">
+						<div id="dsq-comment-message-1426" class="dsq-comment-message"><p>&#8220;In the logical model, a primary key should be defined against durable attributes of the entity.&#8221;</p>
+<p>I question the use of the word &#8220;durable&#8221; here. I could be misinterpreting this, but it seems to infer the wrong criteria for determining candidate keys. &#8220;Durability&#8221; seems to infer the key shouldn&#8217;t change, and that&#8217;s not a criteria for determining candidate keys. Nowhere in the literature of relational calculus, relational algebra or normal forms will you find discussion on the &#8220;durability&#8221; of primary keys. </p>
+<p>Primary keys should be chosen based on qualities that provide uniqueness and nothing more. </p>
+<p>&#8220;To address the question of changing key values &#8211; this is not a problem because of shortcomings of the RDBMS tool&#8221;</p>
+<p>Sure it is. Ever try to change a primary key in a RDBMS that doesn&#8217;t support Cascade Update? You can&#8217;t, because every FK reference breaks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1427">
+					<div id="dsq-comment-header-1427" class="dsq-comment-header">
+						<cite id="dsq-cite-1427">
+	http://www.jeffreypalermo.com							<span id="dsq-author-user-1427">Jeffrey Palermo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1427" class="dsq-comment-body">
+						<div id="dsq-comment-message-1427" class="dsq-comment-message"><p>In a topic like this, there is not &#8216;always&#8217; and &#8216;never&#8217; answer.  For instance, my company&#8217;s product does have composite keys in the database, but they tend not to be in the tables that make up the aggregate roots of my domain model.  In my case (and I am using NHibernate), creating an entity with a dual-key would complicate not only my domain model but also the mapping file.  Yes, I&#8217;m considering the whole of my application in this decision and not the database schema in isolation.  I must say that this is completely orthogonal to the decision to use a natural or surrogate key for the entity.  Using the data&#8217;s natural key for the entity usually works just fine, but I find it easier to work with a surrogate if the natural key requires two pieces of data.</p>
+<p>Other entities might have tables with a composite key, but it&#8217;s a database detail, and my domain model still has a single key, and these entities are not the aggregate roots.  For instance, for a Book aggregate root, I might have many Chapter entities that wholly belong to a Book instance.  In this case, since I&#8217;ll want to maintain order, I&#8217;ll use a composite primary key for Chapter that consists of the chapter natural key and a display index that is used to store the order of the chapter in the Book&#8217;s Chapters collection.  This case of a composite key is easy to deal with because NHibernate&#8217;s
+<list /> mapping takes care of persisting the order part of the composite key.  What is hard to deal with is a composite natural key for an aggregate root.</p>
+<p>Regardless, a deep understanding of SQL and the relational model has to be in play.</p>
+<p>On another note, I, too, share the frustration that some folks create database tables with no actual natural key (a guid is not a natural key).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1428">
+					<div id="dsq-comment-header-1428" class="dsq-comment-header">
+						<cite id="dsq-cite-1428">
+								<span id="dsq-author-user-1428">Patrick Wright</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1428" class="dsq-comment-body">
+						<div id="dsq-comment-message-1428" class="dsq-comment-message"><p>When I started programming professionally, it was 1993, and the client/server architecture was entering the mainstream in a big way; a lot of our work (designing custom business applications) revolved around designing database models. At that time, surrogate keys were not a popular idea, from what I recall. A large part of our modeling revolved around finding what attribute(s) uniquely identified a concept of interest in the business operation. Those were the keys. You could have one, or several attributes in a key, and actually several keys per entity (the primary, and sometime natural and alternate key-sets). </p>
+<p>In retrospect, there was no problem programming in this model, but we ourselves weren&#8217;t trying to use an O/R mapping tool. There were several nice side-effects of modeling using keys (composite or not):<br />
+1- led to better understanding of the entities; if you couldn&#8217;t decide on a key, it was often a sign there was duplication hidden in the entity, calling for normalization<br />
+2- keys migrate to their children, following strict rules, which meant you could pick up any database model and understand something about any entity you chose just by following the migrated keys<br />
+3- querying was easier to follow in code and allowed for slicing (where only a subset of the attributes in a composite key was used in a query)</p>
+<p>Surrogate (&#8220;blind&#8221;) keys started to be in vogue a few years later. The discussion as I recall it related to problems of very deep migrated keys, where the primary key of some descendant table would be enormous, leading to large index structures. There were techniques to get around it, but surrogate keys made it somewhat easier to build smaller indexes. On the other hand, generating unique surrogate keys on high-volume OLTP systems led to its own problems.</p>
+<p>Point being&#8211;it&#8217;s not so long ago that surrogate keys were the exception, rather than the rule. I actually just picked up my copy of Thomas Bruce&#8217;s &#8220;Designing Quality Databases with IDEF1X Information Models&#8221;, which, if you ever come across it, is a great read&#8211;and explains why composite keys make sense if you understand them in the culture in which they thrived.</p>
+<p>Cheers<br />
+Patrick</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1429">
+					<div id="dsq-comment-header-1429" class="dsq-comment-header">
+						<cite id="dsq-cite-1429">
+								<span id="dsq-author-user-1429">schlenk</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1429" class="dsq-comment-body">
+						<div id="dsq-comment-message-1429" class="dsq-comment-message"><p>The simple fact is, ORM and relational databases are a bad fit and composite keys, which are a quite natural fit for RDBMS show the weakness of ORMs.</p>
+<p>All those ORM systems would probably be happier if the Object style databases would actually work and have adequat performance instead of bolting OO style onto relational databases.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1430">
+					<div id="dsq-comment-header-1430" class="dsq-comment-header">
+						<cite id="dsq-cite-1430">
+								<span id="dsq-author-user-1430">Justin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1430" class="dsq-comment-body">
+						<div id="dsq-comment-message-1430" class="dsq-comment-message"><p>Patrick: &#8220;3- querying was easier to follow in code and allowed for slicing (where only a subset of the attributes in a composite key was used in a query)&#8221;</p>
+<p>I disagree on the importance of &#8220;easier to follow&#8221; queries, as the purpose of the query is obvious from the higher-level view of the application logic. The actual SQL generated is a little like the machine code a compiler generates &#8212; it&#8217;s only worth considering when the O/R mapper does something stupid and creates a bottleneck.</p>
+<p>However, the option to slice foreign key queries is the first decent argument for natural keys I&#8217;ve ever heard. Of course, even for the instances that is useful, it&#8217;s still easier to use a surrogate key for routine queries and then just duplicate the relevant portion of the natural key in foreign references.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-1431">
+					<div id="dsq-comment-header-1431" class="dsq-comment-header">
+						<cite id="dsq-cite-1431">
+								<span id="dsq-author-user-1431">Justin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1431" class="dsq-comment-body">
+						<div id="dsq-comment-message-1431" class="dsq-comment-message"><p>Also, surrogate keys have no performance penalty in the average case. A unique id has a lot more uniqueness per bit than all but a few natural keys. You lose space on each primary record, but you win it back on every foreign key.</p>
+<p>I&#8217;ve been programming for over 20 years, and I&#8217;ve been working with RDMS&#8217;s for more than 10 years. Old-school SQL is dead; ORM is, and has been for many years, the future. I can also write assembly for a half dozen processors, but they only make 2 of those these days. Skill/knowledge faces obsolescence in a hurry these days.</p>
+<p>This field sucks because you can&#8217;t just settle down &#8212; you have to always be learning &#8212; but that&#8217;s the same reason I like it. It helps that I&#8217;m in my 20&#8242;s, though, and I can imagine getting bitter in a decade or so.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/02/01/composite-keys-are-evil/ ';
+	var disqus_identifier = '280 /blogs/jeremy.miller/archive/2007/02/01/Composite-keys-are-evil.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Composite keys are evil";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=280');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/02\/01\/composite-keys-are-evil\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://codeofrob.com/' rel='external nofollow' class='url'>Rob Ashton</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6752">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://www.best-registrycleaner.net' rel='external nofollow' class='url'>Best Registry Cleaner</a> on <a href="http://codebetter.com/jeremymiller/2009/01/20/create-your-own-auto-registration-convention-with-structuremap/#comment-6747">Create your own Auto Registration Convention with StructureMap</a></li><li class="recentcomments">Eric Turnbow on <a href="http://codebetter.com/jeremymiller/2005/11/07/using-the-chain-of-responsibility-pattern/#comment-6745">Using the Chain of Responsibility Pattern</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.320 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 14:10:44 -->
+<!-- super cache -->

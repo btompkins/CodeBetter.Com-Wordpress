@@ -122,13 +122,13 @@ class evScriptOptimizerBackend {
             <div class="error" id="message">
                 <p><?php echo evScriptOptimizer::$options['cache_dir_message']; ?></p>
             </div>
-            <? } ?>
+            <?php } ?>
 
             <?php if ($saved) { ?>
             <div class="updated" id="message">
                 <p><strong><?php _e('Options have been saved! Cache clear.', 'spacker'); ?></strong></p>
             </div>
-            <? } ?>
+            <?php } ?>
             
             <form action="" method="post">
                 <?php

@@ -10,7 +10,34 @@
 	</div>
 
 	<div class="dd-block">
-		<div class="dd-title"><h2>Premium WordPress Themes</h2></div>
+		<div class="dd-title"><h2>Sponsor</h2></div>
+		<div class="dd-insider">
+		
+			<div style="padding-bottom:16px;float:left;">
+				<a href="http://ref.webhostinghub.com/scripts/click.php?ref_id=rsuog&ad_id=54c8d95f" target="_blank">
+				<img src='<?php echo DD_PLUGIN_URL ?>../image/ads/hub_300_wordpress.png' />
+				</a>
+			</div>
+			<div style="clear:both"></div>
+			
+			<p>UNLIMITED Web Hosting, 24/7 U.S. Technical Support &amp; 90-Day FULL Money Back Guarantee. 100% Customer Satisfaction! 
+			
+			<br>(Check our reviews at <a href="http://webhostinggeeks.com/user-reviews/index2.php?item_id=78"
+target="_blank">WHG</a>, <a
+href="http://webhostingrating.com/companies/web-hosting-hub/"
+target="_blank">WHR</a>, <a
+href="http://webhostingfan.com/reviews/webhostinghub-review/"
+target="_blank">WHF</a>)</p>
+    <p>More info: <a
+href="http://ref.webhostinghub.com/scripts/click.php?ref_id=rsuog&ad_id=54c8d95f"
+target="_blank">www.webhostinghub.com</a></p>
+			
+		</div>
+		
+	</div>
+	
+	<div class="dd-block">
+		<div class="dd-title"><h2>Wordpress Theme</h2></div>
 		<div class="dd-insider">
 		
 			<div style="padding-bottom:16px;float:left;">
@@ -26,7 +53,10 @@
 			<p>
 			<strong>Beautiful themes, Great support!</strong>
 			</p>
+	
 		</div>
 		
 	</div>
+	
+	
 </div>

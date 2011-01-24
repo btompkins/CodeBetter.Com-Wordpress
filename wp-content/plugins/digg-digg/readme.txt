@@ -5,7 +5,7 @@ Tags: mkyong, digg digg, digg, linked, reddit, dzone, yahoo buzz, tweetMeme, twi
 
 Requires at least: 2.3
 Tested up to: 3.0
-Stable tag: 4.5.0.6
+Stable tag: 4.5.0.7
 
 All-in-One social voted count buttons.
 
@@ -45,6 +45,10 @@ Refer FAQ Here, <a href="http://www.mkyong.com/blog/digg-digg-wordpress-plugin/#
 6. Buttons + Before Content + Compact Mode + Excerpt Mode
 
 == Changelog ==
+
+= Digg Digg v4.5.0.7 - 17/01/2011 =
+
+* Minor bugs fixed.
 
 = Digg Digg v4.5.0.6 - 04/01/2011 =
 

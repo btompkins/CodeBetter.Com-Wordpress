@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Named and Optional Arguments in C# 4.0 | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='KaizenConf &#8211; Functional Programming – Is it a game changer?' href='http://codebetter.com/matthewpodwysocki/2008/10/24/kaizenconf-functional-programming-is-it-a-game-changer/' />
+<link rel='next' title='C# 4.0 &#8211; Named and Optional Parameters &#8211; Behind the Scenes' href='http://codebetter.com/matthewpodwysocki/2008/10/29/c-4-0-named-and-optional-parameters-behind-the-scenes/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/10/28/named-and-optional-arguments-in-c-4-0/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=75' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-75" class="post-75 post type-post status-publish format-standard hentry category-c category-f">
+					<h1 class="entry-title">Named and Optional Arguments in C# 4.0</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/10/28/named-and-optional-arguments-in-c-4-0/" title="11:25 pm" rel="bookmark"><span class="entry-date">October 28, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Many interesting news is coming from PDC this week.&#160; Part of the announcements was around Visual Studio 2010 and the .NET Framework 4.0 CTP.&#160; Microsoft has made available, a Virtual PC Image preloaded with Visual Studio.</p>
+<p>You can download the preview information here:</p>
+<ul>
+<li><a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=922B4655-93D0-4476-BDA4-94CF5F8D4814&amp;displaylang=en">Microsoft Pre-release Software Visual Studio 2010 and .NET Framework 4.0 CTP</a> </li>
+<li><a href="https://connect.microsoft.com/VisualStudio/content/content.aspx?ContentID=9790">Visual Studio 2010 and .NET Framework 4.0 CTP Feedback</a> </li>
+<li><a href="http://code.msdn.microsoft.com/csharpfuture">C# Future Samples on MSDN Code Gallery</a> </li>
+<li><a href="http://channel9.msdn.com/pdc2008/TL16/">The Future of C# with Anders Hejlsberg</a> </li>
+</ul>
+<p>&#160;</p>
+<p>One of the interesting features of C# 4.0 is for both named and optional arguments.&#160; They are often very useful together, but are quite actually two different things.&#160; Optional arguments gives us the ability to omit arguments to method invocations, whereas named arguments allows us to specify the arguments by name instead of by position.&#160; Code using the named parameters are often more readable than code relying on argument position.&#160; These features were long overdue, especially in regards to COM interop.&#160; Both F#, and now C# have this feature which gives us greater flexibility is designing APIs.</p>
+<p>&#160;</p>
+<h2>Named and Optional Arguments in F#</h2>
+<p>As I&#8217;ve stated before, F# has had these features for both named and option parameters.&#160; Let&#8217;s look at the implementation details of each.&#160; Named arguments are simply when creating an object, specify the name before the assignment (=) operator such as the example below.&#160; </p>
+<div style="font-family: courier new"><span style="color: blue">let</span> t = <span style="color: blue">new</span> TextBoxInfo<span style="color: blue">(</span>text = <span style="color: maroon">&quot;Hello&quot;</span>,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; color = Color<span style="color: blue">.</span>Black<span style="color: blue">)</span>&#160;</div>
+<p>&#160;</p>
+<p>An optional parameter can be specified during the declaration by prefixing the argument name with a question mark (?).&#160; This becomes translated to an Option&lt;&#8217;a&gt; type which allows for either some value or no value at all.&#160; Should the value not be specified, you can set the default argument value through the let syntax.&#160; Let&#8217;s walk through an example of a simple class called TextBoxInfo.</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>     </p>
+<p><span style="color: blue">open</span> System<span style="color: blue">.</span>Drawing     </p>
+<p><span style="color: blue">type</span> TextBoxInfo<span style="color: blue">(</span>?text<span style="color: blue">:</span><span style="color: blue">string</span>, ?color<span style="color: blue">:</span>Color, ?font<span style="color: blue">:</span>Font<span style="color: blue">)</span> =&#160; <br />&#160; <span style="color: green">// Initialize </span>    <br />&#160; <span style="color: blue">let</span> text = defaultArg text <span style="color: maroon">&quot;&quot;</span>&#160; <br />&#160; <span style="color: blue">let</span> color = <span style="color: blue">match</span> color <span style="color: blue">with</span>&#160; <br />&#160;&#160;&#160; <span style="color: blue">|</span> None <span style="color: blue">-&gt;</span> Color<span style="color: blue">.</span>Red&#160; <br />&#160;&#160;&#160; <span style="color: blue">|</span> Some c <span style="color: blue">-&gt;</span> c&#160;&#160; <br />&#160; <span style="color: blue">let</span> font = <span style="color: blue">match</span> font <span style="color: blue">with</span>&#160; <br />&#160;&#160;&#160; <span style="color: blue">|</span> None <span style="color: blue">-&gt;</span>&#160;<span style="color: blue">new</span> Font<span style="color: blue">(</span>FontFamily<span style="color: blue">.</span>GenericSerif, <span style="color: maroon">10</span><span style="color: maroon">.0f</span><span style="color: blue">)</span>&#160; <br />&#160;&#160;&#160; <span style="color: blue">|</span> Some f <span style="color: blue">-&gt;</span> f&#160; <br />&#160;&#160;&#160;&#160;&#160; <br />&#160; <span style="color: green">// Properties </span>    <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Text = text&#160; <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Color = color&#160; <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Font = font</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that we&#8217;ve looked at the F# implementation, let&#8217;s look at how the C# team handled this issue.</p>
+<p>&#160;</p>
+<h2>The Implementation in C#</h2>
+<p>First, let&#8217;s look at the named parameters.&#160; Much like F#, this process is rather straight forward.&#160; Instead of using the assignment operator (=), the colon is used to denote the name and value pair.&#160; An example of this using the above code would look like this:</p>
+<div style="font-family: courier new"><font color="#0000ff">var</font> t1 = <span style="color: blue">new</span> TextBoxInfo(text : <span style="color: maroon">&quot;Hello&quot;</span>, size: 10.0f);     <br /><font color="#0000ff">var</font> t2 = <span style="color: blue">new</span> TextBoxInfo(size : 12.0f,&#160;&#160; <br />&#160;&#160;&#160; width : 50.0f);</div>
+<div style="font-family: courier new">&#160;</div>
+<p>These named parameters can be used not only on these constructors, but also methods, and properties with indexers.&#160; Moving onto optional arguments, a parameter is simply declared optional by giving a default value to it through the use of the assignment operator.&#160; Let&#8217;s take the above example written in F# and express is C# 4.0.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">class</span> TextBoxInfo     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span> TextBoxInto(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">string</span> text = <span style="color: maroon">&quot;&quot;</span>,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">float</font> size = 10.0f,</div>
+<div style="font-family: courier new">&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">float</font> width = 50.0f,</div>
+<div style="font-family: courier new">&#160;&#160;&#160;&#160;&#160;&#160;&#160; Color color = Color.Red)&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br />&#160;&#160;&#160; { &#8230; }     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>But, this doesn&#8217;t work at all.&#160; Why you ask?&#160; Because, we require compile-time constraints, which means that we cannot initialize the default color this way.</p>
+<p><a href="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/NamedandOptionalArgumentsinC4.0_7B9D/compile_time_constraint_2.png"><img style="border-right: 0px;border-top: 0px;border-left: 0px;border-bottom: 0px" height="277" alt="compile_time_constraint" src="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/NamedandOptionalArgumentsinC4.0_7B9D/compile_time_constraint_thumb.png" width="479" border="0" /></a> </p>
+<p>Instead, if we change the above code to use the default constructor of color, such as this, the error goes away.</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">class</span> TextBoxInfo     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">public</span> TextBoxInfo(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">string</span> text = <span style="color: maroon">&quot;&quot;</span>,     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">float</span> size = <span style="color: maroon">10</span><span style="color: maroon">.0f</span>,     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">float</span> width = <span style="color: maroon">50</span><span style="color: maroon">.0f</span>,     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Color color = <span style="color: blue">new</span> Color())     <br />&#160;&#160;&#160; { &#8230; }</div>
+<div style="font-family: courier new">&#160;</div>
+<p>How useful is this then?&#160; Not as useful as I&#8217;d hoped.&#160; Once again, F# does get this right which allows us to initialize to whatever we so please, but it&#8217;s not done in the method signature, only the fact that it is an optional parameter.</p>
+<p>Ok, so you&#8217;re probably asking about overload resolution.&#160; Using this technique will affect the resolution of your given methods.&#160; There are some rules that apply for resolution which are taken from the New Features in C# 4.0 document:</p>
+<ul>
+<li>A method signature if applicable if all its parameters are either optional or have exactly one corresponding argument (by name or position) in the call which is convertible to the parameter type. </li>
+<li>Betterness rules on conversions are only applied for arguments that are explicitly given &#8211; ommitted optional arguments are ignored for betterness purposes. </li>
+<li>If two signatures are equally good, one that does not omit optional arguments is preferred. </li>
+</ul>
+<p>We can take these rules to examine the following code:</p>
+<div style="font-family: courier new">MyMethod(<span style="color: blue">string</span> s1, <span style="color: blue">string</span> s2 = <span style="color: maroon">&quot;Hello&quot;</span>)     <br />MyMethod(<span style="color: blue">object</span> o)     <br />MyMethod(<span style="color: blue">string</span> s)     <br />MyMethod(<span style="color: maroon">&quot;Hi!&quot;</span>)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Given the above rules, the method that would be called would be the MyMethod(string s) as we take the signature that does not omit the optional arguments.&#160; Now that we have the rules in place, we can be careful of how we structure our code.</p>
+<p>&#160;</p>
+<h2>Wrapping It Up</h2>
+<p>This is one of the first looks into the future of C#.&#160; Much of the features of C# 4.0 are not around functional programming techniques as they were with 3.0, but still have some improvements.&#160; The dynamic keyword is interesting, if not just for the COM interop story.&#160; The ability to call into IronPython definitely makes the polyglot in me very happy.</p>
+<p>As the language evolves, I believe we&#8217;ll find more emphasis on the surrounding frameworks for such things as concurrency and less on the language keywords themselves.&#160; We&#8217;ve found that over time, if the language starts adding keywords, and somehow, for some strange reason, we&#8217;re wrong about the implementation, if prematurely ages the language and possibly sends it into irrelevancy.&#160; I still have a wish list, a mile long for C#, but it&#8217;ll be a more interesting discussion of what part of that would more of a framework construct instead of a language one.</p>
+<p>I encourage you to download the VPC of the Visual Studio 2010 and .NET Framework 4.0 CTP, try out the features, and give feedback!</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/10/28/named-and-optional-arguments-in-c-4-0/" title="Permalink to Named and Optional Arguments in C# 4.0" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/10/28/named-and-optional-arguments-in-c-4-0/feed/" title="Comments RSS to Named and Optional Arguments in C# 4.0" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-75 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/10/24/kaizenconf-functional-programming-is-it-a-game-changer/" rel="prev"><span class="meta-nav">&larr;</span> KaizenConf &#8211; Functional Programming – Is it a game changer?</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/10/29/c-4-0-named-and-optional-parameters-behind-the-scenes/" rel="next">C# 4.0 &#8211; Named and Optional Parameters &#8211; Behind the Scenes <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-167">
+					<div id="dsq-comment-header-167" class="dsq-comment-header">
+						<cite id="dsq-cite-167">
+	http://grantpalin.com							<span id="dsq-author-user-167">Grant Palin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-167" class="dsq-comment-body">
+						<div id="dsq-comment-message-167" class="dsq-comment-message"><p>Heh, C# is catching up with VB&#8230;I think optional arguments were in VB6! <img src='http://codebetter.com/matthewpodwysocki/wp-includes/images/smilies/icon_razz.gif' alt=':P' class='wp-smiley' /> </p>
+<p>Admittedly, the feature is not a silver bullet, but it can be useful from time to time. Time and place for everything. Having used optional arguments in VB.NET, I know that the way they affect overloading can make things tricky.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-168">
+					<div id="dsq-comment-header-168" class="dsq-comment-header">
+						<cite id="dsq-cite-168">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-168">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-168" class="dsq-comment-body">
+						<div id="dsq-comment-message-168" class="dsq-comment-message"><p>@Grant</p>
+<p>And you have default arguments in C++ as well, such as this:<br />
+int print( double dvalue, int prec=2 );</p>
+<p>It&#8217;s interesting to say the least that C# was the last to get this feature.  As I&#8217;ve said before, the real compelling argument for this feature is for the interop story with C++, VB.NET, dynamic languages, and especially COM interop.  </p>
+<p>With any given technology or technique, you&#8217;ll find people screaming from the hilltop about possible abuse, but I see them playing out much as they did in the C++ world.  Nothing to get super excited about in terms of that.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-169">
+					<div id="dsq-comment-header-169" class="dsq-comment-header">
+						<cite id="dsq-cite-169">
+	http://sticklebackplastic.com							<span id="dsq-author-user-169">Matt Ellis</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-169" class="dsq-comment-body">
+						<div id="dsq-comment-message-169" class="dsq-comment-message"><p>Matt, you mentioned that the syntax was to separate the parameter and it&#8217;s default value with a colon, yet all your examples are using the equals sign? Is that just a typo?</p>
+<p>Cheers<br />
+Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-170">
+					<div id="dsq-comment-header-170" class="dsq-comment-header">
+						<cite id="dsq-cite-170">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-170">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-170" class="dsq-comment-body">
+						<div id="dsq-comment-message-170" class="dsq-comment-message"><p>@Matt</p>
+<p>No, there is no typo.  In order to use named parameters, you use a colon to separate the name value pairs.  In order to use default arguments, you use an = assignment operator.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-171">
+					<div id="dsq-comment-header-171" class="dsq-comment-header">
+						<cite id="dsq-cite-171">
+								<span id="dsq-author-user-171">Andrew Shapira</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-171" class="dsq-comment-body">
+						<div id="dsq-comment-message-171" class="dsq-comment-message"><p>Which Option<t> type are you referring to here &#8211; is that essentially what is presented here <a href="http://www.codeproject.com/KB/architecture/option1.aspx" rel="nofollow">http://www.codeproject.com/KB/architecture/option1.aspx</a> ?</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-172">
+					<div id="dsq-comment-header-172" class="dsq-comment-header">
+						<cite id="dsq-cite-172">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-172">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-172" class="dsq-comment-body">
+						<div id="dsq-comment-message-172" class="dsq-comment-message"><p>@Andrew</p>
+<p>No, it&#8217;s a built in type to F#, under Microsoft.FSharp.Core.Option<t>.  I&#8217;ve created one as well in my Functional C# library on MSDN Code Gallery. : <a href="http://code.msdn.microsoft.com/FunctionalCSharp" rel="nofollow">http://code.msdn.microsoft.com/FunctionalCSharp</a></p>
+<p>Matt</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-173">
+					<div id="dsq-comment-header-173" class="dsq-comment-header">
+						<cite id="dsq-cite-173">
+	http://nesteruk.org							<span id="dsq-author-user-173">Dmitri Nesteruk</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-173" class="dsq-comment-body">
+						<div id="dsq-comment-message-173" class="dsq-comment-message"><p>I don&#8217;t like the way Color cannot be initialized &#8211; the usefulness of default parameters drops somewhat. Do you reckon this might be fixed before VS 2010 is out the door?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-174">
+					<div id="dsq-comment-header-174" class="dsq-comment-header">
+						<cite id="dsq-cite-174">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-174">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-174" class="dsq-comment-body">
+						<div id="dsq-comment-message-174" class="dsq-comment-message"><p>@Dmitri</p>
+<p>I agree, the usefulness drops somewhat when you realize that only simple types can be expressed this way.  I&#8217;m not sure whether there is enough priority to fix any of this at all.  I wish there were.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-175">
+					<div id="dsq-comment-header-175" class="dsq-comment-header">
+						<cite id="dsq-cite-175">
+	http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/							<span id="dsq-author-user-175">Senthil</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-175" class="dsq-comment-body">
+						<div id="dsq-comment-message-175" class="dsq-comment-message"><p><a href="http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/" rel="nofollow">http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-176">
+					<div id="dsq-comment-header-176" class="dsq-comment-header">
+						<cite id="dsq-cite-176">
+	http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/							<span id="dsq-author-user-176">Senthil</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-176" class="dsq-comment-body">
+						<div id="dsq-comment-message-176" class="dsq-comment-message"><p><a href="http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/" rel="nofollow">http://skurocks.wordpress.com/2009/05/06/optional-parameter-named-arguments-default-values-c-40/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-177">
+					<div id="dsq-comment-header-177" class="dsq-comment-header">
+						<cite id="dsq-cite-177">
+	http://cherupally.blogspot.com/							<span id="dsq-author-user-177">Kiran Cherupally</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-177" class="dsq-comment-body">
+						<div id="dsq-comment-message-177" class="dsq-comment-message"><p>Hi all,</p>
+<p>I have added a post on this topic. Please read and post your comments/questions.</p>
+<p><a href="http://cherupally.blogspot.com/2009/11/c-40-new-features-named-and-optional.html" rel="nofollow">http://cherupally.blogspot.com/2009/11/c-40-new-features-named-and-optional.html</a></p>
+<p>Thanks,<br />
+Kiran</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/10/28/named-and-optional-arguments-in-c-4-0/ ';
+	var disqus_identifier = '75 /blogs/matthew.podwysocki/archive/2008/10/28/named-and-optional-arguments-in-c-4-0.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Named and Optional Arguments in C# 4.0";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=75');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/10\/28\/named-and-optional-arguments-in-c-4-0\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.970 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:49:42 -->
+<!-- super cache -->

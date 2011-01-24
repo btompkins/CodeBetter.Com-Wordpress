@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>How I’m using the Event Aggregator Pattern in StoryTeller | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Braindump on the Event Aggregator Pattern' href='http://codebetter.com/jeremymiller/2009/07/22/braindump-on-the-event-aggregator-pattern/' />
+<link rel='next' title='Write Your Own Diagnostics for StructureMap (and yet more fun with Linq)' href='http://codebetter.com/jeremymiller/2009/07/25/write-your-own-diagnostics-for-structuremap-and-yet-more-fun-with-linq/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2009/07/24/how-i-m-using-the-event-aggregator-pattern-in-storyteller/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=706' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-706" class="post-706 post type-post status-publish format-standard hentry category-presentation-patterns">
+					<h1 class="entry-title">How I’m using the Event Aggregator Pattern in StoryTeller</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2009/07/24/how-i-m-using-the-event-aggregator-pattern-in-storyteller/" title="3:13 am" rel="bookmark"><span class="entry-date">July 24, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In my last post I did a <a href="/blogs/jeremy.miller/archive/2009/07/23/251847.aspx">braindump on the Event Aggregator pattern</a>, and me being me, I was critical of the Prism approach for what I feel is needless complexity of usage.&nbsp; Just to even the score and allow you to make fun of my code, here is a brief synopsis of my approach to the Event Aggregator pattern in the <a href="http://storyteller.tigris.org">StoryTeller</a> codebase.&nbsp; I&rsquo;m banging this out way fast, so feel free to ping me in the comments about anything that isn&rsquo;t clear.&nbsp; I&rsquo;m going to blog tomorrow night on a small Event Aggregator strategy for client side JavaScript and if anybody wants it, I&rsquo;ll also talk about writing diagnostics for the StoryTeller Event Aggregator.</p>
+<p>&nbsp;</p>
+<p>My Event Aggregator looks like this:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: #2b91af">IEventAggregator</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Sending messages</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> SendMessage&lt;T&gt;(T message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> SendMessage&lt;T&gt;() <span style="color: blue">where</span> T : <span style="color: blue">new</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// This method sounded cool, but has been somewhat awkward</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// in real usage</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> SendMessage&lt;T&gt;(<span style="color: #2b91af">Action</span>&lt;T&gt; action) <span style="color: blue">where</span> T : <span style="color: blue">class</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Explicit registration</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> AddListener(<span style="color: blue">object</span> listener);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> RemoveListener(<span style="color: blue">object</span> listener);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Filtered registration, experimental</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #2b91af">If</span>&lt;T&gt; If&lt;T&gt;(<span style="color: #2b91af">Func</span>&lt;T, <span style="color: blue">bool</span>&gt; filter);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The key points about my design is that I:</p>
+<ol>
+<li>Use generic marker interfaces to call and register the subscribers</li>
+<li>There is no &ldquo;Event/Message&rdquo; pair like Prism, just little &#8220;Message&rdquo; objects</li>
+<li>All wiring is done through an IoC container (StructureMap)</li>
+<li>The subscriber registration is done by convention by my IoC container</li>
+<li>At this point I depend on explicit calls to remove listeners instead of using WeakReferences in the Event Aggregator.&nbsp; I have not made up my mind how this is going to end up yet.</li>
+</ol>
+<p>&nbsp;</p>
+<h4><b>Publishers</b></h4>
+<p>Classes that need to publish messages simply need to get a reference to the IEventAggregator singleton.&nbsp; In my world order that&rsquo;s done strictly through <a href="/blogs/jeremy.miller/archive/2005/10/06/132825.aspx">Constructor Injection</a>.&nbsp; </p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> TestEngine(<span style="color: #2b91af">IEventAggregator</span> events, <span style="color: #2b91af">IUserInterfaceTestObserver</span> observer)</p>
+</div>
+<p>Sending a message is as simple as calling the IEventAggregator.SendMessage() method:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">virtual</span> <span style="color: blue">void</span> Execute(<span style="color: #2b91af">Test</span> test)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _events.SendMessage(<span style="color: blue">new</span> <span style="color: #2b91af">TestRunEvent</span>(test, <span style="color: #2b91af">TestState</span>.Executing));</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _currentTest = test;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _engine.RunTest(test);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _currentTest = <span style="color: blue">null</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _events.SendMessage(<span style="color: blue">new</span> <span style="color: #2b91af">TestRunEvent</span>(test, <span style="color: #2b91af">TestState</span>.NotQueued){Completed = <span style="color: blue">true</span>});</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<h4><b>Thread Marshalling</b></h4>
+<p>Internally, I let the EventAggregator class itself handle all thread marshalling between the UI thread and background threads.&nbsp; Today, publishing to the EventAggregator happens on the same thread as the caller, but the Event Aggregator just assumes that messages come in on a background thread and uses SynchronizationContext to marshal the call back to the UI thread.&nbsp; I register SynchronizationContext with StructureMap like this inside a StructureMap Registry:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ForSingletonOf&lt;<span style="color: #2b91af">SynchronizationContext</span>&gt;().TheDefault.Is.ConstructedBy(() =&gt;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (<span style="color: #2b91af">SynchronizationContext</span>.Current == <span style="color: blue">null</span>)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #2b91af">SynchronizationContext</span>.SetSynchronizationContext(<span style="color: blue">new</span> <span style="color: #2b91af">DispatcherSynchronizationContext</span>());</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> <span style="color: #2b91af">SynchronizationContext</span>.Current;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; });</p>
+</div>
+<p>The Event Aggregator itself just opens up a constructor argument for SynchronizationContext like so:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> EventAggregator(<span style="color: #2b91af">SynchronizationContext</span> context)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _context = context;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>Finally, when the EventAggregator class is publishing events to subscribers it uses its SynchronizationContext to marshal the callback:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SendMessage&lt;T&gt;(<span style="color: #2b91af">Action</span>&lt;T&gt; action) <span style="color: blue">where</span> T : <span style="color: blue">class</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sendAction(() =&gt; all().Each(x =&gt; x.CallOn(action)));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SendMessage&lt;T&gt;(T message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sendAction(() =&gt; all().CallOnEach&lt;<span style="color: #2b91af">IListener</span>&lt;T&gt;&gt;(x =&gt; x.Handle(message)));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">protected</span> <span style="color: blue">virtual</span> <span style="color: blue">void</span> sendAction(<span style="color: #2b91af">Action</span> action)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Uses SynchronizationContext to marshal the call</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// to the UI thread</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _context.Send(state =&gt; { action(); }, <span style="color: blue">null</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Unit testing interactions with the Event Aggregator is very simple because you only need to assert calls to SendMessage():</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<span style="color: #2b91af">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> send_cancellation_message_if_the_test_is_queued()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MockFor&lt;<span style="color: #2b91af">IEventAggregator</span>&gt;().AssertWasCalled(</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; x =&gt; x.SendMessage(<span style="color: blue">new</span> <span style="color: #2b91af">TestRunEvent</span>(theTest, <span style="color: #2b91af">TestState</span>.NotQueued)));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<h4><b>Subscribers</b></h4>
+<p>As I said before, all subscribers need to implement this interface for each message type they need to receive:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: #2b91af">IListener</span>&lt;T&gt;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> Handle(T message);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Which results in methods like this:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: #2b91af">FixtureExplorer</span> : <span style="color: #2b91af">IListener</span>&lt;<span style="color: #2b91af">FixtureLibraryLoaded</span>&gt;, <span style="color: #2b91af">IStartable</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> Handle(<span style="color: #2b91af">FixtureLibraryLoaded</span> message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #2b91af">TreeNode</span> node = BuildTree(message.Library);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _view.ApplyFixtureNode(node);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _container.Inject(message.Library);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Internally, the EventAggregator just stores all of the subscribers in a single List (StoryTeller isn&rsquo;t big enough that I&rsquo;m worried about the performance hit from scanning all subscribers).&nbsp; When an event is published like this to the EventAggregator:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ReloadFixtureLibrary()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _library = _proxy.BuildFixtureLibrary();</p>
+<p style="margin: 0px"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _events.SendMessage(<span style="color: blue">new</span> <span style="color: #2b91af">FixtureLibraryLoaded</span>(_library));</b></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The EventAggregator receives a &ldquo;FixtureLibraryLoaded&rdquo; messsage, then it loops through all of its subscribers and tries to case each object to IHandler&lt;FixtureLibraryLoaded&gt;.&nbsp; If the object can be cast to that interface, EventAggregator will call the Handle(FixtureLibraryLoaded) method on the subscriber.&nbsp; That code looks like this below:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SendMessage&lt;T&gt;(T message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// all() is just a readonly IEnumerable&lt;object&gt; snapshot</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// of the list of subscribers</span></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// sendAction(Action) is just making the Action run through</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// SynchronizationContext</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sendAction(() =&gt; all().CallOnEach&lt;<span style="color: #2b91af">IListener</span>&lt;T&gt;&gt;(x =&gt; x.Handle(message)));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The &ldquo;CallOnEach&lt;T&gt;(Action&lt;T&gt;)&rdquo; method is a small extension method I&rsquo;ve started using across projects:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: blue">void</span> CallOn&lt;T&gt;(<span style="color: blue">this</span> <span style="color: blue">object</span> target, <span style="color: #2b91af">Action</span>&lt;T&gt; action) <span style="color: blue">where</span> T : <span style="color: blue">class</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">var</span> subject = target <span style="color: blue">as</span> T;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (subject != <span style="color: blue">null</span>)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; action(subject);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">static</span> <span style="color: blue">void</span> CallOnEach&lt;T&gt;(<span style="color: blue">this</span> <span style="color: #2b91af">IEnumerable</span> enumerable, <span style="color: #2b91af">Action</span>&lt;T&gt; action) <span style="color: blue">where</span> T : <span style="color: blue">class</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">foreach</span> (<span style="color: blue">object</span> o <span style="color: blue">in</span> enumerable)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; o.CallOn(action);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><b>Convention Based Registration</b></h4>
+<p>As I said earlier, all subscribers have to implement the IListener&lt;T&gt; interface to &ldquo;plug&rdquo; into the Event Aggregator.&nbsp; I&rsquo;m very aggressive about using my IoC container (StructureMap of course) to &ldquo;compose&rdquo; the system.&nbsp; Every &ldquo;service,&rdquo; Presenter,&nbsp; or element of the user interface that would implement the IListener&lt;T&gt; interface is constructed/resolved by StructureMap.&nbsp; The event aggregator itself is a &ldquo;managed singleton&rdquo; in the container:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For&lt;<span style="color: #2b91af">IEventAggregator</span>&gt;().AsSingletons().Use&lt;<span style="color: #2b91af">EventAggregator</span>&gt;();</p>
+</div>
+<p>StructureMap &ldquo;knows&rdquo; about the Event Aggregator and creates all the objects in the system that would implement IListener&lt;T&gt;.&nbsp; Wouldn&rsquo;t it be convenient if StructureMap could just automatically add the subscribers to the Event Aggregator as it creates the objects?&nbsp; That turns out to be relatively simple to do with the &ldquo;TypeInterceptor&rdquo; mechanism in StructureMap.&nbsp; I built a simple TypeInterceptor that automatically adds any object created by StructureMap to the Event Aggregator before the new object is returned to the caller.&nbsp; This EventAggregatorInterceptor class is shown below:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: #2b91af">EventAggregatorInterceptor</span> : <span style="color: #2b91af">TypeInterceptor</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">object</span> Process(<span style="color: blue">object</span> target, <span style="color: #2b91af">IContext</span> context)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; context.GetInstance&lt;<span style="color: #2b91af">IEventAggregator</span>&gt;().AddListener(target);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">return</span> target;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">bool</span> MatchesType(<span style="color: #2b91af">Type</span> type)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">return</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type.ImplementsInterfaceTemplate(<span style="color: blue">typeof</span> (<span style="color: #2b91af">IListener</span>&lt;&gt;)) ||</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; type.CanBeCastTo(<span style="color: blue">typeof</span> (<span style="color: #2b91af">ICloseable</span>));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&ldquo;TypeInterceptor&rdquo; is a StructureMap interface, and &ldquo;ImplementsInterfaceTemplate()&rdquo; and &ldquo;CanBeCastTo()&rdquo; are extension methods on the Type class provided by StructureMap as convenience methods.&nbsp; Next, I need to add the EventAggregatorInterceptor to StructureMap with this little bit of code in the bootstrapper:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RegisterInterceptor(<span style="color: blue">new</span> <span style="color: #2b91af">EventAggregatorInterceptor</span>());</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Inside StoryTeller is a Presenter class called QueuePresenter that listens for the TestRunEvent:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: #2b91af">QueuePresenter</span> : <span style="color: #2b91af">IScreen</span>, <span style="color: #2b91af">IListener</span>&lt;<span style="color: #2b91af">TestRunEvent</span>&gt;</p>
+</div>
+<p>&nbsp;</p>
+<p>When the user interface screen conducting code makes a call to &ldquo;container.GetInstance&lt;QueuePresenter&gt;(), StructureMap will invoke the EventAggregatorInterceptor.Process() method and register the new instance of QueuePresenter with the Event Aggregator.</p>
+<p>The value of the convention based registration approach is less code and fewer errors.&nbsp; The registration happens automatically, so I don&rsquo;t get errors from forgetting to register an event.&nbsp; Classes that are strictly subscribers do not need to be coupled to the Event Aggregator at all.&nbsp; When I unit test the Queue Presenter class above I can simply walk right up to the Handle(TestRunEvent):</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: #2b91af">TestFixture</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: #2b91af">when_a_new_test_is_queued</span> : <span style="color: #2b91af">QueuePresenterContext</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">object</span> theItem;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">protected</span> <span style="color: blue">override</span> <span style="color: blue">void</span> setUp()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MockFor&lt;<span style="color: #2b91af">IExecutionQueue</span>&gt;().Expect(x =&gt; x.GetAllQueuedTests()).Return(<span style="color: #2b91af">DataMother</span>.TestArray(3));</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theItem = <span style="color: blue">new</span> <span style="color: blue">object</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MockFor&lt;<span style="color: #2b91af">IQueuedItemFactory</span>&gt;().Expect(x =&gt; x.Build(theTest)).Return(theItem);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ClassUnderTest.Handle(<span style="color: blue">new</span> <span style="color: #2b91af">TestRunEvent</span>(theTest, <span style="color: #2b91af">TestState</span>.Queued));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<span style="color: #2b91af">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> hide_the_no_tests_label()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theView.AssertWasCalled(x =&gt; x.NoTestsAreQueued = <span style="color: blue">false</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<span style="color: #2b91af">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> the_test_should_be_added_to_the_view()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theView.AssertWasCalled(x =&gt; x.AddTestItem(theItem));</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>Note that there&rsquo;s no reference to Event Aggregator in the unit testing code above.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4><b>What about Filtering?</b></h4>
+<p>So far I&rsquo;ve only got one place where I need to worry about event filtering and I do it inside the subscriber.&nbsp; My &ldquo;TestPresenter&rdquo; class only cares about TestRunEvent messages that relate to a particular Test object.&nbsp; In this case I&rsquo;m simply filtering inside TestPresenter.Handle(TestRunEvent) like this:</p>
+<div style="border-bottom: black thin solid;border-left: black thin solid;font-family: courier new;background: white;color: black;font-size: 10pt;border-top: black thin solid;border-right: black thin solid">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> Handle(<span style="color: #2b91af">TestRunEvent</span> message)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Filter the message here and disregard messages not related to *my* Test</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (message.Test != _test) <span style="color: blue">return</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: green">// Continue on with processing</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>When you need event filtering, I&rsquo;m finding it much easier to use coarse grained events rather than finer grained events.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>That&rsquo;s about it, there really isn&rsquo;t that much to it.&nbsp; Fire away with questions.&nbsp; The entire code for this is in the StoryTeller codebase that&rsquo;s available without a tigris login.</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/presentation-patterns/" title="View all posts in Presentation Patterns" rel="category tag">Presentation Patterns</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2009/07/24/how-i-m-using-the-event-aggregator-pattern-in-storyteller/" title="Permalink to How I’m using the Event Aggregator Pattern in StoryTeller" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2009/07/24/how-i-m-using-the-event-aggregator-pattern-in-storyteller/feed/" title="Comments RSS to How I’m using the Event Aggregator Pattern in StoryTeller" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-706 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2009/07/22/braindump-on-the-event-aggregator-pattern/" rel="prev"><span class="meta-nav">&larr;</span> Braindump on the Event Aggregator Pattern</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2009/07/25/write-your-own-diagnostics-for-structuremap-and-yet-more-fun-with-linq/" rel="next">Write Your Own Diagnostics for StructureMap (and yet more fun with Linq) <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-5639">
+					<div id="dsq-comment-header-5639" class="dsq-comment-header">
+						<cite id="dsq-cite-5639">
+	http://www.mohundro.com/blog/							<span id="dsq-author-user-5639">David Mohundro</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5639" class="dsq-comment-body">
+						<div id="dsq-comment-message-5639" class="dsq-comment-message"><p>Random question regarding the EventAggregator pattern and possibly off-topic&#8230; </p>
+<p>I&#8217;ve been looking at MassTransit, NServiceBus and other messaging-related frameworks and the ideas of the ServiceBus seem very close to the EventAggregator pattern. Is it a stretch to think of them as essentially the same pattern, except that the EventAggregator is just for local messages?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5640">
+					<div id="dsq-comment-header-5640" class="dsq-comment-header">
+						<cite id="dsq-cite-5640">
+	http://phatboyg.lostechies.com/							<span id="dsq-author-user-5640">Chris Patterson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5640" class="dsq-comment-body">
+						<div id="dsq-comment-message-5640" class="dsq-comment-message"><p>@David,</p>
+<p>They are very similar. In fact, I&#8217;m currently harvesting the internal message delivery pipeline from MassTransit into Magnum to use as a similar type of event publishing system. The end product is similar, but I&#8217;m focusing heavily on the threading aspect since I plan to use it to dispatch events between actors in-process.</p>
+<p>I&#8217;ll post about it soon, hopefully before the end of the weekend.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5641">
+					<div id="dsq-comment-header-5641" class="dsq-comment-header">
+						<cite id="dsq-cite-5641">
+								<span id="dsq-author-user-5641">Eyston</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5641" class="dsq-comment-body">
+						<div id="dsq-comment-message-5641" class="dsq-comment-message"><p>The NDC sessions have a lot with IoC (Udi Dahan, Ayende, yours, probably others?) and it seems to be a way to play to the strengths of C#.  The promise of coding a feature being limited to just &#8230; coding the feature is pretty enticing.</p>
+<p>I&#8217;d be interested in the Javascript examples.  I&#8217;m trying to stop treating it as 2nd class code <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5642">
+					<div id="dsq-comment-header-5642" class="dsq-comment-header">
+						<cite id="dsq-cite-5642">
+								<span id="dsq-author-user-5642">Michael</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5642" class="dsq-comment-body">
+						<div id="dsq-comment-message-5642" class="dsq-comment-message"><p>Do you have to take thread safety into account during your enumeration on the off chance that the subscriber is removed from another thread?</p>
+<p>Also, how does the experimental filtered operation work? Can you show the code?</p>
+<p>Thanks</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5643">
+					<div id="dsq-comment-header-5643" class="dsq-comment-header">
+						<cite id="dsq-cite-5643">
+	http://www.codebetter.com/blogs/glenn.block							<span id="dsq-author-user-5643">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5643" class="dsq-comment-body">
+						<div id="dsq-comment-message-5643" class="dsq-comment-message"><p>Nice post Jeremy!</p>
+<p>I do like the IListener<t> approach as I mentioned on Ward&#8217;s blog, and think it is quite elegant. It is a bit &#8220;magical&#8221; in that it requires something to do the autowiring, but not a problem if you are using StructureMap <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>On the other hand I think there are benefits to the Prism approach. First, is it&#8217;s very explicit. It&#8217;s easy in the code to follow the liftime of the events, including putting a breakpoint where the subscription happens. Also the filtering is explicit, I can easily see at the time of subscription what filter I am subscribing with. Second, it is very similar to the pattern of event subscription in the framework. This means it&#8217;s easier for folks familar with that pattern to subscribe. Fourth, it does not rely on a magical autowirer to hook it up. It&#8217;s a very light service that can easily be passed into the constructor of any object, it does not ever require a container.</p>
+<p>Now as I said, I LIKE IListener</t><t> . But to be fiar I don&#8217;t believe that Prism&#8217;s EA leads you to bad/unmaintainable code. Also thanks as you were definitely an inspiration for us to look into the EventAggregator pattern in Prism V1, I hear lots of stories from customers who are very happy using it.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5644">
+					<div id="dsq-comment-header-5644" class="dsq-comment-header">
+						<cite id="dsq-cite-5644">
+	http://codebetter.com/members/jmiller/default.aspx							<span id="dsq-author-user-5644">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5644" class="dsq-comment-body">
+						<div id="dsq-comment-message-5644" class="dsq-comment-message"><p>@Glenn,</p>
+<p>The bottom line for me is that the Prism EA requires me to write more code, and it&#8217;s worse in the unit testing code.  More code for the same tasks == FAIL.</p>
+<p>&#8220;I hear lots of stories from customers who are very happy using it.&#8221;</p>
+<p>&#8211; because the EA in Prism is the only implementation they&#8217;ve ever been exposed to.  Don&#8217;t fool yourself for an instance into believing that Prism is the best it could be just because of positive feedback.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5645">
+					<div id="dsq-comment-header-5645" class="dsq-comment-header">
+						<cite id="dsq-cite-5645">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-5645">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5645" class="dsq-comment-body">
+						<div id="dsq-comment-message-5645" class="dsq-comment-message"><p>@Jeremy</p>
+<p>It is worse in the unit-testing code, but only by a slight degree, as it means I have to have a mock EventAggregator.</p>
+<p>On the comment, dude, you are misinterpreting. I was not giving the customer feedback to say that OUR implementation was the best. I was actually saying that it was evidence that folks liked the use of that pattern. It was a complement on your promoting of the pattern&#8230;</p>
+<p>However in talking about the best, I think the best is relative, it was far better than what customers had used in the past coming out of p&#038;p. I am the first to agree that things can always be improved, that&#8217;s the nature of developing software. And fortunately we design Prism in such a way that EventAgg was our implementation, but something we avoided any hard dependencies on. </p>
+<p>Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5646">
+					<div id="dsq-comment-header-5646" class="dsq-comment-header">
+						<cite id="dsq-cite-5646">
+	http://wizardsofsmart.net/							<span id="dsq-author-user-5646">Ryan Riley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5646" class="dsq-comment-body">
+						<div id="dsq-comment-message-5646" class="dsq-comment-message"><p>Any thoughts on how the Reactive Framework (IObservable/IObserver) now in Silverlight and to come in .NET 4.0 may change the pattern? Does Rx remove the need for an EventAggregator implementation?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5647">
+					<div id="dsq-comment-header-5647" class="dsq-comment-header">
+						<cite id="dsq-cite-5647">
+	http://codebetter.com/members/jmiller/default.aspx							<span id="dsq-author-user-5647">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5647" class="dsq-comment-body">
+						<div id="dsq-comment-message-5647" class="dsq-comment-message"><p>@Ryan,</p>
+<p>Give me a week or two and I&#8217;ll go take a closer look.  I&#8217;m going to talk to the MassTransit guys too about whether a Message Bus is appropriate to use as your event aggregator.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-5648">
+					<div id="dsq-comment-header-5648" class="dsq-comment-header">
+						<cite id="dsq-cite-5648">
+								<span id="dsq-author-user-5648">Jeff</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-5648" class="dsq-comment-body">
+						<div id="dsq-comment-message-5648" class="dsq-comment-message"><p>Jeremy,<br />
+how is this different from Udi Dahan&#8217;s Domain event pattern or the upcoming Rx (System.Reactive)? Can you comment? Just seems confusing</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2009/07/24/how-i-m-using-the-event-aggregator-pattern-in-storyteller/ ';
+	var disqus_identifier = '706 /blogs/jeremy.miller/archive/2009/07/23/how-i-m-using-the-event-aggregator-pattern-in-storyteller.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "How I’m using the Event Aggregator Pattern in StoryTeller";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=706');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2009\/07\/24\/how-i-m-using-the-event-aggregator-pattern-in-storyteller\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://codeofrob.com/' rel='external nofollow' class='url'>Rob Ashton</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6752">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://www.best-registrycleaner.net' rel='external nofollow' class='url'>Best Registry Cleaner</a> on <a href="http://codebetter.com/jeremymiller/2009/01/20/create-your-own-auto-registration-convention-with-structuremap/#comment-6747">Create your own Auto Registration Convention with StructureMap</a></li><li class="recentcomments">Eric Turnbow on <a href="http://codebetter.com/jeremymiller/2005/11/07/using-the-chain-of-responsibility-pattern/#comment-6745">Using the Chain of Responsibility Pattern</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.320 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 13:52:26 -->
+<!-- super cache -->

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Quick Thoughts on Eventual Consistency | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='What is a Domain Event?' href='http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/' />
+<link rel='next' title='Academic TDD links' href='http://codebetter.com/gregyoung/2010/05/12/academic-tdd-links/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=142' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-142" class="post-142 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Quick Thoughts on Eventual Consistency</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/" title="10:37 am" rel="bookmark"><span class="entry-date">April 14, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Very often people attempting to introduce eventual consistency into a system run into problems from the business side. A very large part of the reason of this is that they use the word consistent or consistency when talking with domain experts / business stakeholders. A quick look up of the word consistent helps show where the confusion comes in.</p>
+<p>&#160;</p>
+<p>S: (n) consistency (logical coherence and accordance with the facts) &quot;a rambling argument that lacked any consistency&quot;   <br />S: (n) consistency ((logic) an attribute of a logical system that is so constituted that none of the propositions deducible from the axioms contradict one another)</p>
+<p>&#160;</p>
+<p>Business users hear “Consistency” and they tend to think it means that the data will be <strong>wrong</strong>. That the data will be incoherent and contradictory. This is not actually the case. Instead try using the word “stale” or “old”, in discussions when the word stale is used the business people tend to realize that it just means that someone could have changed the data, that they may not have the latest copy of it.</p>
+<p>&#160;</p>
+<p>If you can get this point to be understood the discussion about introducing eventual consistency becomes a fairly simple one. </p>
+<p>&#160;</p>
+<p>You can quantify mathematically the “cost” of eventual consistency, the cost can generally be defined by how many more concurrency problems are experienced. If no concurrency problem is experienced then the end user view&#160; of the data is essentially identical for most use cases. It is important to note though that although this is one way of thinking about cost there are other aspects including complexity for the development team etc. </p>
+<p>&#160;</p>
+<p>Unless you are using pessimistic locking, all data is stale, there are possibilities of optimistic concurrency failures. There is some period of time that it takes to build the DTOs, put them on the wire and for the client to receive them and draw them on the screen. There is also a period of time for a change to come from the client back up to the server. In all of these periods of time the data could change causing an optimistic concurrency failure. Let’s go with some numbers.</p>
+<p>&#160;</p>
+<p>Get data from database – 10 ms</p>
+<p>Build DTOs – 1 ms</p>
+<p>Get data to client – 100 ms</p>
+<p>Show on screen – 50ms</p>
+<p>Send back to server – 100 ms</p>
+<p>Server validation of request – 1 ms</p>
+<p>&#160;</p>
+<p>So we can quickly add these together and know that any request the server is processing is operating on 262 ms stale data. Of course we have left out the largest thing the user! <a href="http://biae.clemson.edu/bpc/bp/Lab/110/reaction.htm#Type%20of%20Stimulus">The human brain has roughly a 190 ms reaction time to visual stimulus</a>, that’s just to realize the data has been shown on the screen, it is assumed the user is actually changing something as well. Do you measure the amount of time users take on various screens? Are you thinking it might be a good idea? Let’s go with a relatively quick time for the sake of discussion. A mean time of 60 seconds on a given screen. This gets added in as well so the total is now 60.262 s</p>
+<p>&#160;</p>
+<p>Let’s imagine that we also tracked the number of optimistic concurrency failures. <em>Hint:</em> t<em>his is another value you should be tracking</em>. We could relatively easily define an equation that represented the probability of a concurrency failure given the period of time. Most data sets will follow a normal distribution … Let’s assume that we get one (an example of where we may not would be if we had a periodical update at 62 seconds … thus P(t) approaches 1 at t = 60.</p>
+<p>&#160;</p>
+<p>If we were to add in 5 seconds of eventual consistency assuming a normal distribution of changes we would end up with 65.262 seconds. </p>
+<p>&#160;</p>
+<p>So we would have increased probability = P(65.262) – P(60.262).</p>
+<p>&#160;</p>
+<p>Now for the last step. Let’s estimate the cost of an optimistic concurrency failure. Its a user, they have to redo something because they failed. We can come up with a rough estimate of the cost. The cost to the business from eventual consistency can at this point be estimated. <em>Its important to note that for some transactions you may say “the value is high so we will never give a consistency error”, say for orders over $1000, it is profitable to later handle the problem even in a manual fashion, accept the order no matter what. This is actually a <strong>very </strong>valuable insight to reach. </em>You know how often the case is being run over a period of time, you estimated the cost of the failure, and you know the increased probability of a failure due to n seconds of eventual consistency. </p>
+<p>&#160;</p>
+<p>Estimated Cost = Number of Times * Increased Probability * Cost per time</p>
+<p>&#160;</p>
+<p>This is a simple and effective way to help make decisions with eventual consistency. What is the cost in terms of user productivity and experience and what will you gain technically by introducing it? How will it affect your availability and partitionability? </p>
+<p>&#160;</p>
+<p>I hope also that people will see the value in tracking metrics like how long users stay on screens and the number of consistency errors reported … These metrics can help improve user experience drastically.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/" title="Permalink to Quick Thoughts on Eventual Consistency" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/feed/" title="Comments RSS to Quick Thoughts on Eventual Consistency" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-142 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/" rel="prev"><span class="meta-nav">&larr;</span> What is a Domain Event?</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2010/05/12/academic-tdd-links/" rel="next">Academic TDD links <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">12 Responses to <em>Quick Thoughts on Eventual Consistency</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2979">
+		<div id="comment-2979">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Scott</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2979">June 25, 2010 at 2:07 pm</a></div>
+
+		<div class="comment-body"><p>Greg,<br />
+I read Hendry&#8217;s argument and has exactly the same thoughts as you. </p>
+<p>If we look at is logically if the user process is create the user, add the photo (other data), we can even go one step further and do them all in one service call to the server. I mean why have more than one screen.  </p>
+<p>I used to think this was a serious problem as well users not seeing things immediately but we just educated them on what to expect&#8230;. e.g. If you add this user to this role its will take 60 minutes to appear on all servers &#8212; WHAT 60 Minutes&#8230; haha&#8230; not one of the business users have complained &#8211; its all about expectations.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2978">
+		<div id="comment-2978">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2978">May 11, 2010 at 9:48 pm</a></div>
+
+		<div class="comment-body"><p>Hendry</p>
+<p>Now let&#8217;s get around that problem. You said a split second, if its a split second why return them to the list? 9/10 problems can be gotten around this way. </p>
+<p>OK its usability, trick the user. Show it like its there (you just sent the command and know it puts it in the list, you even created the id do it in your view model). </p>
+<p>The second option has cost associated with it, the first does not. There are further options such as we could make things synchronous (which is btw my default architecture for 99% of systems). We should also be looking at where eventual consistency is needed and how we deal with that data. Editing CRUD style data is not a good place to put in eventual consistency, doing tasks tends to be much better.</p>
+<p>Cheers,</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2977">
+		<div id="comment-2977">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Hendry Luk</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2977">May 4, 2010 at 1:50 am</a></div>
+
+		<div class="comment-body"><p>Hi Greg,<br />
+Thanks for the write-up.<br />
+I have to echo what Jorn has said, a split second of inconsistency is a big problem when there is an apparent order of how things happen from user&#8217;s viewpoint.<br />
+E.g. when a user add a new entry &#8220;Dave&#8221; into a phone-book, he would expect the immediate subsequent screen to show Dave in the list, so he can attach a photo or IM address to it.<br />
+Instead, thanks to split-second staleness, the next screen is giving him back a list without Dave in it. The user is puzzled, scrolling up and down not being able to find his beloved Dave. Being an inexperienced user, he tries to create Dave&#8217;s contact again, saves, and eventually sees one Dave on next screen (without knowing that he has actually created 2 Daves in the address-book).<br />
+He picks the only Dave he can see, and attaches a photo, IM, email, etc. Hits save, and now he sees two Daves in the following list, and none of them shows the photo he has just attached. This story ends with him frantically beating the screen with his head.<br />
+This user just had a massively confusing and chaotic experience. The data was only split-second stale, but it does not take an incredibly fast brain response to perceive this inconsistency because the user &#8220;knows for fact&#8221; that the query is definitely made *after* the command (albeit only split second), and was expecting a cause-and-effect experience.<br />
+You can educate the user that he will not see the recent changes immediately after he creates/changes a contact, and that he should hit refresh momentarily. So back there, instead of recreating Dave&#8217;s contact again, he should have clicked refresh button few seconds after he created it the first time.<br />
+You can probably educate internal corporate users, but it is much harder to tell your client to educate their public world-wide customers how to use their website.<br />
+And the fact that it needs user education for such a simple task only highlights the clumsiness of its usability in the first place. I think user-education might work in utopian world, but in real practice, I dont think we can just use architectural argument to justify clunky usability to our customers, they just won&#8217;t buy it.<br />
+We can&#8217;t just use user-education as the answer to our own technical issues. I know there are times that user education is important, but it should always be the last resort. Users want intuition, not education.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2976">
+		<div id="comment-2976">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://geekswithblogs.net/akraus1/' rel='external nofollow' class='url'>Alois Kraus</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2976">April 25, 2010 at 9:42 pm</a></div>
+
+		<div class="comment-body"><p>Interesting read. How does that play together with your proposed event sourcing pattern to feed a state machine with events to improve reliability. In your model you only deal with data access but a UI has some logic (state machine) e.g. to update some rows in a database only if the read data is in this or that state. If state changes are only done by the user there is no problem but one user event is almost always transalted into several technical events which can become problematic since race condions can happen now. I mean if the application logic depends on some handshake protocol which involves several events to reach a consistent state we would not have one event in 262ms but perhaps within 10ms several events. How should should one deal with that eventual consistency?<br />
+It is valid to store data and read them immediately to verify if it has correctly been written. That limits scalability for sure but it can make sense in environments where we need to flag immediately success or failure in a near real time fashion.</p>
+<p>Yours,<br />
+  Alois Kraus</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2975">
+		<div id="comment-2975">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">J&#248;rn Wildt</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2975">April 15, 2010 at 6:32 pm</a></div>
+
+		<div class="comment-body"><p>Good points. Thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2974">
+		<div id="comment-2974">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blog.codebrain.co.uk' rel='external nofollow' class='url'>Stu Cam</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2974">April 15, 2010 at 10:11 am</a></div>
+
+		<div class="comment-body"><p>OK, perhaps synonymous was a poor choice of wording.</p>
+<p>What strikes me about your calculations is that given the human latency in parsing and completing a task the system latency for becoming consistent can grow quite high until it becomes a real problem.</p>
+<p>If 10 seconds is an eternity for a computer then 60 seconds is bordering on the end of time <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2973">
+		<div id="comment-2973">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2973">April 15, 2010 at 8:38 am</a></div>
+
+		<div class="comment-body"><p>@Stu</p>
+<p>CQRS is not synonymous with eventual consistency. Eventual consistency is an option in CQRS. CQRS has many benefits without eventual consistency.</p>
+<p>What he is saying is correct, telling users, and educating them in general is the best road. Beyond that keeping the SLA low helps a lot (10 seconds is an eternity for a computer but nothing for a human).</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2972">
+		<div id="comment-2972">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blog.codebrain.co.uk' rel='external nofollow' class='url'>Stu Cam</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2972">April 15, 2010 at 8:00 am</a></div>
+
+		<div class="comment-body"><p>@Jorn</p>
+<p>I had seen a presentation by Udi Dahan whereby he says that the way to handle user interaction in a CQRS system (synonymous with Eventual Consistency) is by positive reinforcement.</p>
+<p>Lets say a user wants to update an order. We present the screen for them to change the order, and on submit show them a message which says &#8220;Changes accepted, your order will be updated shortly&#8221;. This simple message is enough in most cases and users will accept the delay in the write/read proliferation.</p>
+<p>This does of course require a fair amount of checking in your command handlers to ensure that you catch any problems with the ChangeOrder message up-front. Ideally you only want 100% valid messages making it to your ESB.</p>
+<p>As Greg points out if the &#8220;Changes accepted&#8221; feedback is not sufficient you can keep local edits in the user session and simply present from that until the change filters through to the read system.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2971">
+		<div id="comment-2971">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2971">April 15, 2010 at 7:05 am</a></div>
+
+		<div class="comment-body"><p>Jorn, </p>
+<p>It can be done but in general education is a much better way of handling things. Combine education with a short SLA between the read and write models and generally you can get to a reasonable point. When its absolutely needed to trick the user with session locality, it can be done but it requires duplication of logic.</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2970">
+		<div id="comment-2970">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">J&#248;rn Wildt</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2970">April 14, 2010 at 8:15 pm</a></div>
+
+		<div class="comment-body"><p>The use cases I have seen have never had much trouble with stale data &#8230; that is, stale data from other users. It&#8217;s easy to accept that someone else might have changed your data while you are looking at it.</p>
+<p>My biggest issue with eventual consistency is how to handle the fact that the user, who did the change, may not see his own change until some time later. This makes people nervous (very understandable) and they may even try to submit the request again if they don&#8217;t see their changes get trough immediately.</p>
+<p>Do you have any tips for handling &#8220;session local&#8221; consistency?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2969">
+		<div id="comment-2969">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2969">April 14, 2010 at 1:37 pm</a></div>
+
+		<div class="comment-body"><p>Stu I would guess not many though the metrics required to do it are relatively straight-forward to track and have numerous other benefits (why do users spend so long on this screen anyways?)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2968">
+		<div id="comment-2968">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blog.codebrain.co.uk' rel='external nofollow' class='url'>Stu Cam</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#comment-2968">April 14, 2010 at 1:27 pm</a></div>
+
+		<div class="comment-body"><p>I like the idea of being able to calculate the cost of eventual consistency with regards to the human aspect &#8211; something which I feel has been largely ignored when discussing timings.</p>
+<p>I wonder how many companies are able to reach the level of sophistication in their core architecture to dynamically adjust their approach to consistency based on cost. Probably not many!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2010%2F04%2F14%2Fquick-thoughts-on-eventual-consistency%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.265 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:56:44 -->
+<!-- super cache -->

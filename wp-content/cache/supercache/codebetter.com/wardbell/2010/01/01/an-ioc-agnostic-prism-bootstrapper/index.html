@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>An IoC-Agnostic Prism Bootstrapper | Ward Bell</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/wardbell/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/wardbell/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/wardbell/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/wardbell/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/wardbell/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Ward Bell' href='http://codebetter.com/wardbell/' />
+<link rel='start' title='A Programmer Pilgrim’s Progress' href='http://codebetter.com/wardbell/2009/12/06/a-programmer-s-progress/' />
+<link rel='prev' title='A Programmer Pilgrim’s Progress' href='http://codebetter.com/wardbell/2009/12/06/a-programmer-s-progress/' />
+<link rel='next' title='MVVM, Josh Smith’s Way' href='http://codebetter.com/wardbell/2010/03/19/mvvm-josh-smith-s-way/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/' />
+<link rel='shortlink' href='http://codebetter.com/wardbell/?p=6' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/wardbell/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/wardbell/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-6" class="post-6 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">An IoC-Agnostic Prism Bootstrapper</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/wardbell/author/wardbell/" title="View all posts by wardbell">wardbell</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/" title="4:54 am" rel="bookmark"><span class="entry-date">January 1, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/wardbell/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/wardbell/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/wardbell/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><a href="http://www.codeplex.com/prism">Prism</a> from Microsoft Patterns &amp; Practices leans on an <a href="http://en.wikipedia.org/wiki/Inversion_of_control">Inversion of Control (IoC)</a> container. While nominally indifferent to your choice of container, you have to work a bit to extricate yourself from its default choice which is <a href="http://www.codeplex.com/unity">Microsoft Unity</a>. More so with some containers than others.</p>
+<p>The sweat and tears flow in the “Bootstrapper” class with which you launch your application. Most Prism samples feature a Bootstrapper that inherits from “UnityBootstrapper”. “UnityBootstrapper” busies itself with registering and configuring a dozen or so Prism components in a manner characteristic of Unity and it unapologetically takes a hard dependence on Unity itself. You are welcome to write your own Bootstrapper base class from scratch; of course this entails reading and understanding what “UnityBootstrapper” does so you can reassure yourself that your replacement achieves the same effects. Who has time for that?</p>
+<p>Almost a year ago I found myself writing a single application with three different client technologies, each dependent upon its own container. The three diverged in minor details – each was a different incarnation of a Container + ObjectBuilder – but the differences were sufficiently great that I felt compelled to unleash the Prism base bootstrapper class from its Unity chains.</p>
+<p>Preoccupied with more important business, I took the most expeditious route. I salvaged as much of Prism’s UnityBootstrapper as I could while replacing its direct dependency on Unity library references. </p>
+<p>Prism initialization is not something I want to own. When P&amp;P updates its UnityBootstrapper, I want a quick, no-thought pathway to update my IoC-agnostic version.</p>
+<p>The result was Cal.Bootstrapper (“CAL” is short for “Composite Application Library”, Prism’s official name) and some supporting types. Cal.Bootstrapper looks like a cleaned-up UnityBootstrapper. It goes through the same motions of registering types and configuring instances albeit with reference to a denuded IoC, shorn of all but the most minimal functionality. This, dear reader, will be my gift to you.</p>
+<p>Recently, a few folks have wondered about replacing Unity with a completely different IoC container. The one I hear most often is <a href="http://structuremap.sourceforge.net/Default.htm" target="_blank">StructureMap</a>. Its author, <a href="http://codebetter.com/blogs/jeremy.miller/" target="_blank">Jeremy Miller</a>, has several times entertained the notion of replacing “UnityBootstrapper” with something that reflects glory on StructureMap. Apparently he has better things to do. I guess I’ll tackle it.</p>
+<h3>The Goods</h3>
+<p>I’ve bundled everything described in this post into a 2 meg zip, <a href="http://www.ideablade.com/WardsBlog/PrismRI-Ioc.zip" target="_blank">PrismRI-Ioc.zip</a>, downloadable from my company website. Do with it as you will.</p>
+<p><strong>Please note: I have no intention of maintaining this; don’t even ask.</strong></p>
+<h3>No, This is Not the Right Way</h3>
+<p>My knowledge of StructureMap is deeply impoverished but, from the little I do know, I’m certain that the “proper” course is to abandon “UnityBootstrapper” altogether. But there’s a reason Jeremy hasn’t tackled this and no one seems to have done so for other IoC products either.</p>
+<p>Nicholas Blumhardt, author of Autofac, took a crack at integrating Prism with his IoC back in August, 2009. He wanted to do it “the right way,” completely rethinking how a Prism app is bootstrapped and how application modules are written. He describes it <a href="http://code.google.com/p/autofac/wiki/PrismIntegration" target="_blank">here</a> as a “work-in-progress”. I guess it took a little more work than he thought it would and he must have found something better to do because it doesn’t look like he finished.</p>
+<p>I hoped to avoid this “road to good intentions” by doing it the “the easy way” which may be the “wrong way” but it works … which beats something that doesn’t.</p>
+<p>I decided to change as little of the Unity-oriented Prism app approach as I could. I want to get something done. I want you to be able to convert your running Prism app with minimal effort.</p>
+<p>Accordingly, my “Cal.Bootstrapper” mimics the “UnityBootstrapper” and it wallows in the style and ceremony that other IoC products despise.</p>
+<p>Is it all that bad? Why am I changing my IoC container anyway? I ought to have a clear idea about what I want from an alternative to Unity. I’m wasting my time if I’m only replacing the UnityBootstrapper with something “better”. Frankly, I don’t care how Prism configures its minimal requirements. If I want StructureMap (or AutoFaq, Castle Windsor, Ninject, etc), it is because I prefer that IoC for registering and configuring <strong><em>my own application components</em></strong>. I may replace the Prism configuration eventually but right now that is neither my motivation nor my first step.</p>
+<p>Therefore, although my Cal.Bootstrapper is ugly as sin, it will serve me for the nonce as I hope it serves you and I shall proceed to describe it without further apology. I will let it configure Prism the ugly way using my IoC container in place of Unity after which I am free in my own code to drive my IoC container as it was meant to be driven.</p>
+<h3>Battle Plan</h3>
+<p>A Prism application has a Bootstrapper class to configure the container, create and configure the main UI view called the “shell”, acquire application modules, and launch the application.</p>
+<p>You are expected to write a custom Bootstrapper that inherits from a base Bootstrapper class provided by Prism (the aforementioned UnityBootstrapper). This base class handles the above inventory of start-up tasks. Your derived Bootstrapper is supposed to extend the base class by overriding certain abstract and virtual methods.</p>
+<p>In other words, the bootstrapper is launch karaoke. You add your voice at predefined moments. It’s great if the music suits you. If you’re singing off key, you’re should stop faking it and write your own song.</p>
+<p>Tempted as I was, I chose not to quarrel with this approach. In fact, I took a deep breath and then embraced it … for the reasons discussed above. </p>
+<p>I decided to replace the UnityBoostrapper with an alternative base class (Cal.Bootstrapper) that does not know about Unity.</p>
+<p>Your derived Bootstrapper will provide an IoC container to this base class, wrapped in a vendor-neutral “ContainerAdapter, and delivered to the base class by overriding its abstract “CreateContainerAdapter” method.</p>
+<p>I have a few additional goals:</p>
+<ul>
+<li>“Improve” the UnityBootstrapper so I can figure out what it does. </li>
+<li>Make it easy to update my base class when (if) Microsoft updates the UnityBootstrapper. </li>
+<li>Minimize the effort to get my existing app bootstrapper deriving fro the IoC-agnostic base class. </li>
+<li>Minimize the changes necessary to convert my existing Unity-based Prism app. </li>
+<li>“Prove it” with an app Prism-aficionados know: the Prism Reference Implementation. </li>
+</ul>
+<p>The original UnityBootstrapper is code only a mother could love. Long methods; much repetition; mysterious names. I can’t replace it until I understand what it does. My first step is to refactor it for readability. This is somewhat a matter of taste but I hope you’ll agree that the my revision, called “RefinedUnityBootstrapper”, is an improvement.</p>
+<p>I mustn’t get carried away if I am to satisfy my second subsidiary goal. Too many improvements would hinder re-synchronization with Microsoft’s changes.</p>
+<p>I want to prove that my approach works on an “application” that anyone can examine and that would be familiar to Prism developers. The Prism RI is the obvious candidate; that’s what I tackled.</p>
+<p>I haven’t looked at the RI in a long time. The version on my disk dates from February 2009. That’s pre-Silverlight 3 and, although I had patched it for SL 3, it’s still old and funky. The UI doesn’t work the way it should: stock positions don’t change when you buy and sell, the “Watch List” feature is broken, the Silverlight version throws a recoverable exception when you sell more stock than you own.</p>
+<p>But I didn’t have time to freshen it up, it was good enough for my purposes, and it’s all I’m going to give you.</p>
+<h3>Swappable Versions</h3>
+<p>This is a tutorial. I want you to be able to switch among different container implementations without changing the body of the application. I don’t have the time or the interest to do anything fancy.&#160; In the “real” world, I’d make the change and discard the original. </p>
+<p>The version of the RI you run depends entirely upon the executing version of Prism RI Bootstrapper class. The class is divided into two partial class files. One of them is constant. The other holds just the code that varies from container to container. The file with variations is called StockTraderRIBootstrapper.Ioc.Desktop or StockTraderRIBootstrapper.Ioc.Silverlight.</p>
+<p>The variations are governed by compiler directives at the top. You uncomment ONE of them, recompile, and let ‘er rip. The example below shows the bootstrapper readied for StructureMap.</p>
+<p>//***************************************************************************    <br />// *** PICK YOUR BOOTSTRAPPER AND IOC CONTAINER WITH _ONE_ OF THESE DEFINES </p>
+<p>//#define ORIGINAL_UNITYBOOTSTRAPPER    <br />//#define REFINED_UNITYBOOTSTRAPPER     <br />//#define UNITY_CONTAINER_ADAPTER     <br />#define STRUCTUREMAP_CONTAINER_ADAPTER     <br />//#define AUTOFAC_CONTAINER_ADAPTER </p>
+<p>//***************************************************************************</p>
+<p>Each variation takes only a few lines. I set the title text so you can see which version is running on screen (the original three letter “CFI” company name changes to one of “OUB”, “RUB”, “UCA”, “SMA”, or “ACA” to match your selection). For the Ioc-agnostic variations, there is an override of the method that creates the selected Ioc ContainerAdapter. The two versions pinned to the UnityBootstrapper (remember that I “refined” the UnityBootstrapper first simply to understand it better) have a shim method instead.</p>
+<p><em>Incredibly stupid, I know. I’d never ship anything like this. I live with it because it’s a throw away demo and doesn’t merit the effort or complexity of proper decoupling. Or at least it doesn’t merit that attention yet.</em></p>
+<p>The rest of the Prism RI stays constant. It took some work to keep it that way. Not a lot, fortunately; the Patterns and Practices people did a pretty good job of keeping the RI Ioc-neutral.</p>
+<p>I won’t bore you with the details of my journey to this blissful place. They are chronicled in “PrismRIChanges.txt”, located in the PrismRI folder next to the Visual Studio Solution file, “StockTraderRI-IoC.sln”. The gist of it is</p>
+<ul>
+<li>Add the Ioc assemblies in a common directory structure </li>
+<li>Add the PrismBootstrapper solution with its Ioc-agnostic Cal.Bootstrapper and the Ioc-specific ContainerAdapters. </li>
+<li>Revise the start-up project, StockTraderRI, to access the above </li>
+<li>Replace references to “IUnityContainer” with “IContainerAdapter” </li>
+<li>Remove module references to Unity. </li>
+</ul>
+<p>You’ll do pretty much the same if you convert your existing Prism application to another Ioc container.</p>
+<h3>ContainerAdapters</h3>
+<p>The fun is in the ContainerAdapters which implement the following interface:</p>
+<p>namespace Cal.Bootstrapper {    <br />&#160; public interface IContainerAdapter { </p>
+<p>&#160;&#160;&#160; IContainerAdapter RegisterInstance&lt;T&gt;(T instance);    </p>
+<p>&#160;&#160;&#160; IContainerAdapter RegisterType&lt;TFrom, TTo&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; ContainerRegistrationScope scope) where TTo : TFrom;     </p>
+<p>&#160;&#160;&#160; IContainerAdapter RegisterType(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Type fromType, Type toType, ContainerRegistrationScope scope);     </p>
+<p>&#160;&#160;&#160; IContainerAdapter RegisterTypeIfMissing&lt;TFrom, TTo&gt;(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; ContainerRegistrationScope scope) where TTo : TFrom;     </p>
+<p>&#160;&#160;&#160; IContainerAdapter RegisterTypeIfMissing(     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Type fromType, Type toType, ContainerRegistrationScope scope);     </p>
+<p>&#160;&#160;&#160; T Resolve&lt;T&gt;() where T : class;     </p>
+<p>&#160;&#160;&#160; object Resolve(Type type);     </p>
+<p>&#160;&#160;&#160; T TryResolve&lt;T&gt;() where T : class ;     </p>
+<p>&#160;&#160;&#160; object TryResolve(Type type);     <br />&#160; } </p>
+<p>&#160; public enum ContainerRegistrationScope {    <br />&#160;&#160;&#160; Singleton,     <br />&#160;&#160;&#160; Instance,     <br />&#160; }     <br />}</p>
+<p>Not so bad if you know your container. Clearly IContainerAdapter must be so dumb that any IoC Container vendor can support it. It needs to be just smart enough for the base Bootstrapper class to configure Prism. Fortunately, this challenge is easily met.</p>
+<p>The code tends to be boilerplate. Autofac took a little more work (see below) but still weighs in at only 180 lines.</p>
+<p>You also have to write an adaptor that implements Microsoft.Practices.ServiceLocation.IServiceLocator; virtually everyone has done this already.</p>
+<h3>IoC Containers Demo’d</h3>
+<p>I’ve tried this approach with three IoC Containers: <a href="http://msdn.microsoft.com/en-us/library/dd203101.aspx" target="_blank">Unity</a> (Unity v.1.2.0.0, ObjectBuilder2 v.2.2.2.0), <a href="http://sourceforge.net/projects/structuremap/files/" target="_blank">StructureMap</a> (v.2.5.4.0), and <a href="http://code.google.com/p/autofac/downloads/list" target="_blank">Autofac</a> (Desktop: v.1.4.5.676, Silverlight: 1.4.4.572).</p>
+<p>You should know that I am not an expert in any of these containers. In fact, I just winged it, especially with StructureMap and Autofaq about which I know squat. I figured I could download them, skim whatever documentation they offered, and get something to work adequately for Shmoes like me.</p>
+<p>It’s not quite that easy and I have low confidence in my use of these containers. Their authors are invited to lend a hand improving matters … after they’re done laughing.</p>
+<p>I wanted to show at least one non-Unity container for both desktop and Silverlight applications. StructureMap doesn’t have a Silverlight version yet (come on, Jeremy). I tried Autofac because it does have a Silverlight version. </p>
+<p>I’m glad I did. The StructureMap implementation was a breeze. Autofac was much harder. I’m not trashing Autofac. It just happened to be harder for me, partly due to my ignorance and mostly because of the position Autofac takes on resolving unregistered types.</p>
+<h3>Major Container “Gotcha”</h3>
+<p>Container differences matter! One pervasive Prism practice in particular relies on a Unity default behavior that other containers do not observe. It’s serious enough to influence your choice of containers or make your conversion substantially more difficult.</p>
+<p>Prism instantiates a lot of its own components with unregistered public concrete classes. For example, somewhere in the bowels of RegionManager initialization, it resolves “DelayedRegionCreationBehavior”. This class is never registered with the container.</p>
+<p>Unity is ok with this. When asked to resolve an unregistered public concrete type, it treats the type as if it had been registered and scoped as an instance (i.e., you get a fresh instance each time). Both TryResolve and Resolve behave this same way.</p>
+<p>Prism components count on this default Unity container behavior. What if you change containers?</p>
+<p>StructureMap has the same default behavior when resolving an unregistered public concrete type. However, it’s TryResolve equivalent, “TryGetInstance”, return null. As I write, I have not detected a consequence of this difference; but I know it’s waiting in the grass somewhere.</p>
+<p>You could argue all day about whether a container should return null or return an instance the way Unity does. You could argue whether it should default to Singleton or Instance scope. </p>
+<p>Autofac punts. If you attempt to Resolve an unregistered type, it throws an Autofac.ComponentNotRegisteredException with a clear message. “TryResolve” returns null, which is the sensible thing to do.</p>
+<p><em>Aside: the three ContainerAdapter files in my sample implement a “ContainerPlay” class that reveals these differences.</em></p>
+<p>I can’t quarrel with Autofac’s choice but I sure paid the price for purity. I had to hunt down all resolutions of concrete types and manually register them during AutofacContainerAdapter initialization. Unfortunately even that is insufficient. Many class constructors take parameters defined by concrete types. The container will attempt to resolve these and will throw at runtime. There aren’t integration tests to detect these automatically so I have to wander through the app under the debugger. I still haven’t got it to work.</p>
+<p>It was easier to get the Prism RI working with StructureMap. I have assumed that the only critical difference is with explicit “TryResolve” calls. I haven’t encountered any optional constructor parameters so I expect StructureMap and Unity to resolve these in the same way.</p>
+<p>I searched the Prism and RI source code for “TryResolve” calls involving concrete type. There weren’t many of them. I only found one of potential consequence. The base bootstrapper calls “TryResolve&lt;RegionAdapterMappings&gt;”. Fortunately, it also registers RegionAdapterMappings explicitly so resolution is always successful. Perhaps I was luck. Remember to be careful how you use TryResolve in your application.</p>
+<p>The net of it is that containers differ. Prism should not have relied on a Unity-specific type resolution feature. If you have done so in your Unity-based application (as I have), you too are vulnerable.</p>
+<h3>Where Did The Tests Go?</h3>
+<p>I removed the test projects from the Prism RI and the Composite Application Library projects that go with it. Why did I do that? laziness?</p>
+<p>I really thought this simple task would take maybe a long day at most. Stripping the tests away from the start was supposed to help me stay in the time box. It was going to be non-trivial to setup Prism’s test environment, convert the tests, and repackage for distribution to you. I didn’t think I could afford it.</p>
+<p>The point of the exercise was to demonstrate how to liberate your application to use an alternative container. I wasn’t trying to deliver a product and there is limited value in tests for a version of the Prism RI that is (a) obsolete and (b) irrelevant to your application.</p>
+<p>Unfortunately, this “simple” task kept expanding in scope; it took four long days. Geez like that never happens.</p>
+<p>Now that I’m “done” I wish I had those tests back, the UnityBootstrapperFixture in particular. Debugger testing is painful as we all know. Had I committed to automated tests, I would have written something better than the idiotic compiler-directive-based approach to swapping containers. Sure it would have cost me something – a day? – to get it right, a day I didn’t want to spend. But if someone wants to take this further, the tests would accelerate his progress greatly and imbued his efforts with confidence. Mea culpa.</p>
+<p>I wonder if some kind soul will restore them?</p>
+<p>Happy New Year, everyone!</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/wardbell/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/" title="Permalink to An IoC-Agnostic Prism Bootstrapper" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/feed/" title="Comments RSS to An IoC-Agnostic Prism Bootstrapper" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-6 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/wardbell/2009/12/06/a-programmer-s-progress/" rel="prev"><span class="meta-nav">&larr;</span> A Programmer Pilgrim’s Progress</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/wardbell/2010/03/19/mvvm-josh-smith-s-way/" rel="next">MVVM, Josh Smith’s Way <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">7 Responses to <em>An IoC-Agnostic Prism Bootstrapper</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-24">
+		<div id="comment-24">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.buzzle.com/articles/jenny-craig-review-how-does-jenny-craig-weight-loss-system-work.html' rel='external nofollow' class='url'>Jenny Craig</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-24">January 8, 2010 at 6:19 am</a></div>
+
+		<div class="comment-body"><p>This post is very informative. Thanks for sharing it.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-23">
+		<div id="comment-23">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://zine.net.pl/blogs/simon/' rel='external nofollow' class='url'>Szymon Pobiega</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-23">January 4, 2010 at 6:47 am</a></div>
+
+		<div class="comment-body"><p>Hi Ward</p>
+<p>There is an open source project my colleague and I implemented called MetaContainer (<a href="http://www.codeplex.com/Wikipage?ProjectName=metacontainer" rel="nofollow">http://www.codeplex.com/Wikipage?ProjectName=metacontainer</a>) which is basically a CommonServiceLocator extended so that mapping registration functionality is also abstracted. Maybe it would be helpful.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-22">
+		<div id="comment-22">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/WardBell/default.aspx' rel='external nofollow' class='url'>WardBell</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-22">January 2, 2010 at 7:35 pm</a></div>
+
+		<div class="comment-body"><p>ON TESTING.</p>
+<p>I couldn&#8217;t sleep after writing that woeful section that attempts to justify the elimination of tests.</p>
+<p>I bit the bullet and wrote them; they&#8217;re in the current download.</p>
+<p>I&#8217;ll be posting about this particular experience shortly &#8230; stay tuned.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-21">
+		<div id="comment-21">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/WardBell/default.aspx' rel='external nofollow' class='url'>WardBell</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-21">January 2, 2010 at 7:33 pm</a></div>
+
+		<div class="comment-body"><p>@David &#8211; Thanks for pointing out your version. I got into this because folks (including Jeremy) didn&#8217;t know it had been done. And there you are <img src='http://codebetter.com/wardbell/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> .</p>
+<p>I also prefer your implementation of StructureMapServiceLocator which follows the recommended approach. I didn&#8217;t know about that approach at the time I wrote so I just winged it.</p>
+<p>Anyone who wants the most literal translation should use yours.</p>
+<p>I comfort myself for the hours spent on four points:<br />
+(1) I refined the UnityBootstrapper so readers have a clearer idea what it does, (2) I have a truly IoC agnostic approach which makes it easier for others to implement the IoC approach they prefer, (3) I used the Prism RI as my proof point, (4) I have tests for all variations (new today) and a clear path forward for maintaining those tests.</p>
+<p>Thanks for the note and your interest.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-20">
+		<div id="comment-20">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/WardBell/default.aspx' rel='external nofollow' class='url'>WardBell</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-20">January 2, 2010 at 7:25 pm</a></div>
+
+		<div class="comment-body"><p>@Nicholas I understand. There always seems to be something better to do. I only got sucked into this on a dare. I hope someone cares.</p>
+<p>I see that your approach of registering ALL concrete would address the concrete type instantiation &#8220;problem&#8221; &#8230; in a most drastic fashion <img src='http://codebetter.com/wardbell/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> .  For all I know it is adequately performant (you reflect over the assemblies anyway) and harmless (as any subsequent explicit registrations will trump this scan).</p>
+<p>To be clear, I am not saying that Unity/StructureMap are right to implicitly resolve unregistered concretes. It&#8217;s a designer&#8217;s choice and, as the contrast of Unity and StructureMap show, there are several possible interpretations.</p>
+<p>Cheers</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-19">
+		<div id="comment-19">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mohundro.com/blog/' rel='external nofollow' class='url'>David Mohundro</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-19">January 1, 2010 at 5:04 pm</a></div>
+
+		<div class="comment-body"><p>There is an implementation of a Prism bootstrapper for StructureMap at <a href="http://code.google.com/p/compositewpf-structuremapextensions/.." rel="nofollow">http://code.google.com/p/compositewpf-structuremapextensions/..</a>. I have no doubts that it is certainly lacking in the StructureMap department because of its similarity to the Unity version, but it&#8217;s there. There&#8217;s also some implementations of other bootstrappers in PrismContrib for at least Castle Windsor and maybe more but I&#8217;m not sure.</p>
+<p>I&#8217;ve never been a huge fan of my StructureMap bootstrapper and it always seemed like there should&#8217;ve been an easier way to plug in your IoC of choice. Oh well. Can&#8217;t hurt to have multiple implementations/eyes/etc looking at this.</p>
+<p>Thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-18">
+		<div id="comment-18">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://nblumhardt.com' rel='external nofollow' class='url'>Nicholas Blumhardt</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#comment-18">January 1, 2010 at 9:06 am</a></div>
+
+		<div class="comment-body"><p>Hi Ward!</p>
+<p>Good on you for giving this a shot. The version I wrote for Autofac has been sitting for a while, but we&#8217;ll get it in there <img src='http://codebetter.com/wardbell/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>There&#8217;s an alternative (hack) to resolve-anything for Autofac. Just use ContainerBuilder.RegisterTypesMatching(t => t.IsConcrete).</p>
+<p>All the best<br />
+Nick</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/wardbell/2010/01/01/an-ioc-agnostic-prism-bootstrapper/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/wardbell/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fwardbell%2F2010%2F01%2F01%2Fan-ioc-agnostic-prism-bootstrapper%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.624 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:14:41 -->
+<!-- super cache -->

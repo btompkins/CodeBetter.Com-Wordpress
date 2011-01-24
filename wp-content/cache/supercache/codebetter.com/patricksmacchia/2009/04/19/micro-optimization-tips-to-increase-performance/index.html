@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Micro- optimization tips to increase performance | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='The Microsoft project CCI (Common Compiler Infrastructure) goes Open Source' href='http://codebetter.com/patricksmacchia/2009/04/15/the-microsoft-project-cci-common-compiler-infrastructure-goes-open-source/' />
+<link rel='next' title='Do we need Micro-Optimization?' href='http://codebetter.com/patricksmacchia/2009/04/19/do-we-need-micro-optimization/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2009/04/19/micro-optimization-tips-to-increase-performance/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=111' />
+<meta name="_awb_version" content="2.0.3" /><link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.6" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-111" class="post-111 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Micro- optimization tips to increase performance</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2009/04/19/micro-optimization-tips-to-increase-performance/" title="12:28 pm" rel="bookmark"><span class="entry-date">April 19, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">In a previous post <a href="/blogs/patricksmacchia/archive/2008/12/01/lessons-learned-from-a-real-world-focus-on-performance.aspx" target="_blank">Lesson<br />
+learned from a real-world focus on performance</a>,<br />
+I explained how we increased the <a href="http://www.NDepend.com" target="_blank">NDepend<br />
+</a>static analysis process performances with a 4 factor. The post quantified<br />
+performance gain, and interestingly enough 25% came from micro-optimizations.<br />
+Basically the lesson learned was:</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><i><b><span lang="EN-US">Micro-optimizations<br />
+are worth it while premature optimizations are the root of evil </span></b></i><span lang="EN-US"><i>(as </i><i>Donald Knuth said a long<br />
+time ago). The difference between micro-optimizations and premature<br />
+optimizations is that the first ones are driven by measurement while the second<br />
+ones are driven by guesses, intuitions and hunches.</i></span></li>
+</ul>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Today, I would like to enumerate<br />
+some micro-optimization tips we found effective. Please, constantly keep in mind<br />
+that these tips are not advices on how you should develop all your code. </span></p>
+<ul>
+<li><span lang="EN-US">Do your code your way, </span><span lang="EN-US"></span></li>
+<li><span lang="EN-US">then measure performance,<br />
+</span><span lang="EN-US"></span></li>
+<li><span lang="EN-US">then apply<br />
+micro-optimization tips where performance problems are detected.</span></li>
+</ul>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Also as explained in the<br />
+previous post, the bulk of performance gain will come anyway from better algorithms.<br />
+Micro-optimizations should come after having rationalizing your algorithms. Keep the <a href="http://idioms.thefreedictionary.com/a+bigger+bang+for+buck" target="_blank"><i>bang for buck</i></a>&nbsp; tenet in mind: <i>Invest first your time and energy in things that will give you the best value</i>.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Prefer <i>for </i>loops over <i>foreach </i>loops</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">I wrote a <a href="/blogs/patricksmacchia/archive/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances.aspx" target="_blank">controversial<br />
+post</a>,<br />
+claiming that using <i>for </i>loop instead of <i>foreach </i>loops has been proven to be effective for us. Try for your code and see if it also works for you.</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Prefer array over List&lt;T&gt; if possible</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">In the loop post, I also explained<br />
+that using arrays instead of <i>List&lt;T&gt;</i><br />
+is also a good way to enhance performance. This is not a surprise considering<br />
+that on one hand the CLR and the IL are both optimized to work with arrays, and<br />
+on the other hands, <i>List&lt;T&gt;</i><br />
+implementation relies on arrays. It is interesting to decompile <i>List&lt;T&gt;</i> and see that it comes with<br />
+a <i>_items : T[]</i> field assigned each<br />
+time that the capacity of the list is changing. Of course arrays length remains<br />
+constant and this is why <i>List&lt;T&gt;</i><br />
+is sometime more suited.</span> We even noticed that when doing intensive loops on a list, it might be worth getting a temporary array from the <i>List&lt;T&gt;</i> through the method <i>List&lt;T&gt;.ToArray()</i>, and then perform your loops on the array.</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Refactor your algorithms to rely on hash table<br />
+constant time search</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><b>The absolutely killer<br />
+performance collections are hash tables</b>, implemented through <i>HashSet&lt;T&gt;</i><br />
+and <i>Dictionary&lt;K,V&gt;</i>.<span>&nbsp; </span>Here also I wrote a <a href="/blogs/patricksmacchia/archive/2008/10/29/collections-and-performances.aspx" target="_blank">post<br />
+</a>on comparing different hash table implementations performance.<br />
+Obviously, hash<br />
+table should be used only when there is the need to look out for an<br />
+object<br />
+amongst many other objects. But with a bit of astute, it seems to me<br />
+that most<br />
+of algorithms can be rewritten in order to rely on the hash table magic<br />
+which is: checking if a set contains a particular object, </span><span lang="EN-US">in a constant time (i.e independently from the size of the set) </span><span lang="EN-US">and perform<br />
+a search operation in a set in a constant time. More explanation <a href="http://www.codinghorror.com/blog/archives/001014.html)" target="_blank">here</a>.<br />
+</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Maybe the hash table<br />
+trick is more an algorithm rewriting tips than a micro-optimization tips, but I<br />
+really do think it is essential to spread the word about it.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Use CLR primitive types instead of typed data </span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The set of primitive type<br />
+is pretty limited: integers types (int, short, ulong, byte&hellip;), float numbers types<br />
+(double, float, decimal), boolean, string and char (maybe we could add also <i>enumerations</i>). But think about it: no<br />
+matter how complex an object grape is, it is an aggregation of data stored with<br />
+primitive types instances + maybe some unmanaged handles.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The fact is that both the<br />
+CLR/JIT compiler and the IL language are super optimized to cop with primitive<br />
+types. So it is performance wise to use a primitive types instead of a<br />
+typed data. For example, in .NET paths are represented with simple string. This<br />
+is something that really bothers me and for <a href="http://www.NDepend.com" target="_blank">NDepend </a>we created our own<br />
+library to represent and manipulate path: <a href="http://www.codeplex.com/FileDirectoryPath" target="_blank">NDepend.Helpers.FilePathDirectory</a>.<br />
+With this library paths are typed and frankly when doing intensive path<br />
+operations this is a blessing. But if in the future we figure out that some specific<br />
+algorithms relying on typed paths are costly, we won&rsquo;t hesitate to temporarily represent<br />
+paths with raw strings.</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Use POCO instead of aggregated object </span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">POCO stands for <a href="http://en.wikipedia.org/wiki/Plain_Old_CLR_Object" target="_blank">Plain Old<br />
+CLR Object</a></span><span lang="EN-US"></span><span lang="EN-US">.<br />
+A POCO is an object that doesn&rsquo;t reference nor require complex infrastructure<br />
+to be used. A complex infrastructure can be a database connection or a file<br />
+handle. IMHO (and only In Humble My Opinion) a complex infrastructure can be any object that is not a CLR<br />
+primitive type. A POCO is then an object that doesn&rsquo;t use anything else that<br />
+just CLR primitive types. As mentioned above, primitive types are optimized and<br />
+having POCO is consequently better for performance. Another good advocate for POCO is that such objects increase also<br />
+design and maintenance. Indeed, POCO avoid creating overly complex custom<br />
+classes interactions.</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Notes: <i>There are debates in comments of this post about my quick definition of POCO. I won&#8217;t play with words and, please, refer to the <a target="_blank" href="http://en.wikipedia.org/wiki/POCO">POCO wikipedia definition</a>, which is not very different from what I wrote anyway.</i><br /></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt" lang="EN-US">Bufferize properties getter result in local<br />
+variable</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Here is an example:</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<pre>void MethodNotOptimized(Order order) {   string firstName = order.Client.PersonName.FirstName;   string lastName = order.Client.PersonName.LastName;}
+
+void MethodOptimized(Order order) {   PersonName personName = order.Client.PersonName;   string firstName = personName.FirstName;   string lastName = personName.LastName;}</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">No matter how smart is the<br />
+JIT compiler, I doubt it does the analysis to see that the object returned by<br />
+some property getters (here <i>order.Client.PersonName</i>) is constant.<br />
+Of course here the performance gain is very small, it is just saving 2 getter/method<br />
+calls. But browse your code and you&rsquo;ll see that this tips can be applied also in<br />
+many costly scenario, especially those involving loops, meaning you can save N getter/methods calls.</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">This example shows well<br />
+that&nbsp; unfortunately, micro-optimization often degrade the code elegance.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<pre>void MethodNotOptimized(Order order) {   foreach(Product product in order.Products) {      product.SetClientName(         order.Client.PersonName.FirstName,         order.Client.PersonName.LastName);   }}
+
+void MethodOptimized(Order order) {   PersonName personName = order.Client.PersonName;   string firstName = personName.FirstName;   string lastName = personName.LastName;   IList&lt;Product&gt; products = order.Products;   int productsCount = products.Count;   for(int i=0; i&lt; productsCount; i++) {      Product product = products [ i ] ;      product.SetClientName(firstName, lastName);   }}</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><br />
+</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 16pt" lang="EN-US">Non-private fields can make sense</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Indeed, and I know that<br />
+this one might shock you. But even if the JIT compiler might be smart enough to do it for you, it can<br />
+save a few CPU cycles to access directly a field instead of using a property. I<br />
+personally use this trick scarcely, when I measured that this will indeed<br />
+improve performance. And some algorithms like <a href="http://www.ndepend.com/Metrics.aspx#MethodRank" target="_blank">ranking computation</a> spend 60% of the time reading and assigning fields.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">If possible, use the <i>readonly</i> keyword if you have the chance<br />
+to have an immutable field. For other scenario, I still protect my field accesses<br />
+with a <a href="http://www.ndepend.com/Features.aspx#CQL" target="_blank">CQL rule</a><br />
+that warns if the field is not read or assigned in specific scenario. And harnessing<br />
+the <a href="http://www.ndepend.com/ConstraintsExtractedFromCode.aspx" target="_blank">possibility to declare CQL rule in source code</a> is particularly interesting<br />
+here:</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<pre>using NDepend.Framework.CQL;
+
+class Foo {   [CQLConstraintAttribute(@"// &lt;Name&gt;m_Field should only be witten by FooUser.MethodWriter().&lt;/Name&gt;WARN IF Count &gt; 0 IN SELECT METHODS WHERE  IsDirectlyWritingField ""Foo.m_Field"" AND  !NameIs ""FooUser.MethodWriter(Foo)""", Active = true, DisplaySelectionViewInReport = true)]   internal int m_Field;}
+
+class FooUser {   internal void MethodWriter(Foo foo) {      foo = 3;   }}</pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 16pt" lang="EN-US">Test tier API to get the best of it</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">When performance is an<br />
+issue, it can be worth to re-think about how your code is using tier API. I have<br />
+a real-world example in mind. Once I wrote code that first checked if a file<br />
+existed, and then read the file last write time. After testing, it appears to<br />
+be cheaper to use a <i>FileInfo</i> object<br />
+to perform these 2 operations. I suppose that the <i>FileInfo</i> class bufferises some information to avoid some sort of path<br />
+operation the second time.</span></p>
+<p>&nbsp;</p>
+<pre>using System.IO;
+
+void MethodNotOptimized(string path) {   if(File.Exists(path)) {      DateTime lastWriteTime = File.GetLastWriteTime(path);   }}
+
+void MethodOptimized(string path) {   FileInfo fileInfo = new FileInfo(path);   if(fileInfo.Exists(path)) {      DateTime lastWriteTime = fileInfo.LastWriteTime;   }}</pre>
+<p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 16pt" lang="EN-US">Know which branches of your code are the most used</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">And this last example illustrates<br />
+an important thing: know which branches of your code is the most used. In this previous<br />
+example, I knew that most of the time the file was supposed to exist. Thus I<br />
+didn&rsquo;t even have to test if creating a <i>FileInfo</i><br />
+object and then check for the file existence was more costly than just calling <i>File.Exists()</i>.</span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2009/04/19/micro-optimization-tips-to-increase-performance/" title="Permalink to Micro- optimization tips to increase performance" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2009/04/19/micro-optimization-tips-to-increase-performance/feed/" title="Comments RSS to Micro- optimization tips to increase performance" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-111 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2009/04/15/the-microsoft-project-cci-common-compiler-infrastructure-goes-open-source/" rel="prev"><span class="meta-nav">&larr;</span> The Microsoft project CCI (Common Compiler Infrastructure) goes Open Source</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2009/04/19/do-we-need-micro-optimization/" rel="next">Do we need Micro-Optimization? <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-601">
+					<div id="dsq-comment-header-601" class="dsq-comment-header">
+						<cite id="dsq-cite-601">
+	http://twitter.com/minhajuddin							<span id="dsq-author-user-601">Khaja Minhajuddin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-601" class="dsq-comment-body">
+						<div id="dsq-comment-message-601" class="dsq-comment-message"><p>Great article and very good tips. However, do you think we really need to invest our time in micro optimizations when throwing some more memory and CPU cycles would have the same effect. Do you think in Today&#8217;s age of cheap computing power, Micro Optimizations are still needed?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-602">
+					<div id="dsq-comment-header-602" class="dsq-comment-header">
+						<cite id="dsq-cite-602">
+								<span id="dsq-author-user-602">Omer Mor</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-602" class="dsq-comment-body">
+						<div id="dsq-comment-message-602" class="dsq-comment-message"><p>I believe that when you know that most of the time the file will exist, then you can just try to get the LastWriteTime, and catch the relevant exception if it doesn&#8217;t. Checking for existence is cheaper in the exceptional case that the file is missing, but if it is rare than most the time the try-catch method will be faster (and better looking IMO).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-603">
+					<div id="dsq-comment-header-603" class="dsq-comment-header">
+						<cite id="dsq-cite-603">
+	http://www.NDepend.com							<span id="dsq-author-user-603">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-603" class="dsq-comment-body">
+						<div id="dsq-comment-message-603" class="dsq-comment-message"><p>Omer, it might be indeed cheaper but IMHO the less exception my code provokes the better it is, then I still prefer the original proposed solution.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-604">
+					<div id="dsq-comment-header-604" class="dsq-comment-header">
+						<cite id="dsq-cite-604">
+	http://hackingon.net							<span id="dsq-author-user-604">Liam McLennan</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-604" class="dsq-comment-body">
+						<div id="dsq-comment-message-604" class="dsq-comment-message"><p>Way to redefine POCO. A car is a mechanical device that moves around. A giraffe also moves around. Therefore a car is a giraffe.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-605">
+					<div id="dsq-comment-header-605" class="dsq-comment-header">
+						<cite id="dsq-cite-605">
+								<span id="dsq-author-user-605">Jeremy Gray</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-605" class="dsq-comment-body">
+						<div id="dsq-comment-message-605" class="dsq-comment-message"><p>@Patrick &#8211; I&#8217;m with Liam on this one. Good post in general (except for the nasty Demeter violations in your code samples) but please do refrain from redefining POCO. The term POCO has a very clear history (on the Java side the originating term POJO has been around for ages) and in its most common usage represents any class that has not been forced to inherit from a particular base class to be able to interoperate with a tool or framework. The term has nothing to do with types of members.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-606">
+					<div id="dsq-comment-header-606" class="dsq-comment-header">
+						<cite id="dsq-cite-606">
+	http://www.neovolve.com							<span id="dsq-author-user-606">Rory Primrose</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-606" class="dsq-comment-body">
+						<div id="dsq-comment-message-606" class="dsq-comment-message"><p>I think you can easily get a lot of heat in suggesting that everyone should code using for instead of foreach as it is a small performance benefit. All these micro-optimizations help though and it&#8217;s not a big ask when it comes down to a slight change in coding style. I actually code in foreach because it is so easy, but then use R# to convert it to a for statement.</p>
+<p>The foreach statement also normally stuffs up MSTest code coverage because the enumerator usually doesn&#8217;t implement IDisposable and so the ((IDisposable)enumerator).Dispose() block is never hit.</p>
+<p>You make a statement in &#8220;Prefer array over List<t> if possible&#8221; about converting the collection to an array and then running a foreach. Need to be careful on this one because the implementation of ToArray/CopyTo methods on type may rely on a foreach internally. A foreach should only be changed into a for statement if the type exposes an indexer property or when the array copy implementation doesn&#8217;t rely on foreach.</p>
+<p>For example, I did this exact change when loop though ConfigurationElementCollection but then found that ConfigurationElementCollection.CopyTo does a foreach under the covers. To call ToArray/CopyTo and then run a for in these cases will make performance worse as it will run a for after a foreach. It would be cheaper to stick with just the foreach in this case.</p>
+<p>Also, in your optimized &#8220;Bufferize properties getter result in local variable&#8221; sample, you can inline firstName and lastName variables so the result isn&#8217;t that much more code than the original.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-607">
+					<div id="dsq-comment-header-607" class="dsq-comment-header">
+						<cite id="dsq-cite-607">
+	http://www.NDepend.com							<span id="dsq-author-user-607">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-607" class="dsq-comment-body">
+						<div id="dsq-comment-message-607" class="dsq-comment-message"><p>Ok, concerning POCO I refer to the Wikipedia definition which is not very different than mine anyway, I just propose even more restriction.<br />
+<a href="http://en.wikipedia.org/wiki/POCO" rel="nofollow">http://en.wikipedia.org/wiki/POCO</a></p>
+<p>Concerning foreach there are huge debate that I will close with a simple advice: in my code, using for instead of foreach slightly enhanced performance. Just try by yourself with a profiler and see if you can get better performance.</p>
+<p>Concerning copy to array to get faster loop later, I am talking of List<t>CopyToArray(). Decompile it by yourself and you&#8217;ll see it ends up calling a CLR unmanaged method that is certainly ultra-optimized.<br />
+internal static extern void Array.Copy(&#8230;).</p>
+<p>Concerning the Demeter violations, very often micro-optimization makes code less elegant and break design, I agree (like public fields for example). It is up to you: break design and put careful comments to clearly inform that it is in the name of performance.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-608">
+					<div id="dsq-comment-header-608" class="dsq-comment-header">
+						<cite id="dsq-cite-608">
+								<span id="dsq-author-user-608">Per Erik Stendahl</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-608" class="dsq-comment-body">
+						<div id="dsq-comment-message-608" class="dsq-comment-message"><p>for vs foreach: foreach is just so much more readable and less errorprone that I&#8217;m never going to write for instead of foreach just to save cycles.</p>
+<p>I think the correct solution is to write to Microsoft and have them fix the compiler. Less preferable would be IL-rewriting tool in the postbuild event.</p>
+<p>Many of these optimizations really should be handled by tools.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-609">
+					<div id="dsq-comment-header-609" class="dsq-comment-header">
+						<cite id="dsq-cite-609">
+	http://rikkus.info							<span id="dsq-author-user-609">Rik Hemsley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-609" class="dsq-comment-body">
+						<div id="dsq-comment-message-609" class="dsq-comment-message"><p>The only situation I can imagine using _any_ of these is when writing something which does heavy number crunching and finding the compiler isn&#8217;t allowing me to squeeze every last cycle out.</p>
+<p>If I saw any of these in normal code, I&#8217;d be very, very angry.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-610">
+					<div id="dsq-comment-header-610" class="dsq-comment-header">
+						<cite id="dsq-cite-610">
+	http://rikkus.info							<span id="dsq-author-user-610">Rik Hemsley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-610" class="dsq-comment-body">
+						<div id="dsq-comment-message-610" class="dsq-comment-message"><p>Regarding the captcha thing: What happens if I can&#8217;t use a pointing device and I want to post a comment?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-611">
+					<div id="dsq-comment-header-611" class="dsq-comment-header">
+						<cite id="dsq-cite-611">
+								<span id="dsq-author-user-611">allwarr</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-611" class="dsq-comment-body">
+						<div id="dsq-comment-message-611" class="dsq-comment-message"><p>None of these optimalizations make sense in 99.9% of any code. Really surprised, someone can spend so much time on it.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-612">
+					<div id="dsq-comment-header-612" class="dsq-comment-header">
+						<cite id="dsq-cite-612">
+								<span id="dsq-author-user-612">Bernhard Hofmann</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-612" class="dsq-comment-body">
+						<div id="dsq-comment-message-612" class="dsq-comment-message"><p>Optimisation is always going to bring out debate on it&#8217;s worth in terms of the benefits for the time spent in the profile-change-profile-compare loop. I agree wholeheartedly with optimising code, but I&#8217;d like to add that it is often not worth my employer&#8217;s money. Often the code we write runs significantly faster than the IO we perform, and as a result the benefits of micro-optimisation are not seen or appreciated. I would value multi-threading and parallel processing far more than making code less maintainable in order to save a few CPU cycles. The above comes from my personal experience with web services, web sites, Windows services, and Windows applications so it&#8217;s all IMHO of course. <img src='http://codebetter.com/patricksmacchia/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-613">
+					<div id="dsq-comment-header-613" class="dsq-comment-header">
+						<cite id="dsq-cite-613">
+	http://www.NDepend.com							<span id="dsq-author-user-613">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-613" class="dsq-comment-body">
+						<div id="dsq-comment-message-613" class="dsq-comment-message"><p>My experience showed that you can expect 10 to 25% better perf with such tricks.  It is not elegant,  it is time consuming,  the result is uncertain,  I completely agree but if you are in the case where performance matters a lot and you already improved your algorithm, there is no other choices.</p>
+<p>Concerning optimization with parallelization my experience is that it is much much more complicated than just spawning new threads, even in the ideal case where threads doesn&#8217;t share any states and doesn&#8217;t do any rendez-vous.  Soon programmers will learn that harnessing efficiently several cores is much more difficult than expected, mainly because of low-level memory/cache access contention.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-614">
+					<div id="dsq-comment-header-614" class="dsq-comment-header">
+						<cite id="dsq-cite-614">
+								<span id="dsq-author-user-614">Mike Strobel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-614" class="dsq-comment-body">
+						<div id="dsq-comment-message-614" class="dsq-comment-message"><p>I&#8217;ll agree with you that hash-based collections, particularly HashSet<t>, is a great idea whenever you frequently need to check for arbitrary values.  HashSet</t><t> is a particularly wonderful collection type, as it exposes very performant set-based operations like UnionWith, IntersectWith, and ExceptWith.  Definition disagreements aside, I also agree on the merits of using POCO.</p>
+<p>I always recommend caching property values locally, but not necessarily for performance&#8211;this is a good practice in general, particularly in cases where a property value may change between reads (and the algorithm expects an unchanged value).</p>
+<p>On the rest, I tend to disagree.  Unless you are iterating over huge (and I do mean *huge* collections, with tens of thousands of elements), I see no performance justification for falling back on arrays and &#8216;for&#8217; loops.  There are a few reasons for this.  First, arrays aren&#8217;t particularly safe&#8211;they have the same variance rules as in Java, which break type safety.  Using a List</t><t> to wrap an array eliminates this problem.  I also generally advise against exposing writable collection, but that&#8217;s another discussion altogether.  Regarding &#8216;for&#8217; loops, I find them to be less readable and generally more troublesome to maintain, particularly if you introduce more than one control variable.  The combination of foreach loops and iterators was included in large part because the performance hit (in most cases) *is* minimal, and the semantics are easier to read.  Iterators may also be suspended and resumed easily.  With the introduction of the LINQ APIs in .NET 3.5, we now have a very powerful query model that works against any collection types, and which may be optimized for specific types of collections.  Complex queries which previously required several nested loops can now be written with a single query, and the performance cost in most scenarios isn&#8217;t worth considering.</p>
+<p>Non-private fields are okay in internal code, but I would advise against exposing any public fields in your APIs.  Exposed fields on internal types can be particularly useful in cases where you need to perform atomic operations on shared data using CompareExchange or any of the other Interlocked methods.  While this is fine for internal code, exposing public fields generally violates established design standards.  And some of us do care about standards&#8211;we have a pretty nice ecosystem in .NET, so let&#8217;s not pollute it with oddities if we can avoid it, eh? <img src='http://codebetter.com/patricksmacchia/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>As for using value types, this can be a mixed bag.  It really depends on the context.  If you are working with these types in isolation, then you may certainly see a performance benefit.  However, if you are frequently passing these values as method parameters, you may actually see performance degradation, as the value gets copied on each call.  Naturally, the appropriateness of value types boils down to how many reference types you would otherwise be instantiating vs. how many copy-by-value operations you might end up performing.  Copy-by-value be avoided by using &#8216;ref&#8217; parameters, but I recommend against it because C# has no notion of const ref parameters.</p>
+<p>If you&#8217;re really concerned about performance in the CLR, I recommend spending some time with C++/CLI.  C++/CLI provides some nifty constructs for improving performance, which I have leveraged in &#8220;bottleneck&#8221; code.  These include const ref parameters, forced inlining of method and properties, better control over boxing and unboxing, and better interop performance.  Using arrays and &#8216;for&#8217; loops in C++/CLI is more forgivable in my opinion, as the language has no support for custom iterators anyway, and it&#8217;s a common enough practice in C++ that you&#8217;re not going to surprise or annoy too many people.</p>
+<p>Anyhoo, I hope I didn&#8217;t come across as too condescending&#8211;on the whole, I think you wrote a good post, and I&#8217;m always interested to see people discussing performance issues.</p>
+<p>All the best,<br />
+Mike</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-615">
+					<div id="dsq-comment-header-615" class="dsq-comment-header">
+						<cite id="dsq-cite-615">
+	http://codebetter.com/members/Patrick-Smacchia/default.aspx							<span id="dsq-author-user-615">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-615" class="dsq-comment-body">
+						<div id="dsq-comment-message-615" class="dsq-comment-message"><p>Mike, thanks for all these precision. You underlined well the trade-off: perf vs. design/elegance. </p>
+<p>And sure, C++/CLI is an appealing option when it comes to performance of .NET code.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-616">
+					<div id="dsq-comment-header-616" class="dsq-comment-header">
+						<cite id="dsq-cite-616">
+								<span id="dsq-author-user-616">Anonymous</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-616" class="dsq-comment-body">
+						<div id="dsq-comment-message-616" class="dsq-comment-message"><p>I don&#8217;t see how using for is such a big deal or is &#8220;harder&#8221;, just use VS snippets.  I like for because it is very tweakable via the params and to me I like the syntax of it.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-617">
+					<div id="dsq-comment-header-617" class="dsq-comment-header">
+						<cite id="dsq-cite-617">
+								<span id="dsq-author-user-617">Atut</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-617" class="dsq-comment-body">
+						<div id="dsq-comment-message-617" class="dsq-comment-message"><p>Better you increase readability of code snippets. It wraps statements and also have HTML markup admist it.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2009/04/19/micro-optimization-tips-to-increase-performance/ ';
+	var disqus_identifier = '111 /blogs/patricksmacchia/archive/2009/04/19/micro-optimization-tips-to-increase-performance.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Micro- optimization tips to increase performance";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=111');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2009\/04\/19\/micro-optimization-tips-to-increase-performance\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.262 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-24 20:04:40 -->
+<!-- super cache -->
