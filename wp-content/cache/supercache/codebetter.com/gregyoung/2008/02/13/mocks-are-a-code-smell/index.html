@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Mocks are a code smell | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='Alt.Net Seattle' href='http://codebetter.com/gregyoung/2008/02/12/alt-net-seattle/' />
+<link rel='next' title='A Passing Thought' href='http://codebetter.com/gregyoung/2008/03/18/a-passing-thought/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=68' />
+<link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-68" class="post-68 post type-post status-publish format-standard hentry category-ddd category-dddd category-featured category-messaging category-mock category-pi-calculus category-tdd">
+					<h1 class="entry-title">Mocks are a code smell</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/" title="8:31 am" rel="bookmark"><span class="entry-date">February 13, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Now that the title has grabbed your attention no I don&#8217;t really think that mocks are a code smell as a rule but I do think they are grossly overused and there are other ways of dealing with the same issues which should also be considered when designing&nbsp; systems.     </p>
+<p>While not purely, I guess some may put me in the classicist camp ..</p>
+<p>Ian Cooper has a great post up <a href="http://codebetter.com/blogs/ian_cooper/archive/2008/02/04/classicist-vs-mockist-test-driven-development.aspx">Classicist vs Mockist Test Driven Development</a>. In the comments I have stated that I personally try to architect around a need for mocks in many cases and figured it a bit long to explain how in comments &#8230; </p>
+<p><i>Let me say before I continue that these are not new ideas.</i></p>
+<p>&nbsp;Its not by accident that when you read old OOA/D books that they seem to use the concepts of &#8220;calling a method&#8221; on an object and &#8220;messaging an object&#8221; interchangeably. We can use this similarity to our advantage in our design &#8230; While the former requires me to mock the thing I am calling (you can&#8217;t call a method on a non-existent object) the latter if I introduce a dispatcher does not need to have an object that it is targeting. As we will also see this method also tends to <strike>remove&nbsp; </strike>move the need for dependency injection.</p>
+<h2>Naive Example</h2>
+<p>I never understand things unless they are shown to me in code so let&#8217;s imagine the canonical example of an ATM with a controller and various services it interacts with. This makes a great example as it has a few services that it would <i>orchestrate</i> (generally 1-2 per test). These scenarios are also almost exclusively request/response which is very common in most of our object interactions (especially with services)<i> making a 1-way call an asynchronous message is rather trivial to do and is a no-brainer for nearly &#8216;ility we could possibly discuss.</i></p>
+<p>Let&#8217;s start with the first stage of coming to an ATM machine. I put in my card and then expect it to ask me to authenticate (yes it usually asks me for a pin but maybe its a fancy-shiny-new-atm that uses biometrics so we will assume there are multiple interchangeable mechanisms). </p>
+<p>In a mocking scenario we would have a few tests here using mocks. The first test would be in the ICardReaderService implementation where we would mock the HAL (Hardware Abstraction Layer) and insure that our expectation of it receiving a message and appropriately calling a mock of our ATMController is met. </p>
+<p>Further we would have tests to insure our expectations of the controller properly calling the IAuthenticationService when it is notified that a card has been placed in the ATM. <b><i>note that we could have the services call each other directly but generally a controller is a preferred pattern.</i></b></p>
+<p>Have you noticed in visualizing these tests that almost all of our code is setting up mocks and expectations for our tests? What if we were to model this so instead of being direct method calls all of these items were done through messages and handled by <a href="http://en.wikipedia.org/wiki/Finite_state_machine">Finite State Machines</a>?</p>
+<p>&nbsp;</p>
+<p>First we will need some concept of what exactly a message is. I am providing a naive example for the sake of this post.</p>
+<pre>public interface IMessage {         IMessageConsumer Sender { get ; }     }   
+
+public interface IBidirectionalMessage : IMessage  {         IMessageConsumer Sender { get; }     void ReplyWith(IMessage Reply);  }  </pre>
+<p>Second we will need some way of having our messages sent between the objects, in a real system we would like use a message dispatcher that supports all sorts of neat and fun things but in testing we don&#8217;t actually want them dispatched (we only care that they actually were created its for our integration tests to insure that they actually get dispatched appropriately) so we can come up with a pretty dumb implementation of our dispatcher &#8230;</p>
+<pre>public interface IMessagePublisher   {      void Publish(IMessage message);   }   
+
+public class FakeMessagePublisher : IMessagePublisher   {     private Queue messages;     public FakeMessagePublisher()     {         messages = new Queue();     }     public void Publish(IMessage message)     {         messages.Enqueue(message);     }     public IEnumerable AllMessages()     {         while (messages.Count &gt; 0) {             yield return messages.Dequeue();         }     }   }    </pre>
+<p>To make things complete we will also need to bring in our IMessageConsumer interface which is used above. Non-naive versions of these interfaces and the dispatcher could probably have books written about them so please forgive the naivity of the examples. </p>
+<p>If you want to take a look at a nice implementation of similar ideas take a look at <a href="http://http://sourceforge.net/projects/nservicebus">nServiceBus</a> though if you are working on smaller applications you may find this to be a rather large dependency, a simple stripped down in-process dispatcher is a very easy piece of code to write.</p>
+<pre>public interface IMessageConsumer  {     void ConsumeMessage(IMessage Message);          bool CanConsume();  }  </pre>
+<p>Then we will create a simple static locator that <b>everything </b>can use to find the current messaging subsystem (yes DI is a good thing here but when we only have 1 thing to inject do we care?).</p>
+<p>Once we have this class we can start working on our actual system and write some tests. </p>
+<p>So our first test identified was to insure that the CardReaderService actually notifies the IATMController that a card has been placed in the reader.<i>&nbsp; </i>We will need a message for it to use to do the notification.</p>
+<pre>class CardInsertedMessage   {          public readonly string CardHolder;     public readonly string CardNumber;
+
+     public CardInsertedMessage(string cardHolder, string cardNumber)     {         CardNumber = cardNumber;         CardHolder = cardHolder;     }   }  </pre>
+<p>Now we can write our first test using a Fake for the HAL (which btw is one place I always agree with using a fake). </p>
+<pre>[Test]  public void Reader_ShouldSendCardInsertedMessage_When_CardInserted()  {     ICardReaderHAL FakeHAL = new FakeCardReaderHAL();     IATMCardReaderService CardReader = new ATMCardReaderService(FakeHAL);     FakeHAL.InsertCard("1111 1111 1111 1111", "Greg Young");     List messages = new List(FakeMessagePublisher.AllMessages());     Assert.AreEqual(1, messages.Count);     Assert.IsType(messages[0]);     CardInsertedMessage message = (CardInsertedMessage) message[0];     Assert.AreEqual("Greg Young", message.CardHolder);     Assert.AreEqual("1111111111111111", message.CardNumber);  }  </pre>
+<p>Notice that we don&#8217;t care here about the handling of the message? We only care that the message was created! This is very much the way that mocking works no? Our expectation is not that some other object was called but simply that the message was raised from this object. <b>We will later test in integration tests that things do actually happen.</b></p>
+<p>One thing I will also point out is that we don&#8217;t have any mock setup for expectations that could deviate from how our actual objects work.</p>
+<p>So now let&#8217;s go to our next test, that the controller properly handles the fact that a card was inserted and asks the authentication service to authenticate us and that once it sends the request it is capable of receiving the response. </p>
+<pre>public void Controller_ShouldRequestAuthentication_When_CardInsertedMessageReceived()  {     ATMController Controller = New.ATMController.InState(ATMController.States.AwaitingCard);     CardInsertedMessage InsertedMessage = new CardInsertedMessage("Greg Young", "11111111111111");     controller.ConsumeMessage(InsertedMessage);     List messages = new List(FakeMessagePublisher.AllMessages());     Assert.AreEqual(1, messages.Count);     Assert.IsType(messages[0]);     Assert.AreEqual(Controller, request.Sender);     Assert.IsTrue(Controller.CanAccept());  }  </pre>
+<h4>Dual Expectations?</h4>
+<p>In our Controller_ShouldRequestAuthentication_When_CardInsertedMessageReceived test the astute reader may hold an objection to the test actually testing two expectations. The first expectation being that the controller properly generated a message and the second expectation being that the controller was able to receive the expect response to the message. To be honest I am on the fence with this one, on one hand the expectations are very closely linked to each other, on the other hand they are very different expectations. I personally tend to put the two expectations into one test because if either fails it still gets me close enough to the point where things are failing that I can quickly solve the problem but mileage may vary for others. If people find it to be more correct, here are the seperated versions of the tests.</p>
+<pre>public void Controller_ShouldRequestAuthentication_When_CardInsertedMessageReceived()  {     ATMController Controller = New.ATMController.InState(ATMController.States.AwaitingCard);     CardInsertedMessage InsertedMessage = new CardInsertedMessage("Greg Young", "11111111111111");     controller.ConsumeMessage(InsertedMessage);     List messages = new List(FakeMessageDispatcher.AllMessages());     Assert.AreEqual(1, messages.Count);     Assert.IsType(messages[0]);     Assert.AreEqual(Controller, request.Sender);  }   
+
+public void Controller_ExpectsAuthenticationResponse_After_SendingAuthenticationRequest()  {     ATMController Controller = new ATMController();     CardInsertedMessage InsertedMessage = new CardInsertedMessage("Greg Young", "11111111111111");     controller.ConsumeMessage(InsertedMessage);     Assert.IsTrue(Controller.CanAccept());  }  </pre>
+<p>The tests for the IAuthenticationService and the handling of the return message to the controller are almost identical to these tests. Due to these similarities I am going to skip ahead to the final part of the process; a naive example of giving the customer money. As before we will need a message</p>
+<pre>class DispenseMoneyMessage  {     public readonly decimal Amount;     public DispenseMoneyMessage(decimal amount)     {         Amount = amount;     }  }</pre>
+<p>Now the part that is different with our pretend ATM is that the CashHopperService has a state in it of how much money is left in the machine. So we can write a test for how much money is in the ATM.</p>
+<p>Now we can implement our test.</p>
+<pre>public void CashHopperService_ShouldUpdateAmountOfCash_WhenItDispensesCash()  {     FakeHopperHAL FakeHAL = new FakeHopperHAL();     CashHopperService hopper = new CashHopperService(FakeHAL);     FakeHAL.AddCash(5000.00m);     hopper.ConsumeMessage(new DispenseCashMessage(500.00m));     Assert.IsEmpty(FakeMessagePublisher.AllMessages());     Assert.IsEqual(4500.00, hopper.CashAvailable);  }  </pre>
+<h2>The Testing Threesome</h2>
+<p>I said before I that I skipped many of the interactions because the were uninteresting. This is because there are <b>EXACTLY THREE TYPES OF TESTS WE WILL EVER WRITE. </b>In the examples above we covered all three.</p>
+<ul>
+<li>Message-Is-Produced-When-An-External-Event-Occurs </li>
+<li>Message-Produced-When-A-Message-Is-Consumed </li>
+<li>State-Is-Transitioned-When-A-Message-Is-Consumed </li>
+</ul>
+<p>That&#8217;s it! Given that we only have these types of tests and all of them are extremely similar we can quite easily come through and use my other favorite programming threesome Reduce, Recycle, Reuse!</p>
+<p>It doesn&#8217;t take much imagination to see something like this in our not so distant future.</p>
+<pre>public void Controller_ShouldRequestAuthentication_When_CardInsertedMessageReceived()  {    When.Consumer&lt;ATMController&gt;().InState(ATMController.States.AwaitingCard)).         Receives(Fakes.CardInsertedMessage).         Expect&lt;AuthenticationRequest&gt;();}</pre>
+<p><i>With an API like this why are we even naming our tests?!</i></p>
+<p>We could even take this very quickly to a metadata based method of testing. There are <b>MANY</b> well known ways of easily testing state machines (and generating them from metadata descriptions of them which might be in a DSL).</p>
+<h2></h2>
+<h2>Dependency Eradication</h2>
+<p>There has been <b>ALOT </b>of talk lately about dependency injection and all of the issues that can go along with it. Of late there was one particular thread on the altdotnet list <a href="http://tech.groups.yahoo.com/group/altdotnet/message/2299">AMC: Changes the way we think</a> which is of interest.</p>
+<blockquote>
+<p>Village Wisdom: </p>
+<p>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; We use constructor dependency injection (and sometimes properties) because it’s important to expose your dependencies… </p>
+<p>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; … so that callers who aren’t using IoC (ahem&nbsp; tests) can easily work with the test in isolation by using mocks and not having to involve an IoC container… </p>
+<p>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; … and so it behooves us to keep the number of dependencies in a class down to a minimum to keep tests from getting too complicated… </p>
+<p>-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; … which also forces us to battle between too-many-dependencies and dependencies-that-do-too-much. </p>
+<p>Basically, it seems like we make a lot of choices based on writing tests and the fact that our tests don’t use IoC (to keep things less complicated, we tell ourselves).</p>
+</blockquote>
+<p>Well I am going to disagree strongly with #1. I think an object is much better to have <b>NO </b>dependencies than to expose them. In the canonical example of sending an email why does the object need to even care that there is an email service which actually sends the email?</p>
+<p>&#8220;Changing the way we think&#8230;&#8221; is what&#8217;s really needed here &#8230; walk away from doing <b>EVERYTHING</b> as direct object interations and move to decoupling through messaging!</p>
+<p>Or to comment to <a href="http://weblogs.asp.net/rosherove/archive/2008/01/18/dependency-injection-is-it-relevant-beyond-unit-testing.aspx">Roy Osherove&#8217;s post</a> who ever said testability has to lead to dependency injection?! Given these posts lead to type mock but &#8230;</p>
+<p>Others have even gone so far as to make the fallacious statement that <a href="http://www.parleys.com/display/PARLEYS/Domain+Driven+Design+with+AOP+and+DI">Domain Driven Design is not possible without DI and AOP</a> but this deserves a long post on its own. </p>
+<p>This is not to say that messaging is built on a system of Love and Rainbows. </p>
+<h2>Trouble in Paradise?</h2>
+<p>Are you thinking to yourself </p>
+<blockquote>
+<p>&#8216;sure this is great in the success cases but what about the failures?&#8217; </p>
+</blockquote>
+<p>Well umm yeah it can be a problem and a quick blog post is definitely not the place to address all of these issues. The big issue here is that since we are using messages for our interactions we may or may not have a call stack. Without a call stack exceptions as they exist in the framework well don&#8217;t work.</p>
+<p>There are a few cases that can be problematic with exceptions. The first is when dealing with a bi-directional message. When we send a request the processor gets an exception and fails. The processor (or in some implementations the dispatcher can) package up an exception message with the details of the message and return the results instead of the success response (a common pattern for this might also be to make the response support being a failure and including the exception).</p>
+<p>The next case which is particularly nasty is when you are dealing with a one way message. What happens when the thing processing it on the other side fails? Depending on the situation this may be very problematic because if the message is say a delta message there is a real possibility that the component will not be able to process any more messages (possibly inconsistent state).</p>
+<p>The last case that can be extremely problematic is when you have a request/response based message and either your message doesn&#8217;t actually get routed anywhere or whatever was processing it on the other side died. Without someway of gracefully handling this your object will sit in its waiting on response state forever.</p>
+<p>&nbsp;</p>
+<p>This difference in thinking of course does open us up to being able to distribute our objects fairly transparently to multiple processes and/or machines</p>
+<h2>&nbsp;</h2>
+<h2>Balancing the Scale</h2>
+<p>Since NOTHING has a reference to anything except for the dispatcher and our messages as objects are easily serializable we can quite easily move them out of our own process even to a processor running on a wrist-watch in Russia if we liked without our system knowing or really caring that we did that.</p>
+<p>This does not bypass the old RPC should not be transparent thought as you still should be THINKING about the overhead involved.</p>
+<p>&nbsp;</p>
+<p>The second large scalability gain is that we can quite easily multi-thread. Our threading boundaries are not decided within our code but in how we dispatch our messages. </p>
+<p>&nbsp;</p>
+<p>Basically while a messaging based system may start out running a very simple model you can scale it by changing how you dispatch and process messages.</p>
+<p>&nbsp;</p>
+<h2>Conclusion</h2>
+<p>If there is one thing to quote from here it is this:</p>
+<p>Messaging is not for <b>EVERYWHERE</b> but its a tool that should be in your toolkit. Each side has its pros and cons but right now everyone seems so focused on things like IOC containers and mocking frameworks that they have completely forgotten that its sometimes best to not have a dependency at all.</p>
+<p>I personally like to keep a rule that I call methods inside of an aggregate root but as soon as I leave the aggregate root I use a message.</p>
+<p>I know this has been a long read; but I am barely even scratching the surface of everything I want to say on this subject. I would love to go into further discussions like </p>
+<p>&#8220;How do you actually implement that dispatcher thing?&#8221; </p>
+<p>&#8220;How do you make that dispatcher thing work with multiple machines?&#8221;</p>
+<p>&#8220;You mean somebody already implemented that dispatcher thing for me?&#8221;</p>
+<p>&#8220;How do we make that fluent interface we saw&#8221;</p>
+<p>&#8220;How do messaging and Domain Driven Design interact&#8221;</p>
+<p>&#8220;Messaging, Pipelines, and Interception&#8221;</p>
+<p>&#8220;What is the pi-calculus and why do I care?&#8221;</p>
+<p>But even writing this takes quite a bit. What if any of those continuations sound good?</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/ddd/" title="View all posts in DDD" rel="category tag">DDD</a>, <a href="http://codebetter.com/gregyoung/category/dddd/" title="View all posts in DDDD" rel="category tag">DDDD</a>, <a href="http://codebetter.com/gregyoung/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>, <a href="http://codebetter.com/gregyoung/category/messaging/" title="View all posts in Messaging" rel="category tag">Messaging</a>, <a href="http://codebetter.com/gregyoung/category/mock/" title="View all posts in mock" rel="category tag">mock</a>, <a href="http://codebetter.com/gregyoung/category/pi-calculus/" title="View all posts in pi-calculus" rel="category tag">pi-calculus</a>, <a href="http://codebetter.com/gregyoung/category/tdd/" title="View all posts in TDD" rel="category tag">TDD</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/" title="Permalink to Mocks are a code smell" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/feed/" title="Comments RSS to Mocks are a code smell" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-68 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2008/02/12/alt-net-seattle/" rel="prev"><span class="meta-nav">&larr;</span> Alt.Net Seattle</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2008/03/18/a-passing-thought/" rel="next">A Passing Thought <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">20 Responses to <em>Mocks are a code smell</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2024">
+		<div id="comment-2024">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.rogeralsing.com' rel='external nofollow' class='url'>Roger Alsing (Johansson)</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2024">February 25, 2008 at 10:05 am</a></div>
+
+		<div class="comment-body"><p>Hi Greg,<br />
+Roger &#8211; NAspect / NPersist here, its been quite a while since we spoke.</p>
+<p>Im really interested in your oppinion on this:</p>
+<p>>>Others have even gone so far as to make the fallacious statement that Domain Driven Design is not<br />
+>>possible without DI and AOP but this deserves a long post on its own. </p>
+<p>While I might not go so far to say that you can&#8217;t do DDD w/o DI and AOP, but it certainly helps and the ideas that he present in that movie is the way to go IMO.</p>
+<p>So any chance you could elaborate on that one? or even go for that &#8220;long post of its own&#8221;? <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2023">
+		<div id="comment-2023">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2023">February 15, 2008 at 5:58 pm</a></div>
+
+		<div class="comment-body"><p>Yes udi they are handled by sagas &#8230; </p>
+<p>per nservicebus I am referring to a rather specific case of doing very lightweight dispatching (think in process dispatch by message type) where you can write about 20 lines of code to handle things and avoid external dependencies.</p>
+<p>As I said the example was a naive one <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2022">
+		<div id="comment-2022">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://udidahan.weblogs.us' rel='external nofollow' class='url'>Udi Dahan</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2022">February 15, 2008 at 2:32 pm</a></div>
+
+		<div class="comment-body"><p>I was wondering why you consider the dependency on nServiceBus to be so heavy. Service layer code will depend on nServiceBus.dll &#8211; which just contains 3-4 interfaces and a couple of structure-classes. All the actual infrastructure &#8211; msmq, etc, is xcopied and configured in.</p>
+<p>You might want to take your in-memory queue and implement ITransport around it.</p>
+<p>As for all the failure scenarios you mentioned, those are primarily handled by sagas.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2021">
+		<div id="comment-2021">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jimmybogard.lostechies.com' rel='external nofollow' class='url'>Jimmy Bogard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2021">February 14, 2008 at 2:15 pm</a></div>
+
+		<div class="comment-body"><p>I wouldn&#8217;t call this an argument against mocks.  It&#8217;s really an argument against transparent dependencies.  Messaging decouples two dependencies, but like the other commenter mentioned, it&#8217;s a tradeoff.</p>
+<p>Additionally, what TDD&#8217;ers are saying is not that IoC is mandatory, but the dependency inversion principle is.  To test a component/class in isolation, it cannot interact with other external dependencies.  Traditionally this has meant file system, network, database, etc.  With DDD in the mix, this has meant any Service in your model.</p>
+<p>DIP doesn&#8217;t automatically require IoC containers.  In one project I was on, we followed the DIP throughout our entire codebase but never once introduced Spring, StructureMap, Windsor, or the like.  We just designed against interfaces for our services.  Calling code would put the correct dependency in, whether through constructors, builders, factories, etc.</p>
+<p>It&#8217;s a straw man argument to say that transparent dependencies/dependency injection requires mocking to test.  The selection of the test double depends on what you&#8217;re testing.  If you&#8217;re testing interactions between two classes, mocks are the way to go.  But you still have stubs, fakes and dummies to look at.  The mistake with folks doing DIP is to rely on mocks for all of their test doubles, when they really want one of the others.  But nothing in the DIP says &#8220;you must use mocks for test doubles&#8221;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2020">
+		<div id="comment-2020">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2020">February 13, 2008 at 9:44 pm</a></div>
+
+		<div class="comment-body"><p>yes Colin it fits as a TestSpy well &#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2019">
+		<div id="comment-2019">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2019">February 13, 2008 at 9:02 pm</a></div>
+
+		<div class="comment-body"><p>@Greg<br />
+Would this definition not cover it: <a href="http://xunitpatterns.com/Test%20Spy.html" rel="nofollow">http://xunitpatterns.com/Test%20Spy.html</a></p>
+<p>I&#8217;d also be interesting in knowing how the IMessageProducer interface fits into it all, but I guess thats part of the other post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2018">
+		<div id="comment-2018">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2018">February 13, 2008 at 8:31 pm</a></div>
+
+		<div class="comment-body"><p>Nat: an even better link on why I don&#8217;t think those are mocks <a href="http://martinfowler.com/articles/mocksArentStubs.html#TheDifferenceBetweenMocksAndStubs" rel="nofollow" target="_new" mce_href="http://martinfowler.com/articles/mocksArentStubs.html#TheDifferenceBetweenMocksAndStubs">martinfowler.com/&#8230;/mocksArentStubs.html</a></p>
+<p>&nbsp;</p>
+<p>but by this definition I should be calling it a Stub I guess since it does record information.&nbsp;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2017">
+		<div id="comment-2017">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2017">February 13, 2008 at 8:26 pm</a></div>
+
+		<div class="comment-body"><p>Nat:<br />
+I wouldn&#8217;t call the fakedispatcher a mock, I would call it a fake.</p>
+<p>From wikipedia:<br />
+Mocks and fakes</p>
+<p>Fakes are the simpler of the two, simply implementing the same interface as the object that they represent and returning pre-arranged responses. Mock objects in this sense do a little more: their method implementations contain assertions of their own. This means that a true mock, in this sense, will examine the context of each call—perhaps checking the order in which its methods are called, perhaps performing tests on the data passed into the method calls as arguments.</p>
+<p>My Fake has no expectations in it &#8230; it is just a bucket. The expectations live in the test.</p>
+<p>Nat and Chad:</p>
+<p>Per exporting dependencies &#8230; I will write up a post showing this&#8230; For in process dispatching this can actually be done with compile time support using code generation and by making the producer/consumers generic. This not only exports what the object does out of the object but also allows for pretty much everything that DI does. The one issue with this is that it will only work when you are dealing in-process with single dispatch.</p>
+<p>In particular to how I would address visibility, it is easily discoverable that my ATMController implements the IMessageProducer<authenticationrequest> interface from the outside.</p>
+<p>Nat:<br />
+I understand 100% that there is a trade off here &#8230; as I said in the post </p>
+<p>&#8220;Messaging is not for EVERYWHERE but its a tool that should be in your toolkit. Each side has its pros and cons but right now everyone seems so focused on things like IOC containers and mocking frameworks that they have completely forgotten that its sometimes best to not have a dependency at all.&#8221;</authenticationrequest></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2016">
+		<div id="comment-2016">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2016">February 13, 2008 at 6:49 pm</a></div>
+
+		<div class="comment-body"><p>Somethings gone wrong with the formatting on my comment so I thought I&#8217;d try again&#8230;</p>
+<p>@Nat<br />
+On the mocking I don&#8217;t necessarily agree, as I understand it the tests now use a simple Test Spy class which is registered once with the static locator. This does make testing much easier (it&#8217;s an approach I use and really like). </p>
+<p>On the collaborators front my views are guided by the fact that I don&#8217;t think that I need to see all of a classes dependencies on its interface. Collaborators are important but seeing class A collaborates with B doesn&#8217;t necessarily tell us enough about that interaction to be able to know about the behavior of A, I&#8217;ll always need to look at the usage to see that. </p>
+<p>There are also different styles of collaboration. I use something similiar to the style Greg suggests for situations where my domain classes talk to pure infrastructure (dirty tracking), but I haven&#8217;t gone as far as to use it for cross aggregate communication. Needless to say I don&#8217;t use DI with domain entities anyway though. </p>
+<p>On the little language bit, could you give an example because although I think I know what you mean I could be misunderstanding. </p>
+<p>@Greg<br />
+Really interesting article, good stuff and as you guess I&#8217;m sure its gonna spark some interesting debate <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  </p>
+<p>For me the most interesting follow ups would be:<br />
+&#8220;How do messaging and Domain Driven Design interact?&#8221;<br />
+&#8220;How do you actually implement that dispatcher thing?&#8221;<br />
+&#8220;How do I handle return values and/or updating state within my domain entities?&#8221;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2015">
+		<div id="comment-2015">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2015">February 13, 2008 at 6:03 pm</a></div>
+
+		<div class="comment-body"><p>@Nat<br />
+On the mocking I don&#8217;t necessarily agree, as I understand it the tests now use a simple Test Spy class which is registered once with the static locator. This does make testing much easier (it&#8217;s an approach I use and really like).</p>
+<p>On the collaborators front my views are guided by the fact that I don&#8217;t think that I need to see all of a classes dependencies on its interface. Collaborators are important but seeing class A collaborates with B doesn&#8217;t necessarily tell us enough about that interaction to be able to know about the behavior of A, I&#8217;ll always need to look at the usage to see that.</p>
+<p>There are also different styles of collaboration. I use something similiar to the style Greg suggests for situations where my domain classes talk to pure infrastructure (dirty tracking), but I haven&#8217;t gone as far as to use it for cross aggregate communication. Needless to say I don&#8217;t use DI with domain entities anyway though.</p>
+<p>On the little language bit, could you give an example because although I think I know what you mean I could be misunderstanding.</p>
+<p>@Greg<br />
+Really interesting article, good stuff and as you guess I&#8217;m sure its gonna spark some interesting debate <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>For me the most interesting follow ups would be:</p>
+<p>&#8220;How do messaging and Domain Driven Design interact?&#8221;<br />
+&#8220;How do you actually implement that dispatcher thing?&#8221;<br />
+&#8220;How do I handle return values and/or updating state within my domain entities?&#8221;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2014">
+		<div id="comment-2014">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Robin Clowers</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2014">February 13, 2008 at 5:54 pm</a></div>
+
+		<div class="comment-body"><p>This is a really interesting concept, I would definitely like to see some follow up posts.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2013">
+		<div id="comment-2013">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://graysmatter.codivation.com' rel='external nofollow' class='url'>Justice~!</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2013">February 13, 2008 at 4:09 pm</a></div>
+
+		<div class="comment-body"><p>This is a great post.  I don&#8217;t normally just add a &#8220;me too&#8221; in my comments but I think a lot of this is preaching to the choir for me.  As much I feel mocking is useful I definitely do find it overused in cases where there are simpler ways to still run the same tests.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2012">
+		<div id="comment-2012">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bluespire.com/blogs' rel='external nofollow' class='url'>Rob</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2012">February 13, 2008 at 3:41 pm</a></div>
+
+		<div class="comment-body"><p>Great post.  I&#8217;m always interested in different approaches to solving problems.  I&#8217;d love to see you take this further with some of the discussions you mentioned.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2011">
+		<div id="comment-2011">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://chadmyers.lostechies.com' rel='external nofollow' class='url'>Chad Myers</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2011">February 13, 2008 at 3:17 pm</a></div>
+
+		<div class="comment-body"><p>Greg, one of the main arguments on the mailing list was that it is important to have all your dependencies exposed (usually via the ctor) as this increases something or other (I won&#8217;t try to make their argument for them).  This seems &#8216;nice&#8217;, but I&#8217;m not sold as to how valuable this practice really is.</p>
+<p>It seems that in your examples, the types of messages a service would receive or send out is not immediately obvious to an outside observer. </p>
+<p>How would you address the &#8216;dependency visibility&#8217; critics?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2010">
+		<div id="comment-2010">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://bigtunatim.wordpress.com/' rel='external nofollow' class='url'>Tim B</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2010">February 13, 2008 at 3:02 pm</a></div>
+
+		<div class="comment-body"><p>Greg your code snippets are all jacked because HTML isn&#8217;t interpreted inside the  tags.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2009">
+		<div id="comment-2009">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blog.eleutian.com' rel='external nofollow' class='url'>Aaron Jensen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2009">February 13, 2008 at 2:54 pm</a></div>
+
+		<div class="comment-body"><p>Greg, your code snippets are totally broken in browser. (br&#8217;s show and there&#8217;s no new lines.)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2008">
+		<div id="comment-2008">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://penmanscratch.blogspot.com' rel='external nofollow' class='url'>Gregory</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2008">February 13, 2008 at 2:53 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;How do messaging and Domain Driven Design interact&#8221; and &#8220;Messaging, Pipelines, and Interception&#8221; sound the most interesting to me.  You haven&#8217;t convinced me, but I&#8217;m listening . . .</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2007">
+		<div id="comment-2007">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Nat</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2007">February 13, 2008 at 11:35 am</a></div>
+
+		<div class="comment-body"><p>You have neither removed mocks nor eliminated dependencies.  The way you are testing how your objects are sending messages via a fake dispatcher *is* a mock object.  You have mocked out the dispatcher.  And objects do have dependencies on one another, its just that they are hidden by the dispatcher and have to be understood by reading the imperative code of all the message consumers instead of declarative code that connects objects together.</p>
+<p>Multicasting events is not a replacement for directly introducing objects to one another.  It&#8217;s a trade off.  It&#8217;s a big help when objects are frequently, dynamically added to or removed from the system because there is less explicit wiring to modify.  But that benefit comes at the price that it is harder to understand the runtime dependencies between objects: that explicit wiring helps people understand the architecture of the code.</p>
+<p>It also limits your ability to raise the level of abstraction.  The code that connects objects is, itself, a little-language that expresses what the composition of objects does.  And that little-language is then used to build up to another little-language at an even higher level of abstraction.  And so on until the &#8220;top&#8221; of the system is a short, declarative description of what the entire system does.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2006">
+		<div id="comment-2006">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2006">February 13, 2008 at 11:24 am</a></div>
+
+		<div class="comment-body"><p>As a starting point try <a href="http://books.google.com/books?hl=en&#038;lr=&#038;id=dH9zp14-1KYC&#038;oi=fnd&#038;pg=PR15&#038;dq=%22Hohpe%22+%22Enterprise+Integration+Patterns:+Designing,+Building,+...%22+&#038;ots=UvUuuAb-0b&#038;sig=ZI2mv5O9V67Jxf9JovZGpUruPlY" rel="nofollow">http://books.google.com/books?hl=en&#038;lr=&#038;id=dH9zp14-1KYC&#038;oi=fnd&#038;pg=PR15&#038;dq=%22Hohpe%22+%22Enterprise+Integration+Patterns:+Designing,+Building,+&#8230;%22+&#038;ots=UvUuuAb-0b&#038;sig=ZI2mv5O9V67Jxf9JovZGpUruPlY</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2005">
+		<div id="comment-2005">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Miika</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2008/02/13/mocks-are-a-code-smell/#comment-2005">February 13, 2008 at 10:41 am</a></div>
+
+		<div class="comment-body"><p>This is interesting. Being new to messaging concepts, some ideas where to read more?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2008/02/13/mocks-are-a-code-smell/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2008%2F02%2F13%2Fmocks-are-a-code-smell%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.345 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 15:13:56 -->
+<!-- super cache -->

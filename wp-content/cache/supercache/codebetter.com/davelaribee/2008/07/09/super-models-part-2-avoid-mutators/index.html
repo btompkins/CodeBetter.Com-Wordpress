@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Super Models, Part 2: Avoid Mutators | Dave Laribee</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davelaribee/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davelaribee/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davelaribee/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davelaribee/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davelaribee/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Dave Laribee' href='http://codebetter.com/davelaribee/' />
+<link rel='start' title='Self Re-Introduction' href='http://codebetter.com/davelaribee/2007/09/17/self-re-introduction/' />
+<link rel='prev' title='&quot;Agile Shop&quot;' href='http://codebetter.com/davelaribee/2008/06/27/quot-agile-shop-quot/' />
+<link rel='next' title='How I Got Started in Software' href='http://codebetter.com/davelaribee/2008/07/09/how-i-got-started-in-software/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/' />
+<link rel='shortlink' href='http://codebetter.com/davelaribee/?p=58' />
+<link rel="stylesheet" href="http://codebetter.com/davelaribee/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davelaribee/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-58" class="post-58 post type-post status-publish format-standard hentry category-code category-ddd category-oo category-opinion">
+					<h1 class="entry-title">Super Models, Part 2: Avoid Mutators</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davelaribee/author/davelaribee/" title="View all posts by davelaribee">davelaribee</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/" title="2:11 am" rel="bookmark"><span class="entry-date">July 9, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davelaribee/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davelaribee/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davelaribee/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><font color="dimgray">A quick disclaimer: we&#8217;re entering religious territory here. I feel strongly about this issue, but it&#8217;s certainly my opinion. If you want to get the full sense of how passionate people are about this issue, <a href="http://www.javaworld.com/javaworld/jw-09-2003/jw-0905-toolbox.html">check out this article at JavaWorld</a>.</font></p>
+<p>I&#8217;ve come to the point of view that Entities should not use set mutators (&#8220;setters&#8221;). Anything you represent as a setter can usually be better represented as a plain old method. Why?</p>
+<p>Let&#8217;s remember one of the fundamental guidelines of DDD: intention revealing interfaces. Which is more intention revealing?</p>
+<pre>
+Customer c = new Customers().Find(42);
+
+// This...
+c.Address = aNewAddressValueObject;
+
+// or this?
+c.ChangeAddress(aNewAddressValueObject);
+</pre>
+<p>That&#8217;s a subtle point and it&#8217;s admittedly open for debate. To firm up my argument let&#8217;s consider the situation where I&#8217;m <i>crunching knowledge into model</i> and address change becomes a temporal concept. I now need to track what an address is of a certain date and time. Surely a setter will do the trick, but I think the command &#8220;change an address&#8221; is better expressed with a method. I can fiddle with the internals of that method and, because we&#8217;re practicing command-query separation, accept that commands change the state of aggregate roots and entities.</p>
+<p>For me, the biggest argument for avoiding setters is that it promotes thinking in terms of data in a paradigm (DDD) where data-first can be harmful and counter productive. I cannot stress enough: <b>entities are behavioral objects</b> and, for my money, <i>Action&lt;T&gt;</i> where <i>T</i> is some value object fits the notion of command rather elegantly.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davelaribee/category/code/" title="View all posts in code" rel="category tag">code</a>, <a href="http://codebetter.com/davelaribee/category/ddd/" title="View all posts in DDD" rel="category tag">DDD</a>, <a href="http://codebetter.com/davelaribee/category/oo/" title="View all posts in oo" rel="category tag">oo</a>, <a href="http://codebetter.com/davelaribee/category/opinion/" title="View all posts in opinion" rel="category tag">opinion</a>. Bookmark the <a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/" title="Permalink to Super Models, Part 2: Avoid Mutators" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/feed/" title="Comments RSS to Super Models, Part 2: Avoid Mutators" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-58 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davelaribee/2008/06/27/quot-agile-shop-quot/" rel="prev"><span class="meta-nav">&larr;</span> &quot;Agile Shop&quot;</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davelaribee/2008/07/09/how-i-got-started-in-software/" rel="next">How I Got Started in Software <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">40 Responses to <em>Super Models, Part 2: Avoid Mutators</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-400">
+		<div id="comment-400">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Wim Hollebrandse</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-400">November 16, 2009 at 8:15 pm</a></div>
+
+		<div class="comment-body"><p>I have an idea.</p>
+<p>Why don&#8217;t we get rid of the syntactic sugar and use set_Address and get_Address methods? <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>I mean set_Address() is far closer semantically to your ChangeAddress method.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-399">
+		<div id="comment-399">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/bsimser' rel='external nofollow' class='url'>Bil Simser</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-399">August 13, 2008 at 3:54 am</a></div>
+
+		<div class="comment-body"><p>I would be a happy person if my guys wrote code like c.ChangeAddress(newAddress) rather than c.Address = newAddress;</p>
+<p>For me, it&#8217;s all about intent revealing code. You may argue it&#8217;s sugar, but without the sugar we&#8217;re dealing with raw materials and frankly who codes in assembler or p-code anymore?</p>
+<p>We&#8217;ve been debating BDD syntax for months now, and it&#8217;s all about readability. I agree that when you go down the evil path of logic in setters, you&#8217;re just setting yourself up for failure later. Hiding code behind a setter because there are curly brackets is no different than writing SQL in your webpage codebehind. You&#8217;re hiding the intent and while it might come out in a peer review, it&#8217;s something that could be buried deep in the system.</p>
+<p>I&#8217;m all for using auto-properties in 3.5 for this sole purpose. Give them a single responsibiity. Set a value and that&#8217;s it. Don&#8217;t do any rounding, don&#8217;t do any null checks or lookups or whatever. Let it do what it was designed for. Leave a method like ChangeAddress() to handle logic which can be tested (and might change) and let setters set and getters get.</p>
+<p>For a DDD perspective I would rather see methods on models that mean something rather than properties that I have to interpret what might happen if I set that value to something. Let field access control NH and you&#8217;re done. Later this won&#8217;t come back to bite you and say &#8220;Aha, I&#8217;m a setter but I also do &#8216;other&#8217; things, but you didn&#8217;t know that did you?&#8221;. When the intent of the domain changes (ChangeAddress becomes more than just changing an address but auto-routing mail to the new address) then update the method and rename it (maybe introducing new properties to handle it).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-398">
+		<div id="comment-398">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Evan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-398">July 14, 2008 at 6:45 pm</a></div>
+
+		<div class="comment-body"><p>@Dave</p>
+<p>I&#8217;m right there with ya..this helps keep the LOC in the service layer (controllers, etc) from becoming huge..</p>
+<p>And it doesn&#8217;t add a smell if the aggregate root needs to add additional behavior when &#8220;changing addresses&#8221;.  This is doubly true if the logic may throw an exception.  Catching an exception from a setter just feels icky.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-397">
+		<div id="comment-397">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">markwriter</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-397">July 10, 2008 at 3:51 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for the clarification, Chris! For whatever reason, I hadn&#8217;t come across that term before.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-396">
+		<div id="comment-396">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://sneal.net' rel='external nofollow' class='url'>Shawn</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-396">July 10, 2008 at 4:11 am</a></div>
+
+		<div class="comment-body"><p>Wow look at all these comments, now I *know * this is religious topic.</p>
+<p>Sometimes using a property setter is completely appropriate, like when a class has a sensible default value but you can override it using a simple setter.  I prefer to use methods like in your example when there&#8217;s a verb involved, some action, not just simple data assignment (although under the covers maybe that&#8217;s all that is happening).  </p>
+<p>If you&#8217;re doing something other than a simple assignment I tend to lean towards methods.  I think the FCL has guidance for this, at least for getters?</p>
+<p>This seems to go hand in hand with some guidance I read regarding immutable objects, prefer readonly fields/properties and objects over mutable ones.  I can&#8217;t remember where I read this&#8230;</p>
+<p>Anyway, I&#8217;m glad I&#8217;m not the only one who worries about intent and naming.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-395">
+		<div id="comment-395">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-395">July 9, 2008 at 11:14 pm</a></div>
+
+		<div class="comment-body"><p>@Greg &#8211; Yes, show us what you&#8217;re talking about. Maybe double dispatch? (I&#8217;m guessing.)</p>
+<p>@Will &#8211; Have an upcoming post on that. Again, we&#8217;re talking about the model layer, data-binding and serialization have zero reason to be there. Hopefully I&#8217;ll stir up the pot some more with that assertion! <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-394">
+		<div id="comment-394">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-394">July 9, 2008 at 11:13 pm</a></div>
+
+		<div class="comment-body"><p>@Chris &#8211; Well said! This is a heuristic in the model layer (for me).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-393">
+		<div id="comment-393">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://turbulentintellect.blogspot.com' rel='external nofollow' class='url'>Chris Ammerman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-393">July 9, 2008 at 10:55 pm</a></div>
+
+		<div class="comment-body"><p>@markwriter</p>
+<p>Scott is talking about &#8220;sugar&#8221; in a similar way we use the term &#8220;syntax sugar&#8221; when talking about language features.</p>
+<p>Syntax sugar is a feature added to a language to make it possible to do something that was already possible in a way that is more pleasant / intuitive / concise / elegant / whatever to certain developers&#8217; sensibilities.</p>
+<p>In this case, I think maybe we&#8217;re talking about &#8220;code standards sugar&#8221;.  The effect achieved is the same: in Dave&#8217;s own words, using an explicit method rather than a property setter is more intuitive and transparent of purpose, coming from a Domain-Driven Development (DDD) mindset.</p>
+<p>For what it&#8217;s worth, I agree with Scott.  It&#8217;s sugar.  That doesn&#8217;t mean it&#8217;s pointless&#8230;.  Just that it probably shouldn&#8217;t be a blanket rule, or even a &#8220;best practice&#8221;.  But it may make great sense in a Dave&#8217;s DDD context.  He noted himself, he&#8217;s talking in particular about the &#8220;model&#8221; layer, which generally is the portion of your app that most closely models the domain regardless what your driving development philosophy is.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-392">
+		<div id="comment-392">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">markwriter</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-392">July 9, 2008 at 10:26 pm</a></div>
+
+		<div class="comment-body"><p>Curious about a term Scott used: &#8220;sounds like a sugar thing&#8221;</p>
+<p>What is a &#8216;sugar thing&#8217;?  I&#8217;ve not heard that term used before.</p>
+<p>Thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-391">
+		<div id="comment-391">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-391">July 9, 2008 at 8:32 pm</a></div>
+
+		<div class="comment-body"><p>I go a step further and claim getters are just as bad as setters &#8230; Getting rid of them is quite a bit more difficult though <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>We have talked about this in the past &#8230; will try to put a post with some diagrams of how to do it.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-390">
+		<div id="comment-390">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">schneider</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-390">July 9, 2008 at 7:58 pm</a></div>
+
+		<div class="comment-body"><p>I Feel c.Address is for the initial setting of the state from the DB.</p>
+<p>while<br />
+c.ChangeAddress(aNewAddressValueObject)</p>
+<p>better supports adding new requirements in the future (Audit trails), and is more descriptive of the action performed.</p>
+<p>And I don&#8217;t think this is in religious territory, I think ChangeAddress is the best approach.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-389">
+		<div id="comment-389">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://statestreetgang.net' rel='external nofollow' class='url'>Will</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-389">July 9, 2008 at 7:57 pm</a></div>
+
+		<div class="comment-body"><p>Say goodbye to serialization and databinding (well, two way at least)!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-388">
+		<div id="comment-388">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-388">July 9, 2008 at 7:27 pm</a></div>
+
+		<div class="comment-body"><p>@Dave<br />
+Excellent thanks, I thought it might be that one but I wasn&#8217;t 100% sure. Have to say I find these sorts of topics very interesting, which probably says nothing good about me.</p>
+<p>@Jeremy<br />
+Ta for replying. </p>
+<p>I&#8217;ve definitely done what you suggest in places, but I&#8217;m just thinking if you apply that approach quite widely (so upper layers don&#8217;t really see the setters) then it might expand the interface of your entities quite rapidly and you&#8217;d end up with quite a lot of overlap between getters/setters and related coarse grained methods.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-387">
+		<div id="comment-387">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-387">July 9, 2008 at 6:59 pm</a></div>
+
+		<div class="comment-body"><p>@Colin &#8211; Check out Udi&#8217;s blog (I think that&#8217;s what Jeremy is siting) for an example:</p>
+<p><a href="http://udidahan.weblogs.us/2007/03/06/better-domain-driven-design-implementation/" rel="nofollow">http://udidahan.weblogs.us/2007/03/06/better-domain-driven-design-implementation/</a></p>
+<p>I actually found this linked (through a chain) to your blog.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-386">
+		<div id="comment-386">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/jeremy.miller' rel='external nofollow' class='url'>Jeremy D. Miller</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-386">July 9, 2008 at 6:50 pm</a></div>
+
+		<div class="comment-body"><p>@Dave,</p>
+<p>I completely agree with you about changing state with methods like that.  Part of the fallout from the EF controversy last week has been some discussions about what goes into setters.  I&#8217;ve found that putting any nontrivial logic into setters is problematic.  </p>
+<p>@Colin,</p>
+<p>I don&#8217;t really think it&#8217;s a higher abstraction level.  It&#8217;s just the role that the domain object plays in a particular context.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-385">
+		<div id="comment-385">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.derickbailey.com' rel='external nofollow' class='url'>Derick Bailey</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-385">July 9, 2008 at 6:43 pm</a></div>
+
+		<div class="comment-body"><p>100% agree with avoiding mutating setters.</p>
+<p>I just did some training for my current team, and we got to the point where we were assigning managers to departments in the org chart that we were writing for the class. I immediately created a &#8220;Department.AssignManager()&#8221; method, and the internals of the method did nothing more than call a private setter on the .Manager property.</p>
+<p>You&#8217;re post here does a much better job of describing why I did that, and I&#8217;ve forwarded the link to my team.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-384">
+		<div id="comment-384">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-384">July 9, 2008 at 6:33 pm</a></div>
+
+		<div class="comment-body"><p>@Scott &#8211; Sugar matters in English. We want to pick the right word for the right job. Synonyms carry nuance and if we accept the value proposition of ubiquitous language and DDD then I think we&#8217;re compelled to reach for the sugar bowl.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-383">
+		<div id="comment-383">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-383">July 9, 2008 at 6:29 pm</a></div>
+
+		<div class="comment-body"><p>@Jeremy @Dave<br />
+Do either of you have a good example of the approach where you extract an interface at a higher level of abstraction. I get the idea but am having trouble working out how you would go about it in practice.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-382">
+		<div id="comment-382">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.hanselman.com/blog' rel='external nofollow' class='url'>Scott Hanselman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-382">July 9, 2008 at 6:13 pm</a></div>
+
+		<div class="comment-body"><p>Interesting discussion, although, I&#8217;m having trouble getting past the fact that you&#8217;re really comparing:</p>
+<p>c.ChangeAddress(aNewAddressValueObject); </p>
+<p>and (under the covers)</p>
+<p>c.set_Address(aNewAddressValueObject); </p>
+<p>This seems like a sugar thing to me.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-381">
+		<div id="comment-381">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://huntjason.spaces.live.com' rel='external nofollow' class='url'>JH</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-381">July 9, 2008 at 5:46 pm</a></div>
+
+		<div class="comment-body"><p>@Jeremy &#038; @ Dave</p>
+<p>I like that. Nothing says you have to only have a single interface implemented on an object. </p>
+<p>Cross-boundary uses properties with both accessors, internal uses an interface with a more ubiquitous language. Heuristic works for me.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-380">
+		<div id="comment-380">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-380">July 9, 2008 at 5:35 pm</a></div>
+
+		<div class="comment-body"><p>Wow, @Joe. What about my post makes you think this is an iron fist rule? It&#8217;s a design heuristic. Perhaps I should have put the disclaimer in BOLD RED?</p>
+<p>@Jeremy &#8211; No doubt. I&#8217;m talking model layer here, too. When you find yourself doing an orchestration of setting things from the outside or you find setters with logic in them? Switch to a method. I doubt you disagree with that&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-379">
+		<div id="comment-379">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Joe</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-379">July 9, 2008 at 5:18 pm</a></div>
+
+		<div class="comment-body"><p>After reading this (and some comments) I&#8217;m sure glad i don&#8217;t work on your projects.<br />
+I think this is going too far, are these measures really saving time/effort/maintenance?<br />
+&#8220;All entities should be immutable&#8221; &#8211; have you considered what that would do to performance?  Everytime you required to change any field you would need a new allocation.  Existing references would be invalidated &#8211; so all references would need to go through an indirection.<br />
+Why is ChangeXXXX better than XXX = value?  What if one project uses Change and another uses Set and another uses Modify?<br />
+I can see the value of providing a method to wrap up an atomic operation &#8211; but then you hit the issue of dealing with large parameter lists.  It&#8217;s much less readable and there are lots of issues with optional fields, breaking changes over time etc.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-378">
+		<div id="comment-378">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/jeremy.miller' rel='external nofollow' class='url'>Jeremy D. Miller</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-378">July 9, 2008 at 3:11 pm</a></div>
+
+		<div class="comment-body"><p>It&#8217;s not an either/or decision on setters.  You could keep the setters on the entities to make test automation scenarios and NHibernate usage easy.  Then apply the Interface Segregation Principle.  Lift an interface off of the entity that ONLY contains the methods that change state in a coarse grained manner like Dave is talking about.  Have the service layer only consume the interfaces sans setters.</p>
+<p>Udi Dahan does something like this when he writes services over the top of a domain model.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-377">
+		<div id="comment-377">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-377">July 9, 2008 at 3:08 pm</a></div>
+
+		<div class="comment-body"><p>Great stuff, another good discussion on the general topic:</p>
+<p><a href="http://peripateticaxiom.blogspot.com/2008/06/tdd-mocks-and-design.html" rel="nofollow">http://peripateticaxiom.blogspot.com/2008/06/tdd-mocks-and-design.html</a></p>
+<p>@Dave<br />
+&#8220;c.ChangeAddress(aNewAddressValueObject);&#8221;</p>
+<p>Temporal aspect is a good argument, for sure, but it can be handled to some extent even if you use setters. Having said that I might well use &#8220;c.ChangeAddress(aNewAddressValueObject);&#8221; but you&#8217;d probably have an associated getter (or getter method) so it&#8217;s not really changing the design that much (though I get you about intention revealing interfaces).</p>
+<p>Actually though I wouldn&#8217;t necessarily put this sort of member directly on Customer. VERY debatable but often I find its better if (for example) a Customer exposed a custom collection (AddressCollection) with the extra methods on it. Why, well because a key entity like Customer probably has a relationships to a few other VALUE OBJECTS/ENTITIES and if you put all the methods for those other entities on the Customer then it&#8217;s interface gets a little confused (GetCurrentName, GetCurrentAddres, FindAddressAt(Date),&#8230;).</p>
+<p>&#8220;In working with a team, allowing setters creates a crutch that can create weird orchestrations _outside_ of your model.&#8221;</p>
+<p>Agreed, but then even when we have setters/getters I&#8217;ve found good developers will write good code inside the domain and bad developers&#8230;you get the idea <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>&#8220;I cannot stress enough: entities are behavioral objects and, for my money, Action<t> where T is some value object fits the notion of command rather elegantly.&#8221;</p>
+<p>Huh <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-376">
+		<div id="comment-376">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Bryan Watts</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-376">July 9, 2008 at 3:05 pm</a></div>
+
+		<div class="comment-body"><p>Also, I forgot to mention that I understand your position on the semantic difference of an Action<t> versus a setter in a behavioral object &#8211; it is perceived as &#8220;more explicit&#8221;.</p>
+<p>The &#8220;act of setting&#8221; is the command, not the structural element representing its invocation. If you can set a value on an object, that is as much impetus as is needed to infer work may be done.</p>
+<p>And just to be pedantic, a setter is an Action</t><t> <img src='http://codebetter.com/davelaribee/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-375">
+		<div id="comment-375">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://huntjason.spaces.live.com' rel='external nofollow' class='url'>JH</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-375">July 9, 2008 at 3:03 pm</a></div>
+
+		<div class="comment-body"><p>This seems fine within a single application boundary.</p>
+<p>Serializing an object requires you have both a setter and getter for each property. Method behavior doesn&#8217;t serialize unless you control both the caller and callee where they can both reference the same assembly.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-374">
+		<div id="comment-374">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Bryan Watts</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-374">July 9, 2008 at 2:57 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m not sure I see the distinction &#8211; &#8220;ChangeAddress&#8221; mutates the object just as the setter does.</p>
+<p>All you&#8217;ve done is introduce a different way of saying the same thing &#8211; &#8220;change an internal value of this already-constructed object&#8221;.</p>
+<p>The subtle difference is that you don&#8217;t allow the reader to leverage their existing knowledge of the meaning of &#8220;=&#8221;; instead, you choose an arbitrary name for that concept (why not &#8220;Update&#8221; or &#8220;Alter&#8221; or even &#8220;Mutate&#8221;?)</p>
+<p>What if the C# compiler team had chosen &#8220;change_&#8221; instead of &#8220;set_&#8221; and called them changers? Either the concept behind &#8220;=&#8221; then becomes palatable, or you pick another redundant term for it (maybe &#8220;Set&#8221;?)</p>
+<p>I am not arguing against convenience methods like ChangeName(first, last, prefix, suffix). They add value. Redefining &#8220;=&#8221; just increases the mental flotsam/jetsam that the readers of your code must harbor.</p>
+<p>To avoid being labeled &#8220;religious&#8221;, I&#8217;d like to point out that Occam&#8217;s razor clearly puts your approach on the losing side of &#8220;postulates the fewest entities&#8221;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-373">
+		<div id="comment-373">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-373">July 9, 2008 at 2:04 pm</a></div>
+
+		<div class="comment-body"><p>@Joe &#8211; Value objects are always immutable. I declare private fields in value objects as readonly and require everything be supplied in a constructor or possibly a static factory method. When designing entities I always ask &#8220;what about this is immutable&#8221; or &#8220;what, if changed, would result in a new entity anyway and therefore can be made immutable as I&#8217;d delete the entity?&#8221;</p>
+<p>As far as the customer.ChangeFirstName(&#8220;John&#8221;) example goes it&#8217;s likely that there isn&#8217;t a whole extra lot of expression versus the mutator. I would say that we often make our behavior methods a little larger grained, so:</p>
+<p>customer.ChangeName(first, last, prefix, suffix, middle);<br />
+- or, if you&#8217;d like to introduce a parameter objects -<br />
+customer.ChangeName(personNameValueObject);</p>
+<p>Then we&#8217;ll surface getters on the customer such as:</p>
+<p>customer.FullName // &#8220;Dr. Jane A. Doe&#8221;<br />
+- and &#8211;<br />
+customer.FileAs // &#8220;Doe, John A.&#8221;</p>
+<p>This flexibility does, in fact, lead to better expression. I&#8217;m not trying to win an argument here so much as I&#8217;m trying to get at a few points: a default heuristic (avoiding setters) can lead to a more supple (what @Scott hinted at) and intention-revealing design that brings our model closer to the domain&#8217;s nature.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-372">
+		<div id="comment-372">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-372">July 9, 2008 at 1:57 pm</a></div>
+
+		<div class="comment-body"><p>@Gabriel &#8211; As Karl pointed out, you can map to private fields while still using the getter name in your HQL by changing the mapping strategy.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-371">
+		<div id="comment-371">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-371">July 9, 2008 at 1:56 pm</a></div>
+
+		<div class="comment-body"><p>@Karl &#8211; Good points. I would say that by default, when considering design decisions, I like our team to say &#8220;is this better expressed with a method.&#8221; Usually the answer is &#8220;yes&#8221; when we&#8217;re in the model.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-370">
+		<div id="comment-370">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.joeyoung.net' rel='external nofollow' class='url'>Joe</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-370">July 9, 2008 at 1:43 pm</a></div>
+
+		<div class="comment-body"><p>I noticed you said &#8220;Entities should not use set mutators&#8221; so Value objects still would use setters. I mean, you have to &#8220;set&#8221; the city, state, zip, etc. of an Address object right?</p>
+<p>A question though about when you need to change the first name of the customer for example.<br />
+Is customer.ChangeFirstName(&#8220;John&#8221;) more descriptive than customer.FirstName = &#8220;John&#8221;? How would you handle the simple changes, things that don&#8217;t involve other Entities or Value objects?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-369">
+		<div id="comment-369">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-369">July 9, 2008 at 12:48 pm</a></div>
+
+		<div class="comment-body"><p>The point I take from this post is that developers should give more thought to this than automatically using setters &#8211; which is probably the norm, especially when you consider how easy this is with automatic properties or via resharper.</p>
+<p>Frequently a setter doesn&#8217;t covey the intent nearly as well as as a method would. As Scott points out, setters and getters also introduce coupling.</p>
+<p>Now, do I think we should completely stop using setters? No. But people really need to start thinking about what they are trying to do. </p>
+<p>If I was building a billing system (say for a telephone company or something), you bet your ass that I&#8217;d use:</p>
+<p>customer.MovedTo(newAddress);<br />
+rather than<br />
+custome.Address = newAddress;</p>
+<p>Even if MoveTo did nothing more than set a private field. </p>
+<p>@Gabriel:<br />
+What does NHibernate have to do with the discussion? I map to private fields all the time.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-368">
+		<div id="comment-368">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">josh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-368">July 9, 2008 at 11:18 am</a></div>
+
+		<div class="comment-body"><p>wow&#8230; why stop there. why not make the whole entity immutable. whenever you want to change anything just mark the old one as inactive and create a new replacement. or better yet, just tell the customer they aren&#8217;t allowed to move.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-367">
+		<div id="comment-367">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://gabriel.lozano-moran.name' rel='external nofollow' class='url'>Gabriel Lozano-Moran</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-367">July 9, 2008 at 7:53 am</a></div>
+
+		<div class="comment-body"><p>Not using NHibernate, are you?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-366">
+		<div id="comment-366">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-366">July 9, 2008 at 7:09 am</a></div>
+
+		<div class="comment-body"><p>John,</p>
+<p>If Customer.MovedTo() is appropriate to the ubiquitous language of the domain and closer to the intent, then it&#8217;s a good name.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-365">
+		<div id="comment-365">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-365">July 9, 2008 at 7:08 am</a></div>
+
+		<div class="comment-body"><p>Personally, I don&#8217;t think the issue is whether to not use getters and setters, but that each bit of client code using a getter or setter is creating a coupling point.</p>
+<p>Any approach early on in a solution where there isn&#8217;t much implementation done yet is going to appear flexible.  </p>
+<p>Behavioral programming typically reduces the amount of coupling points, and this leaves the design more supple.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-364">
+		<div id="comment-364">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Object Bigot</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-364">July 9, 2008 at 6:38 am</a></div>
+
+		<div class="comment-body"><p>In an ideal world I would abolish all getters and setters, or use a language such as Eiffel if I wanted OO purity.</p>
+<p>In the real world this is just too hardcore for some, as most people still think procedurally. As long as the Domain Model doesn&#8217;t become too &#8216;Anemic&#8217;, I would allow getters and setters for the sake of getting work done.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-363">
+		<div id="comment-363">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david_laribee/' rel='external nofollow' class='url'>Dave Laribee</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-363">July 9, 2008 at 4:27 am</a></div>
+
+		<div class="comment-body"><p>@Object Bigot (really?) &#8211; I prefer to think behaviorally from the get go. In working with a team, allowing setters creates a crutch that can create weird orchestrations _outside_ of your model. DDD is a hard thing to employ with collective code ownership, and by creating a rule of no setters we end up a time where we stop and think &#8220;what really needs to change here.&#8221;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-362">
+		<div id="comment-362">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Object Bigot</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-362">July 9, 2008 at 4:20 am</a></div>
+
+		<div class="comment-body"><p>It all depends on where you draw the line at data abstraction. Abstract to a high enough level too soon and you create unflexible classes.</p>
+<p>I would prefer to use getters and setters early on in design when the level of abstraction required is unclear and then refactor to common methods when the design becomes stable.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-361">
+		<div id="comment-361">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.obrienjd.com' rel='external nofollow' class='url'>John O'Brien</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#comment-361">July 9, 2008 at 3:06 am</a></div>
+
+		<div class="comment-body"><p>Oh yeah, religious territory for some. </p>
+<p>In your example, is the &#8216;intent&#8217; really that obscured when we change (set) the &#8216;Value&#8217; of a &#8216;Value Object&#8217; </p>
+<p>I am wondering if you&#8217;re overthinking it a little.<br />
+Keep going and we may realize we don&#8217;t identify why a person&#8217;s address changes. So we go into the territory of &#8230;</p>
+<p>Customer.MovedTo()  </p>
+<p>just my opinion too. DDD is good but still needs some balance.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davelaribee/2008/07/09/super-models-part-2-avoid-mutators/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davelaribee/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='58' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="01d5c0c766" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.559 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:56:43 -->
+<!-- super cache -->

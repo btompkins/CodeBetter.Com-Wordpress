@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>This is how ASP.NET MVC controller actions should be unit tested | Jeffery Palermo</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jefferypalermo/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jefferypalermo/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jefferypalermo/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jefferypalermo/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeffery Palermo' href='http://codebetter.com/jefferypalermo/' />
+<link rel='start' title='ASP.NET 1.1 Request Validation.' href='http://codebetter.com/jefferypalermo/2004/04/16/asp-net-1-1-request-validation/' />
+<link rel='prev' title='New drop of ASP.NET MVC Framework now available' href='http://codebetter.com/jefferypalermo/2008/03/05/new-drop-of-asp-net-mvc-framework-now-available/' />
+<link rel='next' title='RSVP now for Party with Palermo, MVP Summit 2008 edition' href='http://codebetter.com/jefferypalermo/2008/03/10/rsvp-now-for-party-with-palermo-mvp-summit-2008-edition/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/' />
+<link rel='shortlink' href='http://codebetter.com/jefferypalermo/?p=618' />
+<link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-618" class="post-618 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">This is how ASP.NET MVC controller actions should be unit tested</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jefferypalermo/author/jefferypalermo/" title="View all posts by jefferypalermo">jefferypalermo</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/" title="8:22 pm" rel="bookmark"><span class="entry-date">March 9, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jefferypalermo/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jefferypalermo/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jefferypalermo/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I&#8217;m upgrading my <a href="http://www.partywithpalermo.com">partywithpalermo.com</a> website for the <a href="http://mvpsummit2008.partywithpalermo.com">MVP Summit party</a>, and I&#8217;m retrofitting my tests to use the <a href="http://codebetter.com/blogs/jeffrey.palermo/archive/2008/03/05/new-drop-of-asp-net-mvc-framework-now-available.aspx">March CTP of the MVC Framework</a>.&nbsp;&nbsp;I have the following action that I need to unit test:</p>
+<div>
+<div>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white"><span>public</span> <span>class</span> MainController : ControllerBase</pre>
+<pre>{</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    <span>private</span> <span>readonly</span> IAttendeesRepository _repository;</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    <span>public</span> MainController(IAttendeesRepository repository, IViewEngine viewEngine)</pre>
+<pre>    {</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        _repository = repository;</pre>
+<pre>        ViewEngine = viewEngine;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    }</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>    <span>public</span> <span>void</span> Register(<span>string</span> name, <span>string</span> website, <span>string</span> comment)</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    {</pre>
+<pre>        var attendee = <span>new</span> Attendee(name, website, comment);</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        _repository.SaveNewAttendee(attendee);</pre>
+<pre>        RenderView(<span>"confirm"</span>, attendee);</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    }</pre>
+<pre>}</pre>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>Note the explicit dependencies on IAttendeeRepository and IViewEngine.&nbsp; That means that I&#8217;ll be interacting with those two dependencies in this controller.&nbsp; Here is my unit test (this passes, by the way):</p>
+<p>&nbsp;</p>
+<div>
+<div>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">[Test]</pre>
+<pre><span>public</span> <span>void</span> ShouldSaveAttendee()</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">{</pre>
+<pre>    var repository = <span>new</span> FakeRepository();</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>    var mockViewEngine = <span>new</span> MockViewEngine();</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    var controller = <span>new</span> MainController(repository, mockViewEngine);</pre>
+<pre>    controller.ControllerContext = <span>new</span> ControllerContext(<span>new</span> RequestContext(<span>new</span> HttpContextStub(), <span>new</span> RouteData()), controller);</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    controller.Register(<span>"Jeffrey.',"</span>, <span>"http://www.jeffreypalermo.com?=&amp;@%20"</span>, <span>"this comment!?,'."</span>);</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    Attendee attendee = repository.SavedAttendee;</pre>
+<pre>    Assert.That(attendee.Name, Is.EqualTo(<span>"Jeffrey.',"</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    Assert.That(attendee.Website, Is.EqualTo(<span>"http://www.jeffreypalermo.com?=&amp;@%20"</span>));</pre>
+<pre>    Assert.That(attendee.Comment, Is.EqualTo(<span>"this comment!?,'."</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>    Assert.That(mockViewEngine.ActualViewContext.ViewName, Is.EqualTo(<span>"confirm"</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    Assert.That(mockViewEngine.ActualViewContext.ViewData, Is.EqualTo(attendee));</pre>
+<pre>}</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre><span>private</span> <span>class</span> HttpContextStub : HttpContextBase</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">{</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">}</pre>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>This is a pretty straightforward unit test except for the line before calling the Register() method.&nbsp; I have to use setter-injection to set a stubbed ControllerContext.&nbsp; If I don&#8217;t, the Register() method will bomb with an exception when the ViewContext is created, and the code tries to get an HttpContextBase off of the ControllerContext.&nbsp; It&#8217;ll throw a NullReferenceException.&nbsp; My code doesn&#8217;t really care about the ControllerContext or what is in it, but because of how the code is structured, I must use setter injection to break this dependency.&nbsp; Note that testability is next up on the list of things to do for the MVC Framework team.</p>
+<p>Preview2 (March CTP) was all about getting the routing engine out into its own assembly so that it can be used separate from MVC controllers.&nbsp; Also, the MVC Framework is &#8220;binnable&#8221;.&nbsp; You can xcopy deploy it.&nbsp; There is plenty of time to fix these things, and the team is working on it.&nbsp; You can also be sure that I&#8217;ll keep raising the issue because I&#8217;ve been test-driving code for three years, and it&#8217;s instinct now to see what is easy and frictionless and separate it from code that is harder to test than it should be.&nbsp; Overall, pretty good for a CTP.</p>
+<p>&nbsp;</p>
+<p>The following is what I would like to write.&nbsp; The following is how I would like my test to look.&nbsp; Notice just the absence of the ControllerContext line.</p>
+<div>
+<div>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">[TestFixture]</pre>
+<pre><span>public</span> <span>class</span> MainControllerTester</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">{</pre>
+<pre>    [Test]</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    <span>public</span> <span>void</span> ShouldSaveAttendee()</pre>
+<pre>    {</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        var repository = <span>new</span> FakeRepository();</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        var mockViewEngine = <span>new</span> MockViewEngine();</pre>
+<pre>        var controller = <span>new</span> MainController(repository, mockViewEngine);</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        controller.Register(<span>"Jeffrey"</span>, <span>"http://www.jeffreypalermo.com"</span>, <span>"this comment"</span>);</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        Attendee attendee = repository.SavedAttendee;</pre>
+<pre>        Assert.That(attendee.Name, Is.EqualTo(<span>"Jeffrey"</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        Assert.That(attendee.Website, Is.EqualTo(<span>"http://www.jeffreypalermo.com"</span>));</pre>
+<pre>        Assert.That(attendee.Comment, Is.EqualTo(<span>"this comment"</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>        Assert.That(mockViewEngine.ActualViewContext.ViewName, Is.EqualTo(<span>"confirm"</span>));</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        Assert.That(mockViewEngine.ActualViewContext.ViewData, Is.EqualTo(attendee));</pre>
+<pre>    }</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>    <span>private</span> <span>class</span> MockViewEngine : IViewEngine</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    {</pre>
+<pre>        <span>public</span> ViewContext ActualViewContext;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>        <span>public</span> <span>void</span> RenderView(ViewContext viewContext)</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        {</pre>
+<pre>            ActualViewContext = viewContext;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        }</pre>
+<pre>    }</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>    <span>private</span> <span>class</span> FakeRepository : IAttendeesRepository</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    {</pre>
+<pre>        <span>public</span> Attendee SavedAttendee;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">&nbsp;</pre>
+<pre>        <span>public</span> IEnumerable&lt;Attendee&gt; GetAttendees()</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        {</pre>
+<pre>            <span>throw</span> <span>new</span> NotImplementedException();</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        }</pre>
+<pre>&nbsp;</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">        <span>public</span> <span>void</span> SaveNewAttendee(Attendee attendee)</pre>
+<pre>        {</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">            SavedAttendee = attendee;</pre>
+<pre>        }</pre>
+<pre style="border-style: none;margin: 0em;padding: 0px;overflow: visible;font-size: 8pt;width: 100%;color: black;line-height: 12pt;font-family: consolas,'Courier New',courier,monospace;background-color: white">    }</pre>
+<pre>}</pre>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>Note that my unit test is concerned with explicit dependencies and doesn&#8217;t know or care that I&#8217;m making use of a PROTECTED method named &#8220;RenderView&#8221; inside my action.&nbsp; That detail doesn&#8217;t matter because the interaction with the IViewEngine is what is important.&nbsp;</p>
+<p>I also understand that I could use the <a href="http://www.amazon.com/Working-Effectively-Legacy-Robert-Martin/dp/0131177052">Legacy code</a> pattern of &#8220;Extract and Override Call&#8221; (<a href="http://www.amazon.com/Working-Effectively-Legacy-Robert-Martin/dp/0131177052">Feathers</a>, p348).&nbsp; Microsoft has already provided the extracted method, RenderView.&nbsp; I can override the call to break the dependency, but that pattern is meant to be used as a dependency-breaking technique with legacy code.&nbsp; If you haven&#8217;t read Michael Feathers&#8217; book, Working Effectively with Legacy Code, you should order it right now.&nbsp; It talks about all kinds of dependency-breaking techniques in order to write unit tests on existing code.&nbsp; My goal in providing feedback to the MVC Framework team (and I provide feedback, believe me) is to have this framework be something that I would want to use.&nbsp; There is plenty of time to make the necessary changes, and the team is working hard.</p>
+<p>I revised this post a bit after chatting on the phone with Scott Guthrie this evening.&nbsp; We&#8217;ll see some testability improvements in the next drop, and the team is aiming to make drops around every 6 weeks or so.</p>
+<p>Note:&nbsp; I&#8217;m playing around with using &#8220;var&#8221; for locals.&nbsp; Not sure if I like it yet.&nbsp; We&#8217;ll see.&nbsp; No need to comment on the &#8220;vars&#8221;.&nbsp; Comment on controllers, actions, and unit tests.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jefferypalermo/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/" title="Permalink to This is how ASP.NET MVC controller actions should be unit tested" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/feed/" title="Comments RSS to This is how ASP.NET MVC controller actions should be unit tested" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-618 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jefferypalermo/2008/03/05/new-drop-of-asp-net-mvc-framework-now-available/" rel="prev"><span class="meta-nav">&larr;</span> New drop of ASP.NET MVC Framework now available</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jefferypalermo/2008/03/10/rsvp-now-for-party-with-palermo-mvp-summit-2008-edition/" rel="next">RSVP now for Party with Palermo, MVP Summit 2008 edition <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">16 Responses to <em>This is how ASP.NET MVC controller actions should be unit tested</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2355">
+		<div id="comment-2355">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/scottgu' rel='external nofollow' class='url'>ScottGu</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2355">March 11, 2008 at 7:47 am</a></div>
+
+		<div class="comment-body"><p>Hi Simone,</p>
+<p>>>>>>> probably already in the pipeline, but what I&#8217;d like to see is a TestViewEngine that is part of a System.MVC.Testing.dll that can be used for testing Controllers.  Helper methods are great, but feel like something you make because the library you are working with is suboptimal.</p>
+<p>One of the things the team is working on right now is some refactorings to not require the need to create or assign mocks for common scenarios (like the one Jeffrey was doing above).  Phil Haack is probably going to be blogging about some of the approaches they are looking to enable in the next few weeks.</p>
+<p>Thanks,</p>
+<p>Scott</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2354">
+		<div id="comment-2354">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jeremy Gray</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2354">March 10, 2008 at 7:20 pm</a></div>
+
+		<div class="comment-body"><p>@Derik &#8211; var _is_ strong typed.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2353">
+		<div id="comment-2353">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2353">March 10, 2008 at 7:16 pm</a></div>
+
+		<div class="comment-body"><p>@Dan,<br />
+I use Rhino Mocks where it is easier than using nested classes.  In this case, I opted for nested classes.</p>
+<p>I don&#8217;t fall to either absolute on the spectrum.  I could break each assert out into its own test case, but in this particular case, I strike a balance based on reducing friction.  </p>
+<p>Regarding the Attendee&#8217;s constructor.  I need to test that the constructor is called with the appropriate arguments.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2352">
+		<div id="comment-2352">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Dan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2352">March 10, 2008 at 4:58 pm</a></div>
+
+		<div class="comment-body"><p>IMHO, I believe too many things are being tested under this one test case. This test is testing, the setting of the attendee properties, that save was called, and that RenderView was called appropriately. This test would look more simple/readable as a interaction based test  &#8211; rather than a state based test. </p>
+<p>If you wanted to test that the attendee&#8217;s property values were set as expected I believe that should be another test &#8211; or at least rename this test more appropriately.  Also, recommend using a mock framework such as NMock or RhinoMock.  I&#8217;ve found the overhead of creating and maintaining &#8216;fake&#8217; or stub classes to be time consuming and troublesome when small changes occur.</p>
+<p>This is more what I had in mind:</p>
+<p>[SetUp]<br />
+public void setup()<br />
+{<br />
+  context = new ControllerContext(new RequestContext(new HttpContextStub(), new RouteData()), controller);<br />
+}</p>
+<p>[Test]<br />
+public void ShouldSaveAttendee()<br />
+{<br />
+  var mockRepository =  mocks.NewMock<iattendeesrepository>();<br />
+  var mockViewEngine = mocks.NewMock<iviewengine>();  </p>
+<p>  Expect.Method(&#8220;SaveNewAttendee&#8221;).On(repository);</p>
+<p>  var controller = new MainController(mockRepository, mockViewEngine);<br />
+  controller.ControllerContext = context;<br />
+  controller.Register(&#8220;Jeffrey.&#8217;,&#8221;, &#8220;http://www.jeffreypalermo.com?=&#038;@%20&#8243;, &#8220;this comment!?,&#8217;.&#8221;);</p>
+<p>  mocks.VerifyAllExpectationsHaveBeenMet();<br />
+}</p>
+<p>To test that the attendee properties were actually set to the correct values should actually tested at the Attendee class level (since the attendee constructor is doing that work). Thoughts?</iviewengine></iattendeesrepository></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2351">
+		<div id="comment-2351">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codeclimber.net.nz' rel='external nofollow' class='url'>Simone</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2351">March 10, 2008 at 8:16 am</a></div>
+
+		<div class="comment-body"><p>@ScottGu,<br />
+probably already in the pipeline, but what I&#8217;d like to see is a TestViewEngine that is part of a System.MVC.Testing.dll that can be used for testing Controllers.<br />
+Helper methods are great, but feel like something you make because the library you are working with is suboptimal.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2350">
+		<div id="comment-2350">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.blogcoward.com' rel='external nofollow' class='url'>jdn</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2350">March 10, 2008 at 3:46 am</a></div>
+
+		<div class="comment-body"><p>Definitely agree with Odetocode Scott (there&#8217;s a proliferation of Scotts in this comment chaing).  I think var is definitely useful here in terms of cutting down on the amount of code you need to type, and it is strongly typed.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2349">
+		<div id="comment-2349">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.OdeToCode.com/blogs/scott/' rel='external nofollow' class='url'>Scott</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2349">March 10, 2008 at 12:59 am</a></div>
+
+		<div class="comment-body"><p>@Paul<br />
+> What the heck is &#8220;repository&#8221; without using R# or go to definition</p>
+<p>How is: </p>
+<p>  var repository = new FakeRepository();</p>
+<p>less readable than:</p>
+<p>  FakeRepository repository = new FakeRepository();</p>
+<p>Do you need to see the type name twice to make sure it&#8217;s *really* a fake repository?</p>
+<p>P.S. var != dynamic or loose</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2348">
+		<div id="comment-2348">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/scottgu' rel='external nofollow' class='url'>ScottGu</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2348">March 10, 2008 at 12:26 am</a></div>
+
+		<div class="comment-body"><p>@Scott Bellware,</p>
+<p>>>>>>>> Can this test be effected using a design that doesn&#8217;t require these test helpers, or at least requires less of them?</p>
+<p>Yes &#8211; of course it can.  You can replace this helper method:</p>
+<p>           mocks.SetFakeControllerContext(controller);</p>
+<p>with these three lines of more explicit code if you prefer:</p>
+<p>           //<br />
+           // Construct mock HttpContext and ControllerContext and explictly inject onto Controller<br />
+           //</p>
+<p>           HttpContextBase mockHttpContext = mocks.FakeHttpContext();</p>
+<p>           ControllerContext mockControllerContext = new ControllerContext(new RequestContext(mockHttpContext, new RouteData()), controller);</p>
+<p>           controller.ControllerContext = mockControllerContext;</p>
+<p>All of the objects and methods (with one exception) above are with out of the box objects and methods in the shipping MVC Preview 2.  </p>
+<p>The one exception is the mocks.FakeHttpContext() method.  This is a simple helper that constructs a mock HttpContext using RhinoMocks.  For completeness here is its complete implementation of it below:</p>
+<p>        public static HttpContextBase FakeHttpContext(this MockRepository mocks)<br />
+        {<br />
+            HttpContextBase context = mocks.PartialMock<httpcontextbase>();<br />
+            HttpRequestBase request = mocks.PartialMock<httprequestbase>();<br />
+            HttpResponseBase response = mocks.PartialMock<httpresponsebase>();<br />
+            HttpSessionStateBase session = mocks.PartialMock<httpsessionstatebase>();<br />
+            HttpServerUtilityBase server = mocks.PartialMock<httpserverutilitybase>();</p>
+<p>            SetupResult.For(context.Request).Return(request);<br />
+            SetupResult.For(context.Response).Return(response);<br />
+            SetupResult.For(context.Session).Return(session);<br />
+            SetupResult.For(context.Server).Return(server);</p>
+<p>            mocks.Replay(context);<br />
+            return context;<br />
+        }</p>
+<p>There is much more work planned to make the testing workflow simpler with future previews.  There are definitely certain testing aspects that the team feels needs to be improved (a point that all MVC preview 2 presentations from the MVC team members have explictly called out).  </p>
+<p>The biggest work items and refactorings for MVC Preview 2 were in the routing engine layer &#8211; since other components in .NET will start relying on it shortly.  Now that that is done you&#8217;ll see a bigger focus on refactoring and polishing the testing workflow of controllers with the preview releases ahead.</p>
+<p>- Scott</httpserverutilitybase></httpsessionstatebase></httpresponsebase></httprequestbase></httpcontextbase></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2347">
+		<div id="comment-2347">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2347">March 10, 2008 at 12:13 am</a></div>
+
+		<div class="comment-body"><p>Jeff,</p>
+<p>I know I&#8217;m on your back about these things all the time, but there&#8217;s value in making controllers RESTful and resource-oriented.</p>
+<p>You would end up with a RegistrationsController rather than a MainController.  The action to create a new registration would simply be: Create.  You&#8217;d POST to Registrations/Create.  To get the new registration form, you&#8217;d GET Registrations/New.</p>
+<p>Resource controllers keep things simple by allowing you to have only a standard set of verbs that reflect the underlying resource-oriented protocols like HTTP:<br />
+- New (GET)<br />
+- Create (POST)<br />
+- Update (POST)<br />
+- Delete (or Destory) (POST)<br />
+- List (GET)</p>
+<p>With a limited set of action names to work with, the work is in figuring out the resource names.  Meaningful and appropriate resource names help your addresses to be more discoverable and often more sensible.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2346">
+		<div id="comment-2346">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2346">March 10, 2008 at 12:02 am</a></div>
+
+		<div class="comment-body"><p>Jeff,</p>
+<p>I&#8217;d like to see what you come up with after working with the controller testing abilities in RSpec for Rails.</p>
+<p>I find it distressing that I would have to mock a view engine to test whether a controller asked for one view or another to be rendered.</p>
+<p>I find the extend and override solution to lead to clearer test code, but I still don&#8217;t feel it as a &#8220;good&#8221; or &#8220;right&#8221; solution.  I&#8217;m spoiled by Ruby.  My expectations have been set pretty high by what I see as a much better implementation of an MVC framework using a much friendlier language.</p>
+<p>I think I&#8217;d rather see this done with a generic controller test base class that knows the type of the controller, can provide an instance of the controller to test and can prove that expectations have been met.  I think this is closer to a solution for good clear test code that you and Phil are dancing around the perimeter of.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2345">
+		<div id="comment-2345">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://devlicio.us/blogs/derik_whittaker/default.aspx' rel='external nofollow' class='url'>Derik Whittaker</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2345">March 10, 2008 at 12:01 am</a></div>
+
+		<div class="comment-body"><p>Jeff,</p>
+<p>What is the point of using var&#8217;s for your locals?  You doing something where you need the variable to possibly be dynamic?  </p>
+<p>Personally I am not a fan of using var&#8217;s yet.  I don&#8217;t think i see a point in not using a strongly typed variable unless you are doing something with linq or something where you need the variable to be dynamic.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2344">
+		<div id="comment-2344">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2344">March 9, 2008 at 11:56 pm</a></div>
+
+		<div class="comment-body"><p>ScottGu,</p>
+<p>I don&#8217;t believe Jeffrey&#8217;s comments went to the MERE POSSIBILITY of testing this code, but the FRICTION involved in doing so.</p>
+<p>TDD isn&#8217;t about just being able to test, it&#8217;s about being able to design clean, clear interfaces, and we look at the amount of ancillary dependencies showing up in test scripts as an unequivocal indicator of design problems.</p>
+<p>Can this test be effected using a design that doesn&#8217;t require these test helpers, or at least requires less of them?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2343">
+		<div id="comment-2343">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottic.us' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2343">March 9, 2008 at 11:43 pm</a></div>
+
+		<div class="comment-body"><p>Paul,</p>
+<p>> What the heck is &#8220;repository&#8221; without using R# or go to definition.<br />
+> So much for self-documenting code</p>
+<p>It&#8217;s a repository.  I trust that Jeffrey will always use appropriate variable names, so I know that the variable name is likely the name of the type or a subtype (especially when mocking or stubbing).</p>
+<p>If the variable has to be something other than the type, I still don&#8217;t have to be interested in the type unless I can&#8217;t derive the intention of the code from its use or literate style and appropriate language.</p>
+<p>I agree that the &#8220;var&#8221; keyword should be struck from the language. I&#8217;d rather see a more Ruby-esque mode of variable declaration like:</p>
+<p>repository = new Repository();</p>
+<p>Explicit type declaration prefixes on variable declaration statements isn&#8217;t a significant part of readability.  The extents of language-oriented programming that can be achieved in untyped and dynamic languages are a testament to this.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2342">
+		<div id="comment-2342">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codeclimber.net.nz' rel='external nofollow' class='url'>Simone</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2342">March 9, 2008 at 11:02 pm</a></div>
+
+		<div class="comment-body"><p>Now it will not work since if you that way you get a &#8220;null reference exception&#8221; because the controller context has not been set. Isn&#8217;t it?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2341">
+		<div id="comment-2341">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Paul</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2341">March 9, 2008 at 10:44 pm</a></div>
+
+		<div class="comment-body"><p>The var keyword should be banished from anything but Linq queries.</p>
+<p>Notice how similar the following is to what we VB&#8217;ers do today:</p>
+<p>&#8220;var&#8221; repository = new FakeRepository();</p>
+<p>and the corresponding VB version&#8230;.</p>
+<p>&#8220;dim&#8221; respository &#8220;as&#8221; new FakeRepository()</p>
+<p>Using the var in this manner makes a code smell to high heaven! What the heck is &#8220;repository&#8221; without using R# or go to definition. So much for self-documenting code&#8230;&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2340">
+		<div id="comment-2340">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://graysmatter.codivation.com' rel='external nofollow' class='url'>Justice~!</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#comment-2340">March 9, 2008 at 10:32 pm</a></div>
+
+		<div class="comment-body"><p>You beat me to this post, but I&#8217;ll probably post about it anyway.  This to me is one of the more frustrating choices and I totally agree.  We shouldn&#8217;t have to try to find workaround for something designed fresh.  </p>
+<p>It&#8217;s more frustrating to me given we&#8217;ve already been through 6 mos worth.  I really hope it is fixed in the next drop, or at least a valid explanation given as to why it&#8217;s not available.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/jefferypalermo/2008/03/09/this-is-how-asp-net-mvc-controller-actions-should-be-unit-tested/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/jefferypalermo/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fjefferypalermo%2F2008%2F03%2F09%2Fthis-is-how-asp-net-mvc-controller-actions-should-be-unit-tested%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 4.789 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:51:44 -->
+<!-- super cache -->

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Reactive Extensions for .NET – Event-based Async Operations | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Introduction to the Reactive Extensions for JavaScript – Buffering' href='http://codebetter.com/matthewpodwysocki/2010/08/25/introduction-to-the-reactive-extensions-for-javascript-buffering/' />
+<link rel='next' title='Getting Started with Node.js on Windows' href='http://codebetter.com/matthewpodwysocki/2010/09/08/getting-started-with-node-js-on-windows/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/09/01/reactive-extensions-for-net-event-based-async-operations/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=240' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-240" class="post-240 post type-post status-publish format-standard hentry category-c category-event-based-porgramming category-reactive-framework">
+					<h1 class="entry-title">Reactive Extensions for .NET – Event-based Async Operations</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/09/01/reactive-extensions-for-net-event-based-async-operations/" title="12:25 am" rel="bookmark"><span class="entry-date">September 1, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>With the many posts that I’ve done on the Reactive Extensions for both JavaScript and .NET, I’ve covered a wide variety of the basics as well as some of the deeper stuff.&#160; This time, I’d like to get back to the basics that I do when I give a talk on Rx in person, and this time explaining some of the problems we face today with reactive programming in general, asynchronous and event-based.</p>
+<h2>Why Do We Need It?</h2>
+<p>Let’s go into an example of using the <a href="http://msdn.microsoft.com/en-us/library/e7a34yad.aspx">event-based asynchronous programming methods</a> that became a bit more prevalent when .NET 2.0 came around, especially with the introduction of WCF in the .NET 3.0 timeframe.&#160; This was an alternative to the other methods of asynchronous programming which included the Begin/End Pattern and using WaitHandles.&#160; One distinct advantage it did have was for the ability to report progress, report incremental results or state changes that the others could not provide.&#160; But with it, comes many downsides as well which we’ll go into and where the Reactive Extensions can help.&#160; </p>
+<p>Typically, we’d have some form of asynchronous method which has no return value and takes in any number of parameters, and a given user token which would allow us to correlate our token with what comes in the user state to make sure we’re looking at the right result.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">void</span><span style="color: #000000"> DoSomethingAsync(</span><span style="color: #0000FF">object</span><span style="color: #000000"> token)
+{
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Kick off something async</span><span style="color: #008000">
+</span><span style="color: #000000">}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>And we’d also have some form of EventArgs which would encompass our result and exception should one occur and optionally a cancelled flag should we need to do so and be notified that it happened.&#160; Then we’d also have our EventHandler which is then called when our asynchronous method is complete.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">class</span><span style="color: #000000"> DoSomethingCompletedEventArgs : EventArgs
+{
+    </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">string</span><span style="color: #000000"> Result { </span><span style="color: #0000FF">get</span><span style="color: #000000">; </span><span style="color: #0000FF">set</span><span style="color: #000000">; }
+    </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">bool</span><span style="color: #000000"> Cancelled { </span><span style="color: #0000FF">get</span><span style="color: #000000">; </span><span style="color: #0000FF">set</span><span style="color: #000000">; }
+    </span><span style="color: #0000FF">public</span><span style="color: #000000"> Exception Error { </span><span style="color: #0000FF">get</span><span style="color: #000000">; </span><span style="color: #0000FF">set</span><span style="color: #000000">; }
+}
+
+</span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">event</span><span style="color: #000000"> EventHandler</span><span style="color: #000000">&lt;</span><span style="color: #000000">DoSomethingCompletedEventArgs</span><span style="color: #000000">&gt;</span><span style="color: #000000">
+    DoSomethingCompleted;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>To give you an idea of some of the problems we face with this pattern, let’s go over an example using the System.Net.WebClient class and downloading a string asynchronously via the DownloadStringAsync method.&#160; Let’s enumerate some of the challenges in the code below.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">var uri </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Uri(</span><span style="color: #800000">"</span><span style="color: #800000">http://search.twitter.com/search.json?q=4sq.com</span><span style="color: #800000">"</span><span style="color: #000000">);
+var client </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> WebClient();
+
+client.DownloadStringCompleted </span><span style="color: #000000">+=</span><span style="color: #000000"> (sender, args)
+{
+    </span><span style="color: #008000">//</span><span style="color: #008000"> TODO: Get the only one we want?
+    </span><span style="color: #008000">//</span><span style="color: #008000"> TODO: Check for cancel?
+    </span><span style="color: #008000">//</span><span style="color: #008000"> TODO: Check for exception?
+    </span><span style="color: #008000">//</span><span style="color: #008000"> TODO: Check for result?
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> TODO: What about more composition?</span><span style="color: #008000">
+</span><span style="color: #000000">};
+
+client.DownloadStringAsync(uri);
+
+</span><span style="color: #008000">//</span><span style="color: #008000"> TODO: How to unsubscribe</span><span style="color: #008000">
+</span><span style="color: #000000">client.DownloadStringCompleted </span><span style="color: #000000">-=</span><span style="color: #000000"> </span><span style="color: #000000">???</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The first challenge is how to make sure we get the value we want.&#160; After all, if multiple calls are made to this WebClient instance, we’ll need to correlate the user state with our token.&#160; Next, we need to check for cancellation and do something when that happens.&#160; After checking for cancellation, we might also want to check for exceptions and handle them appropriately as well.&#160; And finally we get our result, now what do we do with it?&#160; Better yet, now that I have the result, how can I compose it with another asynchronous call?&#160; Finally, when using lambdas for subscribing to events, I can’t unsubscribe our inline lambda, so that could cause an issue as well.&#160; Making some of those changes to handle our cases properly, we end up with code that looks like the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">var uri </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Uri(</span><span style="color: #800000">"</span><span style="color: #800000">http://search.twitter.com/search.json?q=4sq.com</span><span style="color: #800000">"</span><span style="color: #000000">);
+var client </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> WebClient();
+var token </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #0000FF">object</span><span style="color: #000000">();
+
+DownloadStringCompletedEventHandler h </span><span style="color: #000000">=</span><span style="color: #000000"> (sender, args)
+{
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Check if it's ours</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000FF">if</span><span style="color: #000000"> (token </span><span style="color: #000000">!=</span><span style="color: #000000"> args.UserState) </span><span style="color: #0000FF">return</span><span style="color: #000000">;
+
+    </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.Cancelled)
+    {
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Do something to say we stopped</span><span style="color: #008000">
+</span><span style="color: #000000">    }
+    </span><span style="color: #0000FF">else</span><span style="color: #000000"> </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.Error </span><span style="color: #000000">!=</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">)
+    {
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Do something with that error</span><span style="color: #008000">
+</span><span style="color: #000000">    }
+    </span><span style="color: #0000FF">else</span><span style="color: #000000">
+    {
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Well, now what?</span><span style="color: #008000">
+</span><span style="color: #000000">    }
+};
+
+client.DownloadStringCompleted </span><span style="color: #000000">+=</span><span style="color: #000000"> h;
+client.DownloadStringAsync(uri, token);
+
+</span><span style="color: #008000">//</span><span style="color: #008000"> When we're ready to clean up</span><span style="color: #008000">
+</span><span style="color: #000000">client.DownloadStringCompleted </span><span style="color: #000000">-=</span><span style="color: #000000"> h;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>We solved a good majority of the problems with a lot of boilerplate.&#160; But within all this boilerplate, we’re losing sight of our core goal here, which is to get our result and do something with it, especially when that next call happens to be to another asynchronous call.&#160; For example, what if we want to download a string from somewhere, transform it into JSON, modify the results and then upload somewhere else?&#160; Our code might look like the following should we use the Reactive Extensions for .NET to solve it.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">var client </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> WebClient();
+var searchUri </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Uri(</span><span style="color: #800000">"</span><span style="color: #800000">http://search.twitter.com/search.json?q=4sq.com</span><span style="color: #800000">"</span><span style="color: #000000">);
+var uploadUri </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Uri(</span><span style="color: #800000">"</span><span style="color: #800000">http://localhost:8080/uploads</span><span style="color: #800000">"</span><span style="color: #000000">);
+
+IObservable</span><span style="color: #000000">&lt;</span><span style="color: #000000">Unit</span><span style="color: #000000">&gt;</span><span style="color: #000000"> query </span><span style="color: #000000">=</span><span style="color: #000000">
+    from result </span><span style="color: #0000FF">in</span><span style="color: #000000"> client.DownloadStringAsObservable(searchUri, </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #0000FF">object</span><span style="color: #000000">())
+    let transformed </span><span style="color: #000000">=</span><span style="color: #000000"> TransformResult(result)
+    from upload </span><span style="color: #0000FF">in</span><span style="color: #000000"> client.UploadStringAsObservable(
+        uploadUri,
+        </span><span style="color: #800000">"</span><span style="color: #800000">POST</span><span style="color: #800000">"</span><span style="color: #000000">,
+        transformed,
+        </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #0000FF">object</span><span style="color: #000000">())
+    select upload;
+
+var subscription </span><span style="color: #000000">=</span><span style="color: #000000"> query.Subscribe(
+    x </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> {}, </span><span style="color: #008000">//</span><span style="color: #008000"> Nothing to do</span><span style="color: #008000">
+</span><span style="color: #000000">    exn </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+    {
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Do something with the exception</span><span style="color: #008000">
+</span><span style="color: #000000">    },
+    () </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+    {
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Indicate we're finished</span><span style="color: #008000">
+</span><span style="color: #000000">    });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What we’re able to do is take operations that would have required quite a bit of code in terms of boilerplate, and allow for composition through LINQ via the Reactive Extensions for .NET.&#160; But, how do we get there?&#160; </p>
+<h2>How Do We Get There?</h2>
+<p>What we need to do at this point is to transform our asynchronous call from above and turn it into an IObservable&lt;T&gt; instance.&#160; Using the FromEvent which we’ve covered earlier, won’t cut it because ultimately, we want to combine the asynchronous call with the event handler which is invoked upon completion, which FromEvent cannot provider.&#160; Instead, we want to focus our effort into the Observable.Create and Observable.CreateWithDisposable methods to help us.&#160; This allows us to create IObservable&lt;T&gt; instances from the subscribe implementation.&#160; We can either choose the CreateWithDisposable method which gives us an IObserver&lt;T&gt; instance and we return a concrete IDisposable instance, or we call Create in which are given the same IObserver&lt;T&gt; instance, but we return an Action instead of the IDisposable instance.&#160; Let’s look at those signatures below:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">static</span><span style="color: #000000"> IObservable</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000"> CreateWithDisposable</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000">(
+    Func</span><span style="color: #000000">&lt;</span><span style="color: #000000">IObserver</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000">, IDisposable</span><span style="color: #000000">&gt;</span><span style="color: #000000"> subscribe
+)
+
+</span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">static</span><span style="color: #000000"> IObservable</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000"> Create</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000">(
+    Func</span><span style="color: #000000">&lt;</span><span style="color: #000000">IObserver</span><span style="color: #000000">&lt;</span><span style="color: #000000">TSource</span><span style="color: #000000">&gt;</span><span style="color: #000000">, Action</span><span style="color: #000000">&gt;</span><span style="color: #000000"> subscribe
+)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Using the Observable.Create method, let’s create a method called DownloadStringAsObservable extension method to handle the asynchronous request.&#160; Inside the Observable.Create, we’ll create our DownloadStringCompletedEventHandler where we can check for our user token, handle cancellation by calling observer.OnCompleted, handle exceptions via observer.OnError and finally handle our result by calling observer.OnNext and observer.OnCompleted to indicate we are finished.&#160; We then take this handler and listen to the DownloadStringCompleted event.&#160; We want to be able to catch any errors in our DownloadStringAsync should it throw an exception, so we put that in a try/catch block and send the Exception to observer.OnError.&#160; Finally, Being the good citizens we are, we want to clean up after ourselves by removing our handler from the DownloadStringCompleted event when we dispose of our subscription.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">static</span><span style="color: #000000"> IObservable</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> DownloadStringAsObservable(
+    </span><span style="color: #0000FF">this</span><span style="color: #000000"> WebClient client,
+    Uri address,
+    </span><span style="color: #0000FF">object</span><span style="color: #000000"> userToken)
+{
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> Observable.Create</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">(observer </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+    {
+        DownloadStringCompletedEventHandler handler </span><span style="color: #000000">=</span><span style="color: #000000"> (sender, args) </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+        {
+            </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.UserState </span><span style="color: #000000">!=</span><span style="color: #000000"> userToken) </span><span style="color: #0000FF">return</span><span style="color: #000000">;
+
+            </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.Cancelled)
+                observer.OnCompleted();
+            </span><span style="color: #0000FF">else</span><span style="color: #000000"> </span><span style="color: #0000FF">if</span><span style="color: #000000">(args.Error </span><span style="color: #000000">!=</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">)
+                observer.OnError(args.Error);
+            </span><span style="color: #0000FF">else</span><span style="color: #000000">
+            {
+                observer.OnNext(args.Result);
+                observer.OnCompleted();
+            }
+        };
+
+        client.DownloadStringCompleted </span><span style="color: #000000">+=</span><span style="color: #000000"> handler;
+
+        </span><span style="color: #0000FF">try</span><span style="color: #000000">
+        {
+            client.DownloadStringAsync(address, token);
+        }
+        </span><span style="color: #0000FF">catch</span><span style="color: #000000"> (Exception ex)
+        {
+            observer.OnError(ex);
+        }
+
+        </span><span style="color: #0000FF">return</span><span style="color: #000000"> () </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> client.DownloadStringCompleted </span><span style="color: #000000">-=</span><span style="color: #000000"> handler;
+    });
+}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The sample logic applies to uploading a string as well by wrapping the UploadStringAsync method as we do below.</p>
+</p>
+</p>
+</p>
+</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">static</span><span style="color: #000000"> IObservable</span><span style="color: #000000">&lt;</span><span style="color: #000000">Unit</span><span style="color: #000000">&gt;</span><span style="color: #000000"> UploadStringAsObservable(
+    </span><span style="color: #0000FF">this</span><span style="color: #000000"> WebClient client,
+    Uri address,
+    </span><span style="color: #0000FF">string</span><span style="color: #000000"> method,
+    </span><span style="color: #0000FF">string</span><span style="color: #000000"> data,
+    </span><span style="color: #0000FF">object</span><span style="color: #000000"> userToken)
+{
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> Observable.Create</span><span style="color: #000000">&lt;</span><span style="color: #000000">Unit</span><span style="color: #000000">&gt;</span><span style="color: #000000">(observer </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+    {
+        UploadStringCompletedEventHandler handler </span><span style="color: #000000">=</span><span style="color: #000000"> (sender, args) </span><span style="color: #000000">=&gt;</span><span style="color: #000000">
+        {
+            </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.UserState </span><span style="color: #000000">!=</span><span style="color: #000000"> userToken) </span><span style="color: #0000FF">return</span><span style="color: #000000">;
+
+            </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.Cancelled)
+                observer.OnCompleted();
+            </span><span style="color: #0000FF">else</span><span style="color: #000000"> </span><span style="color: #0000FF">if</span><span style="color: #000000"> (args.Error </span><span style="color: #000000">!=</span><span style="color: #000000"> </span><span style="color: #0000FF">null</span><span style="color: #000000">)
+                observer.OnError(args.Error);
+            </span><span style="color: #0000FF">else</span><span style="color: #000000">
+            {
+                observer.OnNext(</span><span style="color: #0000FF">new</span><span style="color: #000000"> Unit());
+                observer.OnCompleted();
+            }
+        };
+
+        client.UploadStringCompleted </span><span style="color: #000000">+=</span><span style="color: #000000"> handler;
+
+        </span><span style="color: #0000FF">try</span><span style="color: #000000">
+        {
+            client.UploadStringAsync(address, data, method, token);
+        }
+        </span><span style="color: #0000FF">catch</span><span style="color: #000000">(Exception ex)
+        {
+            observer.OnError(ex);
+        }
+
+        </span><span style="color: #0000FF">return</span><span style="color: #000000"> () </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> client.UploadStringCompleted </span><span style="color: #000000">-=</span><span style="color: #000000"> handler;
+    });
+}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>By using these tokens as we do above, we could easily wrap the DownloadProgressChanged event as well filtering for our token as well.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">static</span><span style="color: #000000"> IObservable</span><span style="color: #000000">&lt;</span><span style="color: #000000">DownloadProgressChangedEventArgs</span><span style="color: #000000">&gt;</span><span style="color: #000000">
+    DownloadProgressChangedAsObservable(
+        </span><span style="color: #0000FF">this</span><span style="color: #000000"> WebClient client,
+        </span><span style="color: #0000FF">object</span><span style="color: #000000"> userToken)
+{
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> Observable.FromEvent</span><span style="color: #000000">&lt;</span><span style="color: #000000">DownloadProgressChangedEventArgs</span><span style="color: #000000">&gt;</span><span style="color: #000000">(
+            client,
+            </span><span style="color: #800000">"</span><span style="color: #800000">DownloadProgressChanged</span><span style="color: #800000">"</span><span style="color: #000000">)
+        .Where(x </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> x.EventArgs.UserState </span><span style="color: #000000">==</span><span style="color: #000000"> userToken)
+        .Select(x </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> x.EventArgs)
+}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What we have done here is taken a less than optimal event-based asynchronous programming model and moved it to use Reactive Extensions for .NET so that we can take care of uniform cancellation checking, error handling and allow for composition.</p>
+<h2>Conclusion</h2>
+<p>Asynchronous programming is something that’s creeping up more and more to .NET developers, especially with Silverlight, Windows Phone and so forth.&#160; Unfortunately, dealing with asynchronous programming has been and continues to be hard.&#160; By using the Reactive Extensions for .NET, we have ways to build bridges from the old asynchronous programming models, to a more composable form where we can uniformly handle exceptions, cancellation and so forth.</p>
+<p>So with that, <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">download it</a>, and <a href="http://social.msdn.microsoft.com/Forums/en-US/rx/threads">give the team feedback!</a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/event-based-porgramming/" title="View all posts in Event-based Porgramming" rel="category tag">Event-based Porgramming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/09/01/reactive-extensions-for-net-event-based-async-operations/" title="Permalink to Reactive Extensions for .NET – Event-based Async Operations" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/09/01/reactive-extensions-for-net-event-based-async-operations/feed/" title="Comments RSS to Reactive Extensions for .NET – Event-based Async Operations" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-240 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/08/25/introduction-to-the-reactive-extensions-for-javascript-buffering/" rel="prev"><span class="meta-nav">&larr;</span> Introduction to the Reactive Extensions for JavaScript – Buffering</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/09/08/getting-started-with-node-js-on-windows/" rel="next">Getting Started with Node.js on Windows <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-534">
+					<div id="dsq-comment-header-534" class="dsq-comment-header">
+						<cite id="dsq-cite-534">
+								<span id="dsq-author-user-534">Chris Martin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-534" class="dsq-comment-body">
+						<div id="dsq-comment-message-534" class="dsq-comment-message"><p>Once the &#8220;ah-hah&#8221; moment hits you, IObserv(able/er) is such a great addition to the framework.</p>
+<p>Thanks for all these articles.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-535">
+					<div id="dsq-comment-header-535" class="dsq-comment-header">
+						<cite id="dsq-cite-535">
+								<span id="dsq-author-user-535">Prajapati KV</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-535" class="dsq-comment-body">
+						<div id="dsq-comment-message-535" class="dsq-comment-message"><p>Great! Thanks for this very informative yet simple article.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/09/01/reactive-extensions-for-net-event-based-async-operations/ ';
+	var disqus_identifier = '240 /blogs/matthew.podwysocki/archive/2010/08/31/reactive-extensions-for-net-event-based-async-operations.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Reactive Extensions for .NET – Event-based Async Operations";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=240');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/09\/01\/reactive-extensions-for-net-event-based-async-operations\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.259 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 15:14:52 -->
+<!-- super cache -->

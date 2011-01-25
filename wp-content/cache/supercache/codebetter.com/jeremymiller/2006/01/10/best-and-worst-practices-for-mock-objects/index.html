@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Best and Worst Practices for Mock Objects | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Why and When to Use Mock Objects' href='http://codebetter.com/jeremymiller/2005/12/20/why-and-when-to-use-mock-objects/' />
+<link rel='next' title='Great Quote from Jeffrey Palermo' href='http://codebetter.com/jeremymiller/2006/01/13/great-quote-from-jeffrey-palermo/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2006/01/10/best-and-worst-practices-for-mock-objects/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=117' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-117" class="post-117 post type-post status-publish format-standard hentry category-test-driven-development">
+					<h1 class="entry-title">Best and Worst Practices for Mock Objects</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2006/01/10/best-and-worst-practices-for-mock-objects/" title="10:59 pm" rel="bookmark"><span class="entry-date">January 10, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P class="MsoNormal">Mock objects are like any other tool.<SPAN>&nbsp; </SPAN>Used one way they’re a huge time saver.<SPAN>&nbsp; </SPAN>In other cases they can easily create more work and degrade the quality of the testing code.<SPAN>&nbsp; </SPAN>In this post I’ll try to present some best and worst practices for utilizing mock objects.<SPAN>&nbsp; </SPAN>Sadly, every “bad” practice described is something I’ve either done or seen done.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">This is the third in a planned series of five posts on mock objects:</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<OL type="1"><br />
+<LI class="MsoNormal"><A HREF="/blogs/jeremy.miller/archive/2005/12/19/135757.aspx">Introduction to Mocks and Stubs</A></LI><br />
+<LI class="MsoNormal"><A HREF="/blogs/jeremy.miller/archive/2005/12/20/135800.aspx">When and Why to use Mocks and Stubs </A></LI><br />
+<LI class="MsoNormal">Best Practices for Mocks (this post)</LI><br />
+<LI class="MsoNormal">Constraints and other Mocking Tricks </LI><br />
+<LI class="MsoNormal">Attaching Mocks and Stubs with StructureMap (by request)</LI></OL><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Mocking Interfaces and Classes outside Your Code</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">Be careful about mocking or stubbing any interface that is outside your own codebase.<SPAN>&nbsp; </SPAN>If you don’t truly understand the semantics and proper usage of an interface you don’t have any business mocking that interface in a unit test.<SPAN>&nbsp; </SPAN>My best advice is to create your own interface to wrap the interaction with the external API classes.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">The best example from my memory was a security subsystem that retrieved security authorization and user information from Active Directory.<SPAN>&nbsp; </SPAN>We created a class that queried Active Directory directly (with a painful detour through ADAM) and wrote tests that were fully connected.<SPAN>&nbsp; </SPAN>Technically we could have probably mocked the <SPAN>System.DirectoryServices</SPAN> classes somehow and just verified that we used the correct LDAP query command, but I don’t think it would have added any value.<SPAN>&nbsp; </SPAN>The reason I think a mock would have been useless is that determining the correct LDAP query string to return the correct results was the majority of the effort.<SPAN>&nbsp; </SPAN>I can write SQL queries in my sleep and XPath expressions when I’m merely drowsy, but the LDAP query syntax is pretty wacky (and poorly documented in my experience).</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Instead of trying to mock the access to Active Directory, create your own coarse-grained interface for retrieving user information that will encapsulate the AD access.<SPAN>&nbsp; </SPAN>Besides the testability gain, it’ll keep your other security code decoupled from the storage so that you can chuck the Active Directory strategy when your aggravation level gets too high.<SPAN>&nbsp; </SPAN>This interface is safe to mock.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>interface</SPAN> IUserInformationStore</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>UserInformation FindUser(<SPAN>string</SPAN> userName);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>UserInformation[] FindUsersInRole(<SPAN>string</SPAN> roleName);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Avoid Mocking Fine-Grained or Chatty Interfaces</B></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Don’t mock fine grained interfaces.<SPAN>&nbsp; </SPAN>You’ll wear off the skin on your fingertips and the tests will NOT be intention revealing.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Specifically, do not mock happy, funny ADO.Net (or JDBC for the Java crowd).<SPAN>&nbsp; </SPAN>Just think of how many different ADO.Net objects and lines of code it takes to make a typical call to the database.<SPAN>&nbsp;&nbsp; </SPAN>I’ve watched a couple of people try to write unit tests on their data access code by mocking <SPAN>IDbConnection</SPAN>, <SPAN>IDbCommand</SPAN>, and the various <SPAN>IDataParameter</SPAN> objects.<SPAN>&nbsp; </SPAN>It’s too much effort for too little gain.<SPAN>&nbsp; </SPAN>My advice is to just test the data access code against the actual database with integration tests.<SPAN>&nbsp; </SPAN>For the most part I think testing persistence code without the database is a complete waste of time.<SPAN>&nbsp; </SPAN>I’d make an obvious exception for data access frameworks and code that generates sql commands though.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">By all means, mock the database in your unit tests, but <A HREF="/blogs/jeremy.miller/archive/2005/10/12/133017.aspx">do it in the right way</A>.<SPAN>&nbsp; </SPAN>With the exception of a DataSet (maybe), I don’t think you should ever expose any ADO.Net objects in the public interface that your data access classes expose to the rest of the system.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">If you have a chatty interface, see if you can bunch the calls into some sort of coarse parameter object.<SPAN>&nbsp; </SPAN>Fowler describes this in his Refactoring book as the <A href="http://www.refactoring.com/catalog/introduceParameterObject.html">Introduce Parameter Object</A> refactoring.<SPAN>&nbsp; </SPAN>As an example, consider the case of testing user interface screen logic in an ASP.Net application.<SPAN>&nbsp; </SPAN>One of the first things you need to do is isolate as much code as possible from the ASP.Net runtime objects (you can create an HttpContext in a unit test, but it’s the blackest magic).<SPAN>&nbsp; </SPAN>We can’t mock the Session directly, but we can put an interface in front of the Session to do state management.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>struct</SPAN> SessionConstants</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>internal</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> SORT_KEY = &#8220;Sort&#8221;;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>internal</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> NAME_FILTER_KEY = &#8220;NameFilter&#8221;;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>internal</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> PAGE_NUMBER_KEY = &#8220;PageNumber&#8221;;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>internal</SPAN> <SPAN>const</SPAN> <SPAN>string</SPAN> DATASET_KEY = &#8220;Data&#8221;;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>interface</SPAN> ISession</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN> GetStringValue(<SPAN>string</SPAN> key);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN> SetStringValue(<SPAN>string</SPAN> key, <SPAN>string</SPAN> sessionValue);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>DataSet GetDataSetValue(<SPAN>string</SPAN> key);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN> SetDataSetValue(<SPAN>string</SPAN> key, DataSet data);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> SessionWrapper : ISession</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> HttpSessionState _session;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> SessionWrapper()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_session = HttpContext.Current.Session;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>string</SPAN> GetStringValue(<SPAN>string</SPAN> key)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> (<SPAN>string</SPAN>) _session[key];</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> SetStringValue(<SPAN>string</SPAN> key, <SPAN>string</SPAN> sessionValue)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_session[key] = sessionValue;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> DataSet GetDataSetValue(<SPAN>string</SPAN> key)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> (DataSet) _session[key];</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> SetDataSetValue(<SPAN>string</SPAN> key, DataSet data)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_session[key] = data;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal">We can now test any web page controller class by using a mock object as a substitute for the Session.<SPAN>&nbsp; </SPAN>The ISession and SessionWrapper pair will definitely make unit testing the web page controller classes easier, but it forces us into a lot of setup calls in the unit tests for each piece of state (page number, sorting expression, user preferences, etc.).<SPAN>&nbsp; </SPAN>I think it also creates an ugly coupling from the controllers to the storage mechanism and structure.<SPAN>&nbsp; </SPAN>A better approach in my opinion is to create a coarse grained class to hold the web page state and a new interface for retrieving the state management that completely decouples the actual storage mechanism.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> PageState</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> <SPAN>string</SPAN> _sort;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> <SPAN>string</SPAN> _filter;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> <SPAN>int</SPAN> _pageNumber;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> DataSet _data;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> PageState(<SPAN>string</SPAN> sort, <SPAN>string</SPAN> filter, <SPAN>int</SPAN> pageNumber, DataSet data)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_sort = sort;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_filter = filter;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_pageNumber = pageNumber;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_data = data;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>string</SPAN> Sort</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _sort; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _sort = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>string</SPAN> Filter</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _filter; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _filter = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>int</SPAN> PageNumber</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _pageNumber; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _pageNumber = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> DataSet Data</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _data; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _data = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>interface</SPAN> IStateService</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>PageState RetrieveState();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN> StoreState(PageState state);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal">Now all it takes to setup the mock object in a unit test for a controller class is an expectation for the <SPAN>RetrieveState()</SPAN> method and another for the <SPAN>StoreState()</SPAN> method.<SPAN>&nbsp; </SPAN>The session state for the test can be quickly setup by calling the constructor function on the <SPAN>PageState</SPAN> object.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">In a comment to my last post Ayende Rahein pointed out that excessive numbers of fine-grained expectations will make the tests very brittle to changes in the code.<SPAN>&nbsp; </SPAN>Been there, done that.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>How Many Mock Objects in any Given Test?</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">How many mock objects are too many?<SPAN>&nbsp; </SPAN>I’ve worked with some people before that felt that there should never be more than 1-2 mock objects involved in any single unit test.<SPAN>&nbsp; </SPAN>I wouldn’t make a hard and fast rule on the limit, but anything more than 2 or 3 should probably make you question the design.<SPAN>&nbsp; </SPAN>The class being tested may have too many responsibilities or the method might be too large.<SPAN>&nbsp; </SPAN>Look for ways to move some of the responsibilities to a new class or method.<SPAN>&nbsp; </SPAN>Excessive mock calls can often be a sign of poor encapsulation.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Inline with <A href="http://www.jamesshore.com/Blog/Reflective-Design.html">Jim Shore’s Reflective Design</A> writing, unit tests and mock objects are another means to gather feedback about your code and design.<SPAN>&nbsp; </SPAN>If you’re having difficulty using a mock object in a unit test, or you’re incurring more setup overhead in your tests than you’d like, it’s frequently a sign that you need to reconsider your class design.<SPAN>&nbsp; </SPAN>In other words, too much mocking, either in the number of mock objects or the setup code, in any single unit test is a Coding Smell.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Minimizing the number of mock objects necessary for any given unit test is a very effective way of keeping the <A HREF="/blogs/raymond.lewallen/archive/2005/06/13/64527.aspx">Cyclomatic Complexity</A> of your classes below an acceptable level.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Only Mock your Nearest Neighbor</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">Ideally you only want to mock the dependencies of the class being tested, not the dependencies of the dependencies.<SPAN>&nbsp; </SPAN>From hurtful experience, deviating from this practice will create unit test code that is very tightly coupled to the internal implementation of a class’s dependencies.<SPAN>&nbsp; </SPAN>A common culprit is the diabolical usage of the Singleton pattern (the authors of the GoF book are making a second version that will supposedly have a full section on Singleton abuse).<SPAN>&nbsp; </SPAN>A frequent usage of a Singleton is to create a Repository object that manages the communication between a client and its backend services.<SPAN>&nbsp; </SPAN>Since you cannot mock a Singleton (yeah I know you can do some IL magic, but do you really want to?), myself and many other people fall into the trap of attaching a mock for the backend data source classes into the Singleton instance and setting up the expectations on this mock.<SPAN>&nbsp; </SPAN>Your unit test is basically validating that the calls that the class being unit tested makes to the repository causes another set of calls to a mock object that is standing in for the data service.<SPAN>&nbsp; </SPAN>If the Singleton is in an unknown state or the internal caching mechanisms of the repository change, you <B>will</B> end up rewriting unit tests.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Since all I really wanted to test in this case was the interaction of a class with the repository class, I’m much better off writing a simpler test that mocks the repository directly.<SPAN>&nbsp; </SPAN>Then I don’t have to worry about the state or the internals of the concrete implementation of the repository.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">As long as you’re aware of the consequences of a Singleton or static members in general, it’s relatively simple to create a repository that doesn’t harm testability.<SPAN>&nbsp; </SPAN>Here’s a couple of links on this specific issue:</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<UL type="disc"><br />
+<LI class="MsoNormal"><A HREF="/blogs/jeremy.miller/articles/129545.aspx">http://codebetter.com/blogs/jeremy.miller/articles/129545.aspx</A></LI><br />
+<LI class="MsoNormal"><A HREF="/blogs/jeremy.miller/archive/2005/08/04/130302.aspx">http://codebetter.com/blogs/jeremy.miller/archive/2005/08/04/130302.aspx</A></LI><br />
+<LI class="MsoNormal"><A href="http://structuremap.sourceforge.net/SingletonInjection.htm">http://structuremap.sourceforge.net/SingletonInjection.htm</A></LI></UL><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal"><B>Mock the Right Thing</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">Here’s an example of the single dumbest thing I’ve ever done with mock objects (and also an example of how NOT to do Model View Presenter).<SPAN>&nbsp; </SPAN>We were building a WinForms application with somewhat complex workflow between the screens.<SPAN>&nbsp; </SPAN>Each screen had some logic in the Presenter (Controller) class that determined whether or not the screen could be closed, usually by checking if the data on the screen was “dirty.”<SPAN>&nbsp; </SPAN>To simulate a view with dirty data, we did something like the following:</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[TestFixture]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> PresenterTester</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[Test]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> CloseViewWhenViewIsNotDirty()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>IMock msgBoxMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IMessageBoxCreator));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>IMock viewMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IView));</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Define the expected interaction</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>msgBoxMock.ExpectNoCall(&#8220;AskYesNoQuestion&#8221;, <SPAN>typeof</SPAN>(<SPAN>string</SPAN>), <SPAN>typeof</SPAN>(<SPAN>string</SPAN>));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Setup the view so that the controller will think the screen is dirty</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.SetupResult(&#8220;Name&#8221;, &#8220;Jeremy&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.SetupResult(&#8220;PhoneNumber&#8221;, &#8220;SOMETHING DIFFERENT TO MAKE THE SCREEN DIRTY&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.SetupResult(&#8220;Email&#8221;, &#8220;jeremy@somewhere.com&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.SetupResult(&#8220;State&#8221;, &#8220;TX&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.SetupResult(&#8220;PostalCode&#8221;, &#8220;78750&#8243;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.Expect(&#8220;Close&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Model model = <SPAN>new</SPAN> Model(&#8220;Jeremy&#8221;, &#8220;555-555-5555&#8243;, &#8220;jeremy@somewhere.com&#8221;, &#8220;TX&#8221;, &#8220;78750&#8243;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the presenter class with the mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Presenter presenter = <SPAN>new</SPAN> Presenter(</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>model,</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IView) viewMock.MockInstance, </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IMessageBoxCreator) msgBoxMock.MockInstance);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Perform the unit of work</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>presenter.Close();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Verify the interaction</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>msgBoxMock.Verify();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.Verify();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">This is a terrible unit test.<SPAN>&nbsp; </SPAN>The “dirty” state of the view was tested by comparing the value of each property on the view class compared to the same property on the internal Model member of the <SPAN>Presenter</SPAN> class.<SPAN>&nbsp; </SPAN>The unit tests setup “clean” or “dirty” states by setting up results for every single property on the <SPAN>IView</SPAN> interface. <SPAN>&nbsp;</SPAN>In practice this obfuscated the intention of the unit tests and made the unit tests more laborious to write and maintain. <SPAN>&nbsp;</SPAN>Everytime you added a new field to the screen, all the <SPAN>Presenter</SPAN> unit tests would break.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">In this case, isolate the “dirty” check so it can be tested separately from the screen flow logic.<SPAN>&nbsp; </SPAN>What I do now is put an <SPAN>IsDirty()</SPAN> method on the view interface.<SPAN>&nbsp; </SPAN>In the <SPAN>Presenter</SPAN> unit tests I simply setup a value for <SPAN>IsDirty()</SPAN> to easily simulate all of the paths through the code.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[Test]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> CloseViewWhenViewIsNotDirty()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>IMock msgBoxMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IMessageBoxCreator));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>IMock viewMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IView));</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Define the expected interaction</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>msgBoxMock.ExpectNoCall(&#8220;AskYesNoQuestion&#8221;, <SPAN>typeof</SPAN>(<SPAN>string</SPAN>), <SPAN>typeof</SPAN>(<SPAN>string</SPAN>));</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Very simply set the screen to be in a &#8220;clean&#8221; state</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.ExpectAndReturn(&#8220;IsDirty&#8221;, <SPAN>false</SPAN>);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>viewMock.Expect(&#8220;Close&#8221;);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the presenter class with the mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Presenter presenter = <SPAN>new</SPAN> Presenter(</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IView) viewMock.MockInstance, </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IMessageBoxCreator) msgBoxMock.MockInstance);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Perform the unit of work</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>presenter.Close();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Verify the interaction</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_msgBoxMock.Verify();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_viewMock.Verify();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN>Now we’ve got a lot less mock setup and the unit tests will be less brittle and easier to understand because we’ve eliminated a lot of the noise from the view property setup.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Watch Out When You Mock Abstract Classes</B></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">I would urge a certain level of caution in mocking an abstract class or a concrete class.<SPAN>&nbsp; </SPAN>For best results my advice is to only mock interfaces to avoid unwanted side effects.<SPAN>&nbsp; </SPAN>It is certainly possible to mock an abstract class, doing that leads to some side effects that effectively negate all of the advantages of a mock object.<SPAN>&nbsp; </SPAN>Dynamic mock object tools like NMock can only override virtual methods.<SPAN>&nbsp; </SPAN>This might not be so much a problem in other languages, but with the .Net languages all methods are non-virtual by default.<SPAN>&nbsp; </SPAN>This means that some of the behavior that you were trying to remove from the test with a mock is still there.<SPAN>&nbsp; </SPAN>The dynamic mock libraries work by using Reflection.Emit to create a dynamic proxy on the fly for the requested interface or abstract class.<SPAN>&nbsp; </SPAN>In the case of an abstract class the dynamic mock can only intercept virtual members and even worse, the constructor function of the superclass will probably be exercised.<SPAN>&nbsp; </SPAN>Here’s an example of mocking an abstract class that’s caused me some grief in the past.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>class</SPAN> ServiceProvider</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> ServiceProvider()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Connect to a web service to cache some data</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>void</SPAN> PerformService();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Cannot be intercepted by a mock object because it&#8217;s non-virtual</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> DataSet LookupData(<SPAN>string</SPAN> id)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> <SPAN>new</SPAN> DataSet();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[TestFixture]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> MockExampleTestFixture</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[Test]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> TestSomething()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// As soon as this code is executed the constructor function of</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// ServiceProvider will be called</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>DynamicMock mock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(ServiceProvider));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal">When you try to create a mock for <SPAN>ServiceProvider</SPAN> the abstract class is trying to access a web service in its constructor function.<SPAN>&nbsp; </SPAN>If the web service isn’t available, the unit test blows up.<SPAN>&nbsp; </SPAN>Even with the mock object, your unit test is now using the web service, making an implicit dependency between your unit test and an external resource and effectively eliminating the advantage of using a mock object in the first place.<SPAN>&nbsp; </SPAN>The solution is might be simple; look for an opportunity to do an <A href="http://www.refactoring.com/catalog/extractClass.html">Extract Interface</A> refactoring to create an <SPAN>IServiceProvider</SPAN> interface that can be mocked without any side effects.</P></p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/test-driven-development/" title="View all posts in Test Driven Development" rel="category tag">Test Driven Development</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2006/01/10/best-and-worst-practices-for-mock-objects/" title="Permalink to Best and Worst Practices for Mock Objects" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2006/01/10/best-and-worst-practices-for-mock-objects/feed/" title="Comments RSS to Best and Worst Practices for Mock Objects" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-117 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2005/12/20/why-and-when-to-use-mock-objects/" rel="prev"><span class="meta-nav">&larr;</span> Why and When to Use Mock Objects</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2006/01/13/great-quote-from-jeffrey-palermo/" rel="next">Great Quote from Jeffrey Palermo <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-432">
+					<div id="dsq-comment-header-432" class="dsq-comment-header">
+						<cite id="dsq-cite-432">
+								<span id="dsq-author-user-432">Geert Baeyaert</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-432" class="dsq-comment-body">
+						<div id="dsq-comment-message-432" class="dsq-comment-message"><p>Great post!</p>
+<p>I have one question though.  In the &#8220;Mock the right thing&#8221; part, you say that you add an IsDirty property to your view.  Doesn&#8217;t this add too much logic to your view, logic which is hard to test?</p>
+<p>As an alternative, what do you think of the following design?</p>
+<p>Define an IIsDirtyStrategy interface with an IsDirty property.  (IIsDirtyStrategy may not be the best name, but let&#8217;s ignore that for now).  Allow your presenter to accept an IIsDirtyStrategy in its ctor (DI).</p>
+<p>This allows you to mock IIsDirtyStrategy in your unit tests, and still keep the logic out of the view.</p>
+<p>Also, for ease of use in your production code, have your presenter implement IIsDirtyStrategy, and create an overload of your ctor which does not accept an IIsDirtyStrategy, but uses itself as the IIsDirtyStrategy.</p>
+<p>In code:</p>
+<p>public class Presenter : IIsDirtyStrategy<br />
+{<br />
+    public Presenter (IView view, IIsDirtyStrategy isDirtyStgy)<br />
+    {<br />
+        Construct (view, isDirtyStgy);<br />
+    }</p>
+<p>    public Presenter (IView view)<br />
+    {<br />
+        Construct (view, this);<br />
+    }</p>
+<p>    private void Construct (IView view, IIsDirtyStrategy isDirtyStgy)<br />
+    {<br />
+        // &#8230;<br />
+    }</p>
+<p>    private bool IsDirty<br />
+    {<br />
+        get { return _isDirtyStgy.IsDirty; }<br />
+    }</p>
+<p>    bool IsDirtyStrategy.IsDirty<br />
+    {<br />
+        get { // This is the real implementation, where the state of the view is compared to what&#8217;s in the model. }<br />
+    }<br />
+}</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-433">
+					<div id="dsq-comment-header-433" class="dsq-comment-header">
+						<cite id="dsq-cite-433">
+								<span id="dsq-author-user-433">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-433" class="dsq-comment-body">
+						<div id="dsq-comment-message-433" class="dsq-comment-message"><p>Geert,</p>
+<p>Thanks for the comment, and yes I do like that solution.   I do something similar now, but just put the equivialent of the IsDirtyStrategy embedded into the view class.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-434">
+					<div id="dsq-comment-header-434" class="dsq-comment-header">
+						<cite id="dsq-cite-434">
+								<span id="dsq-author-user-434">Geert Baeyaert</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-434" class="dsq-comment-body">
+						<div id="dsq-comment-message-434" class="dsq-comment-message"><p>So, it doesn&#8217;t bother you that the logic for determining whether a view is dirty is in the view?</p>
+<p>How do you test this logic?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-435">
+					<div id="dsq-comment-header-435" class="dsq-comment-header">
+						<cite id="dsq-cite-435">
+								<span id="dsq-author-user-435">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-435" class="dsq-comment-body">
+						<div id="dsq-comment-message-435" class="dsq-comment-message"><p>Let me amend that a little bit, I still like to move that to a separate &#8220;controller&#8221; class that can be tested against a mock of the view like you were suggesting, I just embed that controller inside the view class to keep the view interface cleaner.  I don&#8217;t like that logic in the view class itself, unless you implement it by catching &#8220;Change&#8221; events.  It&#8217;s ugly, but you always have the ability to do some testing against the UI itself</p>
+<p>public class View : IView, IScreenView (different interface for the properties)<br />
+{<br />
+    private IDirtyStrategy _dirtyStrategy;</p>
+<p>    public bool IsDirty()<br />
+    {<br />
+        return _dirtyStrategy.IsDirty(this);</p>
+<p>    }</p>
+<p>}</p>
+<p>Another way I&#8217;ve been doing things with my little side UI projects is make every single field element on the screen implement some kind of IPropertyEditor object that has Reset(), Commit(), and IsDirty() methods.  The controller can then iterate through the aggregated IPropertyEditor objects to make the &#8220;IsDirty&#8221; decision and drive data back and forth between the model and the screen.  At least in WinForms development you can quite happily instantiate TextBox and ComboBox objects inside your unit tests without going through NUnitForms or some other sort of UI test harness.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-436">
+					<div id="dsq-comment-header-436" class="dsq-comment-header">
+						<cite id="dsq-cite-436">
+								<span id="dsq-author-user-436">Geert Baeyaert</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-436" class="dsq-comment-body">
+						<div id="dsq-comment-message-436" class="dsq-comment-message"><p>Ok, I understand now.  Thanks for clearing that up.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-437">
+					<div id="dsq-comment-header-437" class="dsq-comment-header">
+						<cite id="dsq-cite-437">
+								<span id="dsq-author-user-437">BW</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-437" class="dsq-comment-body">
+						<div id="dsq-comment-message-437" class="dsq-comment-message"><p>Hi Jeremy,</p>
+<p>By the looks of the dates on this blog post I&#8217;m afraid that this discussion thread may be dead, but I&#8217;ll take a chance and ask this anyway&#8230; You (and others) have said that you should avoid mocking interfaces and classes outside of your code. However, what about something like the following example? My AssemblyController uses an IUnityContainer to perform service locator operations (sorry, I didn&#8217;t know about StructureMap when I wrote it). Should I just go ahead and pass a UnityContainer instead of mocking it, or is mocking this okay? What would you recommend?</p>
+<p><code SNIP><br />
+var containerMock = new Mock<iunitycontainer>();<br />
+var metadataXmlServiceMock = new Mock<imetadataxmlservice>();<br />
+var shellDataContextMock = new Mock<ishelldatacontext>();<br />
+var assemblyListPresenterMock = new Mock<iassemblylistpresenter>();<br />
+containerMock.Expect(x => x.Resolve </iassemblylistpresenter><iassemblylistpresenter>()).Returns(assemblyListPresenterMock.Object).Verifiable();<br />
+&#8230;<br />
+AssemblyController assemblyController = new AssemblyController(<br />
+    containerMock.Object, metadataXmlServiceMock.Object, shellDataContextMock.Object);<br />
+assemblyController.RemoveReference(&#8220;dummy&#8221;); // NOTE: THIS IS THE METHOD BEING TESTED<br />
+</iassemblylistpresenter></ishelldatacontext></imetadataxmlservice></iunitycontainer></code></p>
+<p>Thanks for all of your help and advice. Your Patterns In Practice column is a new favorite of mine.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-438">
+					<div id="dsq-comment-header-438" class="dsq-comment-header">
+						<cite id="dsq-cite-438">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-438">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-438" class="dsq-comment-body">
+						<div id="dsq-comment-message-438" class="dsq-comment-message"><p>BW,</p>
+<p>A.)  Use a real container instead of Unity <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+<p>B.)  Don&#8217;t mock the container itself.  That&#8217;s smelly.  If you *have* to use service location inside the class under test, just inject the proper mocks into the container on the fly &#8212; which is very easy in StructureMap btw.  And should be in Unity.</p>
+<p>It&#8217;s not that you shouldn&#8217;t mock interfaces outside your codebase so much as you shouldn&#8217;t mock any interface you don&#8217;t completely understand or chatty interfaces.  You might be fine with the code above.  You&#8217;ll know pretty fast when you write the tests.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-439">
+					<div id="dsq-comment-header-439" class="dsq-comment-header">
+						<cite id="dsq-cite-439">
+								<span id="dsq-author-user-439">BW</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-439" class="dsq-comment-body">
+						<div id="dsq-comment-message-439" class="dsq-comment-message"><p>Very good &#8211; makes sense. Thank you for your reply!</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2006/01/10/best-and-worst-practices-for-mock-objects/ ';
+	var disqus_identifier = '117 /blogs/jeremy.miller/archive/2006/01/10/136407.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Best and Worst Practices for Mock Objects";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=117');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2006\/01\/10\/best-and-worst-practices-for-mock-objects\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://codeofrob.com/' rel='external nofollow' class='url'>Rob Ashton</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6752">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://www.best-registrycleaner.net' rel='external nofollow' class='url'>Best Registry Cleaner</a> on <a href="http://codebetter.com/jeremymiller/2009/01/20/create-your-own-auto-registration-convention-with-structuremap/#comment-6747">Create your own Auto Registration Convention with StructureMap</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 6.144 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 08:51:14 -->
+<!-- super cache -->

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Can we avoid tooling to prevent spaghetti code? | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='The big picture of the SharpDevelop code base' href='http://codebetter.com/patricksmacchia/2009/04/26/the-big-picture-of-the-sharpdevelop-code-base/' />
+<link rel='next' title='Calling private methods from Unit Tests' href='http://codebetter.com/patricksmacchia/2009/05/10/calling-private-methods-from-unit-tests/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=115' />
+<link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-115" class="post-115 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Can we avoid tooling to prevent spaghetti code?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code/" title="12:13 pm" rel="bookmark"><span class="entry-date">May 3, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><!--[if gte mso 9]&gt;--></p>
+<p><!--[if gte mso 9]&gt;--></p>
+<p>  Normal<br />
+  0</p>
+<p>  21</p>
+<p>  false<br />
+  false<br />
+  false</p>
+<p>  FR<br />
+  X-NONE<br />
+  X-NONE</p>
+<p><!--[if gte mso 9]&gt;--></p>
+<p><!--[if gte mso 10]&gt;--></p>
+<p><!--[endif]-->
+</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Recently, <a target="_blank" href="/blogs/jeremy.miller/">Jeremy D.<br />
+Miller</a><br />
+wrote on <a target="_blank" href="http://twitter.com/jeremydmiller/statuses/1649928662">twitter</a>:<span></span><br />
+</span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><i><span lang="EN-US">I still think NDepend</span><a href="http://www.ndepend.com/"><span lang="EN-US"></span></a></i></span><span class="entry-content"><i><span lang="EN-US"> is more important in strange codebases. I know<br />
+where the coupling pain points are in my own code.</span></i></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">&nbsp;</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">I<br />
+read Jeremy&rsquo;s blog and think it is an excellent point to improve developer<br />
+skills. </span></span><span lang="EN-US">I was<br />
+very concerned to read: <span class="entry-content"><b>I know where the coupling pain points are in my own code</b>. I put a<br />
+lot of energy in evangelizing about the efficiency of good componentization to<br />
+fight again <i>spaghetti code</i>. Anyone<br />
+that worked on a real-world large project (a project with many<br />
+developers, with turn-over, lack of education and years of legacy) knows that<br />
+dealing with wrong coupling is a major problem. Actually I think it is <b>THE</b> major problem for large organization.<br />
+I tried to summarize this situation + solution in my post: </span></span><span class="entry-content"><a target="_blank" href="/blogs/patricksmacchia/archive/2008/09/23/getting-rid-of-spaghetti-code-in-the-real-world.aspx"><span style="color: windowtext;text-decoration: none"><span>&nbsp;</span><span lang="EN-US">Getting<br />
+rid of spaghetti code in the real-world: a Case Study</span></span><span lang="EN-US"></span></a></span><span class="entry-content"><span lang="EN-US"></span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">&nbsp;</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">We<br />
+all agree that software development is an incredibly difficult engineering task,<br />
+and I get skeptical when I hear too confident things like <b>I know where the coupling pain points are in my own code</b>. The<br />
+reasons are twoflod&nbsp;:</span></span></p>
+<p>&nbsp;</p>
+<ul>
+<li><span class="entry-content"><b><span lang="EN-US">First, without the help of<br />
+appropriate tooling, nobody can master the structure of a program</span></b></span><span class="entry-content"><span lang="EN-US">. </span></span></li>
+</ul>
+<p>&nbsp;</p>
+<ul>
+<li><span class="entry-content"><b><span lang="EN-US">Second, from what I saw, unmanageable<br />
+monster code structure is the primary technical reason of project failure.</span></b></span></li>
+</ul>
+<p>&nbsp;</p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">&nbsp;</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">&nbsp;</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">By<br />
+curiosity I analyzed <a target="_blank" href="http://structuremap.sourceforge.net/Default.htm">StructureMap</a></span><a target="_blank" href="http://structuremap.sourceforge.net/Default.htm"><span lang="EN-US"></span></a></span><span class="entry-content"><span lang="EN-US"><a target="_blank" href="http://structuremap.sourceforge.net/Default.htm"> </a>(an OSS<br />
+project developed by Jeremy) with <a target="_blank" href="http://www.NDepend.com">NDepend</a>.</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">&nbsp;</span></span></p>
+<p style="margin: 1pt 0cm"><span class="entry-content"><span lang="EN-US">Below<br />
+is<br />
+a graph of dependencies between namespaces: the code structure is<br />
+entangled, there is no care for componentization nor any identifiable<br />
+layer:</span></span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapGraphSmall.jpg"><span lang="EN-US"></span></a><a target="_blank" href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapGraphBig.jpg"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/StructureMap/StrureMapGraphSmall.jpg-550x0.jpg?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992104&amp;Signature=3tHZpPM1TQ92vnZ0y5igRHIVaiA%3d" border="0" /></a><span lang="EN-US"> </span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapGraphBig.jpg"><span lang="EN-US"></span></a><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Here is the same<br />
+entangled structure viewed this time with the dependency matrix + the<br />
+exhibition of a particular cycle&nbsp;of length 5:</span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapMatrixBig.jpg"><span lang="EN-US"></span></a><a target="_blank" href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapMatrixBig.jpg"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/StructureMap/StrureMapMatrixBig.jpg-550x0.jpg?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992104&amp;Signature=vFICzI2Yvv5apxiiVpsz3%2brGKuI%3d" border="0" /></a><span lang="EN-US"> </span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StrureMapMatrixSmall.jpg"><span lang="EN-US"></span></a><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Don&rsquo;t take me wrong, I<br />
+don&rsquo;t put the blame on StructureMap nor its author. I present concrete and<br />
+verifiable facts, not opinion. Even, I estimate that lack of componentization<br />
+is something acceptable taking account the fact that StructureMap is a small<br />
+project developed by a single person (around 3.100 <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbLinesOfCode">Lines of Code</a> LoC</span><span lang="EN-US">). My concern is that, Jeremy being a<br />
+leader in the .NET community, if a programmer takes the words <span class="entry-content"><b><i>(tooling is for someone else)</i> I know where the<br />
+coupling pain points are in my own code</b></span> for granted, he will end up<br />
+with a similar spaghetti code structure but this time, on a large scale<br />
+professional project.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Actually while starting<br />
+NDepend 5 years ago I didn&rsquo;t put much care in componentization and layering. Inevitably<br />
+I ended up dealing with spaghetti. At a point in 2006, the project was on its<br />
+way to become something professional and at the same time, was released the<br />
+dependency matrix feature. The first thing to do was to eat my own dog food by layering<br />
+the code. For those interested find the whole story detailed in this article: <a target="_blank" href="http://www.theserverside.net/tt/articles/showarticle.tss?id=ControllingDependencies">Control<br />
+component dependencies to gain clean architecture</a><br />
+(section <i>Getting rid of dependency cycles<br />
+: a case-study</i>).</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The dependency matrix<br />
+below shows the current NDepend code base structure. To read the matrix: a blue<br />
+cell means that the namespace represented by the column is using directly the namespace<br />
+represented by the row. The structure is made of 66 components mapped to 66 layered<br />
+namespaces: the matrix is triangular meaning that high level and low level layers<br />
+are well identified or in other words, there are no dependency cycles. The blue<br />
+triangle in the middle is the consequence of the UI code cohesion. The blue<br />
+ribbon at the bottom is the consequence of the low-level internal framework that<br />
+itself relies on some helpers.<span class="entry-content"></span></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/NDependMatrixSmall.jpg"><span lang="EN-US"></span></a><a target="_blank" href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/NDependMatrixBig.jpg"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/StructureMap/NDependMatrixSmall.jpg-550x0.jpg?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992104&amp;Signature=fal%2b4xAQzQl9y1tzKLNNZHqwUzM%3d" border="0" /></a><span lang="EN-US"> </span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/NDependMatrixBig.jpg"><span lang="EN-US"></span></a><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">With 78K LoC NDepend is<br />
+25 times bigger than StructureMap. This is illustrated by the metric view<br />
+below. Every day it is a blessing for the whole team to work on a clean<br />
+structured code. Also every new design decision is driven by the respect of this<br />
+clear, simple and elegant concept.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/StructureMapComparedToNDepend.jpg"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/StructureMap/StructureMapComparedToNDepend.jpg-550x0.jpg?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992104&amp;Signature=AqrWT0UIxSTW6zhTsrPQTx13Yyc%3d" border="0" /></a> </span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">With 78K LoC NDepend is still<br />
+a medium-sized code base. It is itself small compare to a real large code base<br />
+such as the whole .NET Framework v3.5 with millions of LoC. The point here is<br />
+to show how big a code base can become, to give an idea of the damage that <i>spaghetti</i> code could do.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/NDependComparedToDotNetFx.jpg"><span lang="EN-US"></span></a><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.StructureMap/NDependComparedToDotNetFx.jpg"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/StructureMap/NDependComparedToDotNetFx.jpg-550x0.jpg?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992104&amp;Signature=cQLdPPZieNGWOYCYsY5F%2fTxiA94%3d" border="0" /></a><span> <span lang="EN-US"></span></span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">An entire post in<br />
+response to a twitter sentence is maybe a bit disproportioned. But I feel<br />
+concerned when someone trusted says that he doesn&rsquo;t need tooling to care for<br />
+dependencies/layering/componentization. To me, it is as chocking as hearing<br />
+that code correctness can be achieved without automatic testing and contract. I<br />
+saw too many projects failing because of the <i>spaghetti</i> paradigm, and I am sure you saw it too (I just hope you<br />
+don&rsquo;t deal with it every day </span><span style="font-family: Wingdings" lang="EN-US"><span>[:)]</span></span><span lang="EN-US">). <b>The return on investment for structuring the code is just too high to not do it</b>. Alternatively, <b>the pain you got for not structuring code is also just too high to not structure it.</b></span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><b><br /></b></span></p>
+<hr />
+<p><i>I had an email discussion with Jeremy about this post:</i></p>
+<p><b>Jeremy</b>: By <i>I know where my coupling pain points are </i>I meant that I know<br />
+exactly which classes are dangerous to touch and which ones aren&#8217;t that<br />
+risky (&#8230;) At no point in the post do you make any kind of concrete proof that the particular namespace coupling made any kind of real impact on development.&nbsp; I watch CC#&#8217;s religiously (it&#8217;s crept up in some places by natural accretion), but the namespace coupling?&nbsp; I&#8217;d judge that to be relatively unimportant in terms of real impact.</p>
+<p><b>Me</b>: The problem comes from which artifact you use to represent components. <i>Microsoft </i>advocates <i>implicitly </i>for assemblies to represent components, which IMHO is a very poor choices:<br />By <i>implicitly </i>I mean mainly:</p>
+<ul>
+<li>the <i>internal </i>visibility level which scope is assembly</li>
+<li>the one-to-one association between VS project and assembly</li>
+<li>the way project gets referenced each other in VS</li>
+</ul>
+<p>I qualify it as a poor choice because assembly is a physical concept (file) while component is a logical concept. I wrote a lot about the problems provoked by physical components (VS slow down, C#/VB.NET compilation time, CLR loading time, deployment issues with plenty of files to deal with, unit of re-use spawned on many files&#8230;)</p>
+<p><a target="_blank" href="/blogs/patricksmacchia/archive/2008/12/08/advices-on-partitioning-code-through-net-assemblies.aspx">Advices on partitioning code through .NET Assemblies</a><br /><span lang="EN-US"><a target="_blank" href="http://www.theserverside.net/tt/articles/showarticle.tss?id=ControllingDependencies">Control<br />
+component dependencies to gain clean architecture</a><br />
+(section <i>.NET Components</i>)</span></p>
+<p><span lang="EN-US">And Jeremy also advocated against using <i>assembly </i>to master coupling in its post: <a target="_blank" href="/blogs/jeremy.miller/archive/2008/10/10/183438.aspx">Separate Assemblies != Loose Coupling</a></span></p>
+<p>If you don&#8217;t choose <i>assembly </i>to represent component, the natural artifact candidate is then <i>namespace</i>. And if so, namespaces cycles is bad because components cycles is bad. If components A and B are mutually dependent, you get one super component made of A &amp; B, because A and B cannot be tested, reused, refactored etc, (all these things that characterize a component),&#8230;independently from each other.</p>
+<p>A third choice to modelize components, apart <i>assembly </i>and <i>namespace</i>, is a <i>group of types</i>, as the .NET Base Class Library team is doing. They used namespaces to hierarchize the framework set of public types which is not a bad thing from a user point of view. They are now stuck to group their type (like lower level is primitive CLR types <i>int</i>, <i>bool</i>.. then comes a component with more evoluated primitive types <i>string</i>, <i>StringBuilder, array</i>&#8230; then comes threading and other low level stuff&#8230; etc). Types are then grouped, independently from their namespaces (and maybe their assemblies, this I don&#8217;t know). The problem here is that this third artifact (<i>group of types</i>) is made concrete by some <a target="_blank" href="http://code.msdn.microsoft.com/fxarch">proprietary tools</a> and has no real existence in the source code itself. It is hard for programmer to get a concrete picture of componentization and this certainly increases the complexity for refactoring any portion of code. </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code/" title="Permalink to Can we avoid tooling to prevent spaghetti code?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code/feed/" title="Comments RSS to Can we avoid tooling to prevent spaghetti code?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-115 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2009/04/26/the-big-picture-of-the-sharpdevelop-code-base/" rel="prev"><span class="meta-nav">&larr;</span> The big picture of the SharpDevelop code base</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2009/05/10/calling-private-methods-from-unit-tests/" rel="next">Calling private methods from Unit Tests <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-634">
+					<div id="dsq-comment-header-634" class="dsq-comment-header">
+						<cite id="dsq-cite-634">
+								<span id="dsq-author-user-634">Bob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-634" class="dsq-comment-body">
+						<div id="dsq-comment-message-634" class="dsq-comment-message"><p>Another sales pitch.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-635">
+					<div id="dsq-comment-header-635" class="dsq-comment-header">
+						<cite id="dsq-cite-635">
+	http://www.NDepend.com							<span id="dsq-author-user-635">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-635" class="dsq-comment-body">
+						<div id="dsq-comment-message-635" class="dsq-comment-message"><p>Bob &#8216;Anonymous&#8217;, I dedicate several hours every week to expose some ideas that, I estimate, can make the life of blog readers easier.</p>
+<p>I am the lead developers of the NDepend tool and consequently most of the ideas explained revolve around this tool domain. On CodeBetter, I think that Glenn Block with MEF and Matthew Podwysocki with F# have the exact same approach. I consider their post as invaluable insider notes, who else than co-creator could better explain intentions surrounding these technologies?</p>
+<p>I try hard to provide real added value for each blog post, with some efficient ideas that are too rarely debated in the .NET community. If for some engineering reasons you disagree with my posts content, you are highly welcome to open a thread by answering my posts.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-636">
+					<div id="dsq-comment-header-636" class="dsq-comment-header">
+						<cite id="dsq-cite-636">
+								<span id="dsq-author-user-636">Bob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-636" class="dsq-comment-body">
+						<div id="dsq-comment-message-636" class="dsq-comment-message"><p>Fair enough, I just found it lame that you &#8220;exposed&#8221; the SM codebase that way you did. I would imagine you could take code from almost any developer, regardless of skill, and have NDepend render an image that makes it look as if the developer learned to program by reading the back of a Cracker Jack box. SM is a great piece of software that solves the needs of many applications and does so in an elegant way. Your post was misleading.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-637">
+					<div id="dsq-comment-header-637" class="dsq-comment-header">
+						<cite id="dsq-cite-637">
+	http://weblogs.asp.net/fbouma							<span id="dsq-author-user-637">Frans Bouma</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-637" class="dsq-comment-body">
+						<div id="dsq-comment-message-637" class="dsq-comment-message"><p>&#8220;By I know where my coupling pain points are I meant that I know exactly which classes are dangerous to touch and which ones aren&#8217;t that risky (&#8230;) At no point in the post do you make any kind of concrete proof that the particular namespace coupling made any kind of real impact on development.  I watch CC#&#8217;s religiously (it&#8217;s crept up in some places by natural accretion), but the namespace coupling?  I&#8217;d judge that to be relatively unimportant in terms of real impact.&#8221;</p>
+<p>I Agree with this. In my current major project (you know what <img src='http://codebetter.com/patricksmacchia/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> ) I rewrote a lot of code, and it turned out to be very differently organized, yet I do know I have a couple of cycles in the namespace coupling. It&#8217;s simply too much trouble to get that out of the way for the reward you&#8217;ll get back IMHO. I&#8217;m definitely not going to add interfaces all over the place just to get rid of the coupling while there&#8217;s 1 implementation of that interface in the whole big code base: the impact on namespace coupling is IMHO too low for that work. </p>
+<p>I.o.w.: it would be better if you clearly showed what the impact would be if this coupling would stay around. I really don&#8217;t see the disadvantage of this, only if the different namespaces (which share the same root namespace and are in the same assembly) are split up in different assemblies, but when does that happen? They aren&#8217;t grouped together for nothing.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-638">
+					<div id="dsq-comment-header-638" class="dsq-comment-header">
+						<cite id="dsq-cite-638">
+	http://www.NDepend.com							<span id="dsq-author-user-638">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-638" class="dsq-comment-body">
+						<div id="dsq-comment-message-638" class="dsq-comment-message"><p>Bob, I took many care of not judging SM code base.  I know that SM is a useful pieces of OSS software developed by a brilliant mind. I explicitly wrote my intentions:</p>
+<p>>Don’t take me wrong, I don’t put the blame on StructureMap nor its author&#8230;</p>
+<p>Re-read the blog post and you&#8217;ll see that the only and unique thing I exposed from the SM code base, are the 2 screenshoots that are pure facts about the SM code base itself. </p>
+<p>That said ,I demonstrate that the NDepend code base is better componentized, and I explain this is because we use tooling for that, the point I wanted to demonstrate in this post: Can we avoid tooling to prevent spaghetti code?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-639">
+					<div id="dsq-comment-header-639" class="dsq-comment-header">
+						<cite id="dsq-cite-639">
+	http://www.NDepend.com							<span id="dsq-author-user-639">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-639" class="dsq-comment-body">
+						<div id="dsq-comment-message-639" class="dsq-comment-message"><p>>It&#8217;s simply too much trouble to get that out of the way for the reward you&#8217;ll get back IMHO.</p>
+<p>Frans, saying that is like saying you don&#8217;t believe in layering and componentization or am I wrong?</p>
+<p>>it would be better if you clearly showed what the impact would be if this coupling would stay around</p>
+<p>The following post is a testimonial of how painful was a big entangled monolithic assembly and why it was needed to split it up. Basically, the problem was that this monster assembly forced all its users to use 100% of the underlying code, even when only 10% was only needed. The team came back to me very recently after layering the whole code and splitting the monster and they seemed extremely happy with it:</p>
+<p><a href="http://codebetter.com/blogs/patricksmacchia/archive/2008/09/23/getting-rid-of-spaghetti-code-in-the-real-world.aspx" rel="nofollow">http://codebetter.com/blogs/patricksmacchia/archive/2008/09/23/getting-rid-of-spaghetti-code-in-the-real-world.aspx</a></p>
+<p>>I really don&#8217;t see the disadvantage of this, only if the different namespaces (which share the same root namespace and are in the same assembly) are split up in different assemblies, but when does that happen? They aren&#8217;t grouped together for nothing.</p>
+<p>The only constant in software development is that things are changing unexpectedly. When does that happen? When do we need to split up a big entangled monolithic piece of code that grown unexpectedly? I would answer very often actually, the post referenced above show this very clearly.</p>
+<p>Also, concerning the advantages of a good componentization, the following post explains how seamless it was to do a global and apparently very intrusive refactoring just because the code was properly layered from the ground up:<br />
+<a href="http://codebetter.com/blogs/patricksmacchia/archive/2009/02/22/evolutionary-design-and-acyclic-componentization.aspx" rel="nofollow">http://codebetter.com/blogs/patricksmacchia/archive/2009/02/22/evolutionary-design-and-acyclic-componentization.aspx</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-640">
+					<div id="dsq-comment-header-640" class="dsq-comment-header">
+						<cite id="dsq-cite-640">
+	http://geekswithblogs.net/WillSmith							<span id="dsq-author-user-640">Will Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-640" class="dsq-comment-body">
+						<div id="dsq-comment-message-640" class="dsq-comment-message"><p>It seems to me that if the purpose of your post it to demonstrate the advantage of NDepend as a tool, then you should show some sort of before and after of the CODE.  Use a small sample project, display the dependency matrix and the code before, then after.  Show us how much more elegant and readable the code is.  Show us how using the tool can improve the code/design.</p>
+<p>Regardless of your stating:</p>
+<p>  &#8220;Don’t take me wrong, I don’t put the blame on StructureMap nor its author. I present concrete and verifiable facts, not opinion&#8230;&#8221;,</p>
+<p>displaying the dependency matrix of StructureMap, then of NDepend as a comparison can easily be construed as an criticism of SM.  Displaying a graph with red nodes and lines and describing it as &#8220;entagled&#8221; is not fact, but opinion.</p>
+<p>That said, I can see the value in using a tool like NDepend to review the complexity of your code.  However, blindly following the suggestions to eliminate all of the circular dependencies could easily add more complexity to a design.  We have SOLID principles, not laws.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-641">
+					<div id="dsq-comment-header-641" class="dsq-comment-header">
+						<cite id="dsq-cite-641">
+	http://www.NDepend.com							<span id="dsq-author-user-641">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-641" class="dsq-comment-body">
+						<div id="dsq-comment-message-641" class="dsq-comment-message"><p>>Displaying a graph with red nodes and lines and describing it as &#8220;entagled&#8221; is not fact, but opinion.</p>
+<p>I am not native english spoken. Will, if you have another adjective than &#8216;entangled&#8217; to qualify a graph with numerous circular dependencies please submit. I did not invent these cycles, they are here, they are facts.</p>
+<p>>Show us how using the tool can improve the code/design.</p>
+<p>I mentioned that the NDepend code base was entangled also in the early days because of the lack of tooling. It is now fully layered for 3 years almost, thanks to special tooling (actually NDepend analyzing itself). I provided a link to an article that explains this evolution. </p>
+<p>As the title of the post suggest, the point here is to explain by example that without tooling you cannot avoid cycles/spaghetti/entangled code.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-642">
+					<div id="dsq-comment-header-642" class="dsq-comment-header">
+						<cite id="dsq-cite-642">
+								<span id="dsq-author-user-642">Bob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-642" class="dsq-comment-body">
+						<div id="dsq-comment-message-642" class="dsq-comment-message"><p>> As the title of the post suggest, the point here is to explain by example that without tooling you cannot avoid cycles/spaghetti/entangled code.</p>
+<p>And my point  is that some cycles are not &#8220;evil&#8221;, and that while showing a pretty picture with arrows pointing everywhere make it look like a codebase with fatal flaws,  that may not actually be the case. Again, show the dependency matrix then show some actual code.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-643">
+					<div id="dsq-comment-header-643" class="dsq-comment-header">
+						<cite id="dsq-cite-643">
+	http://codebetter.com/members/Patrick-Smacchia/default.aspx							<span id="dsq-author-user-643">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-643" class="dsq-comment-body">
+						<div id="dsq-comment-message-643" class="dsq-comment-message"><p>>And my point  is that some cycles are not &#8220;evil&#8221;</p>
+<p>Then we fundamentally disagree on this point.  Cycles means absence of component and absence of component means death of the project in the mid-term. I wrote a lot about this, so let me copy/paste some reasoning from this article:<br />
+<a href="http://www.theserverside.net/tt/articles/showarticle.tss?id=ControllingDependencies" rel="nofollow">http://www.theserverside.net/tt/articles/showarticle.tss?id=ControllingDependencies</a></p>
+<p>Why are dependency cycles harmful ?</p>
+<p>Dependency cycles between components lead to what is commonly called spaghetti code or tangled code. If component A depends on B that depends on C that depends on A, the component A can’t be developed and tested independently of B and C. A, B and C form an indivisible unit, a kind of super-component. This super-component has a higher cost than the sum of the cost over A, B and C because of the diseconomy of scale phenomenon (well documented in  Software Estimation: Demystifying the Black Art by Steve McConnell). Basically, this holds that the cost of developing an indivisible piece of code increases exponentially. This suggests that developing and maintaining 1,000 LOC (Lines Of Code) will likely cost three or four times more than developing and maintaining 500 LOC, unless it can be split in two independent lumps of 500 LOC each. Hence the comparison with spaghetti that describes tangled code that can’t be maintained. In order to rationalize architecture, one must ensure that there are no dependency cycles between components, but also check that the size of each component is acceptable (500 to 1000 LOC).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-644">
+					<div id="dsq-comment-header-644" class="dsq-comment-header">
+						<cite id="dsq-cite-644">
+								<span id="dsq-author-user-644">Neil Blackburn</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-644" class="dsq-comment-body">
+						<div id="dsq-comment-message-644" class="dsq-comment-message"><p>Hi Patrick,</p>
+<p>Great post again.  I wanted to fully understand why dependency cycles are harmful, and this is probably a dumb question.  You say if A depends on B that depends on C that depends on A, A can&#8217;t be developed and tested independently.  But isn&#8217;t that the case for B which has a dependency on C?</p>
+<p>Thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-645">
+					<div id="dsq-comment-header-645" class="dsq-comment-header">
+						<cite id="dsq-cite-645">
+	http://www.NDepend.com							<span id="dsq-author-user-645">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-645" class="dsq-comment-body">
+						<div id="dsq-comment-message-645" class="dsq-comment-message"><p>Neil,<br />
+In the explanations, A,B,C are playing equivalent roles, you can still say:<br />
+if B depends on C that depends on A that depends on B, and you see that B is in the exact same entangled position than A (and C also).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-646">
+					<div id="dsq-comment-header-646" class="dsq-comment-header">
+						<cite id="dsq-cite-646">
+								<span id="dsq-author-user-646">Brum</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-646" class="dsq-comment-body">
+						<div id="dsq-comment-message-646" class="dsq-comment-message"><p>Way to go Patrick. Keep that light shining.</p>
+<p>You and me both know why MS itself is investing heavily in static dependency tooling for VS2010, which in turn will help to make this awareness an increasingly more intrinsic part of our trade.</p>
+<p>We can only hope they at some point adress the issues of making namespaces first class citizens of the code world (i.e. private/public/protected namespace MyNamespace {&#8230;} etc.) and the &#8220;Copy Local&#8221; madness. We both know how these things relate to the subject at hand.</p>
+<p>Oh yes. And let&#8217;s hope Rico Mariani (<a href="http://channel9.msdn.com/shows/Going+Deep/Rico-Mariani-Visual-Studio-Today-Tomorrow-and-Beyond/" rel="nofollow">http://channel9.msdn.com/shows/Going+Deep/Rico-Mariani-Visual-Studio-Today-Tomorrow-and-Beyond/</a>) get&#8217;s it right so we can have all of our big code base in one VS solution as soon as possible and run the tests inside that same VS instance too. This would certainly make it easier to do the refactoring actually needed to get all the way to the world of levelized.</p>
+<p>Actually I am tempted to turn the table and ask Jeremy D.Miller:<br />
+- After Patricks exposé, did you learn something new about the dependencies of StructureMap?<br />
+- Knowing about the dependency cycles, do you have good arguments for not dealing with them, other than that you know they are &#8216;pain points&#8217;, &#8216;dangerous to touch&#8217;, &#8216;high risk&#8217; etc.?</p>
+<p>Just to make it clear. I share Patrick(and in fact mostly everyone in this thread)s view that StructureMap is a brilliant and worthwhile piece of framework (in fact we use it and plan to use it more in our work to control dependencies, now if that isn&#8217;t ironic I don&#8217;t know what is <img src='http://codebetter.com/patricksmacchia/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> ?).</p>
+<p>The first question is of course to the point of the help you can get from tooling when it comes to seeing dependencies. If even a guy who claims he has full control of his circulars admits to learn something from a static dependency tool like NDepend I think P is vindicated. Warning! The opposite is of course not true! (due to the size of the project as P has pointed out)</p>
+<p>The second is more related to the stop criterias (when is it good enough? are there legitimate reasons for leaving some circulars be? what are these reasons? can they be enumerated? etc.).</p>
+<p>Regards<br />
+Brum &#8211; Sworn In Spaghetti Slayer</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-647">
+					<div id="dsq-comment-header-647" class="dsq-comment-header">
+						<cite id="dsq-cite-647">
+	http://z-bo.tumblr.com							<span id="dsq-author-user-647">John &quot;Z-Bo&quot; Zabroski</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-647" class="dsq-comment-body">
+						<div id="dsq-comment-message-647" class="dsq-comment-message"><p>Hi Patrick,</p>
+<p>I understand your plea, but&#8230;</p>
+<p>Here are my notes:</p>
+<p>You criticize Microsoft&#8217;s implicit position that assemblies are components, but don&#8217;t make the connection between this and the consequences of this action.  It actually extends all the way down into the &#8220;.NET Data Model&#8221; that was intended to replace all those problem domain specific data models like RDO.</p>
+<p>Here is my favorite example.  DependencyProperty/DependencyObject in .NET 3.0.  In particular, there are two pairs of these objects, one for WPF and one for WCF.  The WPF one is just plain awful, and it is a miracle Microsoft completed WPF given this architectural mistake.  To highlight the design flaw, DependencyProperty has knowledge of WPF subsystems, despite the fact it is intended as a helper for all of WPF.  This knowledge of WPF is the principle reason why WCF needs its own notion of DependencyProperty and therefore DependencyObject.  In turn, this effects integration *everywhere* in .NET 3.0!</p>
+<p>Easily the hugest architectural mistake Microsoft has made with .NET, ever.</p>
+<p>I honestly don&#8217;t know exactly why Microsoft did this.  I&#8217;m told by insiders that hanging WPF subsystem flags like AffectsMeasure and AffectsRender was intended to improve &#8220;discoverability&#8221;.  I found this explanation kind of surprising.  My guess is the true reason has become &#8220;onions lost in the varnish&#8221;.  The only justified reason for this is performance, though, not discoverability.  In particular, the CLR has an overhead for cross-assembly security context checks and I&#8217;m not sure if the CLR is bright enough to &#8220;lift&#8221; these checks using static analysis so that they are only performed once.</p>
+<p>However, I wouldn&#8217;t overblow namespaces and assemblies.  Adding accessibility modifiers for namespaces does not solve any problems whatsoever.  A more sensible approach is to stick with the concept of namespaces as simply not having any meaning in the CLR.  What needs to definitely be done if it&#8217;s not already is to drastically eliminate any performance overhead for cross-assembly security context checks, by lifting checks so they are performed only once per xref.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code/ ';
+	var disqus_identifier = '115 /blogs/patricksmacchia/archive/2009/05/03/can-we-avoid-tooling-to-prevent-spaghetti-code.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Can we avoid tooling to prevent spaghetti code?";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=115');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2009\/05\/03\/can-we-avoid-tooling-to-prevent-spaghetti-code\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.297 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 15:14:18 -->
+<!-- super cache -->

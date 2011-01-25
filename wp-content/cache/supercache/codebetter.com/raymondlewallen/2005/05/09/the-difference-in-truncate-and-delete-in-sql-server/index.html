@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>The difference in TRUNCATE and DELETE in Sql Server | Raymond Lewallen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/raymondlewallen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/raymondlewallen/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/raymondlewallen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/raymondlewallen/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Raymond Lewallen' href='http://codebetter.com/raymondlewallen/' />
+<link rel='start' title='Moving some blog entries' href='http://codebetter.com/raymondlewallen/2004/12/01/moving-some-blog-entries/' />
+<link rel='prev' title='Performance Monitoring &#8211; JIT compilations' href='http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/' />
+<link rel='next' title='SQL Server 2005 Integration Services: Lessons from Project REAL' href='http://codebetter.com/raymondlewallen/2005/05/10/sql-server-2005-integration-services-lessons-from-project-real/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/' />
+<link rel='shortlink' href='http://codebetter.com/raymondlewallen/?p=117' />
+<link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-117" class="post-117 post type-post status-publish format-standard hentry category-most-popular category-sql-development">
+					<h1 class="entry-title">The difference in TRUNCATE and DELETE in Sql Server</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/raymondlewallen/author/raymondlewallen/" title="View all posts by raymondlewallen">raymondlewallen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/" title="10:45 am" rel="bookmark"><span class="entry-date">May 9, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/raymondlewallen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/raymondlewallen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/raymondlewallen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I’ve answered this question many times, and answered it again this weekend.&nbsp; What is the difference when doing a <em>DELETE TableA</em> instead of <em>TRUNCATE TableA</em>?&nbsp;<br />
+A common misconception is that they do the same thing.&nbsp; Not<br />
+so.&nbsp; In fact, there are many differences between the two.</p>
+<p>DELETE is a logged operation on a per row basis.&nbsp; This means<br />
+that the deletion of each row gets logged and physically deleted.</p>
+<p>You can DELETE any row that will not violate a constraint, while leaving the foreign key or any other contraint in place.</p>
+<p>TRUNCATE is also a logged operation, but in a different way.&nbsp;<br />
+TRUNCATE logs the deallocation of the data pages in which the data<br />
+exists.&nbsp; The deallocation of&nbsp;data pages means that your data<br />
+rows still actually exist&nbsp;in the&nbsp;data pages, but the<br />
+extents&nbsp;have been marked as empty for reuse.&nbsp; This is what<br />
+makes TRUNCATE a&nbsp;faster operation to perform over DELETE.</p>
+<p>You cannot TRUNCATE a table that has any foreign key<br />
+constraints.&nbsp; You will have to remove the contraints, TRUNCATE the<br />
+table, and reapply the contraints.</p>
+<p>TRUNCATE will reset any identity columns to the default seed<br />
+value.&nbsp; This means if you have a table with an identity column and<br />
+you have 264 rows with a seed value of 1, your last record will have<br />
+the value 264 (assuming you started with value 1) in its identity<br />
+columns.&nbsp; After TRUNCATEing your table, when you insert a new<br />
+record into the empty table, the identity column will have a value of<br />
+1.&nbsp; DELETE will not do this.&nbsp; In the same scenario, if you<br />
+DELETEd your rows, when inserting a new row into the empty table, the<br />
+identity column will have a value of 265.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/raymondlewallen/category/most-popular/" title="View all posts in Most Popular" rel="category tag">Most Popular</a>, <a href="http://codebetter.com/raymondlewallen/category/sql-development/" title="View all posts in Sql Development" rel="category tag">Sql Development</a>. Bookmark the <a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/" title="Permalink to The difference in TRUNCATE and DELETE in Sql Server" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/feed/" title="Comments RSS to The difference in TRUNCATE and DELETE in Sql Server" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-117 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/" rel="prev"><span class="meta-nav">&larr;</span> Performance Monitoring &#8211; JIT compilations</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/raymondlewallen/2005/05/10/sql-server-2005-integration-services-lessons-from-project-real/" rel="next">SQL Server 2005 Integration Services: Lessons from Project REAL <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">64 Responses to <em>The difference in TRUNCATE and DELETE in Sql Server</em> </h3>
+
+			<div class="navigation">
+				<div class="nav-previous"></div>
+				<div class="nav-next"></div>
+			</div>
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-492">
+		<div id="comment-492">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">kiran</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-492">June 10, 2010 at 9:01 am</a></div>
+
+		<div class="comment-body"><p>Excellent&#8230; very much userful and its exactly what iam looking for</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-491">
+		<div id="comment-491">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://come2knowme.com' rel='external nofollow' class='url'>SQL</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-491">April 14, 2010 at 11:57 am</a></div>
+
+		<div class="comment-body"><p>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</p>
+<p>The minimum permission required is ALTER on table_name. TRUNCATE TABLE permissions default to the table owner, members of the sysadmin fixed server role, and the db_owner and db_ddladmin fixed database roles, and are not transferable. However, you can incorporate the TRUNCATE TABLE statement within a module, such as a stored procedure, and grant appropriate permissions to the module using the EXECUTE AS clause</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-490">
+		<div id="comment-490">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">pavan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-490">March 17, 2010 at 4:14 pm</a></div>
+
+		<div class="comment-body"><p>Nice n Informative post</p>
+<p>Thnx</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-489">
+		<div id="comment-489">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">MeRcUrY</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-489">March 4, 2010 at 5:06 pm</a></div>
+
+		<div class="comment-body"><p>Exactly What I was looking for THANKS! and Great post!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-488">
+		<div id="comment-488">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jansen</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-488">November 14, 2009 at 12:10 am</a></div>
+
+		<div class="comment-body"><p>Since the data rows still exist after truncate the size of the db doesn&#8217;t decrease after running truncate on many tables. Is it possible to release this data and reduce the size of the db?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-487">
+		<div id="comment-487">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">cherrie</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-487">October 14, 2009 at 8:14 am</a></div>
+
+		<div class="comment-body"><p>thank you this is very helpful all over the world =)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-486">
+		<div id="comment-486">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vivahshadi.com' rel='external nofollow' class='url'>Rajender Bhardwaj</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-486">April 15, 2009 at 12:54 pm</a></div>
+
+		<div class="comment-body"><p>Your tutorial is helpful for me.Thanks to YOU</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-485">
+		<div id="comment-485">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">shahid</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-485">April 10, 2009 at 9:42 am</a></div>
+
+		<div class="comment-body"><p>Thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-484">
+		<div id="comment-484">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">hashim</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-484">January 22, 2009 at 12:18 am</a></div>
+
+		<div class="comment-body"><p>how i get back truncated table in sqlserver</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-483">
+		<div id="comment-483">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Piuesh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-483">December 18, 2008 at 11:37 pm</a></div>
+
+		<div class="comment-body"><p>Thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-482">
+		<div id="comment-482">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Haresh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-482">October 14, 2008 at 4:43 am</a></div>
+
+		<div class="comment-body"><p>what is the use of temporary table ?how we use it?</p>
+<p>how to pass dynamic parametyers in stored proc?</p>
+<p>while inserting data in a table through strored proc and the size of the field is </p>
+<p>less than  any valued  ,how we avoid this situation without changing the size of the field   </p>
+<p>plz mail to  hareshpurohitATtelstra.com</p>
+<p>thanks..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-481">
+		<div id="comment-481">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.joegakenheimer.com' rel='external nofollow' class='url'>Joe Gakenheimer</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-481">September 24, 2008 at 1:21 am</a></div>
+
+		<div class="comment-body"><p>Nice explanation; simple and concise.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-480">
+		<div id="comment-480">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.themoose.com' rel='external nofollow' class='url'>MIke</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-480">September 12, 2008 at 4:59 pm</a></div>
+
+		<div class="comment-body"><p>Very helpful post.  Short &#038; to the point.  Thanks!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-479">
+		<div id="comment-479">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sujan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-479">September 8, 2008 at 9:04 am</a></div>
+
+		<div class="comment-body"><p>help ful information</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-478">
+		<div id="comment-478">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Hantus</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-478">July 24, 2008 at 3:28 am</a></div>
+
+		<div class="comment-body"><p>good explain&#8230;for better give some  example</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-477">
+		<div id="comment-477">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Brijesh Nishad</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-477">June 10, 2008 at 3:54 pm</a></div>
+
+		<div class="comment-body"><p>Wat a gud explation u have&#8230;!!!<br />
+It&#8217;s amazing!!!<br />
+really help full for us&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-476">
+		<div id="comment-476">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Rajesh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-476">May 20, 2008 at 6:56 am</a></div>
+
+		<div class="comment-body"><p>Given insight to the concepts. simply nice&#8230;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-475">
+		<div id="comment-475">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">vikram</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-475">March 25, 2008 at 7:28 pm</a></div>
+
+		<div class="comment-body"><p>Hi, thanks for this article , its very easy to understand, i have question, if  we use truncate the data will still present in the pages but they marked as empty for reuse,so what about the space,it wont release any space right?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-474">
+		<div id="comment-474">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">vikram</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-474">March 25, 2008 at 2:52 am</a></div>
+
+		<div class="comment-body"><p>thanks for the post ,can we delete a table that has constraints??</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-473">
+		<div id="comment-473">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Biaoge</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-473">March 20, 2008 at 2:51 am</a></div>
+
+		<div class="comment-body"><p>It seems that delete( usually follows a where clause) does not release table size even you delete a whole table.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-472">
+		<div id="comment-472">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">jimmy</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-472">February 20, 2008 at 7:07 am</a></div>
+
+		<div class="comment-body"><p>shows u do know what the shit is going on actually inside&#8230;. good one. thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-471">
+		<div id="comment-471">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Hardik</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-471">January 8, 2008 at 8:57 am</a></div>
+
+		<div class="comment-body"><p>This is very nice explanation ,,,</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-470">
+		<div id="comment-470">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ruchi Kandwal</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-470">December 20, 2007 at 1:27 pm</a></div>
+
+		<div class="comment-body"><p>it is good to understand.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-469">
+		<div id="comment-469">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sathya</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-469">August 30, 2007 at 9:04 am</a></div>
+
+		<div class="comment-body"><p>The concepts is good.  The other difference is Truncate will be available for the whole table.  Delete can be done by row level.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-468">
+		<div id="comment-468">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">SRIKANTH</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-468">August 15, 2007 at 10:03 am</a></div>
+
+		<div class="comment-body"><p>Very nice and cool explanation.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-467">
+		<div id="comment-467">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">kate</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-467">August 3, 2007 at 3:55 am</a></div>
+
+		<div class="comment-body"><p>thanks a lot easy to understand.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-466">
+		<div id="comment-466">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Suraj</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-466">July 7, 2007 at 11:32 am</a></div>
+
+		<div class="comment-body"><p>nice description</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-465">
+		<div id="comment-465">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sateesh</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-465">June 28, 2007 at 11:13 am</a></div>
+
+		<div class="comment-body"><p>Excellent</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-464">
+		<div id="comment-464">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sukhveer</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-464">June 18, 2007 at 4:15 pm</a></div>
+
+		<div class="comment-body"><p>great job..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-463">
+		<div id="comment-463">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-463">June 1, 2007 at 11:52 am</a></div>
+
+		<div class="comment-body"><p>Somewhat off topic, but&#8230;in a MySQL NDBCluster (in memory table-type), a DELETE won&#8217;t free up the memory used by the table &#8211; it&#8217;ll only make it available for subsequent inserts into it. That is, until the data nodes are re-started.</p>
+<p>A truncate will release memory used by a table without the need to restart a data node.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-462">
+		<div id="comment-462">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Risham</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-462">June 1, 2007 at 10:29 am</a></div>
+
+		<div class="comment-body"><p>What about the table space concept, will it be freed in both the cases, delete n truncate???</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-461">
+		<div id="comment-461">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">AK</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-461">April 11, 2007 at 8:28 am</a></div>
+
+		<div class="comment-body"><p>Great Post<br />
+Helped me a lot</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-460">
+		<div id="comment-460">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Zubair Masoodi</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-460">February 15, 2007 at 12:45 pm</a></div>
+
+		<div class="comment-body"><p>This Post made me to feel better to answer any one who will ask me the difference</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-459">
+		<div id="comment-459">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Sunil</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-459">February 7, 2007 at 8:04 am</a></div>
+
+		<div class="comment-body"><p>Hi it is really very good artical which is showing the difference between truncate and delete</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-458">
+		<div id="comment-458">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sandeep bhardwaj</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-458">February 2, 2007 at 7:21 am</a></div>
+
+		<div class="comment-body"><p>Thanks for clearing the concept, before geting this answer i thought that in truncate we can not roll back in any how.</p>
+<p>thanks again.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-457">
+		<div id="comment-457">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">sandeep bhardwaj</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-457">February 2, 2007 at 7:20 am</a></div>
+
+		<div class="comment-body"><p>Thanks for clearing the concept, before geting this answer i thought that we can not roll back in any how.</p>
+<p>thanks again.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-456">
+		<div id="comment-456">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Maqsud</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-456">January 11, 2007 at 7:30 am</a></div>
+
+		<div class="comment-body"><p>Hi,<br />
+very simple words, excellent post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-455">
+		<div id="comment-455">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Raj</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-455">December 12, 2006 at 9:49 am</a></div>
+
+		<div class="comment-body"><p>Excellent</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-454">
+		<div id="comment-454">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://samironline05@yahoo.co.in' rel='external nofollow' class='url'>samir</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-454">November 7, 2006 at 3:45 am</a></div>
+
+		<div class="comment-body"><p>plz.<br />
+   inform me in my id<br />
+thanks&#8230;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-453">
+		<div id="comment-453">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://samironline05@yahoo.co.in' rel='external nofollow' class='url'>samir</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-453">November 7, 2006 at 3:42 am</a></div>
+
+		<div class="comment-body"><p>sorry,<br />
+i am unable to get my answers</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-452">
+		<div id="comment-452">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">samir</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-452">November 7, 2006 at 3:39 am</a></div>
+
+		<div class="comment-body"><p>sorry,<br />
+ i am unable to retive my answers.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-451">
+		<div id="comment-451">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://samironline05@yahoo.co.in' rel='external nofollow' class='url'>samir</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-451">November 7, 2006 at 3:30 am</a></div>
+
+		<div class="comment-body"><p>what is the use of temporary table ?how we use it?<br />
+how to pass dynamic parametyers in stored proc?</p>
+<p>while inserting data in a table through strored proc and the size of the field is </p>
+<p>less than  any valued  ,how we avoid this situation without changing the size of the field   </p>
+<p>plz mail to </p>
+<p>thanks..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-450">
+		<div id="comment-450">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://samironlineo5@yahoo.co.in' rel='external nofollow' class='url'>samir</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-450">November 7, 2006 at 3:14 am</a></div>
+
+		<div class="comment-body"><p>while inserting data in a table through strored proc and the size of the field is </p>
+<p>less than  any valued  ,how we avoid this situation without changing the size of the field</p>
+<p>plz mail to </p>
+<p>thanks..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-449">
+		<div id="comment-449">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://samir@csmpl.com' rel='external nofollow' class='url'>samir</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-449">November 7, 2006 at 3:05 am</a></div>
+
+		<div class="comment-body"><p>while inserting data in a table through strored proc and the size of the field is<br />
+less than  any valued  ,how we avoid this situation without changing the size of the field</p>
+<p>plz mail to </p>
+<p>thanks..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-448">
+		<div id="comment-448">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Arun Mahendrakar</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-448">October 17, 2006 at 7:18 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for the info.. very simple words, very concise statements, very lucid explanation</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-447">
+		<div id="comment-447">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">shaik afreen</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-447">October 11, 2006 at 6:09 am</a></div>
+
+		<div class="comment-body"><p>Thanks for this information<br />
+which maks me to understand what exactly happens internally.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-446">
+		<div id="comment-446">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ramesh Galla</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-446">September 28, 2006 at 11:18 am</a></div>
+
+		<div class="comment-body"><p>Thanks&#8230;!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-445">
+		<div id="comment-445">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mohammad Iqbal</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-445">September 6, 2006 at 7:07 am</a></div>
+
+		<div class="comment-body"><p>Thanks for a nice answer !!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-444">
+		<div id="comment-444">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://s' rel='external nofollow' class='url'>san</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-444">September 5, 2006 at 10:25 am</a></div>
+
+		<div class="comment-body"><p>Its possible to use where condition in truncate table command</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-443">
+		<div id="comment-443">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jagganitin.blogspot.com' rel='external nofollow' class='url'>Nitin Jagga</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-443">August 8, 2006 at 11:57 am</a></div>
+
+		<div class="comment-body"><p>Q: Is RollBack Possible in both case Delete And Truncate in Sql Server2000 ?</p>
+<p>Sol: Yes, in case of delete you can roll back, but in case of truncate, there&#8217;s a scenario where rollback is possible. Normally not, you can take truncate as delete + commit as truncate is a DDL Command.</p>
+<p>Scenario:</p>
+<p>BEGIN TRAN</p>
+<p>//DO</p>
+<p>TRUNCATE</p>
+<p>IF ERROR (OR ANY CONDITION)<br />
+ROLLBACK</p>
+<p>COMMIT TRAN</p>
+<p>in this case, rollback will work even after truncate if it meets your condition.</p>
+<p>Other wise, truncate as i mentioned is a DDL Command and will work with auto commit status set as true.</p>
+<p>Regards</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-442">
+		<div id="comment-442">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">raza ur rahman</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-442">July 31, 2006 at 6:04 am</a></div>
+
+		<div class="comment-body"><p>nice explaination</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-441">
+		<div id="comment-441">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">raza ur rahman</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-441">July 31, 2006 at 6:02 am</a></div>
+
+		<div class="comment-body"><p>verry good</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-440">
+		<div id="comment-440">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Shakeeb Ahmed</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-440">July 27, 2006 at 10:36 pm</a></div>
+
+		<div class="comment-body"><p>simple and nice explaination!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-439">
+		<div id="comment-439">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">prasadrmarathe</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-439">June 29, 2006 at 8:17 am</a></div>
+
+		<div class="comment-body"><p>Thanks,<br />
+But what abt RollBack<br />
+Is RollBack Possible in both case Delete And Truncate in Sql Server2000</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-438">
+		<div id="comment-438">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Srikanth HN</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-438">June 17, 2006 at 8:20 am</a></div>
+
+		<div class="comment-body"><p>Thanks !! It helped ..<br />
+Short but still easy to understand !</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-437">
+		<div id="comment-437">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dearesthemant@yahoo.co.in' rel='external nofollow' class='url'>hemant</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-437">June 1, 2006 at 5:24 am</a></div>
+
+		<div class="comment-body"><p>Thanks for a great info. It was asked two time in interviw and iwas having no answer<br />
+thank for clearing the concept</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-436">
+		<div id="comment-436">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">shishir</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-436">May 30, 2006 at 2:18 pm</a></div>
+
+		<div class="comment-body"><p>Gud one!<br />
+will help me for my interview <img src='http://codebetter.com/raymondlewallen/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-435">
+		<div id="comment-435">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Rajiv Bhati </cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-435">March 22, 2006 at 9:41 am</a></div>
+
+		<div class="comment-body"><p>hi I am Rajiv Bhati, i am a S/w Test professional(QA). the biggest problem that i face while performing testing,is this one i.e basic difference between delete table and truncate table. from your material i got some more information.<br />
+thanks &#038; regards<br />
+Rajiv Bhati <a href="mailto:rajivbhati12@gmail.com">rajivbhati12@gmail.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-434">
+		<div id="comment-434">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Alan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-434">August 19, 2005 at 6:04 pm</a></div>
+
+		<div class="comment-body"><p>excellent post !!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-433">
+		<div id="comment-433">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Armando Prato</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-433">July 8, 2005 at 11:04 am</a></div>
+
+		<div class="comment-body"><p>One other difference to note&#8230; delete triggers are not fired when using TRUNCATE.</p>
+<p>Excellent post, btw</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-432">
+		<div id="comment-432">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://msmvps.com/greglow' rel='external nofollow' class='url'>Greg Low</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-432">May 30, 2005 at 7:18 am</a></div>
+
+		<div class="comment-body"><p>And the other big difference is: permissions.</p>
+<p>The fact that a user can DELETE rows does not mean they can TRUNCATE the table. By default, they need at least DDL_ADMIN to do that.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-431">
+		<div id="comment-431">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Thomas</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-431">May 30, 2005 at 4:09 am</a></div>
+
+		<div class="comment-body"><p>nice explanation, I was asked this in an interview and couldn’t really explain the difference. thanx….</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-430">
+		<div id="comment-430">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/brendan.tompkins' rel='external nofollow' class='url'>btompkins</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-430">May 10, 2005 at 10:20 am</a></div>
+
+		<div class="comment-body"><p>Add this to the pile of stuff I didn&#8217;t know before I met you.  Thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-429">
+		<div id="comment-429">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/sahil.malik' rel='external nofollow' class='url'>sahilmalik</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#comment-429">May 9, 2005 at 11:34 am</a></div>
+
+		<div class="comment-body"><p>Simple concept + profound implications = good post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/raymondlewallen/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fraymondlewallen%2F2005%2F05%2F09%2Fthe-difference-in-truncate-and-delete-in-sql-server%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 7510.782 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:48:40 -->
+<!-- super cache -->

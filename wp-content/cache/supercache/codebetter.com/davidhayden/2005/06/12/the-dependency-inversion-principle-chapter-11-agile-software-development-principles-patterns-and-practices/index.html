@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>The Dependency-Inversion Principle &#8211; Chapter 11 &#8211; Agile Software Development Principles Patterns and Practices | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='The Liskov Substitution Principle &#8211; Agile Software Development Principles Patterns and Practices' href='http://codebetter.com/davidhayden/2005/06/11/the-liskov-substitution-principle-agile-software-development-principles-patterns-and-practices/' />
+<link rel='next' title='Interface-Segregation Principle (ISP)  &#8211; Principles of Object-Oriented Class Design' href='http://codebetter.com/davidhayden/2005/06/15/interface-segregation-principle-isp-principles-of-object-oriented-class-design/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/06/12/the-dependency-inversion-principle-chapter-11-agile-software-development-principles-patterns-and-practices/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=47' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-47" class="post-47 post type-post status-publish format-standard hentry category-design-patterns">
+					<h1 class="entry-title">The Dependency-Inversion Principle &#8211; Chapter 11 &#8211; Agile Software Development Principles Patterns and Practices</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/06/12/the-dependency-inversion-principle-chapter-11-agile-software-development-principles-patterns-and-practices/" title="9:37 pm" rel="bookmark"><span class="entry-date">June 12, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Moving along with&nbsp;my <A href="http://davidhayden.com/blog/dave/category/42.aspx">chapter-by-chapter review of Agile Software Development Principles, Patterns, and Practices by Robert Martin</FONT></A>.</P><br />
+<FIELDSET><LEGEND>Agile Software Development, Principles, Patterns, and Practices</LEGEND><br />
+<P><STRONG>Book</STRONG>: Agile Software Development, Principles, Patterns, and Practices (<A href="http://www.amazon.com/exec/obidos/ASIN/0135974445/qid=1116531248/sr=2-1/ref=pd_bbs_b_2_1/002-3906371-8676026" target="_blank">Amazon</A>)<BR><STRONG>Author</STRONG>: Robert C. Martin (<A href="http://www.amazon.com/exec/obidos/search-handle-url/index=books&amp;field-author-exact=Robert%20C.%20Martin/002-3906371-8676026" target="_blank">Amazon</A>)<BR><STRONG>Publisher</STRONG>: Prentice Hall; 1st edition (October 15, 2002)<BR><STRONG>Hardcover</STRONG>: 552 pages</P><br />
+<P>Previous Chapters</P><br />
+<UL><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/05/16/1021.aspx">Chapters 1 &#8211; 4 &#8211; Agile Practices, XP, TDD</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/05/18/1024.aspx">Chapters 5 and 6 &#8211; Refactoring and Pair Programming</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/05/19/1029.aspx">Chapter 7 &#8211; What is Agile Design?</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/05/29/1066.aspx">Chapter 8 &#8211; Single-Reponsibility Principle</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/06/04/1096.aspx">Chapter 9 &#8211; Open-Closed Principle</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/06/10/1226.aspx">Chapter 10 &#8211; The Liskov Substitution Principle</A></LI></UL></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Chapter 11 is on the <STRONG>Dependency-Inversion Principle</STRONG>:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Dependency-Inversion Principle</LEGEND><br />
+<P>A. High-level modules should not depend on low-level modules. Both should depend on abstractions.<BR>B. Abstractions should not depend on details. Details should depend on abstractions.</P></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>This principle is closely related&nbsp;to two other principles that I have talked about previously:</P><br />
+<UL><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/06/04/1096.aspx">Open-Closed Principle</A> &#8211; Modules should be open for extension, but closed for modification.</LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2004/12/14/690.aspx">Low Coupling GRASP Pattern</A> &#8211; An element with low (or weak) coupling is not dependent on too many other elements.</LI></UL><br />
+<P>All three of these principles have to do with making your applications loosely coupled by not depending on concrete classes when appropriate, but abstractions.&nbsp; These abstractions are usually done with abstract classes, polymorphic methods, and interfaces. This book has tended to focus on abstract classes, but you can find other books that prefer interfaces, etc.&nbsp; There are pros and cons to each, and that subject is beyond the scope of this post <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> .</P><br />
+<P>This principle is unique with respect to the others in that it points out the direction of dependency on the abstraction. Rather than having the policy and business level classes dependent on the lower-level plumbing / utility type detail classes, it recommends that you invert the dependency and make the lower-level detail classes dependent on the higher level policy making classes that are most important in your application.</P><br />
+<P>Robert said it best in this brief, well-written chunk of text from his book:</P><br />
+<P>“Consider the implications of high level modules that depend upon low level modules. It is the high level modules that contain the important policy decisions and business models of an application. It is these models that contain the identity of the application. Yet, when these modules depend upon the lower level modules, then changes to the lower level modules can have direct effects upon them; and can force them to change.</P><br />
+<P>This predicament is absurd! It is the high level modules that ought to be forcing the low level modules to change. It is the high level modules that should take precedence over the lower level modules. High level modules simply should not depend upon low level modules in any way.</P><br />
+<P>Moreover, it is high level modules that we want to be able to reuse. We are already quite good at reusing low level modules in the form of subroutine libraries. When high level modules depend upon low level modules, it becomes very difficult to reuse those high level modules in different contexts. However, when the high level modules are independent of the low level modules, then the high level modules can be reused quite simply.[Martin, p.127-128]”</P><br />
+<P>You can see this visually in the following figures:</P><br />
+<P>&nbsp;</P><br />
+<P align="center"><IMG src="/photos/david.hayden/images/64508/original.aspx"></P><br />
+<P>&nbsp;</P><br />
+<P>This is a very, very common practice.&nbsp; Everything in the <A HREF="/blogs/david.hayden/articles/category/1094.aspx" target="_blank">Enterprise Library Application Block</A> uses this principle to make it pluggable so that you can add new caching strategies, data repositories, configuration policies, etc. It is also used in anything that uses the Provider Model, because this is the basis of the Provider Model &#8211; provide an abstraction in the .NET framework that your application can utilize and have components that provide the detail be dependent on that abstraction used in your application.</P><br />
+<P>You can see my&nbsp;posts on DotNetNuke and Community Server for a little bit of information on the <A href="http://davidhayden.com/blog/dave/archive/2005/04/27/993.aspx">Provider Model</A> &#8211; the pre&nbsp;.NET 2.0 version anyway, which I have used several times in applications:</P><br />
+<UL><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/04/01/918.aspx">Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/04/03/933.aspx">DotNetNuke Architecture &#8211; Digging Into the DNN Source Code</A></LI></UL><br />
+<P>You can read Robert&#8217;s words about the Dependency-Inversion Principle in this <A href="http://www.objectmentor.com/resources/articles/dip.pdf" target="_blank">PDF</A>. A couple chapters from now I will start digging into a lot of the Design Patterns that support these principles.</P><br />
+<P>&nbsp;</P><br />
+<P>[Sipping on: <A href="http://www.relaxsipenjoy.com/jasmine_pearls_china_green_tea.aspx">Jasmine Pearls Green Tea</A>]</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/06/12/the-dependency-inversion-principle-chapter-11-agile-software-development-principles-patterns-and-practices/" title="Permalink to The Dependency-Inversion Principle &#8211; Chapter 11 &#8211; Agile Software Development Principles Patterns and Practices" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/06/12/the-dependency-inversion-principle-chapter-11-agile-software-development-principles-patterns-and-practices/feed/" title="Comments RSS to The Dependency-Inversion Principle &#8211; Chapter 11 &#8211; Agile Software Development Principles Patterns and Practices" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-47 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/06/11/the-liskov-substitution-principle-agile-software-development-principles-patterns-and-practices/" rel="prev"><span class="meta-nav">&larr;</span> The Liskov Substitution Principle &#8211; Agile Software Development Principles Patterns and Practices</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/06/15/interface-segregation-principle-isp-principles-of-object-oriented-class-design/" rel="next">Interface-Segregation Principle (ISP)  &#8211; Principles of Object-Oriented Class Design <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/06/12/the-dependency-inversion-principle-chapter-11-agile-software-development-principles-patterns-and-practices/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='47' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="1443768677" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.288 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 15:27:05 -->
+<!-- super cache -->

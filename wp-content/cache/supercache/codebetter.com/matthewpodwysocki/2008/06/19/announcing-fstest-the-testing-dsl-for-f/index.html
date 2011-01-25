@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Announcing FsTest &#8211; The Testing DSL for F# | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Concurrency in .NET &#8211; Learning from Erlang' href='http://codebetter.com/matthewpodwysocki/2008/06/18/concurrency-in-net-learning-from-erlang/' />
+<link rel='next' title='Reminder- DC ALT.NET Meeting &#8211; 6/24/2008 &#8211; Applied Functional Programming with F#' href='http://codebetter.com/matthewpodwysocki/2008/06/24/reminder-dc-alt-net-meeting-6-24-2008-applied-functional-programming-with-f/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/06/19/announcing-fstest-the-testing-dsl-for-f/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=31' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-31" class="post-31 post type-post status-publish format-standard hentry category-c category-f category-language-oriented-programming category-tddbdd">
+					<h1 class="entry-title">Announcing FsTest &#8211; The Testing DSL for F#</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/06/19/announcing-fstest-the-testing-dsl-for-f/" title="11:13 pm" rel="bookmark"><span class="entry-date">June 19, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Over the past couple of months, I&#8217;ve been working on some language oriented programming concepts in F# to prove how Domain Specific Languages could work.&nbsp; This coincided with my lofty goals of working towards more <a href="http://behaviour-driven.org/">Behavior Driven Development (BDD)</a> frameworks and expressiveness that I think is needed to make them work.&nbsp; So, this led me down a road of looking first at assertion syntax.&nbsp; With that, it made me create <a href="http://www.codeplex.com/FsTest">FsTest</a> which is now available on <a href="http://www.codeplex.com">CodePlex</a>.&nbsp; This is meant to be a beginning of a conversation on doing better assertions through functional programming and language oriented programming and by no means an end to it.</p>
+<p><span style="font-weight: bold">The Starting Point</span></p>
+<p>During some of my research, I came across a now defunct project on Google Code called <a href="http://code.google.com/p/fsunit/">FsUnit</a>.&nbsp; The idea behind this project was to put a syntactic wrapper around <a href="http://www.nunit.com">NUnit</a> to make assertions a bit more readable and to use unique features to F# to make this happen.&nbsp; To be able to write such things as this for my assertions seemed powerful:</p>
+<p>1 |&gt; should (equal 1)<br />
+true |&gt; should (be True) </p>
+<p>And so on&#8230;&nbsp; Ultimately, I thought it could be improved and expanded, so I talked to the project owner, <a href="http://vernagus.blogspot.com/">Ray Vernagus</a>, and took some of the ideas and ran with them.</p>
+<p><span style="font-weight: bold">Looking at FsTest</span></p>
+<p>I had a couple of issues with the code as it was.&nbsp; But, overall the ideas were quite sound.&nbsp; I also wanted to use xUnit.net as the back end testing framework as I&#8217;m pretty comfortable with it.&nbsp; The support for tests on static classes, and the ability to assert on throwing exceptions were some of the pluses that made me move in this direction.&nbsp; Listed below are some of the assertions that are supported:</p>
+<p><span style="text-decoration: underline">Testing equality:</span><br />
+&#8220;foo&#8221; |&gt; should equal &#8220;foo&#8221;<br />
+&#8220;foo&#8221; |&gt; should not_equal &#8220;bar&#8221;<br />
+null |&gt; should be Null<br />
+&#8220;foo&#8221; |&gt; should be NonNull<br />
+&#8220;foobar&#8221; |&gt; should contain &#8220;foo&#8221;<br />
+&#8220;foobar&#8221; |&gt; should not_contain &#8220;hello&#8221;</p>
+<p><span style="text-decoration: underline">Testing True/False:</span><br />
+true |&gt; should be True<br />
+false |&gt; should be False</p>
+<p><span style="text-decoration: underline">Testing collections:</span><br />
+[1..10] |&gt; should be NonEmpty<br />
+[] |&gt; should be Empty<br />
+[1..10] |&gt; should have 3<br />
+[1..10] |&gt; should not_have 25</p>
+<p><span style="text-decoration: underline">Exception Management:</span><br />
+throwsExceptionFunc |&gt; should (throw_exception&lt;ArgumentException&gt;)<br />
+doesntThrowException |&gt; should not_throw_exception</p>
+<p>And some full examples might look like this:</p>
+<p>#light</p>
+<p>open System<br />
+open Xunit<br />
+open FsxUnit.Syntax</p>
+<p>let throwsException() : unit =<br />
+&nbsp; raise(ArgumentException &#8220;Bad things!&#8221;)</p>
+<p>[&lt;Fact&gt;]<br />
+let throwsException_should_throw_exception() =<br />
+&nbsp; throwsException |&gt; should (throw_exception&lt;ArgumentException&gt;)</p>
+<p>[&lt;Fact&gt;]<br />
+let value_in_range_should_be_in_range() =<br />
+&nbsp; 2 |&gt; should be_in_range 0 100</p>
+<p>It&#8217;s a work in progress, but I feel that I have most of the assertion cases covered in this DSL.&nbsp; The ability through partially applied functions really shone when creating this library.&nbsp; </p>
+<p><span style="font-weight: bold">The Concepts Behind It</span></p>
+<p>What makes this work syntactically is the use of the forward operator.&nbsp; I&#8217;ve covered this briefly in previous posts, but I&#8217;ll elaborate on this again.&nbsp; This is one of the most important operators available to us in the F# language.&nbsp; This is the ability to invert the arguments in such a manner as the first argument is declared first and then the function statement is last.</p>
+<p>This is how it&#8217;s declared in F#:</p>
+<p>let (|&gt;) x f = f x</p>
+<p>Which allows me to better express my intent and gives me the two advantages:</p>
+<ul>
+<li>Clarity of intent &#8211; allows you to perform various operations on the data in a forward chaining way such as:<br />
+    let length = [1..10] |&gt; List.map(fun x -&gt; x * x * x) |&gt; List.filter(fun x -&gt; x % 3= 0) |&gt; List.length</p>
+</li>
+<li>Type inference &#8211; allows type information to flow from the left to the right and allows me to express my data first as part of my method.&nbsp; Shows better intention this way.</li>
+</ul>
+<p>
+And similarly, something in C# would use extension methods to add a forward method, or maybe in this case a Should method which will then take a function as the second parameter, and then overload it as need be.</p>
+<p>Using Actions might look something like this:</p>
+<p>public static void Should&lt;TArg1, TArg2&gt;(this TArg1 arg1, Action&lt;TArg1, TArg2&gt; action, TArg2 arg2)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; action(arg1, arg2);<br />
+}</p>
+<p>And conversely to use the Func delegate might look like this:</p>
+<p>public static TResult Should&lt;TArg1, TArg2, TResult&gt;(this TArg1 arg1, Func&lt;TArg1, TArg2, TResult&gt; func, TArg2 arg2)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; return func(arg1, arg2);<br />
+}</p>
+<p>public static void Contain&lt;T&gt;(IEnumerable&lt;T&gt; items, T item)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; Assert.Contains(item, items);<br />
+}</p>
+<p>And to use it would look something like this:</p>
+<p>Enumerable.Range(1, 10).Should(Contain, 3);</p>
+<p>But, I&#8217;m not necessarily a fan of that style of syntax.&nbsp; C# isn&#8217;t quite a functional language which allows me to do such clever things with operators.&nbsp; I don&#8217;t think it will ever gain that level of expresiveness required.</p>
+<p>Instead, I created two functions that could be chained together such as the should function and the be function.&nbsp; This allows me to create some of the examples above.&nbsp; Let&#8217;s take a look at each function:</p>
+<p>let should f actual =<br />
+&nbsp; f actual</p>
+<p>let be (f : &#8216;a -&gt; unit) actual =<br />
+&nbsp; f actual</p>
+<p>So, that will allow me to express such things as:</p>
+<p>true |&gt; should be True</p>
+<p>And the true function might look something like this:</p>
+<p>let True condition =<br />
+&nbsp; Assert.True(condition)</p>
+<p>As you can see, there isn&#8217;t much to this, and covers most of the assertion scenarios that I&#8217;ve encountered.</p>
+<p><span style="font-weight: bold">Where To Go From Here?</span></p>
+<p>So, where am I headed with this?&nbsp; For right now, I&#8217;m happy with the assertion syntax I&#8217;ve been able to achieve with the language.&nbsp; For the future, I&#8217;m looking at creating a more expressive way for doing BDD and the expresiveness of F# I think can handle such things.&nbsp; I&#8217;ve been following the <a href="http://code.google.com/p/specs/">Specs</a> project for a little bit and I think they have a few good things going for them, although <a href="http://www.scala-lang.org/">Scala</a> isn&#8217;t a functional language in the way that F# is, so I&#8217;m not sure how many lessons can be applied.&nbsp; <a href="http://specter.sourceforge.net/">Specter</a> is another interesting one as well as <a href="http://svn2.assembla.com/svn/machine/trunk/">Machine Specifications (MSpec)</a> from the one and only <a href="http://codebetter.com/blogs/aaron.jensen/default.aspx">Aaron Jensen</a>.</p>
+<p>I&#8217;d like to thank the F# team, <a href="http://diditwith.net/">Dustin Campbell</a> and <a href="http://devhawk.net/">Harry Pierson (DevHawk)</a> for their help on this as well.&nbsp; The team around F# is a wonderful team and I can&#8217;t wait for the CTP of F# to ship.&nbsp; Makes me excited sometimes when working for Microsoft like I do.</p>
+<p>But, in the mean time, feedback is appreciated.&nbsp; Tell me what works and what doesn&#8217;t.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/language-oriented-programming/" title="View all posts in Language Oriented Programming" rel="category tag">Language Oriented Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/tddbdd/" title="View all posts in TDD/BDD" rel="category tag">TDD/BDD</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/06/19/announcing-fstest-the-testing-dsl-for-f/" title="Permalink to Announcing FsTest &#8211; The Testing DSL for F#" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/06/19/announcing-fstest-the-testing-dsl-for-f/feed/" title="Comments RSS to Announcing FsTest &#8211; The Testing DSL for F#" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-31 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/06/18/concurrency-in-net-learning-from-erlang/" rel="prev"><span class="meta-nav">&larr;</span> Concurrency in .NET &#8211; Learning from Erlang</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/06/24/reminder-dc-alt-net-meeting-6-24-2008-applied-functional-programming-with-f/" rel="next">Reminder- DC ALT.NET Meeting &#8211; 6/24/2008 &#8211; Applied Functional Programming with F# <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-92">
+					<div id="dsq-comment-header-92" class="dsq-comment-header">
+						<cite id="dsq-cite-92">
+								<span id="dsq-author-user-92">Kevin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-92" class="dsq-comment-body">
+						<div id="dsq-comment-message-92" class="dsq-comment-message"><p>Am I understanding this wrong, or should this example be a not_contain?</p>
+<p>&#8220;foobar&#8221; |> should contain &#8220;hello&#8221;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-93">
+					<div id="dsq-comment-header-93" class="dsq-comment-header">
+						<cite id="dsq-cite-93">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-93">Matthew Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-93" class="dsq-comment-body">
+						<div id="dsq-comment-message-93" class="dsq-comment-message"><p>@Kevin</p>
+<p>Yes, I realize my copy/paste screwup.  It has been fixed.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/06/19/announcing-fstest-the-testing-dsl-for-f/ ';
+	var disqus_identifier = '31 /blogs/matthew.podwysocki/archive/2008/06/19/announcing-fstest-the-testing-dsl-for-f.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Announcing FsTest &#8211; The Testing DSL for F#";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=31');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/06\/19\/announcing-fstest-the-testing-dsl-for-f\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 7414.262 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:46:32 -->
+<!-- super cache -->

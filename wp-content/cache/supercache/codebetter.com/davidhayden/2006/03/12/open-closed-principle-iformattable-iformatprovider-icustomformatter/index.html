@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='NHibernate with ASP.NET using OOP and Design Patterns' href='http://codebetter.com/davidhayden/2006/03/12/nhibernate-with-asp-net-using-oop-and-design-patterns/' />
+<link rel='next' title='SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer' href='http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=101' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-101" class="post-101 post type-post status-publish format-standard hentry category-c">
+					<h1 class="entry-title">Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/" title="6:01 pm" rel="bookmark"><span class="entry-date">March 12, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Jeffrey provided an example of a SocialSecurityNumber Class in his recent post, called <A href="/blogs/jeffrey.palermo/archive/2006/03/11/140626.aspx">EVERY application has a natural domain model &#8211; level 200</A>.</P><br />
+<P>The class is really a template that leaves things rather wide open, but it served his discussion nicely and didn&#8217;t need to be built-up futher.&nbsp; Here is the class &#8220;template&#8221;:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SocialSecurityNumber<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _rawNumber;</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> SocialSecurityNumber(</SPAN><SPAN>string</SPAN><SPAN> number)<br />
+    {<br />
+        _rawNumber </SPAN><SPAN>=</SPAN><SPAN> number;<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetWithoutDashes()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN>; </SPAN><SPAN>//</SPAN><SPAN>the ssn without dashes.</SPAN><SPAN><br />
+</SPAN><SPAN>    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+    {<br />
+        </SPAN><SPAN>//</SPAN><SPAN>format ssn nicely and output.</SPAN><SPAN><br />
+</SPAN><SPAN>        </SPAN><SPAN>return</SPAN><SPAN>; </SPAN><SPAN>//</SPAN><SPAN>the nice output.</SPAN><SPAN><br />
+</SPAN><SPAN>    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>bool</SPAN><SPAN> Equals(</SPAN><SPAN>object</SPAN><SPAN> obj)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>true</SPAN><SPAN>; </SPAN><SPAN>//</SPAN><SPAN>or false if they don&#8217;t match.<br />
+        </SPAN><SPAN>//</SPAN><SPAN>Use some intelligence to compare for sameness.</SPAN><SPAN><br />
+</SPAN><SPAN>    }<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>As I looked at it, my thoughts were that if you stuck 10 developers in a room to finish the template, each of them would probably come up with a different solution. Some would probably suggest it be a <STRONG>struct</STRONG> and others would modify or change the class completely. This sounds like a great plot for a <A href="http://www.thecoderoom.com/">Code Room</A> Episode. Assuming we keep it as a reference object ( class ), I would probably make the following changes:</P><br />
+<P><STRONG>Implement IFormattable</STRONG></P><br />
+<P>One particular method, <STRONG>GetWithoutDashes</STRONG>, which returns the Social Security Number without dashes, suggests that clients of this class may want to format the SSN in multiple ways:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> GetWithoutDashes()<br />
+{<br />
+    </SPAN><SPAN>return</SPAN><SPAN>; </SPAN><SPAN>//</SPAN><SPAN>the ssn without dashes.</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>You can see a problem we might have in the future.&nbsp;We really don&#8217;t want to keep adding new methods on this class as people need new formatting options.</P><br />
+<P>This would mainly be a pain in the butt, but it also &#8220;violates&#8221; the <A href="http://davidhayden.com/blog/dave/archive/2005/06/04/1096.aspx">Open-Closed Principle</A>:</P><br />
+<P>&#8220;Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification [Martin, p.99]&#8221; &#8211; <A href="http://davidhayden.com/blog/dave/category/42.aspx?Show=All">Agile Software Development Principles, Patterns, and Practices</A></P><br />
+<P>Classes&nbsp;that adhere to the Open-Closed Principle have 2 primary attributes:</P><br />
+<UL><br />
+<LI>&#8220;Open For Extension&#8221; &#8211; It is possible to extend the behavior of the&nbsp;class as the requirements of the application change (i.e. change the behavior of the class).<br />
+<LI>&#8220;Closed For Modification&#8221; &#8211; Extending the behavior of the&nbsp;class does not result in the changing of the source code or binary code of the&nbsp;class itself.</LI></UL><br />
+<P>&nbsp;</P><br />
+<P><STRONG>IFormattable</STRONG></P><br />
+<P>The .NET Framework offers an <STRONG>IFormattable Interface</STRONG> that closes the class for modification ( at least with formatting ) but opens it up for extension by allowing clients to inject their own <STRONG>ICustomFormatter</STRONG> to format the SSN as they wish:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SocialSecurityNumber : IFormattable</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>We can implement the interface like this:</P><br />
+<P>&nbsp;</P><PRE><SPAN>#region</SPAN><SPAN> IFormattable Members</SPAN><SPAN></p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(</SPAN><SPAN>string</SPAN><SPAN> format, IFormatProvider formatProvider)<br />
+{<br />
+    </SPAN><SPAN>if</SPAN><SPAN> (formatProvider </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+    {<br />
+        ICustomFormatter formatter </SPAN><SPAN>=</SPAN><SPAN> formatProvider.GetFormat(<br />
+            </SPAN><SPAN>this</SPAN><SPAN>.GetType())<br />
+            </SPAN><SPAN>as</SPAN><SPAN> ICustomFormatter;</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (formatter </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+            </SPAN><SPAN>return</SPAN><SPAN> formatter.Format(format, </SPAN><SPAN>this</SPAN><SPAN>, formatProvider);<br />
+    }</p>
+<p>    </SPAN><SPAN>if</SPAN><SPAN> (format </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) format </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>switch</SPAN><SPAN> (format)<br />
+    {<br />
+        </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>nd</SPAN><SPAN>&#8220;</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> _rawNumber.Replace(</SPAN><SPAN>&#8220;</SPAN><SPAN>-</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>&#8220;&#8221;</SPAN><SPAN>);<br />
+        </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>:<br />
+        </SPAN><SPAN>default</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> _rawNumber;<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>#endregion</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>Now we can specify we want the SSN without dashes simply as:</P><br />
+<P>&nbsp;</P><PRE><SPAN>Console.WriteLine(</SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>No Dashes: {0:nd}</SPAN><SPAN>&#8220;</SPAN><SPAN>, ssn));</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>where &#8220;nd&#8221; is the new format for SSN with <U>N</U>o <U>D</U>ashes. Weak I know <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>IFormatProvider and ICustomFormatter</STRONG></P><br />
+<P>However, the beauty is that now as a client I can specify my own classes to format the SSN if the need arises in the future.&nbsp; Here is a simple example:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> MySSNFormatProvider : IFormatProvider, ICustomFormatter<br />
+{<br />
+    </SPAN><SPAN>#region</SPAN><SPAN> IFormatProvider Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>object</SPAN><SPAN> GetFormat(Type formatType)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>this</SPAN><SPAN>;<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> ICustomFormatter Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Format(</SPAN><SPAN>string</SPAN><SPAN> format, </SPAN><SPAN>object</SPAN><SPAN> arg, <BR>                           IFormatProvider formatProvider)<br />
+    {<br />
+        </SPAN><SPAN>switch</SPAN><SPAN>(format)<br />
+        {<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>secure</SPAN><SPAN>&#8220;</SPAN><SPAN>:<br />
+            </SPAN><SPAN>default</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>***-**-{0}</SPAN><SPAN>&#8220;</SPAN><SPAN>,<BR>                              arg.ToString().Substring(</SPAN><SPAN>7</SPAN><SPAN>));<br />
+        }<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>We can now spit out a &#8220;secure&#8221; SSN via:</P><br />
+<P>&nbsp;</P><PRE><SPAN>Console.WriteLine(</SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>new</SPAN><SPAN> MySSNFormatProvider(),<BR>                                         </SPAN><SPAN>&#8220;</SPAN><SPAN>{0:secure}</SPAN><SPAN>&#8220;</SPAN><SPAN>, ssn));</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>If _rawNumber was &#8220;123-45-6789&#8243;, the above would output &#8220;***-**-6789&#8243;, which gets across&nbsp;the idea.</P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Overriding Equals and GetHashCode</STRONG></P><br />
+<P>We can&#8217;t override <STRONG>Equals</STRONG> without overriding <STRONG>GetHashCode</STRONG> as the compiler will bark at us.&nbsp; Here is my simple attempt:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>bool</SPAN><SPAN> Equals(</SPAN><SPAN>object</SPAN><SPAN> obj)<br />
+{<br />
+    </SPAN><SPAN>if</SPAN><SPAN> (obj </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>false</SPAN><SPAN>;</p>
+<p>    SocialSecurityNumber ssn </SPAN><SPAN>=</SPAN><SPAN> obj </SPAN><SPAN>as</SPAN><SPAN> SocialSecurityNumber;<br />
+    </SPAN><SPAN>if</SPAN><SPAN> (ssn </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>false</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>return</SPAN><SPAN> (</SPAN><SPAN>this</SPAN><SPAN>._rawNumber.Equals(ssn._rawNumber));<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> GetHashCode()<br />
+{<br />
+    </SPAN><SPAN>return</SPAN><SPAN> _rawNumber.GetHashCode();<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>We can get away with this, because every U.S. Citizen should have a unique SSN and Jeffrey has made the class immutable, which means the class is safe in a hashtable.</P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Overriding ToString</STRONG></P><br />
+<P>Let&#8217;s just delegate this to the new <STRONG>IFormattable</STRONG> implementation by specifying the default format of &#8220;G&#8221;:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+{<br />
+    </SPAN><SPAN>return</SPAN><SPAN> ToString(</SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>null</SPAN><SPAN>);<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Final Class</STRONG></P><br />
+<P>Here is draft of the class along with my <STRONG>MySSNFormatProvider Class</STRONG>.&nbsp; Yeah, this screams TDD / unit testing, but I was lazy <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>&nbsp;</P><PRE><SPAN>using</SPAN><SPAN> System;<br />
+</SPAN><SPAN>using</SPAN><SPAN> System.Diagnostics;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> MyClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        SocialSecurityNumber ssn </SPAN><SPAN>=<BR>                </SPAN><SPAN>new</SPAN><SPAN> SocialSecurityNumber(</SPAN><SPAN>&#8220;</SPAN><SPAN>123-45-6789</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        Console.WriteLine(ssn);<br />
+        Console.WriteLine(</SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>No Dashes: {0:nd}</SPAN><SPAN>&#8220;</SPAN><SPAN>, ssn));<br />
+        Console.WriteLine(</SPAN><SPAN>string</SPAN><SPAN>.Format<BR>                  (</SPAN><SPAN>new</SPAN><SPAN> MySSNFormatProvider(), </SPAN><SPAN>&#8220;</SPAN><SPAN>{0:secure}</SPAN><SPAN>&#8220;</SPAN><SPAN>, ssn));</p>
+<p>        Console.ReadLine();<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SocialSecurityNumber : IFormattable<br />
+    {<br />
+        </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _rawNumber;</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> SocialSecurityNumber(</SPAN><SPAN>string</SPAN><SPAN> number)<br />
+        {<br />
+            _rawNumber </SPAN><SPAN>=</SPAN><SPAN> number;<br />
+        }</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+        {<br />
+            </SPAN><SPAN>return</SPAN><SPAN> ToString(</SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>null</SPAN><SPAN>);<br />
+        }</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>bool</SPAN><SPAN> Equals(</SPAN><SPAN>object</SPAN><SPAN> obj)<br />
+        {<br />
+            </SPAN><SPAN>if</SPAN><SPAN> (obj </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>false</SPAN><SPAN>;</p>
+<p>            SocialSecurityNumber ssn </SPAN><SPAN>=</SPAN><SPAN> obj </SPAN><SPAN>as</SPAN><SPAN> SocialSecurityNumber;<br />
+            </SPAN><SPAN>if</SPAN><SPAN> (ssn </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>false</SPAN><SPAN>;</p>
+<p>            </SPAN><SPAN>return</SPAN><SPAN> (</SPAN><SPAN>this</SPAN><SPAN>._rawNumber.Equals(ssn._rawNumber));<br />
+        }</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> GetHashCode()<br />
+        {<br />
+            </SPAN><SPAN>return</SPAN><SPAN> _rawNumber.GetHashCode();<br />
+        }</p>
+<p>        </SPAN><SPAN>#region</SPAN><SPAN> IFormattable Members</SPAN><SPAN></p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(</SPAN><SPAN>string</SPAN><SPAN> format, <BR>                           IFormatProvider formatProvider)<br />
+        {<br />
+            </SPAN><SPAN>if</SPAN><SPAN> (formatProvider </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+            {<br />
+                ICustomFormatter formatter </SPAN><SPAN>=</SPAN><SPAN> <BR>                    formatProvider.GetFormat(<br />
+                    </SPAN><SPAN>this</SPAN><SPAN>.GetType())<br />
+                    </SPAN><SPAN>as</SPAN><SPAN> ICustomFormatter;</p>
+<p>                </SPAN><SPAN>if</SPAN><SPAN> (formatter </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+                    </SPAN><SPAN>return</SPAN><SPAN> formatter.Format(format, </SPAN><SPAN>this</SPAN><SPAN>, formatProvider);<br />
+            }</p>
+<p>            </SPAN><SPAN>if</SPAN><SPAN> (format </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) format </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>            </SPAN><SPAN>switch</SPAN><SPAN> (format)<br />
+            {<br />
+                </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>nd</SPAN><SPAN>&#8220;</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> _rawNumber.Replace(</SPAN><SPAN>&#8220;</SPAN><SPAN>-</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>&#8220;&#8221;</SPAN><SPAN>);<br />
+                </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>:<br />
+                </SPAN><SPAN>default</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> _rawNumber;<br />
+            }<br />
+        }</p>
+<p>        </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> MySSNFormatProvider : IFormatProvider, ICustomFormatter<br />
+    {<br />
+        </SPAN><SPAN>#region</SPAN><SPAN> IFormatProvider Members</SPAN><SPAN></p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>object</SPAN><SPAN> GetFormat(Type formatType)<br />
+        {<br />
+            </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>this</SPAN><SPAN>;<br />
+        }</p>
+<p>        </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>        </SPAN><SPAN>#region</SPAN><SPAN> ICustomFormatter Members</SPAN><SPAN></p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Format(</SPAN><SPAN>string</SPAN><SPAN> format, </SPAN><SPAN>object</SPAN><SPAN> arg,<BR>                                 IFormatProvider formatProvider)<br />
+        {<br />
+            </SPAN><SPAN>switch</SPAN><SPAN>(format)<br />
+            {<br />
+                </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>secure</SPAN><SPAN>&#8220;</SPAN><SPAN>:<br />
+                </SPAN><SPAN>default</SPAN><SPAN>: </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>***-**-</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>+</SPAN><SPAN> arg.ToString().Substring(</SPAN><SPAN>7</SPAN><SPAN>);<br />
+            }<br />
+        }</p>
+<p>        </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+    }<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>I beat that subject to death, but am wondering what others would do differently or add to the example?&nbsp; It&#8217;s a rather neat &#8220;intellectual&#8221; exercise, albeit a bit bloated if it all isn&#8217;t necessary.&nbsp;There are no doubt some things missing or perhaps done incorrectly.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/c/" title="View all posts in C#" rel="category tag">C#</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/" title="Permalink to Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/feed/" title="Comments RSS to Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-101 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2006/03/12/nhibernate-with-asp-net-using-oop-and-design-patterns/" rel="prev"><span class="meta-nav">&larr;</span> NHibernate with ASP.NET using OOP and Design Patterns</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/" rel="next">SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">16 Responses to <em>Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-204">
+		<div id="comment-204">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mike Stortz</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-204">March 19, 2006 at 8:20 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m working with social service software, and as a matter of messy reality, it is possible to have people with duplicate SSNs.  Not common, fortunately, but possible.</p>
+<p>Also, some people do not recall their entire SSN, and have no documentation handy, so any class that I could use would have to support blank digits (&#8220;X&#8221;?).  This would, of course, result in more possible duplicates.</p>
+<p>That said, excellent article, and I will be sure to implement this pattern where applicable in my classes.  Slick!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-203">
+		<div id="comment-203">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-203">March 15, 2006 at 10:43 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, Johan.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-202">
+		<div id="comment-202">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Johan Eijlders</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-202">March 15, 2006 at 6:40 pm</a></div>
+
+		<div class="comment-body"><p>Hi David,</p>
+<p>Thanks for taking the time to explain some of the fun things of design and development. I&#8217;m a frequent visitor of you&#8217;re blog and i think the subjects you discuss are very interesting.<br />
+Keep up the good work.</p>
+<p>Johan</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-201">
+		<div id="comment-201">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-201">March 15, 2006 at 11:29 am</a></div>
+
+		<div class="comment-body"><p>You&#8217;re asking if the Agile Software Development book gives credit to Bertrand Meyer on the OCP?  Yes, it references his book:</p>
+<p>Object Oriented Software Construction, Bertrand Meyer, Prentice Hall, 1988, p 23</p>
+<p>Regards,</p>
+<p>Dave</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-200">
+		<div id="comment-200">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.danielmoth.com/Blog/' rel='external nofollow' class='url'>Daniel Moth</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-200">March 15, 2006 at 10:40 am</a></div>
+
+		<div class="comment-body"><p>The &#8220;Open Closed principle&#8221; was, afaik, first defined by Bertrand Meyer (creator of Eiffel) in his most excellent book. I am just genuinely curious if the reference you cited gives him credit for that?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-199">
+		<div id="comment-199">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-199">March 14, 2006 at 10:04 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, stephen!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-198">
+		<div id="comment-198">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-198">March 14, 2006 at 10:03 pm</a></div>
+
+		<div class="comment-body"><p>Johan,</p>
+<p>Yes, because the strategy is not about the format. It is about the concrete IFormatProvider strategy determined at runtime and plugged into the string.Format method.</p>
+<p>As an example, use a Factory Method to return the concrete IFormatProvider strategy and then plug it in:</p>
+<p>IFormatProvider ssnFormatProvider = SSNFormatProvider.Create(CurrentUser.Roles);</p>
+<p>Console.WriteLine(string.Format(ssnFormatProvider, &#8220;0:doesntmatter&#8221;, ssn));</p>
+<p>It doesn&#8217;t matter what you plug in for the format and the formatting doesn&#8217;t really need to vary based on the concrete strategy, it is really about the runtime determination of what concrete strategy of IFormatProvider will be implemented.</p>
+<p>Regards,</p>
+<p>Dave</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-197">
+		<div id="comment-197">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">stephen</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-197">March 14, 2006 at 6:55 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for explaining this.  It was said earlier, but I&#8217;ll say it again, this is finally making sense.  The MSDN documentation explains it, but doesn&#8217;t really give an understandable instance of why one would go to the trouble of implementing a formatting class.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-196">
+		<div id="comment-196">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Johan Eijlders</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-196">March 14, 2006 at 6:53 pm</a></div>
+
+		<div class="comment-body"><p>Hi David, </p>
+<p>Thanks for the reaction.<br />
+So you&#8217;re saying. In order to be a strategy more than one algorithm is needed. I understand that.<br />
+Do you think it still a strategy if one would supply the format method of CustomerServiceSSNFormatProvider with &#8220;{0:notsosecure}&#8221; and only change the implementation of the CustomerServiceSSNFormatProvider to:</p>
+<p>public string Format(string format, object arg, IFormatProvider formatProvider)<br />
+        {<br />
+            switch(format)<br />
+            {<br />
+                case &#8220;notsosecure&#8221;:<br />
+                default: return &#8220;***-&#8221; + arg.ToString().Substring(4);<br />
+            }<br />
+        }</p>
+<p>Johan</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-195">
+		<div id="comment-195">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-195">March 14, 2006 at 6:37 pm</a></div>
+
+		<div class="comment-body"><p>Johan,</p>
+<p>The more I think about it, you could consider MySSNFormatProvider a concrete strategy if looking from the perspective of the .NET Framework.</p>
+<p>This is similar to injecting your own custom IComparer to sort objects in an ArrayList like:</p>
+<p>ArrayList items = new ArrayList();<br />
+items.Add(&#8220;One&#8221;);<br />
+items.Add(&#8220;Two&#8221;);<br />
+items.Add(&#8220;Three&#8221;);</p>
+<p>IComparer myComparer = new CoolComparer();<br />
+items.Sort(myComparer);</p>
+<p>In this case, myComparer will be used to compare objects in the ArrayList as opposed to the default IComparable implementation of each object.</p>
+<p>Great question.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-194">
+		<div id="comment-194">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-194">March 14, 2006 at 11:59 am</a></div>
+
+		<div class="comment-body"><p>Thanks, Johan.</p>
+<p>I, personally, wouldn&#8217;t call it the strategy pattern as written.</p>
+<p>I think of the strategy pattern more in terms of using differing / pluggable algorithms based on configuration or context, like having an IPricingStrategy and a family of classes that implement the Interface.</p>
+<p>One, class, called LowestPriceStrategy, for example, implements the Interface and calculates the pricing so that the customer gets the lowest price.</p>
+<p>A second class, called ValuePricingStrategy, would implement the interface that gives the customer most bang for his/her buck.</p>
+<p>A third class, called HighestPriceStrategy, would implement the interface so that the retailer makes the most profit.</p>
+<p>Depending on the configuration or context, one of these pricing strategies would be in play.</p>
+<p>In the example with SSN, I am really only implementing an interface that allows for custom formatting, not changing the algorthm of the formatting based on context.</p>
+<p>However, you could evolve this into a strategy pattern if you were to have a family of classes that implement the &#8220;secure&#8221; format and are plugged into the WriteLine statement based on context.</p>
+<p>Maybe we have different format providers per application role.</p>
+<p>AdminSSNFormatProvider implements the IFormatProvider and ICustomFormatter interfaces and displays the &#8220;secure&#8221; format as &#8220;123-45-6789&#8243;. We have a CustomerServiceSSNFormatProvider that implements the same interfaces and displays the secure format as &#8220;***-**-6789&#8243;. And, CustomerSSNFormatProvider displays the secure format as &#8220;123-45-6789&#8243; as well.</p>
+<p>Therefore you could do something like:</p>
+<p>Console.WriteLine(string.Format(ssnFormatProvider, &#8220;{0:secure}&#8221;, ssn));</p>
+<p>where ssnFormatProvider is declared as IFormatProvider and could be anyone of the concrete classes mentioned above based on the role of the person logged in. In this case, we are differing the algorithm for displaying a &#8220;secure&#8221; SSN based on context.</p>
+<p>This is purely my humble opinion and others may think of it differently.</p>
+<p>Regards,</p>
+<p>Dave</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-193">
+		<div id="comment-193">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Johan Eijlders</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-193">March 13, 2006 at 7:21 pm</a></div>
+
+		<div class="comment-body"><p>Nice example David,</p>
+<p>Is it correct to say that MySSNFormatProvider is a concrete Strategy?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-192">
+		<div id="comment-192">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-192">March 13, 2006 at 4:21 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, Jeffrey.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-191">
+		<div id="comment-191">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-191">March 13, 2006 at 12:41 pm</a></div>
+
+		<div class="comment-body"><p>David,<br />
+Great example of extension.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-190">
+		<div id="comment-190">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-190">March 13, 2006 at 3:08 am</a></div>
+
+		<div class="comment-body"><p>Thanks, Robert.</p>
+<p>I appreciate you taking the time to say so.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-189">
+		<div id="comment-189">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Robert</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#comment-189">March 13, 2006 at 1:04 am</a></div>
+
+		<div class="comment-body"><p>David,</p>
+<p>Really good post.  For the first time, all of this makes complete sense.  </p>
+<p>Robert</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='101' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="64280c6227" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.343 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 15:12:29 -->
+<!-- super cache -->

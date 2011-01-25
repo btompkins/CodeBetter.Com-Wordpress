@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Implementing IEnumerable and IEnumerator on Your Custom Objects' href='http://codebetter.com/davidhayden/2005/03/08/implementing-ienumerable-and-ienumerator-on-your-custom-objects/' />
+<link rel='next' title='Data Access Application Block Revealed &#8211; Factory Methods and Reflection' href='http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=19' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-19" class="post-19 post type-post status-publish format-standard hentry category-application-blocks">
+					<h1 class="entry-title">Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/" title="2:54 am" rel="bookmark"><span class="entry-date">March 10, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>I have mentioned a couple of other <A href="http://codebetter.com/blogs/david.hayden/category/135.aspx">Enterprise Library Application Blocks</A> so far:</P><br />
+<UL><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/02/56345.aspx">Configuration Application Block</A><br />
+<LI><A href="http://codebetter.com/blogs/david.hayden/archive/2005/03/04/56523.aspx">Caching Application Block</A></LI></UL><br />
+<P>Probably the most popular application block is the <STRONG>Data Access Application Block</STRONG> (DAAB).&nbsp; For detailed information on this block, you can read the <A href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnpag2/html/daab.asp" target="_blank">documentation</A>.&nbsp; However, in general, DAAB simplifies the task of reading and writing information to a database by providing a simple API and a library that provides access to the most frequently used features of ADO.NET.&nbsp; It essentially handles the details of connection management, etc. and allows you to read and write data to the database with fewer lines of code and in a consistent manner.</P><br />
+<P>As with all the application blocks in the Enterprise Library (<A href="http://www.microsoft.com/downloads/details.aspx?FamilyId=0325B97A-9534-4349-8038-D56B38EC394C&amp;displaylang=en" target="_blank">download</A>), you need to really familiarize yourself with the <STRONG>Enterprise Library Configuration&nbsp;Tool</STRONG> that is part of the download.&nbsp; It helps create the necessary configuration files that allow each block to run accordingly.&nbsp; Shown below is a snippet of the configuration tool allowing me to customize the configuration files for my local <STRONG>Sql Server</STRONG> and the <STRONG>Northwind</STRONG> Database.</P><br />
+<P align="center"><IMG alt="Data Access Application Block" hspace="0" src="/blogs//images/codebetter_com/david.hayden/130/r_DAAB.gif" align="baseline" border="0"></P><br />
+<P>As I mentioned before, it looks involved and outputs a rather involved configuration file, but it took me all of about 5 minutes to create the necessary configuration files.&nbsp; Other than the name of the database and server, you can accept most of the defaults which pop-up automatically as soon as you say you want to add the Data Access Application Block.&nbsp; Aside from the information that needs to go in your app.config or web.config, here is the configuration file for the DAAB:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>dataConfiguration.config</LEGEND><PRE><SPAN>&lt;?</SPAN><SPAN>xml version</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>1.0</SPAN><SPAN>&#8220;</SPAN><SPAN> encoding</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>utf-8</SPAN><SPAN>&#8220;</SPAN><SPAN>?&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>dataConfiguration</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+  </SPAN><SPAN>&lt;</SPAN><SPAN>xmlSerializerSection type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Microsoft.Practices.EnterpriseLibrary.Data.</SPAN><SPAN><br />
+</SPAN><SPAN>            Configuration.DatabaseSettings, Microsoft.Practices.EnterpriseLibrary.Data,<br />
+            Version</SPAN><SPAN>=</SPAN><SPAN>1.0</SPAN><SPAN>.</SPAN><SPAN>0.0</SPAN><SPAN>, Culture</SPAN><SPAN>=</SPAN><SPAN>neutral, PublicKeyToken</SPAN><SPAN>=</SPAN><SPAN>null</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>    </SPAN><SPAN>&lt;</SPAN><SPAN>enterpriseLibrary.databaseSettings xmlns:xsd</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>http://www.w3.org/2001/XMLSchema</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+            xmlns:xsi</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>http://www.w3.org/2001/XMLSchema-instance</SPAN><SPAN>&#8220;</SPAN><SPAN> defaultInstance</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Northwind</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+            xmlns</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>http://www.microsoft.com/practices/enterpriselibrary/08-31-2004/data</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+      </SPAN><SPAN>&lt;</SPAN><SPAN>databaseTypes</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+        </SPAN><SPAN>&lt;</SPAN><SPAN>databaseType name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Sql Server</SPAN><SPAN>&#8220;</SPAN><SPAN> type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Microsoft.Practices.EnterpriseLibrary.Data.Sql.SqlDatabase,</SPAN><SPAN><br />
+</SPAN><SPAN>            Microsoft.Practices.EnterpriseLibrary.Data, Version</SPAN><SPAN>=</SPAN><SPAN>1.0</SPAN><SPAN>.</SPAN><SPAN>0.0</SPAN><SPAN>, Culture</SPAN><SPAN>=</SPAN><SPAN>neutral,<br />
+            PublicKeyToken</SPAN><SPAN>=</SPAN><SPAN>null</SPAN><SPAN>&#8220;</SPAN><SPAN> /&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>      </SPAN><SPAN>&lt;/</SPAN><SPAN>databaseTypes</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+      </SPAN><SPAN>&lt;</SPAN><SPAN>instances</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+        </SPAN><SPAN>&lt;</SPAN><SPAN>instance name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Northwind</SPAN><SPAN>&#8220;</SPAN><SPAN> type</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Sql Server</SPAN><SPAN>&#8220;</SPAN><SPAN> connectionString</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Northwind</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+      </SPAN><SPAN>&lt;/</SPAN><SPAN>instances</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+      </SPAN><SPAN>&lt;</SPAN><SPAN>connectionStrings</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+        </SPAN><SPAN>&lt;</SPAN><SPAN>connectionString name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Northwind</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+          </SPAN><SPAN>&lt;</SPAN><SPAN>parameters</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+            </SPAN><SPAN>&lt;</SPAN><SPAN>parameter name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>database</SPAN><SPAN>&#8220;</SPAN><SPAN> value</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Northwind</SPAN><SPAN>&#8220;</SPAN><SPAN> isSensitive</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>false</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+            </SPAN><SPAN>&lt;</SPAN><SPAN>parameter name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Integrated Security</SPAN><SPAN>&#8220;</SPAN><SPAN> value</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>True</SPAN><SPAN>&#8220;</SPAN><SPAN> isSensitive</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>false</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+            </SPAN><SPAN>&lt;</SPAN><SPAN>parameter name</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>server</SPAN><SPAN>&#8220;</SPAN><SPAN> value</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>local</SPAN><SPAN>&#8220;</SPAN><SPAN> isSensitive</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>false</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+          </SPAN><SPAN>&lt;/</SPAN><SPAN>parameters</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+        </SPAN><SPAN>&lt;/</SPAN><SPAN>connectionString</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+      </SPAN><SPAN>&lt;/</SPAN><SPAN>connectionStrings</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>&lt;/</SPAN><SPAN>enterpriseLibrary.databaseSettings</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+  </SPAN><SPAN>&lt;/</SPAN><SPAN>xmlSerializerSection</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>dataConfiguration</SPAN><SPAN>&gt;</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The file basically just specifies that I am using Sql Server and the connection string to get to the server and the Northwind Database.</P><br />
+<P>So that is really not that interesting.&nbsp; The key to the block is simplifying the use of ADO.NET.&nbsp; Let&#8217;s grab a customer from the <STRONG>Customer Table</STRONG> in <STRONG>Northwind</STRONG>.&nbsp; I will use the <STRONG>DataReader</STRONG>, but you could certainly pull this off with a <STRONG>DataSet</STRONG> as well.&nbsp; I will also use a <STRONG>querystring</STRONG>, but you could also use a <STRONG>Stored Procedure</STRONG> as well.&nbsp; To each his own on how you prefer to access data from the database.&nbsp; Shown below is a rough outline of the specific commands to pull this off using the DAAB:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Data Access Application Block</LEGEND><PRE><SPAN>Database db </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();</p>
+<p></SPAN><SPAN>string</SPAN><SPAN> query </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Select * from Customers Where CustomerID = @CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>DBCommandWrapper command </SPAN><SPAN>=</SPAN><SPAN> db.GetSqlStringCommandWrapper(query);</p>
+<p>command.AddInParameter(</SPAN><SPAN>&#8220;</SPAN><SPAN>@CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>, DbType.String, id);</p>
+<p></SPAN><SPAN>using</SPAN><SPAN> (IDataReader reader </SPAN><SPAN>=</SPAN><SPAN> db.ExecuteReader(command))<br />
+{<br />
+    </SPAN><SPAN>//</SPAN><SPAN> Do Something&#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Everything starts out with <STRONG>DatabaseFactory.CreateDatabase</STRONG>().&nbsp; If you don&#8217;t specify a named instance of a database (as I did not), it just grabs the default database in the configuration file.&nbsp; The DAAB comes with this <STRONG>DBCommandWrapper</STRONG> class that is essentially a wrapper for <STRONG>SqlCommand</STRONG> for Sql Server.&nbsp; I pass it my querystring as well as add the value of the <STRONG>@CustomerID</STRONG> parameter.</P><br />
+<P>I wanted to use a <STRONG>DataReader</STRONG>, so I call <STRONG>ExecuteReader</STRONG> on the database (db), which passes back an <STRONG>IDataReader</STRONG>.&nbsp; At this point, I do whatever I want with the reader.&nbsp; Realize at this point the connection to the database is open, so you want to do your business and get the connection closed.&nbsp; In my case, I wrapped the reader in a <STRONG>using</STRONG> block, which essentially mimics a <STRONG>try/finally</STRONG> block and calls <STRONG>dispose</STRONG> on the reader in <STRONG>finally</STRONG>.&nbsp; Calling dispose on the reader will close the reader which causes the open connection to close due to its use of the <STRONG>CommandBehavior.CloseConnection</STRONG>.</P><br />
+<P>That is it.&nbsp; You don&#8217;t have to open the connections or create the command objects and manage it all.&nbsp; DAAB does it for you.&nbsp; Let&#8217;s complete the code to grab a particular customer from the Customers Table.</P><br />
+<P>We don&#8217;t have to do this, but let&#8217;s create a <STRONG>Customer</STRONG> Class.&nbsp; Rather than passing the DataReader through another layer, we are going to pass up a Customer Object to the &#8220;UI&#8221; layer.&nbsp; Here is a bare bones Customer Class with only a few pieces of information:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Customer Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Customer<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _id;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _name;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _title;</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ID<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _id; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Name<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _name; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _name </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Title<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _title; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _title </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> Customer (</SPAN><SPAN>string</SPAN><SPAN> id, </SPAN><SPAN>string</SPAN><SPAN> name, </SPAN><SPAN>string</SPAN><SPAN> title)<br />
+    {<br />
+        _id </SPAN><SPAN>=</SPAN><SPAN> id;<br />
+        _name </SPAN><SPAN>=</SPAN><SPAN> name;<br />
+        _title </SPAN><SPAN>=</SPAN><SPAN> title;<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> String.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0} {1}, {2}</SPAN><SPAN>&#8220;</SPAN><SPAN>, _id, _name, _title);<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Now we need to&nbsp;create a class, called <STRONG>CustomerData</STRONG>, that will essentially read in our customer using DAAB and simply fill and return the Customer Class.&nbsp; Here is something quick:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>CustomerData Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> CustomerData<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> CustomerData() {}</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> Customer FetchByID(</SPAN><SPAN>string</SPAN><SPAN> id)<br />
+    {<br />
+        Database db </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();</p>
+<p>        </SPAN><SPAN>string</SPAN><SPAN> query </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>Select * from Customers Where CustomerID = @CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>        DBCommandWrapper command </SPAN><SPAN>=</SPAN><SPAN> db.GetSqlStringCommandWrapper(query);</p>
+<p>        command.AddInParameter(</SPAN><SPAN>&#8220;</SPAN><SPAN>@CustomerID</SPAN><SPAN>&#8220;</SPAN><SPAN>, DbType.String, id);</p>
+<p>        </SPAN><SPAN>using</SPAN><SPAN> (IDataReader reader </SPAN><SPAN>=</SPAN><SPAN> db.ExecuteReader(command))<br />
+        {<br />
+            </SPAN><SPAN>if</SPAN><SPAN> (reader.Read())<br />
+            {<br />
+                </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> Customer(reader.GetString(</SPAN><SPAN>0</SPAN><SPAN>), reader.GetString(</SPAN><SPAN>2</SPAN><SPAN>), reader.GetString(</SPAN><SPAN>3</SPAN><SPAN>));<br />
+            }<br />
+            </SPAN><SPAN>else</SPAN><SPAN><br />
+                </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;<br />
+        }<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>And here is the code that tests it out:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Test Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> TestClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        CustomerData customerData </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> CustomerData();<br />
+        Customer customer </SPAN><SPAN>=</SPAN><SPAN> customerData.FetchByID(</SPAN><SPAN>&#8220;</SPAN><SPAN>ALFKI</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (customer </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+        {<br />
+            Console.WriteLine(customer);<br />
+            Console.ReadLine();<br />
+        }<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>If you don&#8217;t like the idea of using a DataReader or a custom class, you can certainly pass a <STRONG>DataSet</STRONG>.&nbsp; I created this just for the sake of showing something a bit different from the examples provided as part of the Enterprise Library.&nbsp; The key here is the little amount of code you have to write as well as how there is nothing specific to Sql Server.</P><br />
+<P>For more information on the DAAB, click <A href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnpag2/html/daab.asp" target="_blank">here</A>.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/application-blocks/" title="View all posts in Application Blocks" rel="category tag">Application Blocks</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/" title="Permalink to Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/feed/" title="Comments RSS to Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-19 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/03/08/implementing-ienumerable-and-ienumerator-on-your-custom-objects/" rel="prev"><span class="meta-nav">&larr;</span> Implementing IEnumerable and IEnumerator on Your Custom Objects</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/03/11/data-access-application-block-revealed-factory-methods-and-reflection/" rel="next">Data Access Application Block Revealed &#8211; Factory Methods and Reflection <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">8 Responses to <em>Enterprise Library &#8211; Data Access Application Block (DAAB) &#8211; Patterns and Practices</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-43">
+		<div id="comment-43">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-43">March 20, 2005 at 11:56 am</a></div>
+
+		<div class="comment-body"><p>You have to open the connection first <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>There is a sample in the documentation that walks you through the use of the Data Access Application Block with transactions.  Here is a snapshot of the code:</p>
+<p>Database db = DatabaseFactory.CreateDatabase();</p>
+<p>using (IDbConnection connection = db.GetConnection())<br />
+<br />{<br />
+<br />  connection.Open();<br />
+<br />  IDbTransaction transaction = connection.BeginTransaction();</p>
+<p>  try<br />
+<br />  {<br />
+<br />    // Credit the first account<br />
+<br />    db.ExecuteNonQuery(creditCommandWrapper, transaction);<br />
+<br />    // Debit the second account<br />
+<br />    db.ExecuteNonQuery(debitCommandWrapper, transaction);</p>
+<p>    // Commit the transaction<br />
+<br />    transaction.Commit();<br />
+<br />  }<br />
+<br />  catch<br />
+<br />  {<br />
+<br />    // Rollback transaction<br />
+<br />    transaction.Rollback();</p>
+<p>    return false;<br />
+<br />  }</p>
+<p>  return true;<br />
+<br />}<br />
+<br />}<br /></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-42">
+		<div id="comment-42">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Oded</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-42">March 20, 2005 at 5:56 am</a></div>
+
+		<div class="comment-body"><p>How do i use Transactions ?<br />
+<br />i tried using the db.GetConnection.BeginTransaction().<br />
+<br />and got: &quot;The connection is closed.&quot;<br /></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-41">
+		<div id="comment-41">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-41">March 11, 2005 at 3:41 pm</a></div>
+
+		<div class="comment-body"><p>I think you&#8217;re right, Josh.  If you want true abstraction, you will need to go the stored procedure route.</p>
+<p>The config file does not have the flexibility now of allowing you to specify the number and types of parameters for string queries.</p>
+<p>I took a brief look at the code last night and there is a ParameterToken field defined as &quot;@&quot; for SqlServer and &quot;:&quot; for Oracle just as you mentioned.  You could probably override it and do some clever coding to make these string queries more flexible and less dependant on the database, but I don&#8217;t think we should go there <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>In most cases, people probably tend to use the DAAB to write less code and for API consistency as opposed to database abstraction, but you bring up a good point about how stored procedures appear to be more ideal if you really want the ultimate abstraction.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-40">
+		<div id="comment-40">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Josh Flanagan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-40">March 10, 2005 at 7:01 pm</a></div>
+
+		<div class="comment-body"><p>After I made the comment, I started to think that maybe EL *does* do the translation for you &#8211; thinking it might be pretty easy with some regex replace calls.  But as I started to think about the different scenarios, I realized it would be pretty difficult.  The killer is the OLEDB case which doesn&#8217;t allow for named parameters.  If you had a query that only took a single parameter, but used it twice within the query: for Oracle and Sql, you only add a single Parameter to the Command object.  For OleDB, you would have to add 2 Parameters to the Command object &#8211; both with the same value.<br />
+<br />Even storing the SQL query in a configurable location (as opposed to hardcoded) wouldn&#8217;t help, since the number of parameters differs based on provider, so your code would have to change accordingly.   Does EL allow you to define the number &amp; type of parameters for a string query in your config file?<br />
+<br />I wonder if you have to use stored procedures if you want true abstraction from the database provider.<br /></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-39">
+		<div id="comment-39">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-39">March 10, 2005 at 6:49 pm</a></div>
+
+		<div class="comment-body"><p>Josh,</p>
+<p>You&#8217;re absolutely right.</p>
+<p>If you end up hardcoding sql you won&#8217;t be as abstract as you might like.  I would have to peek at the source code to be sure, but I doubt very much that Enterprise Library does any sort of translation.  Great comment.<br /></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-38">
+		<div id="comment-38">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-38">March 10, 2005 at 6:42 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, Jeffrey.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-37">
+		<div id="comment-37">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Josh Flanagan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-37">March 10, 2005 at 3:34 pm</a></div>
+
+		<div class="comment-body"><p>It is a nice abstraction, no question.</p>
+<p>Unfortunately, the query and the parameter syntax in your example ARE specific to SQL Server.  </p>
+<p>For example, if you change your configuration to use the OracleClient provider, you will still have to change the query in your code to something like:</p>
+<p>Select * from Customers Where CustomerID = :CustomerID</p>
+<p>If you use an OLEDB provider, it becomes:</p>
+<p>Select * from Customers Where CustomerID = ?</p>
+<p>I am assuming the Enterprise library does not do this translation of the query for you.  You still have to change the query yourself.  If EL does handle it, then cool.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-36">
+		<div id="comment-36">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dotnetjunkies.com/weblog/jpalermo' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#comment-36">March 10, 2005 at 1:11 pm</a></div>
+
+		<div class="comment-body"><p>Awesome.  Sample code that could actually be used.  Thanks for your post.  It illustrates, also, how to use a data class to populate business objects.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/03/10/enterprise-library-data-access-application-block-daab-patterns-and-practices/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='19' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="6a3c1b39a1" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 9924.705 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:37:42 -->
+<!-- super cache -->

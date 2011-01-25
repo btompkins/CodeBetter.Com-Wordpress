@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>New INTERSECT and EXCEPT operators in Sql Server 2005 T-SQL | Raymond Lewallen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/raymondlewallen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/raymondlewallen/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/raymondlewallen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/raymondlewallen/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Raymond Lewallen' href='http://codebetter.com/raymondlewallen/' />
+<link rel='start' title='Moving some blog entries' href='http://codebetter.com/raymondlewallen/2004/12/01/moving-some-blog-entries/' />
+<link rel='prev' title='My overall top 30 draft picks in Fantasy Football 2005' href='http://codebetter.com/raymondlewallen/2005/07/30/my-overall-top-30-draft-picks-in-fantasy-football-2005/' />
+<link rel='next' title='Languages that run on the .Net framework' href='http://codebetter.com/raymondlewallen/2005/08/01/languages-that-run-on-the-net-framework/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/raymondlewallen/2005/08/01/new-intersect-and-except-operators-in-sql-server-2005-t-sql/' />
+<link rel='shortlink' href='http://codebetter.com/raymondlewallen/?p=175' />
+<link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-175" class="post-175 post type-post status-publish format-standard hentry category-most-popular category-sql-development">
+					<h1 class="entry-title">New INTERSECT and EXCEPT operators in Sql Server 2005 T-SQL</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/raymondlewallen/author/raymondlewallen/" title="View all posts by raymondlewallen">raymondlewallen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/raymondlewallen/2005/08/01/new-intersect-and-except-operators-in-sql-server-2005-t-sql/" title="6:46 am" rel="bookmark"><span class="entry-date">August 1, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/raymondlewallen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/raymondlewallen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/raymondlewallen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>This is the first post of many to come that talk about new enhancements in the Sql Server 2005 T-Sql language.</p>
+<p><font size="5"><strong>INTERSECT</strong></font></p>
+<p>Let say you have a products table.&nbsp; I’m going to use the<br />
+products table from the AdventureWorks database.&nbsp; Now let’s say<br />
+you imported a list of products into the database into a table called<br />
+productduplicates.&nbsp; Just for a reason, let’s say you manufacturer<br />
+sent you a full list of products, and you need to see which products<br />
+you already have in your database.</p>
+<p>Normally, if you didn’t have matching primary keys on both tables,<br />
+like a productId, you would do an inner join on some columns that<br />
+uniquely identify the rows, as such:</p>
+</p>
+<fieldset>
+<legend>INNER JOIN</legend>
+<p>select a.[name], a.productnumber<br />&nbsp;from production.product a<br />inner join production.productduplicates b<br />&nbsp;on a.[name] = b.[name] <br />&nbsp;and a.productnumber = b.productnumber</fieldset>
+</p>
+<fieldset>
+<legend>Execution plan for inner join</legend>
+<p>Hash<br />
+Match(Inner Join, HASH:([b].[Name], [b].[ProductNumber])=([a].[Name],<br />
+[a].[ProductNumber]),<br />
+RESIDUAL:([AdventureWorks].[Production].[Product].[Name] as<br />
+[a].[Name]=[AdventureWorks].[Production].[productduplicates].[Name] as<br />
+[b].[Name] AND [AdventureWorks].[Production].[Product].[ProductNumber]<br />
+as<br />
+[a].[ProductNumber]=[AdventureWorks].[Production].[productduplicates].[ProductNumber]<br />
+as [b].[ProductNumber])) <br />&nbsp; |&#8211;Table<br />
+Scan(OBJECT:([AdventureWorks].[Production].[productduplicates] AS<br />
+[b]))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br />&nbsp;<br />
+|&#8211;Clustered Index<br />
+Scan(OBJECT:([AdventureWorks].[Production].[Product].[PK_Product_ProductID]<br />
+AS [a]))&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </fieldset>
+</p>
+<p>Now you can replace this with a simple INTERSECT statement like the following:</p>
+</p>
+<fieldset>
+<legend>INTERSECT</legend>
+<p>select [name], productnumber from production.product<br />intersect<br />select [name], productnumber from production.productduplicates</fieldset>
+</p>
+<fieldset>
+<legend>Execution plan for INTERSECT</legend>
+<p>Hash Match(Right<br />
+Semi Join,<br />
+HASH:([AdventureWorks].[Production].[productduplicates].[Name],<br />
+[AdventureWorks].[Production].[productduplicates].[ProductNumber])=([AdventureWorks].[Production].[Product].[Name],<br />
+[AdventureWorks].[Production].[Product].[ProductNumber]),<br />
+RESIDUAL:([AdventureWorks].[Production].[Product].[Name]=[AdventureWorks].[Production].[productduplicates].[Name]<br />
+AND<br />
+[AdventureWorks].[Production].[Product].[ProductNumber]=[AdventureWorks].[Production].[productduplicates].[ProductNumber]))<br />
+<br />&nbsp; |&#8211;Table Scan(OBJECT:([AdventureWorks].[Production].[productduplicates]))&nbsp; <br />&nbsp; |&#8211;Clustered Index Scan(OBJECT:([AdventureWorks].[Production].[Product].[PK_Product_ProductID]))&nbsp;&nbsp; </fieldset>
+</p>
+<p>Just like if you were using a UNION for two select statements, the<br />
+same number of columns must exist in both select statements, and they<br />
+must be of the same datatype.&nbsp; In both above examples, you get a<br />
+list of products that exist in both tables, so you know which products<br />
+from the manufacturer you already have listed.</p>
+<p>I haven’t seen any performance difference in the two, but I’ve only<br />
+played with this on small tables.&nbsp; The execution plan does show<br />
+that while you are doing a hash match inner join on the first query,<br />
+the second query performs a hash match right semi join.&nbsp; Both hash<br />
+matches perform 50% of the work in the query.&nbsp; The other 50% is<br />
+split evenly between the table scan and index scan in both<br />
+queries.&nbsp; So what does the fact that a right semi match is<br />
+performed when using INTERSECT?&nbsp; I tells me its doing the same<br />
+thing as if we were to use the EXISTS, like so:</p>
+</p>
+<fieldset>
+<legend>EXISTS</legend>
+<p>select a.[name], a.productnumber<br />&nbsp;from production.product a<br />where exists(select b.[name], b.productnumber from production.productduplicates b<br />&nbsp;where a.[name] = b.[name] <br />&nbsp;and a.productnumber = b.productnumber)</fieldset>
+</p>
+<p><font size="5"><strong>EXCEPT</strong></font></p>
+<p>Same scenario, if you wanted to know which products you have that do<br />
+not exist in the duplicates table, you would normally do a NOT EXISTS<br />
+like so:</p>
+</p>
+<fieldset>
+<legend>NOT EXISTS</legend>
+<p>select a.[name], a.productnumber<br />&nbsp;from production.product a<br />where not exists(select b.[name], b.productnumber from production.productduplicates b<br />&nbsp;where a.[name] = b.[name] <br />&nbsp;and a.productnumber = b.productnumber)</fieldset>
+</p>
+<fieldset>
+<legend>Execution plan for NOT EXISTS</legend>
+<p>Hash<br />
+Match(Right Anti Semi Join, HASH:([b].[Name],<br />
+[b].[ProductNumber])=([a].[Name], [a].[ProductNumber]),<br />
+RESIDUAL:([AdventureWorks].[Production].[Product].[Name] as<br />
+[a].[Name]=[AdventureWorks].[Production].[productduplicates].[Name] as<br />
+[b].[Name] AND [AdventureWorks].[Production].[Product].[ProductNumber]<br />
+as<br />
+[a].[ProductNumber]=[AdventureWorks].[Production].[productduplicates].[ProductNumber]<br />
+as [b].[ProductNumber])) <br />&nbsp; |&#8211;Table Scan(OBJECT:([AdventureWorks].[Production].[productduplicates] AS [b])) <br />&nbsp; |&#8211;Clustered Index Scan(OBJECT:([AdventureWorks].[Production].[Product].[PK_Product_ProductID] AS [a]))</fieldset>
+</p>
+<p>And you get back the list of products that you have that aren’t in<br />
+the duplicates list.&nbsp; You can flip this around to figure out which<br />
+products are in the duplicates that you don’t have in your products.</p>
+<p>Let’s simply the code a little bit by using the EXCEPT operator.&nbsp; This looks identical to the INTERSECTS query:</p>
+</p>
+<fieldset>
+<legend>EXCEPT</legend>
+<p>select [name], productnumber from production.product<br />except<br />select [name], productnumber from production.productduplicates</fieldset>
+</p>
+<fieldset>
+<legend>Execution plan for except</legend>
+<p>Hash Match(Right<br />
+Anti Semi Join,<br />
+HASH:([AdventureWorks].[Production].[productduplicates].[Name],<br />
+[AdventureWorks].[Production].[productduplicates].[ProductNumber])=([AdventureWorks].[Production].[Product].[Name],<br />
+[AdventureWorks].[Production].[Product].[ProductNumber]),<br />
+RESIDUAL:([AdventureWorks].[Production].[Product].[Name]=[AdventureWorks].[Production].[productduplicates].[Name]<br />
+AND<br />
+[AdventureWorks].[Production].[Product].[ProductNumber]=[AdventureWorks].[Production].[productduplicates].[ProductNumber]))<br />
+<br />&nbsp; |&#8211;Table Scan(OBJECT:([AdventureWorks].[Production].[productduplicates])) <br />&nbsp; |&#8211;Clustered Index Scan(OBJECT:([AdventureWorks].[Production].[Product].[PK_Product_ProductID])) </fieldset>
+</p>
+<p>Again, can’t find a performance difference.&nbsp; In all queries<br />
+shows, the reads and duration all average out to be virtually<br />
+identical.&nbsp; You’d have to test this on some large tables (high<br />
+number of rows) to figure out if there is a performance difference at<br />
+all.</p>
+<p>Looking at the execution plans for everything, it doesn’t seem that<br />
+there is a any gain from using INTERSECT and EXCEPT over JOINS or<br />
+EXISTS/NOT EXISTS except for one big thing: <em>Much simpler code!</em></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/raymondlewallen/category/most-popular/" title="View all posts in Most Popular" rel="category tag">Most Popular</a>, <a href="http://codebetter.com/raymondlewallen/category/sql-development/" title="View all posts in Sql Development" rel="category tag">Sql Development</a>. Bookmark the <a href="http://codebetter.com/raymondlewallen/2005/08/01/new-intersect-and-except-operators-in-sql-server-2005-t-sql/" title="Permalink to New INTERSECT and EXCEPT operators in Sql Server 2005 T-SQL" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/raymondlewallen/2005/08/01/new-intersect-and-except-operators-in-sql-server-2005-t-sql/feed/" title="Comments RSS to New INTERSECT and EXCEPT operators in Sql Server 2005 T-SQL" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-175 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/raymondlewallen/2005/07/30/my-overall-top-30-draft-picks-in-fantasy-football-2005/" rel="prev"><span class="meta-nav">&larr;</span> My overall top 30 draft picks in Fantasy Football 2005</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/raymondlewallen/2005/08/01/languages-that-run-on-the-net-framework/" rel="next">Languages that run on the .Net framework <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/raymondlewallen/2005/08/01/new-intersect-and-except-operators-in-sql-server-2005-t-sql/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/raymondlewallen/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fraymondlewallen%2F2005%2F08%2F01%2Fnew-intersect-and-except-operators-in-sql-server-2005-t-sql%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.227 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 14:55:53 -->
+<!-- super cache -->
