@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Build your own CAB Part #8 &#8211; Assigning Responsibilities in a Model View Presenter Architecture | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Put Code Where You Would Expect to Find It' href='http://codebetter.com/jeremymiller/2007/06/10/put-code-where-you-would-expect-to-find-it/' />
+<link rel='next' title='We are so spoiled' href='http://codebetter.com/jeremymiller/2007/06/12/we-are-so-spoiled/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=361' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-361" class="post-361 post type-post status-publish format-standard hentry category-build-your-own-cab category-design-patterns">
+					<h1 class="entry-title">Build your own CAB Part #8 &#8211; Assigning Responsibilities in a Model View Presenter Architecture</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup/" title="8:41 pm" rel="bookmark"><span class="entry-date">June 10, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>&nbsp;</p>
+<p>First, go catch up on what&#8217;s come before:</p>
+<ol>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/21/build-your-own-cab-part-1-the-preamble.aspx">Preamble</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">The Humble Dialog Box</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/30/build-your-own-cab-part-4-the-passive-view.aspx">Passive View</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/03/build-your-own-cab-part-5-the-presentation-model.aspx">Presentation Model</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication.aspx">View to Presenter Communication</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-answering-some-questions.aspx">Answering some questions</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-part-7-what-s-the-model.aspx">What&#8217;s the Model?</a></li>
+</ol>
+<h4>Where&nbsp;should this code go?</h4>
+<p>In a post last winter I said that a coder only becomes a true software craftsman when they start asking themselves &#8220;<a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/12/06/On-Writing-Maintainable-Code.aspx">where should <i>this</i> code go?</a>&#8220;&nbsp; It&#8217;s a neverending question that you use to guide your designs and assign responsibilities.&nbsp; In a typical Model View Presenter architecture the screens are composed of 4 basic types of classes (&#8220;M&#8221;, &#8220;V&#8221;, &#8220;P&#8221;, and the Service Layer).&nbsp; When you&#8217;re designing a screen along MVP lines, you need to assign each responsibility of the screen to one of these 4 pieces, while also determining the design constraints upon each piece.&nbsp;&nbsp;The question of &#8220;who does what?&#8221; isn&#8217;t perfectly black and white, and there are many variations on the basic structure.&nbsp; That being said, here&#8217;s my best advice on the duties and constraints of each of the four pieces.&nbsp; As a rule of thumb, try to put any given&nbsp;responsibility as close to the top of this list as possible without violating the design constraints of each piece.</p>
+<h4>Service Layer</h4>
+<p>The <a href="http://www.martinfowler.com/eaaCatalog/serviceLayer.html">Service Layer</a> classes are generally a <a href="http://en.wikipedia.org/wiki/Fa%C3%A7ade_pattern">Facade</a> over the rest of the application, generally encompassing business logic and data persistence.&nbsp;&nbsp;In general it&#8217;s important and valuable to decouple the view layer from the rest of the application as much as possible to&nbsp;create&nbsp;<a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/01/08/Orthogonal-Code.aspx">orthogonality</a> between the&nbsp;backend and the user interface.&nbsp; If you find&nbsp;the Presenter&nbsp;collaborating with&nbsp;more than&nbsp;a single&nbsp;Service Layer&nbsp;class you might think about putting a single Facade over the two services for that screen.&nbsp; </p>
+<p>In terms of constraints, the Service Layer is not aware of anything specific to any one screen, but it is perfectly permissible for the Service Layer classes to be aware of the Model and perform work on the Model.&nbsp; If you&#8217;ve chosen to use actual <a href="http://en.wikipedia.org/wiki/Domain_model">Domain Model</a> classes for the Model in the screen, the Service Layer is probably just&nbsp;some sort of <a href="http://www.martinfowler.com/eaaCatalog/repository.html">Repository</a> class.&nbsp; You might think of it like this.&nbsp; Say you&#8217;re building a monolithic application today, but tomorrow you want to expose web services to interact with the system as an alternative to the user interface.&nbsp; The Service Layer classes should be able to work within the web service code without any change.</p>
+<p>The Service Layer should encompass any type of business logic that is not specific or tightly coupled to a specific screen.&nbsp; In my current system there is going to be a validation on certain date values against a calendar service that compares the selected date against the business days for&nbsp;a particular country.&nbsp;&nbsp;If I were to embed that logic into the Presenter for my first Trade screen the logic wouldn&#8217;t be very accessible to the following Trade screens.&nbsp; That calendar logic definitely&nbsp;belongs in the Service Layer.&nbsp;</p>
+<h4>Model&nbsp; </h4>
+<p>The Model can be more than just a lump of data.&nbsp; For a multitude of reasons, I want my Model class to&nbsp;implement most of the business rules for the given business concept.&nbsp; The first reason is simply cohesion.&nbsp; As much as possible, I want all of my business rules for an Invoice or a Trade or a Shipment in the domain class for that particular domain concept.&nbsp; If I want to look up the business rules for an Invoice, I want a single place to go look.&nbsp; One of my primary&nbsp;design goals&nbsp;is to <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/10/put-code-where-you-would-expect-to-find-it.aspx">put code where you would expect to find it</a>, and to me&nbsp;that means that invoicing&nbsp;business rules go in the Invoice class.</p>
+<p>The second reason is reuse or elimination of duplication.&nbsp; If you make a Presenter or the View itself responsible for business rules you&#8217;re much more likely to find yourself duplicating the same&nbsp;business rules across multiple screens.&nbsp; Those declarative validation controls in ASP.Net are sure easy to use, but there&#8217;s a definite downside because the responsibility for validation is in the wrong place.</p>
+<p>For example, the Model classes in my current system are responsible for:</p>
+<ul>
+<li><b>Validation rules</b>.&nbsp; The validation rules for a domain concept should definitely&nbsp;be kept in the Domain Model.&nbsp;&nbsp;Validation logic is most definitely a business rule.&nbsp; Besides, it&#8217;s just so common to have multiple screens acting upon the same classes.&nbsp; You don&#8217;t really want to have to duplicate validation rules from a &#8220;Create Trade&#8221; screen to the parallel &#8220;Edit Trade&#8221; screen do you?&nbsp; If nothing else, putting validation rules in the Domain Layer makes these rules very simple to test compared to the same rules living in either the View or even the Presenter.&nbsp; I&#8217;ve got a lot more to say on this subject in the next post on the Notification pattern.&nbsp; In the meantime, Jean-Paul has&nbsp;a good post on <a href="http://www.jpboodhoo.com/blog/ValidationInTheDomainLayerTakeOne.aspx">Validation In The Domain Layer &#8211; Take One</a>&nbsp;and again <a href="http://www.jpboodhoo.com/blog/ValidationInTheDomainLayerTakeTwo.aspx">Validation In The Domain Layer &#8211; Take Two</a>.</li>
+<li><b>Default values</b>.&nbsp; My last two projects have included quite a bit of logic around assigning default values.&nbsp; The normal scenario is that the use selects one value, and from that one value you can determine logical defaults for one or more other fields.&nbsp; I have a little business rule to code tomorrow morning that will automatically set the values for two date fields to 2 days after the Trade Date as soon as the Trade Date is selected for the first time.&nbsp; That rule is going right into the appropriate Trade subclass, both because it&#8217;s where I&#8217;d expect to find that code and because it makes that&nbsp;business rule very easy to drive with Test Driven Development.&nbsp; Because the rule is wholly implemented in the Model class and the Model class is completely decoupled from the View and Service Layer, I can test these rules by applying purely state based testing.&nbsp; For this approach to work I <b>do</b>&nbsp;need the screen to automatically synchronize&nbsp;itself with the Model when the Model changes, but&nbsp;the&nbsp;WinForms tooling makes that kind of <a href="http://www.martinfowler.com/eaaDev/MediatedSynchronization.html">Observer Synchronization</a> relatively simple.&nbsp;</li>
+<li><b>Calculated values</b>.&nbsp; Again, this is dependent upon&nbsp;using Observer Synchronization, but I place the&nbsp;responsibility for calculating derived values into the Model class.&nbsp; It&#8217;s a business rule, and the Model class has all of the data, so it&#8217;s the natural place for this logic.&nbsp; As with defaulted values, the calculation can be relatively simple to test in isolation.</li>
+</ul>
+<p>&nbsp;</p>
+<p>The constraint on the Model is that whether or not we allow the Model classes to call out to any kind of service, and if so, how much coupling do we allow with other services?&nbsp; In my current project I don&#8217;t allow any direct coupling from my Model classes to any external system.&nbsp; If a business rule for defaulting&nbsp;or calculating a value requires information or a service from outside the Model, I would partially&nbsp;move that responsibility out into the Presenter to keep the Model decoupled from infrastructure.&nbsp; The Model classes don&#8217;t know how they&#8217;re displayed nor how they&#8217;re persisted and updated.&nbsp; In other systems you might opt for more of an <a href="http://en.wikipedia.org/wiki/Active_record">Active Record</a> approach that puts some form of service communication responsibility into the Model classes.&nbsp; </p>
+<p>The Presentation Model approach isn&#8217;t really an exception to these constraints because the Presentation Model itself usually wraps the actual Model.</p>
+<h4>View &amp; Presenter</h4>
+<p>The screen itself is split between two main actors, the View and the Presenter.&nbsp; As we&#8217;ve seen in the previous posts on the Supervising Controller, Passive View, and Presentation Model, there&#8217;s a couple different ways to split responsibilities between the View and Presenter.&nbsp; Rather than rehash those posts, I just want to add a few more thoughts:</p>
+<ul>
+<li>Don&#8217;t allow the View to spill out into the Presenter.&nbsp; There might be exception cases, but don&#8217;t allow any reference&nbsp;to any Type in the&nbsp;System.Windows.Forms namespace from the Presenter class.&nbsp;&nbsp;Any WinForms mechanics in the Presenter is like letting water splash out of the tub&nbsp;and rot the floor.&nbsp;</li>
+<li>Keep the View as thin as possible.&nbsp; Always ask yourself if a given piece of code could or should&nbsp;live outside of the View.&nbsp; My advice is to move anything out of the View that doesn&#8217;t have to be there.</li>
+<li>Don&#8217;t allow the Presenter to become too big.&nbsp; It&#8217;s far too tempting to use the Presenter as&nbsp;a receptacle for any random responsibility.&nbsp; If you see parts of the Presenter that don&#8217;t seem to be related to the rest of the Presenter, do an Extract Class refactoring to move that code to a smaller, cohesive class.</li>
+<li>There is no ironclad rule that says 1 screen == 1 view + 1 presenter.&nbsp; It&#8217;s often going to be valuable to reduce the complexity of either the Presenter or View by breaking off pieces of the screen into smaller pieces.&nbsp; There may still be one uber-Presenter and one uber-View for the entire screen, but don&#8217;t hesitate to make specific Presenter or View classes for a part of a complicated screen.&nbsp; There&#8217;s also no ironclad law that says n views = n presenters as well.</li>
+</ul>
+<p>Getting back to first causes, it all comes down to two things:</p>
+<ol>
+<li>Is&nbsp;each piece of the&nbsp;code easy to understand?</li>
+<li>Is the code easy to test?</li>
+</ol>
+<p>Answer these two questions in the affirmative&nbsp;and I think your design is effective.</p>
+<p>&nbsp;</p>
+<h4>Where Next?</h4>
+<p>That&#8217;s the end of the 100/200 level material on &#8220;Build&nbsp;your own&nbsp;CAB.&#8221;&nbsp; Now we get to move on to the cool parts -which will undoubtedly prove more difficult to write.&nbsp; The next post will be on Domain-centric validation with the Notification pattern.&nbsp; After that I think the consensus is to go into building the Application Shell (2-3 posts), then my&nbsp;MicroController stuff (2-3 posts), and automated testing (???).&nbsp; Bringing up the rear will be event aggregation and synchronization with the backend.&nbsp; I am leaving Pluggability until last, but that&#8217;s because I&#8217;m going to slip in a StructureMap 2.1 release at the end of June and demonstrate a couple of new features.</p>
+<p>I&#8217;m hoping to wrap this up no later than the first week in July.</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/build-your-own-cab/" title="View all posts in Build your own CAB" rel="category tag">Build your own CAB</a>, <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup/" title="Permalink to Build your own CAB Part #8 &#8211; Assigning Responsibilities in a Model View Presenter Architecture" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup/feed/" title="Comments RSS to Build your own CAB Part #8 &#8211; Assigning Responsibilities in a Model View Presenter Architecture" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-361 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/06/10/put-code-where-you-would-expect-to-find-it/" rel="prev"><span class="meta-nav">&larr;</span> Put Code Where You Would Expect to Find It</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/06/12/we-are-so-spoiled/" rel="next">We are so spoiled <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2171">
+					<div id="dsq-comment-header-2171" class="dsq-comment-header">
+						<cite id="dsq-cite-2171">
+								<span id="dsq-author-user-2171">Jeremy Collins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2171" class="dsq-comment-body">
+						<div id="dsq-comment-message-2171" class="dsq-comment-message"><p>I&#8217;m loving these series of articles. One thing I always struggle with is &#8220;where does the data access code go?&#8221;</p>
+<p>Basically, which module / layer knows about System.Data.Sql?<br />
+Does the &#8220;service&#8221; layer retrieve and persist collections of domain objects? Or does the model layer handle all of its own persistence?</p>
+<p>Let&#8217;s assume we&#8217;re not using any ORM framework.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2172">
+					<div id="dsq-comment-header-2172" class="dsq-comment-header">
+						<cite id="dsq-cite-2172">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2172">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2172" class="dsq-comment-body">
+						<div id="dsq-comment-message-2172" class="dsq-comment-message"><p>Jeremy,</p>
+<p>Where does data access go?  Nowhere near the user interface code.  The persistence, be it direct ADO.Net access or web services, is somewhere behind the Service Layer.  I strongly prefer a Data Mapper approach that makes the Model classes completely Persistence Ignorant.</p>
+<p>I guess you could technically use an Active Record approach that would put the data access stuff into the Model objects, but that would lock you hard into a 2 tier model.  I could be wrong, but I&#8217;d expect most WinForms applications communicate with the backend through web services or remoting, so that option doesn&#8217;t make a lot of sense to me.  Plus the fact that I hate that approach in general.</p>
+<p>Oh, and the no ORM thing?  Life is entirely too short to spend human being time on writing ADO.Net code by hand in the majority of systems.  That&#8217;s like sending people out to do the harvest with scythes.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2173">
+					<div id="dsq-comment-header-2173" class="dsq-comment-header">
+						<cite id="dsq-cite-2173">
+								<span id="dsq-author-user-2173">SteveJ</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2173" class="dsq-comment-body">
+						<div id="dsq-comment-message-2173" class="dsq-comment-message"><p>Some of the responsibilities going into a model would seem to be the same sort of things I would put in an object called a cache.  The cache updates itself with data (when given from a service layer or wherever).  It then serves that data out to cilents when asked for it.  So if a client/presenter wants a filtered set of data, the cache does the filtering (without changing the underlying data).  If a calculation needs run, the cache is the guy who does it, since it&#8217;s his data being crunched.  In cases where the cache seems to take on more operations than just data retrieval (calculations,etc) I wrap the cache with an object I call the model, but it&#8217;s really just running operations on the cached data (and it is usually too touchy with the cache, which seems wrong to me (doCalculation(cache.getA(), cache.getB());</p>
+<p>This is a little different from validation rules to me&#8230;I would use a model for those, but if the operation in question is basically a utility function (sort, sum, filter) then I leave it on my cache class.</p>
+<p>Is this approach only practical because of my client-server architecture?  Or because my cache is operating on domain objects (DTOs)? </p>
+<p>The other difference I&#8217;m seeing is that my cache isn&#8217;t really allowed to change it&#8217;s underlying data to service a view.  I might use a model to do that, but I wonder who&#8217;s job it is in this pattern to send changes back to the server&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2174">
+					<div id="dsq-comment-header-2174" class="dsq-comment-header">
+						<cite id="dsq-cite-2174">
+								<span id="dsq-author-user-2174">AndyT</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2174" class="dsq-comment-body">
+						<div id="dsq-comment-message-2174" class="dsq-comment-message"><p>Great blog thread, with some great comments from your readers, too.<br />
+You said &#8220;In a typical Model View Presenter architecture the screens are composed of 4 basic types of classes (&#8220;M&#8221;, &#8220;V&#8221;, &#8220;P&#8221;, and the Service Layer).&#8221; In previous sections, you mentioned the application controller. How does this fit into your design? Does the app controller purely control navigation between forms?<br />
+What about the scenario where the form is one part of a (maybe transacted) workflow, say one step in a wizard? In this situation, should there be a use-case controller or equivalent? Where would this fit into the design?<br />
+I agree that the domain objects should be responsible for validation. However, is this limited to generic validation rules that apply in all scenarios? What about use-case-specific validation rules? Should the use-case controller handle this? Or should the application create use-case specific domain objects which inherit from the real domain objects?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2175">
+					<div id="dsq-comment-header-2175" class="dsq-comment-header">
+						<cite id="dsq-cite-2175">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2175">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2175" class="dsq-comment-body">
+						<div id="dsq-comment-message-2175" class="dsq-comment-message"><p>@AndyT,</p>
+<p>Dude, you&#8217;re making me work here!  From your questions I&#8217;d say that you&#8217;re working on a more interesting application than mine, but the grass is always greener somewhere else.</p>
+<p>&#8220;Does the app controller purely control navigation between forms?&#8221;</p>
+<p>For the most part, yes.  That post is either next or the one after.</p>
+<p>&#8220;What about the scenario where the form is one part of a (maybe transacted) workflow, say one step in a wizard? In this situation, should there be a use-case controller or equivalent? Where would this fit into the design?&#8221;</p>
+<p>You could do that, or you could run the workflow as a double linked list so each presenter &#8220;knows&#8221; who&#8217;s next and/or before and tells ApplicationController to go somewhere.  You certainly don&#8217;t want the ApplicationController to become a catch all for any piece of code, so a use case &#8220;Wizard&#8221; controller sounds fine to me.  I&#8217;d have to change my normal ApplicationController design a bit to accomodate that I&#8217;d imagine.</p>
+<p>&#8220;What about use-case-specific validation rules? Should the use-case controller handle this? Or should the application create use-case specific domain objects which inherit from the real domain objects?&#8221;</p>
+<p>I&#8217;d say that if it&#8217;s possible you try to fit the validation in the domain classes first, even if is logic specific to a use case.  </p>
+<p>If you&#8217;ll thumb through the 1st or 2nd chapter in Fowler&#8217;s PEAA book, he talks a bit about the different ways you can organize domain logic.  When he mentions use case controller there&#8217;s a danger of duplicating logic because of how coarse-grained use case controllers can be.  I&#8217;d try to watch domain logic leaking into the use case controllers to prevent possible duplication.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2176">
+					<div id="dsq-comment-header-2176" class="dsq-comment-header">
+						<cite id="dsq-cite-2176">
+								<span id="dsq-author-user-2176">Niyazi G&#252;l</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2176" class="dsq-comment-body">
+						<div id="dsq-comment-message-2176" class="dsq-comment-message"><p>I feel like having aspx as view is limiting and want to use user controls as the view instead.  But not sure how to implement multiple user controls in this pattern<br />
+especially one user control changing state of the other or how to redirect to another view etc. would you provide some insight for this?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2177">
+					<div id="dsq-comment-header-2177" class="dsq-comment-header">
+						<cite id="dsq-cite-2177">
+								<span id="dsq-author-user-2177">Shep</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2177" class="dsq-comment-body">
+						<div id="dsq-comment-message-2177" class="dsq-comment-message"><p>Niyazi,</p>
+<p>One way is to expose the properties and events of your user control(s) and have your aspx page pass them thru to the presenter layer.  I believe if you read up on the Web Client Software Factory you may find your answer.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2178">
+					<div id="dsq-comment-header-2178" class="dsq-comment-header">
+						<cite id="dsq-cite-2178">
+	http://scourtrille.wordpress.com							<span id="dsq-author-user-2178">Shane Courtrille</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2178" class="dsq-comment-body">
+						<div id="dsq-comment-message-2178" class="dsq-comment-message"><p>Jeremy,</p>
+<p>Awesome series but I did want to discuss one point you made in this post.  You make the statement that &#8220;your service layer is probably just some sort of repository class&#8221;.</p>
+<p>I disagree with that comment but it could just be that I am misunderstanding what you mean.  For me a service layer is a place to define &#8220;whole&#8221; operations that can be carried out on your system.  It is a gateway to my domain that is responsible for dealing with things like a unit of work.  A repository on the other hand is a domain object I can use to retrieve, update, add and delete objects from.  </p>
+<p>I&#8217;ve worked on systems that didn&#8217;t have a service layer at all and you would only deal with a repository but I didn&#8217;t consider it a service layer.  It would seem that by mixing these two concerns you are breaking single responsibility.  </p>
+<p>Regards,</p>
+<p>Shane</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2179">
+					<div id="dsq-comment-header-2179" class="dsq-comment-header">
+						<cite id="dsq-cite-2179">
+								<span id="dsq-author-user-2179">Geoffrey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2179" class="dsq-comment-body">
+						<div id="dsq-comment-message-2179" class="dsq-comment-message"><p>Hello,</p>
+<p>I&#8217;m using a MVP model and alle navigation events (eg Edit / Add ) are catched by the presenter ant then the presenter is throwing an &#8220;UIEvent&#8221; to my main application. There navigation is handled.<br />
+But it feels like I could handle the navigation from my presenter. However, no references can be made to winforms lib, so I&#8217;m stuck here.<br />
+You guys are talking about an applicationcontroller.  How does that work and how do you glue it together?</p>
+<p>tx<br />
+Geoffrey</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2180">
+					<div id="dsq-comment-header-2180" class="dsq-comment-header">
+						<cite id="dsq-cite-2180">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2180">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2180" class="dsq-comment-body">
+						<div id="dsq-comment-message-2180" class="dsq-comment-message"><p>@Geoffrey,</p>
+<p>I&#8217;m sorry, but I haven&#8217;t gotten there yet and probably can&#8217;t until the end of the month.  An ApplicationController is from Fowler&#8217;s PEAA book.  It&#8217;s just the controller class for the shell.  I generally give any Command or Presenter class that needs to do navigation a reference to the ApplicationController.  The ApplicationController would have methods for navigating to other screens.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2181">
+					<div id="dsq-comment-header-2181" class="dsq-comment-header">
+						<cite id="dsq-cite-2181">
+								<span id="dsq-author-user-2181">Oblomovi</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2181" class="dsq-comment-body">
+						<div id="dsq-comment-message-2181" class="dsq-comment-message"><p>Your models don&#8217;t work with Services right? And you can do state based testing for model. But what about business entities which represent complex data? Do your models store them? In my models there are business entities, and I&#8217;m forced to mock them, therefore I can&#8217;t do simple state based testing with model <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' /> .</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup/ ';
+	var disqus_identifier = '361 /blogs/jeremy.miller/archive/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Build your own CAB Part #8 &#8211; Assigning Responsibilities in a Model View Presenter Architecture";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=361');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/06\/10\/build-your-own-cab-part-8-model-view-presenter-wrapup\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://codeofrob.com/' rel='external nofollow' class='url'>Rob Ashton</a> on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6752">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments"><a href='http://www.best-registrycleaner.net' rel='external nofollow' class='url'>Best Registry Cleaner</a> on <a href="http://codebetter.com/jeremymiller/2009/01/20/create-your-own-auto-registration-convention-with-structuremap/#comment-6747">Create your own Auto Registration Convention with StructureMap</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.274 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-25 09:30:08 -->
+<!-- super cache -->
