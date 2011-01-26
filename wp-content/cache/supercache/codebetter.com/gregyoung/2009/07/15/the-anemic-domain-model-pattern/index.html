@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>The Anemic Domain Model Pattern | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='Always Valid' href='http://codebetter.com/gregyoung/2009/05/22/always-valid/' />
+<link rel='next' title='Unshackle Your Domain' href='http://codebetter.com/gregyoung/2009/07/15/unshackle-your-domain/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=125' />
+<link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-125" class="post-125 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">The Anemic Domain Model Pattern</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/" title="8:10 pm" rel="bookmark"><span class="entry-date">July 15, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>OK so I assume that you have run into the Anemic Domain Model Anti-Pattern at some point or another likely <a href="http://martinfowler.com/bliki/AnemicDomainModel.html">here</a> on the bliki.</p>
+<p>To quote from the bliki</p>
+<blockquote><p> The basic symptom of an Anemic Domain Model is that at first blush it looks like the real thing. There are objects, many named after the nouns in the domain space, and these objects are connected with the rich relationships and structure that true domain models have. The catch comes when you look at the behavior, and you realize that there is hardly any behavior on these objects, making them little more than bags of getters and setters. Indeed often these models come with design rules that say that you are not to put any domain logic in the the domain objects. Instead there are a set of service objects which capture all the domain logic. These services live on top of the domain model and use the domain model for data.</p>
+</blockquote>
+<p>What if I were to tell you that there are times and places where <strong>gasp</strong> an anemic domain model were in fact a best practice that would be highly recommended to a team? I really do vision the pitchforks and torches coming at me when I say this … Many including myself have lambasted unmentioned groups for pushing people towards anemic domain models so ….</p>
+<h3></h3>
+<p>&#160;</p>
+<h3>Making the case</h3>
+<p>To start with let’s analyze why you were using that domain model in the first place. Ideally you were using it because it provided you the benefit of being able to effectively handle more complexity as opposed to a system like active record or transaction script. In other words you found your system was too complex to be modeled in a more procedural way. This complexity is often seen by analyzing the duplication of code in your more procedural transaction script based system.</p>
+<p>Of course I find it rare to hear people cite this as why they are using a domain model. The reasons I hear tend to be more focused on the layering that necessarily comes with having a domain model. Instead I hear reasoning like testability, maintainability, abstraction from persistence mechanisms, strongly defined contracts etc.</p>
+<p>Where am I going with all this what happened to the anemic domain model pattern? Well it depends why you wanted a domain model in the first place. If you are using a domain model in an object oriented way to help you in the managing of complexity it is absolutely an anti-pattern for you to be seeing an anemic domain model. What if you are in the IMHO much larger group that is mainly seeking the benefits that come with a domain model in layering?</p>
+<p>The simplest in me would say that we would need to then compare the anemic domain model with other mechanisms to see if it would derive any benefit. We can pretty easily gain over a classical Active Record pattern because we can better express what is happening (especially in cases where we have an existing data model as we can map the data model if we want to). This leaves us with the more interesting case of transaction script, I deem the case “interesting” as both models are in fact transaction script we are comparing transaction script over an object model vs transaction script over say table module.</p>
+<p>I would say that even in this close distinction that the anemic domain model can have some advantages. At the least single property level validation tends to be encapsulated within the object.&#160; This although really a slight step towards having a functional domain model can offer huge gains in terms of dealing with transaction script where all of the validation is distributed. There can however be other advantages such as the ability to more easily test in isolation and the long term maintainability of the system. </p>
+<p>&#160;</p>
+<h3>Defining a context</h3>
+<p>So the real question becomes can we define a context where purposefully creating an anemic domain model would be a good idea over our alternatives? </p>
+<p>We want a layered architecture. We understand that our application due to non-functional requirements will need the benefits that a layered architecture provides. We understand the cost of creating a layered architecture and it has been justified by the stakeholders of our project.</p>
+<p>Our domain is not extremely complex. This is a bit of a misnomer, but let’s say that our domain falls within the bottom 90% of systems in terms of domain complexity. There are likely some spots of higher complexity that we may focus more on (and perhaps even model in a more object oriented way).</p>
+<p>Our team is not highly functional in object oriented design and analysis. When I say this I mean that team members must be highly functional in order to attempt creating a domain model (all other attempts will be doomed to failure, likely as an anemic domain model). When I say highly functional I would consider the AJM model (and people at the least being journeyman with maybe a single apprentice as the complexity of the system increases the number of masters needed increases). Said bluntly, 90% of teams in the Microsoft world should be looking at building anemic domain models as opposed to actual domain models for solely this reason. Using things that the development does not have a large understanding of is a certain recipe for failure.</p>
+<p>We would otherwise consider a simpler model such as transaction script but feel that we can benefit from things such as further testability.</p>
+<p>&#160;</p>
+<p>I believe that using these five viewpoints we can effectively create contexts within it makes perfect sense to be <strong>choosing</strong> to create an anemic domain model.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/" title="Permalink to The Anemic Domain Model Pattern" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/feed/" title="Comments RSS to The Anemic Domain Model Pattern" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-125 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2009/05/22/always-valid/" rel="prev"><span class="meta-nav">&larr;</span> Always Valid</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2009/07/15/unshackle-your-domain/" rel="next">Unshackle Your Domain <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">20 Responses to <em>The Anemic Domain Model Pattern</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2743">
+		<div id="comment-2743">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Louis</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2743">September 5, 2010 at 10:16 pm</a></div>
+
+		<div class="comment-body"><p>@Me Myself I:<br />
+I support you wholeheartedly. In my world, the reality is that my application has several domain-specific customers. But their rules &#038; workflow are very different. In this case ADM with an interchangeable services layer is the way I chose. Maintaining &#038; deploying fine-grained services that differ for each customer&#8217;s business processes is far easier that having to bastardise the domain model to cater for each customer&#8217;s peculiars.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2742">
+		<div id="comment-2742">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Louis</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2742">September 5, 2010 at 10:15 pm</a></div>
+
+		<div class="comment-body"><p>@Me Myself I:<br />
+I support you wholeheartedly. In my world, the reality is that my application has several domain-specific customers. But their rules &#038; workflow are very different. In this case ADM with an interchangeable services layer is the way I chose. Maintaining &#038; deploying fine-grained services that differ for each customer&#8217;s business processes is far easier that having to bastardise the domain model to cater for each customer&#8217;s peculiars.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2741">
+		<div id="comment-2741">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Me, myself and I</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2741">September 3, 2010 at 1:45 pm</a></div>
+
+		<div class="comment-body"><p>@Kishore: the sole purpose of existence of domain models is to handle complexity. A simple domain model is a contradiction in terms. IMO.</p>
+<p>@Charles Chen: I seriously see no point in considering a DM architecture having better discoverability than a TS/ADM one, even for skilled OO developers. In a DM architecture, you often have to understand not just the implementation of one particular class which you need to change, but also its contract, and the contract is most often defined in terms of other classes in the model. In cases where a TS/ADM architecture is in the right place, your anemic model is composed of DTOs, of which there isn&#8217;t much to understand &#8211; they have no contract. A transaction script/service, in such cases, is relatively independent, and easily undertstandable &#8211; more so than a family of coupled classes inside a domain model, of which each one may model only an aspect or a relation or some message handling of some business domain object.</p>
+<p>I find there&#8217;s another advantage of a TS/ADM architecture which nobody seems to recognize. With a DM, changes in the business logic affects your DM &#8211; i.e., it may require you to change its architecture, not just the implementation of one or the other operation, since there&#8217;s no one to one or a well defined one to many mapping from the problem domain to the solution domain. With TS/ADM, a mapping from one domain operation to one or many services is more often the case, while the data model (modeled by DTOs) tends to be pretty stable, if properly designed/designed to reflect the business reality. Which makes sense to me: business data doesn&#8217;t change that often, only business operations do. So having a TS/ADM architecture IME tends to isolate things that may need to change due to a business change into separate entities (services or groups of services used by just that particular business operation that changes). Which makes maintenance easier. I&#8217;m not talking from the books, I&#8217;m talking from experience.</p>
+<p>What we do, most often: use a TS/ADM architecture. Then, whenever some not so simple, non-trivial business logic needs to be implemented, make sort of a minimal sub-domain model for that particular piece of logic inside a transaction script/service class/service method. Since such a model is most often small and self-contained, and it models only one particular facet of some business object(s), it is a lot easier to comprehend than a full-blown domain model. I have yet to see a domain model which can&#8217;t be decomposed into mostly inert, infrastructure-like classes, and just a few tiny clusters of domain-related classes which make it easier to implement some business logic as a tiny domain model rather than a procedural-like transaction script. In most cases, IME, domain models linking everything there is to link into one huge, strongly coupled and interconnected model are most often plainly not justified by the complexity of the problem domain/solution domain they have to model. Then why give up the advantages of TS/ADM, even for the 90% of the parts of a problem where there&#8217;s no need for a DM?</p>
+<p>An example: we used to do and maintain a project management application. It allowed one to manage several projects at once over the same pool of resources, project planning, time tracking, costs tracking etc. Most of the application was CRUD. The only part which was more reasonably implementable as a domain model instead of transaction scripts was constraint checking and automatic, resource-driven planning. This was however a tiny part of the application, in terms of all the domain-specific objects manipulated by the application. Why then include the rest of the domain-related objects in a proper domain model, instead of a proper ADM, and doing sort of a micro domain model inside the services class related to project planning? I can&#8217;t see any other reason than a sort of snobbery.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2740">
+		<div id="comment-2740">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://opletayev.blogspot.com/' rel='external nofollow' class='url'>Mikhail Opletayev</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2740">December 4, 2009 at 8:01 pm</a></div>
+
+		<div class="comment-body"><p>I think a decision to make a project scalable and loosely coupled can very well lead to using Anemic Domain Model. </p>
+<p>Some projects are designed from a perspective of a bunch of components talking to each other using data messages. Usually those data message contain no business logic in them and serve just as the data containers, leading to a service layer that operates with such messages.</p>
+<p><a href="http://opletayev.blogspot.com/2009/12/anemic-domain-model.html" rel="nofollow">http://opletayev.blogspot.com/2009/12/anemic-domain-model.html</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2739">
+		<div id="comment-2739">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.lostechies.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2739">November 2, 2009 at 2:04 pm</a></div>
+
+		<div class="comment-body"><p>@Charles<br />
+&#8220;the locus of control is contained within your core objects (even if the pieces of functionality are still implemented in services).&#8221;</p>
+<p>Good point well expressed and I agree that in a good domain model thats the case. However I also agree with Greg, in a bad domain model, which is what most people with little OO experience will create, this doesn&#8217;t tend to happen.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2738">
+		<div id="comment-2738">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://commonlibrarynet.codeplex.com/' rel='external nofollow' class='url'>Kishore</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2738">September 11, 2009 at 2:30 am</a></div>
+
+		<div class="comment-body"><p>All, </p>
+<p>I agree, I&#8217;ve been using the Anemic Domain model for a while now and do prefer it for many of the reasons listed:</p>
+<p>1. Separation of concerns.<br />
+2. Facilitates Code Generation<br />
+3. Facilitates &#8220;Enterprise-Level&#8221; integration<br />
+4. Logic placed in Services can be easily switched.<br />
+5. Note: Extension methods in 3.5 can allow for an interesting hybrid between the two.<br />
+6. Domain Model&#8217;s can become complex.<br />
+7. Relationships / Aggregates can still be in the Anemic Model.</p>
+<p>Regarding #6 Above think of all the various &#8220;Services&#8221;/Functionality that can go into a Rich Domain Model.<br />
+1. Security<br />
+2. Validation<br />
+3. Data Massaging<br />
+4. Persistance<br />
+5. Import / Export<br />
+6. Serialization<br />
+7. Event Handling<br />
+8. Resource/Localization</p>
+<p>This can easily get quite complex.</p>
+<p>I&#8217;m using the Anemic Domain Model and various re-usable components that are part of an open-source library I&#8217;m building. And so far this approach is working quite well.</p>
+<p><a href="http://commonlibrarynet.codeplex.com/" rel="nofollow">http://commonlibrarynet.codeplex.com/</a></p>
+<p>Finally, I just want to say&#8230;. simply put.. things change. And what may be good in one-scenario may not work in another. Patterns change them selves.<br />
+Regards,</p>
+<p>-Kishore</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2737">
+		<div id="comment-2737">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Anders</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2737">August 13, 2009 at 6:58 pm</a></div>
+
+		<div class="comment-body"><p>Any suggestions on where to start if you want to move away from an anemic model to a richer one? Would you start within your transaction boundries and let then help you define your aggregates or would you have another approach?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2736">
+		<div id="comment-2736">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2736">July 31, 2009 at 4:24 pm</a></div>
+
+		<div class="comment-body"><p>@Chuck I think we can safely put discoverability as a non-functional requirement. Is it always needed?</p>
+<p>Also I would point out that the discoverability is only there in a domain done by people who really understand OO which is imho less than 5% of people in the .NET space and probably in the low 2 digits in the java space. When not done properly OO actually hurts discoverability over more procedural styles that people are more familiar with.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2735">
+		<div id="comment-2735">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jamespeckham.com' rel='external nofollow' class='url'>james peckham</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2735">July 31, 2009 at 4:59 am</a></div>
+
+		<div class="comment-body"><p>I don&#8217;t know if this is what you&#8217;re experiencing with an anemic domain model but general speaking our webservice contracts and operations are  so abstract that every ui that is built on those models requires  tons of code to bring it in line with LOB desires. It makes me wonder if there&#8217;s any value to having built the model anyhow? <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2734">
+		<div id="comment-2734">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.charliedigital.com/' rel='external nofollow' class='url'>Charles Chen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2734">July 29, 2009 at 1:51 am</a></div>
+
+		<div class="comment-body"><p>I think you&#8217;ve missed one point here that argues strongly against a transaction script/anemic domain model: &#8220;discoverability&#8221;.  </p>
+<p>While codebases written in the style of DM or TS/ADM will probably contain the same number of classes, there is a big difference in how those classes are wired together and how much _surface area_ a user of the codebase (let&#8217;s call it an API) will need to know.</p>
+<p>One of the key benefits of a domain model approach is that it hides the complexity of the different components behind the core objects of the problem domain.  I like to think that in a transaction script/anemic domain model, the locus of control is placed outside of your core objects.  In a well designed domain model, the locus of control is contained within your core objects (even if the pieces of functionality are still implemented in services).</p>
+<p>Take a calendaring application for example.  In a TS/ADM implementation, you&#8217;d have something like this to move an event (in C#):</p>
+<p>// What you would expect to see in a TS/ADM<br />
+Event _anExistingEvent = &#8230; ;</p>
+<p>EventScheduler scheduler = new EventScheduler();<br />
+scheduler.MoveEventDate(_anExistingEvent, DateTime.Now.AddDays(1));</p>
+<p>In contrast, what you would expect to see in a domain model approach:</p>
+<p>Event _anExistingEvent = &#8230; ;<br />
+_anExistingEvent.MoveEventDate(DateTime.Now.AddDays(1));</p>
+<p>The difference is subtle, but there is a huge gain in usability as there is one less class involved in the interactions of your domain object; a user of your API/framework (i.e. your coworker) doesn&#8217;t have to learn about the EventScheduler to use your code.  Likewise, if we consider the other things that we can do with events, we start to see the benefits of encapsulating (or rather) hiding the business logic and complex interactions within the domain object instead of in external services.  For example, imagine another scenario where you want to send an event in an email:</p>
+<p>// TS/ADM style<br />
+Event _anExistingEvent = &#8230;;<br />
+string _serverAddress = &#8230;;</p>
+<p>EventSendingService service = new EventSendingService(_serverAddress);</p>
+<p>service.CreateMessageForEvent(_anExistingEvent);<br />
+service.Connect();<br />
+service.SendEventMessage();</p>
+<p>// DM approach:</p>
+<p>Event _anExistingEvent = &#8230;;<br />
+_anExistingEvent.SendEventMessage();</p>
+<p>Now I&#8217;m not implying that there is any less code in the implementation, but if we consider this code from as a public API intended for use by others, clearly, a domain model approach is much more usable and approachable than a TS/ADM approach where a user of the API has to know many more objects and understand how they are supposed to interact.</p>
+<p>Just my input <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>&#8211; Chuck</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2733">
+		<div id="comment-2733">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2733">July 26, 2009 at 8:44 am</a></div>
+
+		<div class="comment-body"><p>@Frank<br />
+Yeah, if you spend a lot of effort on a fault domain model then you face a more difficult job re-engineering it. However if the model was simple and/or you kept your solution simple then either can be refactored/redesigned easily.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2732">
+		<div id="comment-2732">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Frank</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2732">July 21, 2009 at 10:35 pm</a></div>
+
+		<div class="comment-body"><p>Then &#8211; if I understand correctly &#8211; there isn&#8217;t much difference between a faulty domain model and faulty anemic domain model, as long as you don&#8217;t spend enormous effort in the model at all.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2731">
+		<div id="comment-2731">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2731">July 21, 2009 at 10:16 pm</a></div>
+
+		<div class="comment-body"><p>@Greg/Frank<br />
+Exactly. If you use a proxy domain expert you&#8217;ll spend a lot of time/effort in analysis and knowledge crunching and getting that warm fuzzy feeling, then 10 minutes with a real domain expert and you get the breakthrough that shows your original model was all wrong. Then you get the joy of basically dumping, or extensively redesigning, your model to fit the real world.</p>
+<p>In comparison if you&#8217;d just gone anemic the redesign is simpler, you just have simpler data structures and services which are much more malleable in those situations.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2730">
+		<div id="comment-2730">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2730">July 21, 2009 at 9:44 pm</a></div>
+
+		<div class="comment-body"><p>if I can pout words in Colin&#8217;s mouth its because you never spend the time to try to no9t make it anemic &#8230; its is just a data model. So you would get the beenfits of isolation and abstraction but not waste any time trying to figure out a real model.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2729">
+		<div id="comment-2729">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Frank</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2729">July 21, 2009 at 9:39 pm</a></div>
+
+		<div class="comment-body"><p>Just for my education, based on the comment of Colin.</p>
+<p>&#8220;Trying to use a domain model in those situations invariably results in a lot of wasted effort creating a model that you realize is utterly wrong after 5 minutes with the domain expert.&#8221;</p>
+<p>What kind of pros does an anemic domain model have over a domain model when the model itself is wrong anyways?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2728">
+		<div id="comment-2728">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://thinkbeforecoding.com' rel='external nofollow' class='url'>Think Before Coding</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2728">July 17, 2009 at 9:41 am</a></div>
+
+		<div class="comment-body"><p>For sure it&#8217;s better to have a model even if anemic than no model at all !<br />
+It gives a better view of data organisation for transaction script-like code.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2727">
+		<div id="comment-2727">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2727">July 16, 2009 at 4:12 pm</a></div>
+
+		<div class="comment-body"><p>Chris &#8230;</p>
+<p>it is &#8220;interesting&#8221; because &#8230; although the &#8220;anemic domain model&#8221; is called a domain model. It is not really a domain model at all it is in fact transaction script. </p>
+<p>As such we are comparing transaction script to transaction script. The anemic domain model being transaction script over an object model compared with a more classical transaction script over say table module.</p>
+<p>Make sense?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2726">
+		<div id="comment-2726">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Chris Falter</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2726">July 16, 2009 at 3:42 pm</a></div>
+
+		<div class="comment-body"><p>Greg &#8211; I do find the perspective refreshing.  I&#8217;m having a hard time understanding some of it, though, as you appear to have been in a big hurry when you were writing.  For example:</p>
+<p>&#8220;This leaves us with the more interesting case of transaction script, I deem the case “interesting” as both models are in fact transaction script we are comparing transaction script over an object model vs transaction script over say table module.&#8221;</p>
+<p>Every word in that passage is in an English dictionary, but I don&#8217;t think we could classify it as an English sentence.  Could you reformulate it, please, so we can better understand what you&#8217;re trying to say?  Thanks!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2725">
+		<div id="comment-2725">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.gregbeech.com' rel='external nofollow' class='url'>Greg Beech</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2725">July 15, 2009 at 11:25 pm</a></div>
+
+		<div class="comment-body"><p>What&#8217;s this? I&#8217;m astounded! Is CodeBetter actually publishing a blog post that actually has some roots in the real world? And isn&#8217;t just full of TDD is the One True Way crap?</p>
+<p>Well done. I may come back here more&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2724">
+		<div id="comment-2724">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#comment-2724">July 15, 2009 at 8:24 pm</a></div>
+
+		<div class="comment-body"><p>Couldn&#8217;t agree more, a topic thats not often discussed and I can&#8217;t argue with a word. One thing I&#8217;d add, use anemic domain if you have little access to domain experts e.g. if all you have are system experts or proxy domain experts. Trying to use a domain model in those situations invariably results in a lot of wasted effort creating a model that you realize is utterly wrong after 5 minutes with the domain expert.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2009/07/15/the-anemic-domain-model-pattern/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2009%2F07%2F15%2Fthe-anemic-domain-model-pattern%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.302 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:13:39 -->
+<!-- super cache -->

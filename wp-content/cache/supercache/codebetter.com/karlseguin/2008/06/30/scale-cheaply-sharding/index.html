@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Scale Cheaply &#8211; Sharding | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='Foundations of Programming Ebook' href='http://codebetter.com/karlseguin/2008/06/25/foundations-of-programming-ebook/' />
+<link rel='next' title='Get Your Func On' href='http://codebetter.com/karlseguin/2008/07/04/get-your-func-on/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=125' />
+<link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-125" class="post-125 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Scale Cheaply &#8211; Sharding</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/" title="3:11 pm" rel="bookmark"><span class="entry-date">June 30, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>There are a lot of expensive ways to scale your database – all of which are highly touted by the big three database vendors because, well, they want to sell you all types of really expensive stuff. Despite what an “engagement consultant” might tell you though, most of the high-traffic websites on the web (google, digg, facebook) rely on far cheaper and better strategies: the core of which is called sharding. </P><br />
+<P>What’s really astounding is that sharding is database agnostic – yet only the MySQL crowd seem to really be leveraging it. The sales staff at Microsoft, IBM and Oracle are doing a good job selling us expensive solutions.</P><br />
+<P>Sharding is the separation of your data across multiple servers. How you separate your data is up to you, but generally it’s done on some fundamental identifier. For example, if we were building a hosted bug tracking site, our data model would likely look something like: </P><br />
+<P><IMG height="243" src="http://www.openmymind.net/shardnig_db1.gif" width="575" border="0"></P><br />
+<P>Every Client is pretty much isolated from all other Clients. So if we put all of Client 1’s data on Server 1 and Client 2’s data on Server 2, our system will run just fine. This scales out horizontally infinitely well (there’s little to no overhead). Our first 500 clients can all go on our first server, at which point we can introduce a second database server and place our next 500 clients. Servers need only be added when actually needed, and there’s no need for management servers, load balancers or anything else – just straight database connections.</P><br />
+<P>One of the disadvantages of sharding is that it does impact your code. You need to figure out which database to connect to. For our simple scenario above, this isn’t too difficult:</P><PRE><br />
+using (SqlConnection connection = GetConnection(clientId))<br />
+{<br />
+ &#8230;<br />
+}<br />
+private static SqlConnection GetConnection(int clientId)<br />
+{<br />
+   string connectionString;<br />
+   if (clientId &lt;= 500)<br />
+   {<br />
+      connectionString = _connectionStrings[0];<br />
+   }<br />
+   else<br />
+   {<br />
+      connectionString = _connectionStrings[1];<br />
+   }<br />
+   return new SqlConnection(connectionString);<br />
+}<br />
+</PRE>This is a simplified example, but should be pretty easy to expand on. Another approach is to use a modulus to figure out which connection string to use, something like: <PRE><br />
+return new SqlConnection(connectingString[clientId % _connectingString.Length]);<br />
+</PRE><br />
+<P>This brings up another problem with sharding (a big one) – repartitioning your data. If we pick the above modulus algorithm with 2 servers and 2 clients then:<BR>&nbsp;&nbsp;&nbsp;&nbsp; Client 2 will be associated to ConnectionString[0] (2 % 2 == 0)<BR>&nbsp;&nbsp;&nbsp;&nbsp; Client 1 will be associated to ConnectionString[1] (1 % 2 == 1)</P><br />
+<P>If we now add a bunch of clients along with a 3rd server, then our code expects to find Client 2 on a different server (2 % 3 == 2). Essentially what this means is that you’ll need a repartitioning strategy – whether that’s an advanced connection manager configuration approach, or bulk copy scripts. The good news is that all of this should be deep inside your data layer and completely hidden from your calling code. There are many ways to handle this, pick whatever seems simplest.</P><br />
+<P>The last hurdle to overcome is actually sharding your data. Our bug hosted example was pretty straightforward, but even it has limitations. When a client creates a new account they are asked to submit their subdomain of choice. We need to check whether that subdomain is available or not – which isn’t trivial since our data is spread all around. Similarly, when a user logs in, we don’t yet know which client they belong to, therefore we can’t figure out which database server to hit for authentication. In such cases, rather than sharding data on a key, you shard on purpose. Essentially, this means you have a database dedicated to your Users table, as well as a ClientHost table which does nothing more than provide a single place to look up whether a host is available or not. Again, this is something that your data access layer must be aware of.</P><br />
+<P>Despite these issues, sharding is my preferred database scaling choice by far. All the issues can be fixed with a bit of code deep within your data layer. The performance advantage AND cost advantage make it a no-brainer. The only reason to consider clustering is for high availability scenarios, or in cases where your bottleneck is data that cannot be easily split. Also, keep in mind that sharding typically plays nice with replication or clustering, so these aren&#8217;t necessarily exclusive strategies.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/" title="Permalink to Scale Cheaply &#8211; Sharding" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/feed/" title="Comments RSS to Scale Cheaply &#8211; Sharding" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-125 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2008/06/25/foundations-of-programming-ebook/" rel="prev"><span class="meta-nav">&larr;</span> Foundations of Programming Ebook</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2008/07/04/get-your-func-on/" rel="next">Get Your Func On <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">22 Responses to <em>Scale Cheaply &#8211; Sharding</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-1181">
+		<div id="comment-1181">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.lostechies.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1181">December 10, 2008 at 11:41 am</a></div>
+
+		<div class="comment-body"><p>Great write up, was wondering it you&#8217;d tried the sharing support in NHibernate and whether you&#8217;d recommend any general sharding guides/best practices.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1180">
+		<div id="comment-1180">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://gurucore.com' rel='external nofollow' class='url'>LockeVN</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1180">August 8, 2008 at 4:59 am</a></div>
+
+		<div class="comment-body"><p>IMO, I think this technique good at small and rather not compicated database schema. It will be better in some case, and it should be used with other cluster, replication technique  &#8230;. Use it like a tweak, not like a methodology for your app, and, consider your app complicated issue.</p>
+<p>Some problems you said it not huge, not big, is really BIG. I think it&#8217;s because of your point of view, a developer.</p>
+<p>&#8211; some common normal SQL queries will not work. Can&#8217;t join, search, make report &#8230;.. Eg: in a blog, you shard the user, you need to get post of your friend, your friend of friend &#8230;.</p>
+<p> &#8212; Rolling database, update changes, maintain, backup, &#8230; cost a lot of time, and you must do by yourself (by your script). And, the important issue is: &#8220;the DBA must know what you do, how data is, where it located,what their relations &#8230;&#8221;  instead of &#8220;which DB to maintain, maintain it&#8221;</p>
+<p>&#8211; I don&#8217;t think our boss, our company allow us to change the code each time their app grow. They will prefer change, or reconfig the DB, the load balancer, &#8230; not the application. With you, the process of: change code, recompile (or interprete), re-test, re-deploy &#8230; is simple, but IMO, I think it is a big pain in software process (I&#8217;m not the boss  lol)</p>
+<p>&#8211; repartitioning is really a big pain. Not easy as you said. How can we assume that our repartitioning script run without error (because of different config of several DB server, because of ACID, because of quality of our data). And, we couldn&#8217;t undo if we failed.</p>
+<p>&#8211; This technique move the &#8220;select data from&#8221; processing load   from (3rd) DB cluster layer to YOUR application layer, from DB cluster machine to applcation machine.<br />
+&#8211; There are some other issues I can&#8217;t put here, but you can google &#8220;federated database&#8221; . This technique is similar to Microsoft idea put in SQL Server (from MSSQL2000 and prior, I don&#8217;t know about 2005 and 2008 version)</p>
+<p>Sorry for straight word, and my poor English   <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_biggrin.gif' alt=':D' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1179">
+		<div id="comment-1179">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.programmingado.net' rel='external nofollow' class='url'>ado.net programming samples</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1179">July 8, 2008 at 8:08 pm</a></div>
+
+		<div class="comment-body"><p>excellent article. real eye opener. I am right now in a position where I for security reasons need to partition  a database.  So there can actually be other reasons for sharding a database other than pure performance.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1178">
+		<div id="comment-1178">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">simon</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1178">July 2, 2008 at 10:00 am</a></div>
+
+		<div class="comment-body"><p>写的非常好~~</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1177">
+		<div id="comment-1177">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://ashmind.com' rel='external nofollow' class='url'>Andrey Shchekin</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1177">July 1, 2008 at 11:04 pm</a></div>
+
+		<div class="comment-body"><p>Well, I think MySQL people think about sharding more because MySQL is so damn slow on large databases, even if you read, memorize and use all possible performance optimizations.</p>
+<p>This is just my 2 cents. While I am considering sharding for my future requirements, I am not ever returning to MySQL (DB2 Express-C may be a good free choice).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1176">
+		<div id="comment-1176">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.scimore.com' rel='external nofollow' class='url'>Thomas Madsen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1176">July 1, 2008 at 6:30 pm</a></div>
+
+		<div class="comment-body"><p>I would strongly suggest that you look at our database. We have a version, ScimoreDB Distributed, which does all the &#8220;sharding&#8221; for you. You code against a single db. When you want to distribute over multiple machines, just specify partitioning key, and ScimoreDB will distributed the data for you.<br />
+And all this, while your normal SQL queries still work. Not a single line in your app have to be changed.<br />
+Read more on:<br />
+<a href="http://www.scimore.com/products/distributed.aspx" rel="nofollow">http://www.scimore.com/products/distributed.aspx</a><br />
+Give it a try.</p>
+<p>Another thing. Its free.</p>
+<p>/thomas (hilbert atthething scimore.com)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1175">
+		<div id="comment-1175">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://lazycoder.com' rel='external nofollow' class='url'>Scott</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1175">July 1, 2008 at 4:04 pm</a></div>
+
+		<div class="comment-body"><p>I think the reason the MS SQL community hasn&#8217;t completely embraced it but the MYSQL community has is the price difference.</p>
+<p>If you shard MYSQL, you are out the hardware and maintenance costs. If you shard MSSQL, you are out hardware, maintenance AND really expensive and confusing licensing costs.</p>
+<p>Ayende really opened my eyes at ALT.NET Seattle to the sharding possibilities of NHibernate.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1174">
+		<div id="comment-1174">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1174">July 1, 2008 at 2:15 pm</a></div>
+
+		<div class="comment-body"><p>@D:<br />
+I always did want to try a shard of SQL Server Express databases <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1173">
+		<div id="comment-1173">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">D</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1173">July 1, 2008 at 1:38 pm</a></div>
+
+		<div class="comment-body"><p>SQL Server licenses are too expensive for such partitioning</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1172">
+		<div id="comment-1172">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1172">July 1, 2008 at 11:24 am</a></div>
+
+		<div class="comment-body"><p>@foobar:<br />
+Never said it was new, but no doubt it will be to some people. Thanks though. Darn, was hoping I&#8217;d win a turing award for this.</p>
+<p>@Dave:<br />
+ I talked about that a bit in the blog post. If it&#8217;s a one off query, just go through all of them. For reporting, we use to run nightly scripts that would re-merge all the data onto a single db. Of course, your millage with that will vary based on how critical/intense your reports are. For frequent queries, sharding might not be right. Maybe it isn&#8217;t right for that particular set of data, or maybe it isn&#8217;t right for all of your data.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1171">
+		<div id="comment-1171">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Karthik</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1171">July 1, 2008 at 10:01 am</a></div>
+
+		<div class="comment-body"><p>Well, the approach is not &#8220;the silver bullet&#8221;, works well in certain situations. We have been using the approach since quite some time, and it works for us since we dont have to share data between clients.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1170">
+		<div id="comment-1170">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Gunt</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1170">July 1, 2008 at 1:08 am</a></div>
+
+		<div class="comment-body"><p>Dave, obviously the author is sharding himself over that question at the moment, maybe he will get back to you soon.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1169">
+		<div id="comment-1169">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Da ve</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1169">July 1, 2008 at 12:48 am</a></div>
+
+		<div class="comment-body"><p>Sharding is great, but how do you search across, say 5 sharded databases where you have 5 Client tables ?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1168">
+		<div id="comment-1168">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://rickwagner.blogspot.com/' rel='external nofollow' class='url'>Rick</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1168">June 30, 2008 at 10:38 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, Karl, this was a very nice article.</p>
+<p>I would offer a disadvantage&#8211; if you ever need to do analysis on your data (or decide to do some ELT type logic), joins aren&#8217;t going to work across db instances.</p>
+<p>Otherwise, I like the idea of sharding, too.</p>
+<p>Rick</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1167">
+		<div id="comment-1167">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">foobar</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1167">June 30, 2008 at 7:56 pm</a></div>
+
+		<div class="comment-body"><p>This is hardly new or innovative.  I have textbooks from the early 1990s describing this technique!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1166">
+		<div id="comment-1166">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1166">June 30, 2008 at 7:03 pm</a></div>
+
+		<div class="comment-body"><p>Good point Bryan, shouldn&#8217;t have missed this one&#8230;changes need to be deployed to all servers, which again isn&#8217;t a huge deal (you can script something to take care of it), it&#8217;s yet another extra step.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1165">
+		<div id="comment-1165">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://Bryan.ReynoldsLive.com' rel='external nofollow' class='url'>Bryan Reynolds</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1165">June 30, 2008 at 6:44 pm</a></div>
+
+		<div class="comment-body"><p>Rolling out DB changes is an issue.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1164">
+		<div id="comment-1164">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1164">June 30, 2008 at 6:07 pm</a></div>
+
+		<div class="comment-body"><p>Joshua: I&#8217;ve dealt with clusters with both SQL Server and MySQL, and if your data supports it, I&#8217;m of the opinion that this solution scales better regardless of cost. I also think it takes less developer time. I know I made it sound like there&#8217;s a lot of accommodation in-code that need to happen, but clusters don&#8217;t set themselves up or maintain themselves either.  Sure it might be more transparent from your code&#8217;s point of view, but that&#8217;s just because someone&#8217;s spending time making it that way for you.</p>
+<p>I think I know what you&#8217;re getting at. The current trend is that hardware is cheap and developers aren&#8217;t. But &#8220;just throwing more hardware at the problem&#8221; is a little too high level for my taste. You have to have some type of architecture in place for it (be that shards, clusters, replication or a mix).  Anyways, in my experience, software costs tend to dwarf both hardware and developer costs.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1163">
+		<div id="comment-1163">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Darren Kopp</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1163">June 30, 2008 at 5:24 pm</a></div>
+
+		<div class="comment-body"><p>Our company uses this approach as well. We have a shared code base that every customers website uses. To track what db / server they are on we just have a virtual directory in which we store a file that has the information. works out well for us.</p>
+<p>We have the information stored in a global database as to which server / db the user is on as well, because we have our web site deployments scripted, but we use the file (which is created via the script as well) so that if for whatever reason the global database isn&#8217;t available, none of our clients go down. the world of world of N + 1 redundancy is what influenced that decision.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1162">
+		<div id="comment-1162">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://flimflan.com/blog' rel='external nofollow' class='url'>Joshua Flanagan</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1162">June 30, 2008 at 5:16 pm</a></div>
+
+		<div class="comment-body"><p>Is this assuming that developer time (through the life of the product) and increased complexity of code is cheaper than hardware and db licenses?<br />
+Or is this stating that this solution is better (more scalable), regardless of cost?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1161">
+		<div id="comment-1161">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://lessthandot.com/' rel='external nofollow' class='url'>SQLDenis</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1161">June 30, 2008 at 4:59 pm</a></div>
+
+		<div class="comment-body"><p>If you implement distributed partitioned views you would not have to make any code changes. However I don&#8217;t think that this is available with all RDBMS vendors</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1160">
+		<div id="comment-1160">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jorge Diaz Tambley</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2008/06/30/scale-cheaply-sharding/#comment-1160">June 30, 2008 at 4:56 pm</a></div>
+
+		<div class="comment-body"><p>Good post, up to now what I&#8217;ve seen are only hardware upgrades. This technique is cheaper.</p>
+<p>Thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.271 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:14:06 -->
+<!-- super cache -->

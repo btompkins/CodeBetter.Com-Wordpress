@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Manage states in a multi-threaded environment without the synchronization pain | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='UI Matter: Make the simple things simple and hard things possible' href='http://codebetter.com/patricksmacchia/2008/04/28/ui-matter-make-the-simple-things-simple-and-hard-things-possible/' />
+<link rel='next' title='Write Active Conventions on your Code Base' href='http://codebetter.com/patricksmacchia/2008/05/11/write-active-conventions-on-your-code-base/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=52' />
+<link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-52" class="post-52 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Manage states in a multi-threaded environment without the synchronization pain</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain/" title="5:10 am" rel="bookmark"><span class="entry-date">May 5, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p class="MsoNormal"><span lang="EN-US">I see 4 common<br />
+ways to deal with states in a multi-threaded environment:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<ul>
+<li><b><span lang="EN-US">Immutable objects</span></b><span lang="EN-US">: The idea is simple and efficient: make sure<br />
+that the states of objects cannot be changed. This way, the object can be<br />
+accessed concurrently by multiple threads without any risk of state corruption<br />
+or thread race. I wrote a blog post</span><a href="http://codebetter.com/blogs/patricksmacchia/archive/2008/01/13/immutable-types-understand-them-and-use-them.aspx"><span lang="EN-US"></span></a><span lang="EN-US"> on <a href="/blogs/patricksmacchia/archive/2008/01/13/immutable-types-understand-them-and-use-them.aspx" target="_blank">how to implement immutability<br />
+with C#</a> and how you can use <a href="http://www.NDepend.com" target="_blank">NDepend</a><br />
+facilities to enforce object immutability and method purity.</span></li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><b><span lang="EN-US">Thread / Resource affinity</span></b><span lang="EN-US">: The idea is as simple as it is<br />
+efficient here also: making sure that an object is always accessed by the same<br />
+thread. The .NET Framework offers several ways to implement this paradigm: the<br />
+<a href="http://msdn.microsoft.com/en-us/library/system.threadstaticattribute.aspx" target="_blank">System.ThreadStatic</a></span><a href="http://msdn.microsoft.com/en-us/library/system.threadstaticattribute.aspx" target="_blank"><span lang="EN-US"></span></a><span lang="EN-US"> attribute on fields, <i>Thread Local<br />
+Storage API</i> and the interface <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.isynchronizeinvoke.aspx" target="_blank">ISynchronizeInvoke</a>.<br />
+These are described in <a href="http://www.codeproject.com/KB/books/thread_resource_affinity.aspx" target="_blank">this article</a> </span><span lang="EN-US">I published<br />
+on CodeProject.</span></li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><b><span lang="EN-US">Synchronized objects / Thread-Safe class</span></b><span lang="EN-US">: Since v1.0, the .NET Framework comes<br />
+natively with a way to implement synchronized objects through the lock<br />
+C#/VB.NET keyword, alias the <i>Monitor </i>class. I found it convenient to implement<br />
+this pattern <a href="http://www.practicaldot.net/Chapter_5/Listing_5_10.htm" target="_blank">this way</a></span><a href="http://www.practicaldot.net/Chapter_5/Listing_5_10.htm"><span lang="EN-US"></span></a><span lang="EN-US">.</span></li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><b><span lang="EN-US">Synchronization objects</span></b><span lang="EN-US">: The .NET Framework comes with<br />
+several synchronization API. Some of them are based on <i>Windows </i>synchronization<br />
+primitives (events, mutex, semaphore) and some of them are implemented by the<br />
+CLR (<i>ReaderWriterLock</i>). These API have been proven to be not optimal and even<br />
+buggy, <a href="http://wesnerm.blogs.com/net_undocumented/2005/04/the_art_of_thre.html" target="_blank">with possible starvation phenomenon in some particular cases</a>.<span></span></span>
+</li>
+</ul>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><b><span style="font-size: 16pt">The cost of synchronizing</span></b></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span lang="EN-US">The goal of<br />
+this post is to praise immutability and affinity over synchronization. There<br />
+are 2 killer arguments against synchronization:</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><span lang="EN-US">First,<br />
+immutability and affinity are so efficient <i>by-design</i><br />
+that once you go with them you won’t get anymore any concurrent access bug. Every experienced programmer knows that synchronizing accesses<br />
+to states is a real pain and generally ends-up in all sorts of<br />
+non-deterministic bugs very hard to pinpoint and correct.</span></li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><span lang="EN-US">Second<br />
+immutability and affinity won’t hurt performance. Synchronizing thread accesses to states leads to thread-context-switches that<br />
+are extremely costly. Also, threads are very expensive resources that are<br />
+wasted each time a thread is put in a wait state. I agree that immutability<br />
+sometime provokes extra object creation but frankly, this is neglectable compare to<br />
+threading cost.</span></li>
+</ul>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><b><span style="font-size: 16pt" lang="EN-US">Why most of developers still<br />
+opt for synchronization? </span></b></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">First it is<br />
+a matter of education. Every programmer academic background comes with a course<br />
+on how to program in a multi-threaded environment with synchronization primitives.<br />
+This is an entertaining course illustrated with pleasent concurrent patterns and as<br />
+far as I know, tricks such as immutability and affinity are not presented.</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">Second, at<br />
+first glance immutability and affinity doesn’t seem to solve any problem. In both<br />
+case there are no shared and mutable states. And this is what programmers want:<br />
+being able to read and write a state from several threads. Just have a look at<br />
+this comment on <a href="/blogs/patricksmacchia/archive/2008/01/13/immutable-types-understand-them-and-use-them.aspx" target="_blank">my blog post on immutability</a>:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><i><span lang="EN-US">I&#8217;m doing concurrency because I want to<br />
+calculate lots of things in parallel. &nbsp;I want them to change.<br />
+&nbsp;Immutable types don&#8217;t help concurrency much. &nbsp;Sure you can prevent<br />
+accidental changes to things that shouldn&#8217;t change. &nbsp;Of course that&#8217;s just<br />
+as valuable when coding single threaded. &nbsp;I really don&#8217;t think you can have<br />
+done much concurrent programming.</span></i></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><b><span style="font-size: 16pt">Immutable object / Changing state</span></b></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">Immutability<br />
+is more subtle than this. The string class is immutable for example. Did you<br />
+hear any programmer complain that he cannot code multi-threaded access to its<br />
+strings? No, and the non-obvious reason actually lies in how we consider the state’s<br />
+identity. A state is typically identified by an object and we write things<br />
+like:</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US">Person person = new Person(“Julien”);</span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US">person.FirstName = “Mathieu”;</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">We also<br />
+write things like:</span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US">string personFirstName = “Julien”;</span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US">personFirstName = “Mathieu”;</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">The<br />
+difference is that in the first case we have non-thread safe code because the<br />
+object <i>person </i>can be read/write accessed by several threads. In the second case<br />
+the state <i>personFirstName </i>had also been modified but now we won’t get<br />
+multi-threading issue because the string class is immutable and the same state<br />
+is handled by 2 different strings. We are losing the common one-to-one relation<br />
+between a state and the underlying object. In other words, the identity of the<br />
+state is not the object anymore but the value itself. But still, the state has<br />
+been changed! The programmer is now free to expose the new <i>“Mathieu”</i> state to<br />
+other threads without any kind of synchronization infrastructure.</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><b><span style="font-size: 16pt" lang="EN-US">The beauty of thread /<br />
+resource affinity</span></b></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">Thread /<br />
+Resource affinity is also a concept that deserves more attention. It promotes<br />
+task-oriented programming. A task is thoroughly executed by the same thread,<br />
+from A to Z, and its states are not visible from other tasks. One famous application of affinity is the way <i>win32/Windows Form</i> works. For a given<br />
+form, all tasks are executed by the same thread, essentially<br />
+painting/refreshing/timer operations and input/mouse/keyboard event handlers.<br />
+The immense benefit that <i>Windows Form</i> users get is that we can be sure that the<br />
+mouse click event handler won’t be triggered while the windows is re-painted.<br />
+Thus all the states maintained behind our form don’t need to be synchronized.<br />
+As we know, the down-side effect is that doing computation from the UI<br />
+thread leads to unresponsive UI, and this is why there are tricks such as the<br />
+<a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.backgroundworker.aspx" target="_blank">BackgroundWorker</a><br />
+class to make it easy to trigger task on tier threads.</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">To<br />
+implement affinity, personally I am not a fan of <i>ThreadStatic </i>or <i>Thread Local<br />
+Storage</i> because they both rely on costly <i>Windows </i>and CLR internals. Also, I<br />
+remember <a href="http://docs.msdnaa.net/ark_new3.0/cd3/content/Tech_System%20Programming.htm#title2_13" target="_blank">this article from Juval Lowy</a> that explains how to implement<br />
+<i>ISynchronizeInvoke<br />
+</i>but I especially remember how complicated and error-prone it is. I prefer to<br />
+implement affinity by myself by:</span></p>
+<p class="MsoNormal"><span lang="EN-US"></span><span lang="EN-US">Preferring<br />
+to maintain states with thread affinity from method local variables instead of<br />
+object fields. Local variables are <i>by-design</i><br />
+bound to the current thread.</span></p>
+<p class="MsoNormal"><span lang="EN-US"></span><span lang="EN-US">Writing<br />
+contracts about affinity. Concretely, all methods of a class begin with<br />
+something like:</span><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US"></span><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US"></span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;font-family: 'Courier New'" lang="EN-US">Debug.Assert( MyHelperPlumbing.CurrentThreadIsInitialThread()<br />
+);</span></p>
+<p class="MsoNormal"><span lang="EN-US">The code is<br />
+less readable but as long as the language teams don’t provide DbC facilities we<br />
+don’t have the choice.</p>
+<p>&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">We are<br />
+currently removing most of synchronized accesses from the code of <i>NDepend</i>. This<br />
+is a needed refactoring that will greatly simplify the development of features we want to do next. I admit that managing changing states through<br />
+immutable objects sometime require some intellectual gymnastic. For example, if<br />
+the object tagged by a <i>DataGridViewRow </i>is immutable, the tag property needs to<br />
+be updated when the state is changing. But clearly, this is a minor programming<br />
+exercise compare to synchronization nightmare.</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain/" title="Permalink to Manage states in a multi-threaded environment without the synchronization pain" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain/feed/" title="Comments RSS to Manage states in a multi-threaded environment without the synchronization pain" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-52 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2008/04/28/ui-matter-make-the-simple-things-simple-and-hard-things-possible/" rel="prev"><span class="meta-nav">&larr;</span> UI Matter: Make the simple things simple and hard things possible</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2008/05/11/write-active-conventions-on-your-code-base/" rel="next">Write Active Conventions on your Code Base <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-261">
+					<div id="dsq-comment-header-261" class="dsq-comment-header">
+						<cite id="dsq-cite-261">
+	http://weblogs.asp.net/gbarnett							<span id="dsq-author-user-261">Granville Barnett</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-261" class="dsq-comment-body">
+						<div id="dsq-comment-message-261" class="dsq-comment-message"><p>Interesting.</p>
+<p>I have always been a fan of the immutable approach despite its larger memory demand &#8211; but like you say the cost of synchronisation is steep.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-262">
+					<div id="dsq-comment-header-262" class="dsq-comment-header">
+						<cite id="dsq-cite-262">
+	http://blogs.msdn.com/jaredpar							<span id="dsq-author-user-262">Jared Parsons</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-262" class="dsq-comment-body">
+						<div id="dsq-comment-message-262" class="dsq-comment-message"><p>Good post but one point I don&#8217;t agree with.</p>
+<p>Debug.Assert( MyHelperPlumbing.CurrentThreadIsInitialThread() );</p>
+<p>A debug assert is great but ideally this should be a retail contract vs. a debug assert.  As you pointed out debugging race conditions is a nightmare at best.  This type of check can be invaluable when tracking down a race condition bug.  Unfortunately there are many race conditions that just don&#8217;t repro in debug code.  Moving this to a retail contract will help ensure that 1) your code fails and fails fast and 2) you learn about the race condition at the earliest possible moment.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-263">
+					<div id="dsq-comment-header-263" class="dsq-comment-header">
+						<cite id="dsq-cite-263">
+	http://www.NDepend.com							<span id="dsq-author-user-263">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-263" class="dsq-comment-body">
+						<div id="dsq-comment-message-263" class="dsq-comment-message"><p>Jared,</p>
+<p>I think there is a misunderstanding. The Debug.Assert(&#8230;) you are referencing is here to enforce the object / resource affinity and not to detect a race condition.</p>
+<p>I agree that race conditions problems sometime don&#8217;t appear in release mode and thus, contract with Debug.Assert(&#8230;) can sometime be not helpful. Also, a shared state can be sane during the execution of Debug.Assert(..) and corrupted just during the execution of the next instruction.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain/ ';
+	var disqus_identifier = '52 /blogs/patricksmacchia/archive/2008/05/05/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Manage states in a multi-threaded environment without the synchronization pain";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=52');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2008\/05\/05\/manage-states-in-a-multi-threaded-environment-without-the-synchronization-pain\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.253 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:45:56 -->
+<!-- super cache -->

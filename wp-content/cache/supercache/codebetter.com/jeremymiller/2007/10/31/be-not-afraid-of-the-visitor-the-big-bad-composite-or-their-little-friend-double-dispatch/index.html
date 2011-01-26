@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Be not afraid of the Visitor, the big, bad Composite, or their little friend Double Dispatch | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='How you&#8217;re writing WinForms apps &#8211; The results' href='http://codebetter.com/jeremymiller/2007/10/30/how-you-re-writing-winforms-apps-the-results/' />
+<link rel='next' title='Development Trivial Pursuit: The difference between MVC and the different flavors of MVP' href='http://codebetter.com/jeremymiller/2007/11/01/development-trivial-pursuit-the-difference-between-mvc-and-the-different-flavors-of-mvp/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=448' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-448" class="post-448 post type-post status-publish format-standard hentry category-design-patterns category-featured category-storyteller">
+					<h1 class="entry-title">Be not afraid of the Visitor, the big, bad Composite, or their little friend Double Dispatch</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch/" title="1:13 pm" rel="bookmark"><span class="entry-date">October 31, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Last week or so there was a thread on the altnetconf message board that about a usage of the Visitor pattern for validating a hierarchy of objects.&nbsp; At work I&#8217;m using the Visitor pattern with some frequency in my financial&nbsp;projects to deal with heterogeneous collections of financial elements.&nbsp; Over and over again I&#8217;m seeing the Composite and Visitor patterns come up as good solutions to a certain range of problems, but these patterns are often a source of almost superstitious fear to those developers&nbsp;who aren&#8217;t familiar with them.&nbsp;&nbsp;From past experience I know that developers don&#8217;t necessarily grok these patterns at the first exposure.&nbsp; I avoided the Visitor for a long time because it&#8217;s just plain weird looking.&nbsp; I changed my mind&nbsp;only after having some positive experiences with the pattern.&nbsp; </P><br />
+<P>I&#8217;ve had a post on these patterns backlogged forever, so now seems like as good of time as any to try to help introduce these important patterns.&nbsp; All of the example code from this post is part of my <A href="http://storyteller.tigris.org/">StoryTeller</A>&nbsp;OSS project and can be perused to your heart&#8217;s content from the Subversion repository on Tigris.&nbsp; </P><br />
+<P>Specifically, I&#8217;m going to talk about design&nbsp;patterns&nbsp;that are useful for&nbsp;processing heterogeneous lists and object hierarchies without resorting to an uncontrolled proliferation of &#8220;if/then&#8221; branches:</P><br />
+<OL><br />
+<LI>The almost forgotten art of Double Dispatch<br />
+<LI>Fear not the Visitor<br />
+<LI>The Big, Bad Composite Pattern</LI></OL><br />
+<P>I struggled quite a bit with the ordering of topics in this post because the patterns seem to be so closely interrelated in my mind.&nbsp; Double Dispatch stands alone, but the reason for doing it is largely to make the Visitor implementation work.&nbsp; I&#8217;ve used a Visitor pattern frequently at work the past couple months without a Composite, but most of the time the Visitor and Composite seem to be found together.</P><br />
+<P>Before I get started&#8230;</P><br />
+<P><STRONG>&lt;BoilerPlateDesignPatternDisclaimer&gt;</STRONG></P><br />
+<P>Design Patterns are <A href="http://codebetter.com/blogs/jeremy.miller/archive/2005/08/31/131509.aspx">a very useful are of study for serious software designers</A>.&nbsp; Design Patterns are an important form of common language between developers and a way to catalogue and reuse design wisdom from the ancients.&nbsp; Design Patterns can be a huge shortcut for designing applications or services.&nbsp; Overusing Design Patterns is bad.&nbsp; Using Design Patterns out of their proper context is usually bad.&nbsp;&nbsp;Committing to a &nbsp;Design Pattern too quickly can often be bad.&nbsp; Using Design Patterns at the right times can reduce the amount of ugly, bugridden &#8220;if/then&#8221; logic in code and make the code easier to test, change, and read.&nbsp; <STRONG>Don&#8217;t just memorize pattern names.&nbsp; Climb up to the top of&nbsp;</STRONG><A href="http://codebetter.com/blogs/jeremy.miller/archive/2007/04/15/Bloom_2700_s-Taxonomy-and-Design-Patterns.aspx"><STRONG>Bloom&#8217;s Taxonomy</STRONG></A>.&nbsp; </P><br />
+<P><STRONG>&lt;/BoilerPlateDesignPatternDisclaimer&gt;</STRONG></P><br />
+<P>Now that that&#8217;s out of the way&#8230;</P><br />
+<H4>The Problem</H4><br />
+<P>My <A href="http://en.wikipedia.org/wiki/Domain_model">Domain Model</A> in <A href="http://storyteller.tigris.org/">StoryTeller</A> is largely made up of a series of classes that inherit from a common <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/Domain/ILeaf.cs">ILeaf</A> interface and represent the concepts in <A href="http://fit.c2.com/">Fit-style testing</A>.</P><br />
+<UL><br />
+<LI>Suite &#8211; a group of tests and/or child suites<br />
+<LI>Test &#8211; contains a mix of Comment&#8217;s and Tables, could contain a reference to a Fragment<br />
+<LI>Comment<br />
+<LI>Table &#8211; The actual test.&nbsp; A Table contains rows which contains cells.&nbsp;<br />
+<LI>Fragment &#8211; a reusable piece of test logic.&nbsp; Think SetUp or TearDown.&nbsp; Can contain Comments and/or Tables<br />
+<LI>Include &#8211; simply a reference to a Fragment<br />
+<LI>SystemUnderTest &#8211; the configuration and list of Suites for an entire system.&nbsp; Effectively the equivalent to a &#8220;project&#8221; for StoryTeller.</LI></UL><br />
+<P>In hierarchical form&nbsp;a SystemUnderTest and its children&nbsp;may look something like:</P><br />
+<OL><br />
+<LI>SystemUnderTest:&nbsp; &#8220;StoryTeller UI&#8221;<br />
+<OL><br />
+<LI>Suite:&nbsp; &#8220;Test Operations&#8221;<br />
+<OL><br />
+<LI>Fragment:&nbsp; &#8220;SetUp&#8221;<br />
+<LI>Fragment:&nbsp; &#8220;TearDown&#8221;<br />
+<LI>Suite:&nbsp; &#8220;Add Test&#8221;<br />
+<OL><br />
+<LI>Test:&nbsp; &#8220;Add Test Happy Path from Tree&#8221;<br />
+<LI>Test:&nbsp; &#8220;Strip illegal characters from Test name&#8221;<br />
+<OL><br />
+<LI>Table<br />
+<LI>Comment<br />
+<LI>Include/Fragment<br />
+<LI>Table<br />
+<LI>Table</LI></OL></LI></OL><br />
+<LI>Suite:&nbsp; &#8220;Delete Test&#8221;</LI></OL><br />
+<LI>Suite:&nbsp; &#8220;Tagging&#8221;<br />
+<LI>Suite:&nbsp; &#8220;Test Execution&#8221;</LI></OL></LI></OL><br />
+<P>&nbsp;</P><br />
+<H4>Introducing the&nbsp;Composite and Visitor&nbsp;Patterns&nbsp;</H4><br />
+<P>From the original Gang of Four:</P><br />
+<BLOCKQUOTE><br />
+<P>Compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly.</P></BLOCKQUOTE><br />
+<P>A composite object is simply an object that is composed of other objects.&nbsp; A SystemUnderTest object will contain one or more Suite objects.&nbsp;&nbsp;A Suite class from StoryTeller will contain other Suites and Test objects in an n-deep hierarchy.&nbsp; I have to do many different operations against an array or hierarchy of ILeaf objects.&nbsp; For example, starting&nbsp;from any particular ILeaf object I need to:</P><br />
+<OL><br />
+<LI>Save each ILeaf, but all the different types of ILeaf classes are persisted a little bit differently<br />
+<LI>When constructing the TreeView in the UI I need to create a TreeNode for each ILeaf object in the hierarchy, but I use a different subclass of TreeNode for each specific type of ILeaf<br />
+<LI>Render each ILeaf into an HTML representation, but each ILeaf is rendered somewhat differently<br />
+<LI>Find all the Tests that match a given criteria starting from anywhere in the hierarchy<br />
+<LI>Execute all the Tests at any level of the hierarchy<br />
+<LI>Find any particular ILeaf by the path or a unique identification<br />
+<LI>Later on I&#8217;m planning on adding syntax checking and possibly refactoring that will have to scan the entire hierarchy</LI></OL><br />
+<P>All of the different types of &#8220;node&#8221; have a consistent set of operations, so it makes sense to create a common interface for all of these &#8220;node&#8221; classes.&nbsp; Going farther, doing an operation on any given node usually means that I also need to perform that same operation on all the children of that node and the descendents.&nbsp; This is where the <A href="http://en.wikipedia.org/wiki/Composite_pattern">Composite Pattern</A> comes into play.&nbsp; Implementing the Composite Pattern means that I need&nbsp;to treat the leaf and branch nodes of the hierarchy in a common manner.&nbsp; </P><br />
+<P>To implement the Composite Pattern I&#8217;ve created the ILeaf interface below:</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> <SPAN>ILeaf</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>IEnumerable</SPAN>&lt;<SPAN>ILeaf</SPAN>&gt; ChildLeaves { <SPAN>get</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>ILeaf</SPAN>[] Children { <SPAN>get</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AcceptVisitor(<SPAN>IVisitor</SPAN> visitor);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>In StoryTeller I&#8217;ve chosen to implement almost all of the hierarchical operations in <A href="http://c2.com/cgi/wiki?VisitorPattern">Visitor pattern</A> classes, but as we&#8217;ll see in a later section the Visitor approach wouldn&#8217;t work without the Composite pattern implemented by the common ILeaf interface.&nbsp; If I hadn&#8217;t decided&nbsp;to keep almost all infrastructure concerns out of the ILeaf nodes, I might have added an &#8220;Execute()&#8221; method on the ILeaf interface.&nbsp; If you had called Test.Execute() it would simply execute itself.&nbsp; If you called Suite.Execute() it would call Execute() on all of its children Suites and all of its Tests so that every Test that descended from that Suite would be executed.</P><br />
+<P>&nbsp;</P><br />
+<H4>Other&nbsp;Examples for the Composite Pattern</H4><br />
+<P>The average software developer probably&nbsp;uses the Composite pattern every single day in existing libraries and API&#8217;s:</P><br />
+<OL><br />
+<LI>The DHTML DOM in web browsers<br />
+<LI>The Control hierarchy in WinForms.&nbsp; Many of the methods you call on a Control will propagate down into its children and its children&#8217;s children.<br />
+<LI>The FileSystem is composed of an n-deep hierarchy of folders and files.&nbsp; Deleting a folder also deletes all of its subfolders and all of the files that it contains.<br />
+<LI>The Xml DOM is the canonical example.&nbsp; No matter where it is in the hierarchy, you basically treat each XmlNode as an XmlNode.<br />
+<LI>In manufacturing systems an assembly of parts is often treated as just another part.&nbsp; I used to work for a computer manufacturer in Texas.&nbsp; With the advent of blade servers a server could be said to be composed of an array of blade servers which all had their own set of parts.&nbsp; If the manufacturing system had been built along OOP lines with the Composite pattern describing the constituent parts, sliding in support for a rack server composed of blade servers wouldn&#8217;t have had to hurt too much.&nbsp; Alas, the manufacturing system was still written in spaghetti code COBOL and out came the &#8220;if/then&#8221; duct tape.</LI></OL><br />
+<P>I can&#8217;t say that I create new Composite pattern implementations from scratch&nbsp;on a regular basis, but it pops up often enough to warrant an inclusion in your design toolbox.&nbsp; I&#8217;ve used the Composite for:</P><br />
+<OL><br />
+<LI>The StoryTeller domain model of Suites and Tests<br />
+<LI>In <A href="http://structuremap.sourceforge.net/">StructureMap</A>, I create an in memory hierarchy of the configuration model for the diagnostics.&nbsp; One instance has child instances which may have child instances which may have constructor arguments.<br />
+<LI>In an insurance application we had a model of regions, customers, and policies that naturally fit a Composite model.&nbsp; I got a lot of push back from other developers on this project that weren&#8217;t familiar with the Composite pattern because it seemed too &#8220;weird.&#8221;&nbsp; I still think it was the simplest way to pull off the model with our requirements, but the unfamiliarity with the pattern was a real problem.&nbsp; I&#8217;m writing this post in no small part to have a published explanation for the Composite and Visitor for the next time I&#8217;m in this situation.<br />
+<LI>Any number of custom filter &#8220;trees.&#8221;&nbsp; I&#8217;d like to have a quarter for every time I&#8217;ve written an IFilter interface of some kind.&nbsp; Any time you do, there&#8217;s almost inevitably a &#8220;NotFilter&#8221; and &#8220;OrFilter&#8221; and &#8220;AndFilter&#8221; that combine other IFilters to create more complex query behavior.&nbsp; </LI></OL><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;</P><br />
+<H4>Double Dispatch</H4><br />
+<P>Before I introduce the Visitor pattern, I need to first&nbsp;demonstrate the ancient&nbsp;technique of <A href="http://www.javaperformancetuning.com/articles/ddispatch.shtml">Double Dispatch</A>.&nbsp; To illustrate the concept, let&#8217;s take a look at the Double Dispatch&nbsp;you&#8217;ve used&nbsp;your entire .Net career to do Xml serialization.&nbsp; Here&#8217;s a sample snippet of code to Xml serialize an object to a file.</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> PersistToFile&lt;T&gt;(T target, <SPAN>string</SPAN> filename)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>XmlSerializer</SPAN> serializer = <SPAN>new</SPAN> <SPAN>XmlSerializer</SPAN>(<SPAN>typeof</SPAN> (T));</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>using</SPAN> (<SPAN>FileStream</SPAN> stream = <SPAN>new</SPAN> <SPAN>FileStream</SPAN>(filename, <SPAN>FileMode</SPAN>.Create, <SPAN>FileAccess</SPAN>.Write))</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; serializer.Serialize(stream, target);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>We create an XmlSerializer object for the Type of object that we&#8217;re serializing.&nbsp; Then we create a FileStream object that we want the data written to, eventually landing in an Xml file.&nbsp; The last thing we do is to pass the FileStream object into the XmlSerializer.&nbsp; As the XmlSerializer works, it figures out the content to write and tells the FileStream to write this content.&nbsp; If the FileStream and XmlSerializer were people, their conversation might be summed up as:</P><br />
+<BLOCKQUOTE><br />
+<P>FileStream:&nbsp; &#8220;Here I am, now you&nbsp;tell me what to do for you.&#8221;</P><br />
+<P>XmlSerializer:&nbsp; &#8220;Write &lt;SomeClass&gt;.&nbsp; Write &lt;SomeProperty&gt;SomeValue&lt;/SomeProperty&gt;&#8230;&#8221;</P></BLOCKQUOTE><br />
+<P>So the two classes aren&#8217;t great&nbsp;conversationalists, but the technique is a powerful slayer of if/then logic.&nbsp; Think about this for a minute.&nbsp; XmlSerializer, the binary serialization, and the newer JSON serializer&#8217;s all have very different logic to determine the exact bytes or characters that represent an object, but the bytes produced are basically stored in the same way.&nbsp; When you serialize an object, however, the Stream object doesn&#8217;t need to care what type of serialization is taking place.&nbsp; The specific serializer will tell the Stream <STRONG>what</STRONG> to write.&nbsp; </P><br />
+<P>Here&#8217;s a sample usage of Double Dispatch from StoryTeller.&nbsp; At various times in the code I need to take an ILeaf object and write out the HTML representation of it.&nbsp; Let&#8217;s say I&#8217;m writing out a single Test to use as the HTML input to the <A href="http://fitnessedotnet.sourceforge.net/">FitnesseDotNet</A> test engine.&nbsp; Any given Test will be composed of a mix of Comments, Tables, and Fragments.&nbsp; All three of these things will be rendered to HTML in a different way.&nbsp; In this case there&#8217;s a finite number of tasks that need to take place to render a Test into HTML.&nbsp; I came up with a simple interface for all of these little HTML writing tasks:</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> <SPAN>IHTMLBuilder</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> StartTable();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> StartTable(<SPAN>Type</SPAN> type);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddComment(<SPAN>string</SPAN> commentText);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddRow();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddRow(<SPAN>params</SPAN> <SPAN>string</SPAN>[] contents);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddRow(<SPAN>string</SPAN> delimitedList);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddCell(<SPAN>string</SPAN> contents, <SPAN>int</SPAN> width);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>string</SPAN> GetHTML();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> WriteTitle(<SPAN>string</SPAN> title);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> WriteTag(<SPAN>string</SPAN> tag);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddStyle(<SPAN>string</SPAN> style);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> StartInclude(<SPAN>string</SPAN> path);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> EndInclude();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> WriteBigTitle(<SPAN>string</SPAN> title);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AddDivider();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> WriteStatus(<SPAN>Status</SPAN> status);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>Next, we&#8217;ve got the issue of where to put the specific logic for rendering each type of ILeaf.&nbsp; HTML rendering in StoryTeller is so intrinsic that I decided to embed the HTML rendering into each ILeaf type that needs to be rendered.&nbsp; Let Table and Row and Column know how to render themselves.&nbsp; That decision led to the creation of one more interface shown below:</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> <SPAN>IHTMLFragment</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> WriteHTML(<SPAN>IHTMLBuilder</SPAN> htmlBuilder);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>To render a <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/Domain/Comment.cs">Comment</A> object I simply pass an IHTMLBuilder into the WriteHTML(IHTMLBuilder) method and let the Comment class tell the IHTMLBuilder what to do.</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> WriteHTML(<SPAN>IHTMLBuilder</SPAN> builder)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; builder.AddComment(_contents);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>The Table class is a little bit more complicated, but it&#8217;s still the same concept.&nbsp; For the sake of completeness, I&#8217;m also showing the code in Row and Cell.</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> WriteHTML(<SPAN>IHTMLBuilder</SPAN> builder)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; CalculateCellWidths();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; builder.StartTable();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>Row</SPAN> row <SPAN>in</SPAN> _rows)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; row.WriteHTML(builder);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE></DIV><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Row.WriteHTML(IHTMLBuilder builder)</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> WriteHTML(<SPAN>IHTMLBuilder</SPAN> builder)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; builder.AddRow();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>Cell</SPAN> cell <SPAN>in</SPAN> _cells)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cell.WriteHTML(builder);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE></DIV><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Cell.WriteHTML(IHTMLBuilder builder)</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> WriteHTML(<SPAN>IHTMLBuilder</SPAN> htmlBuilder)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; htmlBuilder.AddCell(_contents, <SPAN>this</SPAN>.Width);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>In my first pass at this code the Test class could only contain Comments or Tables.&nbsp; In a later pass I added the ability to &#8220;include&#8221; fragments of tests into other tests.&nbsp; No worries though, I simply have yet another class called <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/Domain/Include.cs">Include</A> that also implements IHTMLFragment (oops, I just found a bug related to this in StoryTeller while writing this).&nbsp; When the Test is being rendered the <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/HTML/HTMLWriter.cs">HTMLWriter</A> just iterates over all of the ILeaf children.</P><br />
+<P>Okay, so each thing knows how to tell an IHTMLBuilder how to persist itself, but how does an IHTMLBuilder get around to each Table, Comment, and Fragment?&nbsp; That&#8217;s where the other patterns come into play.&nbsp; We&#8217;ve used the Composite pattern already to standardize the navigation from an ILeaf to its children all the way down.&nbsp; Now we need to introduce the Visitor as a way of creating a logical action that starts working from any given ILeaf node.</P><br />
+<P>&nbsp;</P><br />
+<H4>Fear not the Visitor</H4><br />
+<P>From <A href="http://www.exciton.cs.rice.edu/JavaResources/DesignPatterns/VisitorPattern.htm">the Computer Science department of my alma mater</A>:</P><br />
+<BLOCKQUOTE><br />
+<P>The purpose of the Visitor Pattern is to encapsulate an operation that you want to perform on the elements of a data structure. In this way, you can change the operation being performed on a structure without the need of changing the classes of the elements that you are operating on. Using a Visitor pattern allows you to decouple the classes for the data structure and the algorithms used upon them.</P></BLOCKQUOTE><br />
+<P>As I said before, I need to perform a series of&nbsp;operations against all or part of an ILeaf hierarchy in StoryTeller.&nbsp; Some of these operations pertain to infrastructure or user interface concerns.&nbsp; I don&#8217;t want these concerns embedded in my domain model, so its advantageous to implement these operations in other classes.&nbsp;&nbsp;Very often these operations will involve a mix of the different types of ILeaf objects.&nbsp; If I were to use straight up procedural programming, I&#8217;d be constantly&nbsp;writing the same set of if/then/switch statements all over the place every time I need new operations against a mix bag of ILeaf objects.</P><br />
+<P>The Composite Pattern gives us a standard pattern for navigating the data structure.&nbsp; The next step is to be able to differentiate the proper action based on the type of ILeaf object that we&#8217;re processing.&nbsp; Once again we&#8217;re going to turn to Double Dispatch to help us out.&nbsp; We first define a new interface called IVisitor that exposes specific methods for processing each specific kind of ILeaf.</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> <SPAN>IVisitor</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessTest(<SPAN>Test</SPAN> test);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessTable(<SPAN>Table</SPAN> table);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessComment(<SPAN>Comment</SPAN> comment);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessSuite(<SPAN>Suite</SPAN> suite);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessInclude(<SPAN>Include</SPAN> include);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessFragment(<SPAN>Fragment</SPAN> fragment);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>As we saw earlier, each ILeaf exposes methods to support both the Composite structure and a single method called AcceptVisitor(ILeaf) that enables the Visitor pattern.</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> <SPAN>ILeaf</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>IEnumerable</SPAN>&lt;<SPAN>ILeaf</SPAN>&gt; ChildLeaves { <SPAN>get</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>ILeaf</SPAN>[] Children { <SPAN>get</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> AcceptVisitor(<SPAN>IVisitor</SPAN> visitor);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>When the AcceptVisitor(ILeaf) method is called on an ILeaf, the ILeaf&nbsp;simply turns right around and calls the proper method on the IVisitor and passes itself in as the argument.&nbsp; Here&#8217;s the implementation of AcceptVisitor() for the Test class.</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>override</SPAN> <SPAN>void</SPAN> AcceptVisitor(<SPAN>IVisitor</SPAN> visitor)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; visitor.ProcessTest(<SPAN>this</SPAN>);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>All the Test has done is simply told the incoming IVisitor that &#8220;I&#8217;m a Test, so do whatever it is you do with a Test.&#8221;&nbsp; </P><br />
+<P>So why is this advantageous over simply doing a switch statement on the type?&nbsp; I&#8217;d say it&#8217;s advantageous because:</P><br />
+<OL><br />
+<LI>We&#8217;ve eliminated the need to write the same switch statement over and over again as new operations are added to the system</LI><br />
+<LI>The code to split processing by the type of ILeaf is cleaner in my opinion because we&#8217;ve removed &#8220;noise&#8221; code by letting the Visitor pattern handle the conditional logic</LI><br />
+<LI>It provides a template for new operations to follow</LI><br />
+<LI>It provides an obvious entry point for unit testing against any particular kind of node in the hierarchy.&nbsp; A couple years ago I hit a point in StructureMap where the diagnostic code was an abominable mess.&nbsp; Unit testing was hard because there was a tight coupling between configuration code and the diagnostics.&nbsp; I largely cured the problem by refactoring the diagnostics to a Visitor pattern to the point where it was easy to skip the configuration setup in unit tests to go right to the smaller scenario that I wanted to unit test.&nbsp; Using the Visitor pattern ended up making the diagnostic code far easier to work with.</LI></OL><br />
+<P>&nbsp;</P><br />
+<H4>Creating TreeNodes with the Visitor</H4><br />
+<P>The StoryTeller UI has a TreeView on the left that shows a TreeNode for each ILeaf in the open&nbsp;SystemUnderTest.</P><br />
+<P><IMG src="http://codebetter.com/photos/cblinkblog/images/170454/original.aspx"></P><br />
+<P>I use a specific subclass of the WinForms TreeNode class&nbsp;for each type of ILeaf in order to expose specific actions and screen navigation.&nbsp; When I&#8217;m constructing the TreeNode hierarchy I logically need to iterate over each ILeaf&#8217;s children and create the proper type of TreeNode for each ILeaf child.&nbsp; This construction of the TreeView really became very simple by using the IVisitor interface that already existed by this time.&nbsp; All of my TreeNode&#8217;s extend the abstract <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller.UserInterface/TreeNodes/LeafNode.cs">LeafNode</A> class shown in elided form below:</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>class</SPAN> <SPAN>LeafNode</SPAN>&lt;T&gt; : <SPAN>TreeNode</SPAN>, <SPAN>ILeafNode</SPAN>, <SPAN><STRONG>IVisitor</STRONG></SPAN> <SPAN>where</SPAN> T : <SPAN>ILeaf</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>readonly</SPAN> T _screenSubject;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> LeafNode(T subject)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screenSubject = subject;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &#8230;</PRE><PRE>            <STRONG>RefreshNodes();</STRONG></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> RefreshNodes()</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nodes.Clear();</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &#8230;</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>ILeaf</SPAN> child <SPAN>in</SPAN> ((<SPAN>ILeaf</SPAN>) _screenSubject).ChildLeaves)</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; child.AcceptVisitor(<SPAN>this</SPAN>);</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</STRONG></PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> ProcessTest(<SPAN>Test</SPAN> test)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>TestNode</SPAN> node = <SPAN>new</SPAN> <SPAN>TestNode</SPAN>(test);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nodes.Add(node);</PRE></DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> ProcessSuite(<SPAN>Suite</SPAN> suite)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>SuiteNode</SPAN> node = <SPAN>new</SPAN> <SPAN>SuiteNode</SPAN>(suite);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Nodes.Add(node);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE></DIV><br />
+<P>When LeafNode&#8217;s constructor is called it takes in an ILeaf as its &#8220;subject.&#8221;&nbsp; The last step in its constructor is to call the RefreshNodes() method to create all of its child TreeNodes.&nbsp; If this were&nbsp;the SuiteNode, the steps in code would be:</P><br />
+<OL><br />
+<LI>Take in a Suite object as an argument to the constructor</LI><br />
+<LI>In the RefreshNodes() method, iterate over each ILeaf child in the Suite (_screenSubject above)</LI><br />
+<LI>For each ILeaf child the SuiteNode will pass itself into the ILeaf.AcceptVisitor() method</LI><br />
+<LI>If the ILeaf child is a Test, the Test will immediately call the ProcessTest(Test) method on the SuiteNode object&#8230;</LI><br />
+<LI>&#8230;which causes a new TestNode to be created for that Test and added to the Nodes collection of the SuiteNode</LI><br />
+<LI>If the ILeaf child is another Suite, that child Suite will immediately call the ProcessSuite(Suite) method on the SuiteNode object&#8230;</LI><br />
+<LI>&#8230;which causes a new SuiteNode to be created for that child Suite &#8212; which will in turn follow the same process to build its children before&#8230;</LI><br />
+<LI>&#8230;the new child SuiteNode is added to the Nodes collection of the original SuiteNode&#8230;</LI></OL><br />
+<P>It may not seem this way at first glance, but this strategy made the population of the TreeView very simple to implement and unit test.</P><br />
+<P>&nbsp;</P><br />
+<H4>Combining the Visitor and Composite</H4><br />
+<P>The StoryTeller version of the Visitor is relatively simple and I think fairly representative.&nbsp; I use a simple abstract class called <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/Domain/Visitor.cs">Visitor</A> as a common superclass.&nbsp; That class is shown below:</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>class</SPAN> <SPAN>Visitor</SPAN> : <SPAN>IVisitor</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE><SPAN>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; #region</SPAN> IVisitor Members</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>void</SPAN> ProcessTest(<SPAN>Test</SPAN> test);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>void</SPAN> ProcessTable(<SPAN>Table</SPAN> table);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>void</SPAN> ProcessComment(<SPAN>Comment</SPAN> comment);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>abstract</SPAN> <SPAN>void</SPAN> ProcessSuite(<SPAN>Suite</SPAN> suite);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> ProcessInclude(<SPAN>Include</SPAN> include){}</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> ProcessFragment(<SPAN>Fragment</SPAN> fragment){}</PRE><PRE>&nbsp;</PRE><PRE><SPAN>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; #endregion</SPAN></PRE><PRE>&nbsp;</PRE><PRE></PRE><br />
+<DIV><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> VisitLeaf(<SPAN>ILeaf</SPAN> leaf)</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Hook method before processing an ILeaf</SPAN></STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; startLeaf(leaf);</STRONG></PRE><PRE><STRONG>&nbsp;</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Another hook to filter ILeaf&#8217;s before processing</SPAN></STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>if</SPAN> (isInterested(leaf))</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; leaf.AcceptVisitor(<SPAN>this</SPAN>);</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</STRONG></PRE><PRE><STRONG>&nbsp;</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Now, visit each child of the original ILeaf</SPAN></STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>ILeaf</SPAN> child <SPAN>in</SPAN> leaf.ChildLeaves)</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; VisitLeaf(child);</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</STRONG></PRE><PRE><STRONG>&nbsp;</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Hook method after processing an ILeaf and all</SPAN></STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// of its children</SPAN></STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; endLeaf(leaf);</STRONG></PRE><PRE><STRONG>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</STRONG></PRE></DIV><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> startLeaf(<SPAN>ILeaf</SPAN> leaf){}</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> <SPAN>virtual</SPAN> <SPAN>void</SPAN> endLeaf(<SPAN>ILeaf</SPAN> leaf){}</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> <SPAN>virtual</SPAN> <SPAN>bool</SPAN> isInterested(<SPAN>ILeaf</SPAN> leaf)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>return</SPAN> <SPAN>true</SPAN>;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>The mechanics for navigating the ILeaf hierarchy is completely implemented in&nbsp;the VisitLeaf(ILeaf) method.&nbsp; In its simplest form a Visitor implementation would simply call AcceptVisitor(this) on the leaf argument, then iterate over all of leaf&#8217;s children to visit each of them in turn.</P><br />
+<P>When doing a Visitor implementation I&#8217;ve often found it to be advantageous to provide &#8220;hook&#8221; methods before and/or after the processing of each node.&nbsp; These hooks are usually for bookkeeping or times when you can really perform the operation through the common interface of the nodes.&nbsp; One of the ways I use this in StoryTeller is in the HTML rendering of an ILeaf hierarchy.&nbsp; Several of the ILeaf types also implement the <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/Domain/IHTMLFragment.cs">IHTMLFragment</A> interface I introduced earlier to write themselves out in HTML.&nbsp; HTML rendering is done in a subclass of Visitor called <A href="http://storyteller.tigris.org/svn/storyteller/trunk/src/StoryTeller/HTML/HTMLWriter.cs">HTMLWriter</A>.&nbsp; In HTMLWriter I override the startLeaf() method to write out HTML for each ILeaf in a generic manner:</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> <SPAN>override</SPAN> <SPAN>void</SPAN> startLeaf(<SPAN>ILeaf</SPAN> leaf)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>IHTMLFragment</SPAN> fragment = leaf <SPAN>as</SPAN> <SPAN>IHTMLFragment</SPAN>;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>if</SPAN> (fragment != <SPAN>null</SPAN>)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; fragment.WriteHTML(_builder);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>&nbsp;</P><br />
+<P>Usually, however, the meat of the Visitor operation is happening in the ProcessXXXXXXXX() methods.&nbsp; In the HTMLWriter I have specific logic for handling a Suite or&nbsp;a Test in the IVisitor methods shown below:</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>IHTMLBuilder</SPAN> _builder;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>ILeaf</SPAN> _leaf;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> HTMLWriter(<SPAN>ILeaf</SPAN> leaf, <SPAN>IHTMLBuilder</SPAN> builder)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _leaf = leaf;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder = builder;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> GetHTML(<SPAN>bool</SPAN> withStyle)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; addStyle(withStyle);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; VisitLeaf(_leaf);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>return</SPAN> _builder.GetHTML();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>void</SPAN> include(<SPAN>Fragment</SPAN> fragment)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>&#8230;</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>protected</SPAN> <SPAN>override</SPAN> <SPAN>void</SPAN> startLeaf(<SPAN>ILeaf</SPAN> leaf)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>IHTMLFragment</SPAN> fragment = leaf <SPAN>as</SPAN> <SPAN>IHTMLFragment</SPAN>;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>if</SPAN> (fragment != <SPAN>null</SPAN>)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; fragment.WriteHTML(_builder);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>override</SPAN> <SPAN>void</SPAN> ProcessTest(<SPAN>Test</SPAN> test)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.WriteTitle(test.Name);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.WriteStatus(test.Status);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>string</SPAN> tag <SPAN>in</SPAN> test.Tags)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.WriteTag(tag);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>&#8230;</SPAN></PRE><PRE>&nbsp;&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>override</SPAN> <SPAN>void</SPAN> ProcessSuite(<SPAN>Suite</SPAN> suite)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.WriteBigTitle(<SPAN>&#8220;Suite &#8220;</SPAN> + suite.Name);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>string</SPAN> tag <SPAN>in</SPAN> suite.Tags)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.WriteTag(tag);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _builder.AddDivider();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE></DIV><br />
+<P>By making HTMLWriter a Visitor, I can take any given ILeaf and write it and all of its children into HTML.&nbsp; Because I can start the HTML rendering from any point in the hierarchy I&#8217;ve been able to reuse the same class for:</P><br />
+<OL><br />
+<LI>Exporting an entire Suite of tests to HTML</LI><br />
+<LI>Exporting all of the tests in a SystemUnderTest to HTML</LI><br />
+<LI>Writing out a single Test prior to execution</LI><br />
+<LI>Rendering a Fragment into an HTML&nbsp;preview view</LI></OL><br />
+<P>When I&#8217;ve needed to alter the way ILeaf objects are rendered to HTML it&#8217;s been easy to find the write code to change.&nbsp; I simply have to find the&nbsp;appropriate ProcessXXXXXXX() method on HTMLWriter and make the changes there without having to be concerned about the code for rendering any other kind of ILeaf.</P><br />
+<P>&nbsp;</P><br />
+<H4>How does the Visitor Get Around?</H4><br />
+<P>I&#8217;m aware of three different ways to handle the navigation of the Visitor through a list or hierarchy.</P><br />
+<OL><br />
+<LI>The Visitor itself is responsible for navigating the hierarchy.&nbsp; This is the approach I&#8217;ve used in StoryTeller&#8217;s ILeaf hierarchy.&nbsp; Each ILeaf exposes a ChildLeaves property that standardizes the navigation from parent to children for all types of ILeaf.&nbsp; In this case my Visitor classes don&#8217;t really need to know that much about the internals of the hierarchy and I didn&#8217;t feel that it created an unacceptable coupling.&nbsp; I don&#8217;t like this option if it means making the Visitor intimately aware of the internal structure of the hierarchy that it&#8217;s visiting.</LI><br />
+<LI>Make each node in the hierarchy responsible for passing the Visitor down to its children.&nbsp; I use this approach when I don&#8217;t want to expose the internal structure of the hierarchy to the Visitor.&nbsp; It&#8217;s also a great way to make each node responsible for conditional propagation of the Visitor.&nbsp; </LI><br />
+<LI>Use a separate class as an iterator to walk the hierarchy and &#8220;push&#8221; the Visitor to each node in the hierarchy.&nbsp; I think this can simplify the Visitor classes by removing the need for inheritance relationships.&nbsp; It also makes the navigation of the hierarchy easier to maintain and test by isolating the navigation from the Visitor actions.&nbsp; The downside is potentially a little extra mechanical complexity in using the Visitor against a hierarchy because of the extra class.</LI></OL><br />
+<P>&nbsp;</P><br />
+<H4>Yield is your Friend</H4><br />
+<P>The new <A class="" href="http://codebetter.com/blogs/david.hayden/archive/2006/10/05/C_2300_-2.0-Iterators-and-Yield-Keyword-_2D00_-Custom-Collection-Enumerators.aspx">&#8220;yield&#8221; keyword</A> is almost tailor made for creating Visitor/Composite pattern implementations.&nbsp; With the yield keyword I can structure my hierarchy in any way that&#8217;s appropriate and still make the enumeration of the children seem simple to the outside callers.&nbsp; In my Suite class it&#8217;s advantageous for me to keep the child Fragments, Tests, and child Suites in separate data structures.&nbsp; However, when the ChildLeaves property is requested for a Suite I want to iterate through all three collections.&nbsp; In .Net 1.1 I probably would have created some sort of temporary ArrayList or ILeaf[] array just to hold the returned value.&nbsp; In .Net 2.0 I can use the &#8220;yield&#8221; keyword to eliminate the unnecessary shuttling of data in temporary lists like this:</P><br />
+<P>&nbsp;</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>override</SPAN> <SPAN>IEnumerable</SPAN>&lt;<SPAN>ILeaf</SPAN>&gt; ChildLeaves</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>get</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>KeyValuePair</SPAN>&lt;<SPAN>string</SPAN>, <SPAN>Suite</SPAN>&gt; pair <SPAN>in</SPAN> _childSuites)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>yield</SPAN> <SPAN>return</SPAN> pair.Value;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>KeyValuePair</SPAN>&lt;<SPAN>string</SPAN>, <SPAN>Test</SPAN>&gt; test <SPAN>in</SPAN> _tests)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>yield</SPAN> <SPAN>return</SPAN> test.Value;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (<SPAN>KeyValuePair</SPAN>&lt;<SPAN>string</SPAN>, <SPAN>Fragment</SPAN>&gt; pair <SPAN>in</SPAN> _fragments)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>yield</SPAN> <SPAN>return</SPAN> pair.Value;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>&nbsp;</P><br />
+<H4>Yes, I know this is easier in Ruby!</H4><br />
+<P><A class="" href="http://codebetter.com/photos/cblinkblog/images/170454/original.aspx">The Ruby Visitor</A>&nbsp;from ObjectMentor.&nbsp; Ruby guys love to use this example to poke fun at the compiler driven noise in static typed language like Java, C#, and VB.Net.</P><br />
+<H4>Summary</H4><br />
+<P>So was all of this worth it to me?&nbsp; Looking back I&#8217;d say the answer is an emphatic yes.&nbsp; I counted 20 implementations of the IVisitor interface in StoryTeller.&nbsp; I&#8217;ve been able to add new operations across the hierarchy with relative ease.&nbsp; I know I&#8217;ve got at least a couple more hierarchy operations yet to do in later phases and the Visitor/Composite pairing gives me a clean way to add these operations.</P><br />
+<P>If you have a need to process an object hierarchy and/or a mixed list of objects, the Visitor and Composite patterns can do a lot for you to control the complexity of dealing with the data structure.</P><br />
+<H4>Other Reading</H4><br />
+<P>I did quite a bit of reading in the course of writing this post.&nbsp; In particular, I found these references helpful:</P><br />
+<UL><br />
+<LI><A href="http://www.exciton.cs.rice.edu/JavaResources/DesignPatterns/VisitorPattern.htm">The Visitor Design Pattern</A>&nbsp;(Rice CS department.&nbsp; Go Owls!)</LI><br />
+<LI><A href="http://www.exciton.cs.rice.edu/JavaResources/DesignPatterns/composite.htm">Composite Design Pattern</A> (Rice CS department)</LI><br />
+<LI><A href="http://www.chimu.com/publications/short/javaDoubleDispatching.html">Double Dispatching in Java</A></LI><br />
+<LI><A href="http://peak.telecommunity.com/protocol_ref/dispatch-example.html">Double Dispatch and the &#8220;Visitor&#8221; Pattern</A></LI><br />
+<LI><A href="http://c2.com/cgi/wiki?DoubleDispatch">Double Dispatch</A> (from&nbsp;*the* Wiki)</LI><br />
+<LI><A href="http://c2.com/cgi/wiki?CompositePattern">Composite Pattern</A> (Ward&#8217;s Wiki again)</LI><br />
+<LI><A href="http://www.javaworld.com/javaworld/jw-09-2002/jw-0913-designpatterns.html">A look at the Composite design pattern</A></LI></UL><br />
+<P>If you peruse these links you might notice that not one single one of the links uses .Net or even mentions .Net.&nbsp; Not really making a statement of any kind, just pointing that out.</P></p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>, <a href="http://codebetter.com/jeremymiller/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>, <a href="http://codebetter.com/jeremymiller/category/storyteller/" title="View all posts in StoryTeller" rel="category tag">StoryTeller</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch/" title="Permalink to Be not afraid of the Visitor, the big, bad Composite, or their little friend Double Dispatch" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch/feed/" title="Comments RSS to Be not afraid of the Visitor, the big, bad Composite, or their little friend Double Dispatch" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-448 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/10/30/how-you-re-writing-winforms-apps-the-results/" rel="prev"><span class="meta-nav">&larr;</span> How you&#8217;re writing WinForms apps &#8211; The results</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/11/01/development-trivial-pursuit-the-difference-between-mvc-and-the-different-flavors-of-mvp/" rel="next">Development Trivial Pursuit: The difference between MVC and the different flavors of MVP <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2968">
+					<div id="dsq-comment-header-2968" class="dsq-comment-header">
+						<cite id="dsq-cite-2968">
+	http://grabbagoft.blogspot.com/							<span id="dsq-author-user-2968">Jimmy Bogard</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2968" class="dsq-comment-body">
+						<div id="dsq-comment-message-2968" class="dsq-comment-message"><p>Yet another reason to read Kerievsky&#8217;s book&#8230;</p>
+<p>Visitor seems to be up there with Singleton and Abstract Factory on the list of abused design patterns.  For every Visitor I&#8217;ve seen, there&#8217;s an instance where a collecting parameter is just as appropriate.  I haven&#8217;t seen a good example of Visitor outside of implicit or explicit trees, such as HTML, XML, etc.</p>
+<p>One of the things I didn&#8217;t like about Visitor was that it needs to know the entire family of objects that gets visited.   Instead of coupling to one class, it couples with several, so the bar has to be pretty high to introduce this pattern.  But when you need it, you REALLY need it.  Kerievsky provides some good direction on recognizing smells where this pattern could be appropriate.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2969">
+					<div id="dsq-comment-header-2969" class="dsq-comment-header">
+						<cite id="dsq-cite-2969">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2969">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2969" class="dsq-comment-body">
+						<div id="dsq-comment-message-2969" class="dsq-comment-message"><p>@Jimmy,</p>
+<p>My experience has been the other way around.  I&#8217;ve seen people fight with situations that could have been solved more efficiently with the Visitor/Composite combo.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2970">
+					<div id="dsq-comment-header-2970" class="dsq-comment-header">
+						<cite id="dsq-cite-2970">
+	http://blogs.agilejoe.com							<span id="dsq-author-user-2970">Joe Ocampo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2970" class="dsq-comment-body">
+						<div id="dsq-comment-message-2970" class="dsq-comment-message"><p>@Jeremy</p>
+<p>Excellent Post, I am jealous.</p>
+<p>@Jimmy</p>
+<p>I know that this is a similar tree construct but I used a visitor pattern to create a menu system for a site once.</p>
+<p>The site had multiple login roles that governed what link or sub-links would be visible.  Rather than creating a state pattern for the menu system.  The menu structure was static and I used a visitor to traverse through the static menu objects that would simply ask each object if they should render based on the role that the visitor had. </p>
+<p>The visor then held the role based structure that the menu renderer would act on.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2971">
+					<div id="dsq-comment-header-2971" class="dsq-comment-header">
+						<cite id="dsq-cite-2971">
+	http://kentb.blogspot.com							<span id="dsq-author-user-2971">Kent Boogaart</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2971" class="dsq-comment-body">
+						<div id="dsq-comment-message-2971" class="dsq-comment-message"><p>Top post Jeremy.</p>
+<p>Link to Ruby Visitor appears broken. Here it is for others (PDF): <a href="http://www.objectmentor.com/resources/articles/Craftsman51.pdf" rel="nofollow">http://www.objectmentor.com/resources/articles/Craftsman51.pdf</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2972">
+					<div id="dsq-comment-header-2972" class="dsq-comment-header">
+						<cite id="dsq-cite-2972">
+								<span id="dsq-author-user-2972">Stewart Green</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2972" class="dsq-comment-body">
+						<div id="dsq-comment-message-2972" class="dsq-comment-message"><p>Have you seen this article from a few years ago, it&#8217;s not alt.net but hey not everyone is</p>
+<p><a href="http://blogs.msdn.com/devdev/archive/2005/08/29/457798.aspx" rel="nofollow">http://blogs.msdn.com/devdev/archive/2005/08/29/457798.aspx</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2973">
+					<div id="dsq-comment-header-2973" class="dsq-comment-header">
+						<cite id="dsq-cite-2973">
+								<span id="dsq-author-user-2973">Martina</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2973" class="dsq-comment-body">
+						<div id="dsq-comment-message-2973" class="dsq-comment-message"><p>An ILeaf with children? This terminology is a bit odd. Normally, &#8220;leaf&#8221; is used to designate tree nodes without children&#8230;</p>
+<p>compare:<br />
+<a href="http://en.wikipedia.org/wiki/Tree_structure#Nomenclature_and_properties" rel="nofollow">http://en.wikipedia.org/wiki/Tree_structure#Nomenclature_and_properties</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2974">
+					<div id="dsq-comment-header-2974" class="dsq-comment-header">
+						<cite id="dsq-cite-2974">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2974">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2974" class="dsq-comment-body">
+						<div id="dsq-comment-message-2974" class="dsq-comment-message"><p>If I had to do it over again I might call it INode instead.  My bad.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2975">
+					<div id="dsq-comment-header-2975" class="dsq-comment-header">
+						<cite id="dsq-cite-2975">
+	http://www.lostechies.com/blogs/joe_ocampo							<span id="dsq-author-user-2975">Joe Ocampo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2975" class="dsq-comment-body">
+						<div id="dsq-comment-message-2975" class="dsq-comment-message"><p>ReSharper (Shift-F6) or [F2]  <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2976">
+					<div id="dsq-comment-header-2976" class="dsq-comment-header">
+						<cite id="dsq-cite-2976">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2976">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2976" class="dsq-comment-body">
+						<div id="dsq-comment-message-2976" class="dsq-comment-message"><p>Gotta change the file names too and sweet talk SVN into allowing that</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2977">
+					<div id="dsq-comment-header-2977" class="dsq-comment-header">
+						<cite id="dsq-cite-2977">
+	http://intrepidnoodle.com							<span id="dsq-author-user-2977">aaron</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2977" class="dsq-comment-body">
+						<div id="dsq-comment-message-2977" class="dsq-comment-message"><p>Hi,<br />
+Just skim reading (your articles are quite meaty <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> , and I wondered if there was a reason you didn&#8217;t call the IVisitor methods Process(Test test);  Process(Table table); etc<br />
+It seems like that would have allowed more generic behaviour from the caller ?</p>
+<p>Cheers<br />
+Aaron</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2978">
+					<div id="dsq-comment-header-2978" class="dsq-comment-header">
+						<cite id="dsq-cite-2978">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2978">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2978" class="dsq-comment-body">
+						<div id="dsq-comment-message-2978" class="dsq-comment-message"><p>Easier to spot from the CTRL-F12 window.  Can&#8217;t say it was something I thought about a lot though.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2979">
+					<div id="dsq-comment-header-2979" class="dsq-comment-header">
+						<cite id="dsq-cite-2979">
+								<span id="dsq-author-user-2979">Greg M</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2979" class="dsq-comment-body">
+						<div id="dsq-comment-message-2979" class="dsq-comment-message"><p>Regarding the Ruby version of Visitor: it&#8217;s not static typing that stops you doing it, it&#8217;s just Java&#8217;s lame type system. Would be easy to type in Haskell for example, though you don&#8217;t really need the Visitor pattern when you have first-class functions.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2980">
+					<div id="dsq-comment-header-2980" class="dsq-comment-header">
+						<cite id="dsq-cite-2980">
+	http://davesquared.blogspot.com							<span id="dsq-author-user-2980">davidt</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2980" class="dsq-comment-body">
+						<div id="dsq-comment-message-2980" class="dsq-comment-message"><p>Hi Jeremy,<br />
+I&#8217;ve got my terminology confused. I thought &#8220;double dispatch&#8221; was to do with binding to methods based on the run-time types of two different objects? Do I have my terminology wrong? I tried to explain my interpretation in a blog post:<br />
+<shamelessownblogreference><br />
+<a href="http://davesquared.blogspot.com/2007/11/double-dispatch.html" rel="nofollow">http://davesquared.blogspot.com/2007/11/double-dispatch.html</a><br />
+</shamelessownblogreference></p>
+<p>Is the PersistToFile<t> example &#8220;double dispatch&#8221;? Or does XmlSerialiser &#8220;visit&#8221; FileStream? Or is it completely unimportant and just semantic differences? <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /><br />
+Regards,<br />
+David</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2981">
+					<div id="dsq-comment-header-2981" class="dsq-comment-header">
+						<cite id="dsq-cite-2981">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2981">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2981" class="dsq-comment-body">
+						<div id="dsq-comment-message-2981" class="dsq-comment-message"><p>@Greg M,</p>
+<p>I was just getting ready to be jumped from some smug &#8220;I code in a cool language&#8221; guy to write in how much simpler this kind of thing is in other languages.</p>
+<p>@David,</p>
+<p>Thanks for the link.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2982">
+					<div id="dsq-comment-header-2982" class="dsq-comment-header">
+						<cite id="dsq-cite-2982">
+								<span id="dsq-author-user-2982">Paul Hatcher</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2982" class="dsq-comment-body">
+						<div id="dsq-comment-message-2982" class="dsq-comment-message"><p>It may be an abuse of the pattern, but there&#8217;s a nice trick you can pull with generics that allows an arbitrary visitor/visitable classes&#8230;</p>
+<p>    public interface IVisitable<br />
+    {<br />
+        IEnumerable<ivisitable> Candidates { get; }<br />
+        IVisitable[] Children { get; }<br />
+        void Accept(IVisitor visitor);<br />
+    }</p>
+<p>    public interface IVisitor<br />
+    {<br />
+        void Process<t>(T entity);<br />
+    }</p>
+<p>On my implementation I have a Visitor class that allows registration of processes for particular T&#8217;s, and then the class implementing IVisitor just instantiates one appropriately; makes things like the tree node production fairly clean and easy to extend to new node types without having to re-visit existing implementations (if they&#8217;re not going to see that particular class).</t></ivisitable></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2983">
+					<div id="dsq-comment-header-2983" class="dsq-comment-header">
+						<cite id="dsq-cite-2983">
+								<span id="dsq-author-user-2983">Lindsay Holman</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2983" class="dsq-comment-body">
+						<div id="dsq-comment-message-2983" class="dsq-comment-message"><p>Most visitor implmentations I have seen have enabled the removal of a single if/ten statement.  That is why visitor should be feared &#8211; use .. umm .. appropriately &#8211; which is seldom is most cases.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2984">
+					<div id="dsq-comment-header-2984" class="dsq-comment-header">
+						<cite id="dsq-cite-2984">
+								<span id="dsq-author-user-2984">Matt Skelton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2984" class="dsq-comment-body">
+						<div id="dsq-comment-message-2984" class="dsq-comment-message"><p>Hi,</p>
+<p>Great post; helped me out a lot! I found a small error in your examples.</p>
+<p>&#8220;As we saw earlier, each ILeaf exposes methods to support both the Composite structure and a single method called AcceptVisitor(ILeaf) that enables the Visitor pattern.&#8221;</p>
+<p>Should read: &#8220;&#8230;called AcceptVisitor(IVisitor) that&#8230;&#8221;. Cheers.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2985">
+					<div id="dsq-comment-header-2985" class="dsq-comment-header">
+						<cite id="dsq-cite-2985">
+	http://www.aprentis.ru							<span id="dsq-author-user-2985">George Polevoy</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2985" class="dsq-comment-body">
+						<div id="dsq-comment-message-2985" class="dsq-comment-message"><p>yield is your friend, of course, concat is your friend too</p>
+<p>public override IEnumerable<ileaf> ChildLeaves<br />
+        {<br />
+            get<br />
+            {<br />
+                return _tests.Values.Concat(_fragments.Values).Concat(_childSuites.Values);<br />
+            }<br />
+        }</ileaf></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2986">
+					<div id="dsq-comment-header-2986" class="dsq-comment-header">
+						<cite id="dsq-cite-2986">
+								<span id="dsq-author-user-2986">Jason</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2986" class="dsq-comment-body">
+						<div id="dsq-comment-message-2986" class="dsq-comment-message"><p>@Paul Hatcher got it right &#8211; and I think you missed the point of a visitor. Its meant to specifically take advantage of the visitees type.</p>
+<p>so your<br />
+  public interface IVisitor</p>
+<p>    {</p>
+<p>        void ProcessTest(Test test);<br />
+        void ProcessTable(Table table);<br />
+        void ProcessComment(Comment comment);<br />
+        void ProcessSuite(Suite suite);<br />
+        void ProcessInclude(Include include);<br />
+        void ProcessFragment(Fragment fragment);</p>
+<p>    }</p>
+<p>should read<br />
+ public interface IVisitor<br />
+    {<br />
+        void Process(Test test);<br />
+        void Process(Table table);<br />
+        void Process(Comment comment);<br />
+        void Process(Suite suite);<br />
+        void Process(Include include);<br />
+        void Process(Fragment fragment);<br />
+    }</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch/ ';
+	var disqus_identifier = '448 /blogs/jeremy.miller/archive/2007/10/31/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Be not afraid of the Visitor, the big, bad Composite, or their little friend Double Dispatch";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=448');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/10\/31\/be-not-afraid-of-the-visitor-the-big-bad-composite-or-their-little-friend-double-dispatch\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.569 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 12:55:49 -->
+<!-- super cache -->

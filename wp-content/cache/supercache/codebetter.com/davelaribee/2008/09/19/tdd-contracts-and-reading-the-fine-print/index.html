@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>TDD, Contracts, and Reading the Fine Print | Dave Laribee</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davelaribee/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davelaribee/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davelaribee/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davelaribee/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davelaribee/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Dave Laribee' href='http://codebetter.com/davelaribee/' />
+<link rel='start' title='Self Re-Introduction' href='http://codebetter.com/davelaribee/2007/09/17/self-re-introduction/' />
+<link rel='prev' title='The Two ALT.NET Criterion' href='http://codebetter.com/davelaribee/2008/09/14/the-two-alt-net-criterion/' />
+<link rel='next' title='Why SOLID? GIMME AN L!' href='http://codebetter.com/davelaribee/2008/09/22/why-solid-gimme-an-l/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/' />
+<link rel='shortlink' href='http://codebetter.com/davelaribee/?p=70' />
+<link rel="stylesheet" href="http://codebetter.com/davelaribee/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davelaribee/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-70" class="post-70 post type-post status-publish format-standard hentry category-bdd category-dbc category-oo category-tdd">
+					<h1 class="entry-title">TDD, Contracts, and Reading the Fine Print</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davelaribee/author/davelaribee/" title="View all posts by davelaribee">davelaribee</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/" title="1:44 am" rel="bookmark"><span class="entry-date">September 19, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davelaribee/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davelaribee/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davelaribee/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Jimmy Bogard <a href="http://www.lostechies.com/blogs/jimmy_bogard/archive/2008/09/18/tdd-design-trade-offs-and-junk-food.aspx">on coming to TDD and interface oriented</a> Jesus and the aha moment of why we use interfaces:</p>
+<blockquote><p>An interface is a contract, that any implementation needs to adhere to.  Consumers of the interface do not care about implementation details, nor can they, as the interface provides no other information besides the signatures it provides.</p></blockquote>
+<p>I quite like the point that Jimmy hints at. <i>Classes, at a certain level, are tiny components.</i> But is an interface really a contract? Yes&#8230; <i>but it&#8217;s not the whole contract</i>; our tests and specifications are part of the contract of our components.</p>
+<p>A component does a couple of things. It will <b>a)</b> tell its container environment what services it needs to run and <b>b)</b> what services it provides. It does this by requiring or publishing one or more contracts. As far as what we have right now in the mainstream, if we&#8217;re pursuing the highest quality, it&#8217;s up to us to deliver contracts that fully document not just the data (as interfaces do) but, at times, the behavior or semantic qualities of these tiny components we&#8217;re writing. Sometimes those behaviors mean something to the supplier <i>and</i> the consumer.</p>
+<p>Say we have a controller and that controller depends on a service. The controller creates a transaction and invokes a service method. Perhaps that service method then throws a business-meaningful exception. For argument let&#8217;s say we have a shopping cart and you&#8217;ve just added -1 pairs of agile pants to your order. Wait a second&#8230; what just happened?! The fact the exception happened is surely a part of the contract! We have to deal with it after all and abort the transaction or take some compensating action. In the case of ordering some agile pants, maybe you want to display a message indicating that quantity should be one or more. Yes, I realize this is a bad example, but stuff like this necessarily happens in the real world.</p>
+<p>What if &#8212; just go with me here &#8212; we have a dependency that can throw an exception? Is that not part of the contract? Last I checked there wasn&#8217;t a way to say &#8220;hey, this interface can throw these kinds of exceptions&#8221; in C#. Consumers surely need to care about implementation details. What about invariants? If we simply have a structural contract we have nothing that expresses these behavioral elements. C# might get some spec# features, but we&#8217;re not quite there yet. <a href="http://en.wikipedia.org/wiki/Design_by_contract">Preconditions, postconditions, and invariants</a> are a part of the contract we take in.</p>
+<p>When we&#8217;re driving out interfaces and using a nice mock objects framework, we need to think about our consumers when we dive into a dependency and drive it out. What preconditions are you creating? What exceptions are you throwing? Do consumers of this service need to be aware or are they likely to want to handle these exceptions? If so, you need to return to the consumer and write some more tests. Get more mileage out of your code by <a href="http://www.thekua.com/atwork/2008/08/20/defensive-programming-depends-on-context/">applying defensive programming conservatively</a>.</p>
+<p> Simply put: <b>contract = specifications + interface</b>.</p>
+<p>Interested in the potential benefits of DbC for more-robust contracts? Sifting through a quick Google search on the subject yields a nice post by <a href="http://gleichmann.wordpress.com/2007/12/02/why-interfaces-are-poor-contracts/">Mario Gleichmann</a> exploring the idea that interfaces all by themselves are poor contracts.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davelaribee/category/bdd/" title="View all posts in BDD" rel="category tag">BDD</a>, <a href="http://codebetter.com/davelaribee/category/dbc/" title="View all posts in DbC" rel="category tag">DbC</a>, <a href="http://codebetter.com/davelaribee/category/oo/" title="View all posts in oo" rel="category tag">oo</a>, <a href="http://codebetter.com/davelaribee/category/tdd/" title="View all posts in TDD" rel="category tag">TDD</a>. Bookmark the <a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/" title="Permalink to TDD, Contracts, and Reading the Fine Print" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/feed/" title="Comments RSS to TDD, Contracts, and Reading the Fine Print" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-70 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davelaribee/2008/09/14/the-two-alt-net-criterion/" rel="prev"><span class="meta-nav">&larr;</span> The Two ALT.NET Criterion</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davelaribee/2008/09/22/why-solid-gimme-an-l/" rel="next">Why SOLID? GIMME AN L! <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">40 Responses to <em>TDD, Contracts, and Reading the Fine Print</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-507">
+		<div id="comment-507">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.hibeads.com' rel='external nofollow' class='url'>pearl jewelry</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-507">August 3, 2010 at 6:57 am</a></div>
+
+		<div class="comment-body"><p>will read more&#8230;thanks for share&#8230;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-506">
+		<div id="comment-506">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.joyrelax.com' rel='external nofollow' class='url'>massager</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-506">April 8, 2010 at 6:21 am</a></div>
+
+		<div class="comment-body"><p>What if &#8212; just go with me here &#8212; we have a dependency that can throw an exception? Is that not part of the contract?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-505">
+		<div id="comment-505">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">123</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-505">November 11, 2009 at 8:33 am</a></div>
+
+		<div class="comment-body"><p>123</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-504">
+		<div id="comment-504">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmovs.com/dofus-kamas-fr/' rel='external nofollow' class='url'>dofus</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-504">February 27, 2009 at 4:39 pm</a></div>
+
+		<div class="comment-body"><p>Dofus Kamas: <a href="http://www.servicegamer.com/dofus-kamas-fr.asp" rel="nofollow">http://www.servicegamer.com/dofus-kamas-fr.asp</a><br />
+Dofus: <a href="http://www.mmovs.com/dofus-kamas-fr/" rel="nofollow">http://www.mmovs.com/dofus-kamas-fr/</a><br />
+Wakfu: <a href="http://www.mmovs.com/wakfu-kamas-fr/" rel="nofollow">http://www.mmovs.com/wakfu-kamas-fr/</a><br />
+Wakfu Kamas: <a href="http://www.servicegamer.com/wakfu-kamas.asp" rel="nofollow">http://www.servicegamer.com/wakfu-kamas.asp</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-503">
+		<div id="comment-503">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.gameim.com/product/World_of_Warcraft_-_US_Gold.html' rel='external nofollow' class='url'>buy wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-503">February 23, 2009 at 5:36 am</a></div>
+
+		<div class="comment-body"><p>I like play online game, I also <a href="http://www.gameim.com/product/World_of_Warcraft_-_US_Gold.html">buy wow gold</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-502">
+		<div id="comment-502">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">xiuying</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-502">February 23, 2009 at 3:25 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a><br />
+<a href="http://www.runescape2store.com" rel="nofollow">http://www.runescape2store.com</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a> <a href="http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html" rel="nofollow">http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html</a><br />
+<a href="http://www.vgoldsupply.com/dofus-c-1054.html" rel="nofollow">http://www.vgoldsupply.com/dofus-c-1054.html</a><br />
+<a href="http://www.buylotrogold.org" rel="nofollow">http://www.buylotrogold.org</a><br />
+<a href="http://www.buy-lotro-gold.cn" rel="nofollow">http://www.buy-lotro-gold.cn</a><br />
+<a href="http://www.vgoldseller.com/lord-rings-onlineus-c-975.html" rel="nofollow">http://www.vgoldseller.com/lord-rings-onlineus-c-975.html</a><br />
+<a href="http://www.800millions.com" rel="nofollow">http://www.800millions.com</a><br />
+<a href="http://www.trainrunescape.com" rel="nofollow">http://www.trainrunescape.com</a><br />
+<a href="http://www.runescape2vip.cn" rel="nofollow">http://www.runescape2vip.cn</a><br />
+<a href="http://www.buydofuskamas.com" rel="nofollow">http://www.buydofuskamas.com</a><br />
+<a href="http://www.runescape4money.net" rel="nofollow">http://www.runescape4money.net</a><br />
+<a href="http://www.vgoldseller.com/hellgate-london-c-1102.html" rel="nofollow">http://www.vgoldseller.com/hellgate-london-c-1102.html</a><br />
+<a href="http://www.vgoldseller.com/tabula-rasa-c-1107.html" rel="nofollow">http://www.vgoldseller.com/tabula-rasa-c-1107.html</a><br />
+<a href="http://www.wow-power-leveling.net" rel="nofollow">http://www.wow-power-leveling.net</a><br />
+<a href="http://www.vgoldseller.com/power_runescape.php" rel="nofollow">http://www.vgoldseller.com/power_runescape.php</a><br />
+<a href="http://www.vgoldseller.com/eve-online-c-892.html" rel="nofollow">http://www.vgoldseller.com/eve-online-c-892.html</a><br />
+<a href="http://www.vgoldsupply.com/eve-online-c-1191.html" rel="nofollow">http://www.vgoldsupply.com/eve-online-c-1191.html</a><br />
+<a href="http://www.vgoldseller.com/tibia-c-894.html" rel="nofollow">http://www.vgoldseller.com/tibia-c-894.html</a><br />
+<a href="http://www.vgoldseller.com/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/fiesta-c-896.html</a><br />
+<a href="http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html</a></p>
+<p><a href="http://www.huxiji.net.cn" rel="nofollow">http://www.huxiji.net.cn</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://www.myhuxiji.com/jinkouhuxiji.htm" rel="nofollow">http://www.myhuxiji.com/jinkouhuxiji.htm</a><br />
+<a href="http://aoweiclub.com" rel="nofollow">http://aoweiclub.com</a><br />
+<a href="http://www.itourschina.com" rel="nofollow">http://www.itourschina.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourbeijing.com/china-tour.htm" rel="nofollow">http://www.itourbeijing.com/china-tour.htm</a><br />
+<a href="http://www.itourstibet.com" rel="nofollow">http://www.itourstibet.com</a><br />
+<a href="http://computermonitoringsoftwares.com" rel="nofollow">http://computermonitoringsoftwares.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-501">
+		<div id="comment-501">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">xiuying</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-501">February 23, 2009 at 3:24 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a><br />
+<a href="http://www.runescape2store.com" rel="nofollow">http://www.runescape2store.com</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a> <a href="http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html" rel="nofollow">http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html</a><br />
+<a href="http://www.vgoldsupply.com/dofus-c-1054.html" rel="nofollow">http://www.vgoldsupply.com/dofus-c-1054.html</a><br />
+<a href="http://www.buylotrogold.org" rel="nofollow">http://www.buylotrogold.org</a><br />
+<a href="http://www.buy-lotro-gold.cn" rel="nofollow">http://www.buy-lotro-gold.cn</a><br />
+<a href="http://www.vgoldseller.com/lord-rings-onlineus-c-975.html" rel="nofollow">http://www.vgoldseller.com/lord-rings-onlineus-c-975.html</a><br />
+<a href="http://www.800millions.com" rel="nofollow">http://www.800millions.com</a><br />
+<a href="http://www.trainrunescape.com" rel="nofollow">http://www.trainrunescape.com</a><br />
+<a href="http://www.runescape2vip.cn" rel="nofollow">http://www.runescape2vip.cn</a><br />
+<a href="http://www.buydofuskamas.com" rel="nofollow">http://www.buydofuskamas.com</a><br />
+<a href="http://www.runescape4money.net" rel="nofollow">http://www.runescape4money.net</a><br />
+<a href="http://www.vgoldseller.com/hellgate-london-c-1102.html" rel="nofollow">http://www.vgoldseller.com/hellgate-london-c-1102.html</a><br />
+<a href="http://www.vgoldseller.com/tabula-rasa-c-1107.html" rel="nofollow">http://www.vgoldseller.com/tabula-rasa-c-1107.html</a><br />
+<a href="http://www.wow-power-leveling.net" rel="nofollow">http://www.wow-power-leveling.net</a><br />
+<a href="http://www.vgoldseller.com/power_runescape.php" rel="nofollow">http://www.vgoldseller.com/power_runescape.php</a><br />
+<a href="http://www.vgoldseller.com/eve-online-c-892.html" rel="nofollow">http://www.vgoldseller.com/eve-online-c-892.html</a><br />
+<a href="http://www.vgoldsupply.com/eve-online-c-1191.html" rel="nofollow">http://www.vgoldsupply.com/eve-online-c-1191.html</a><br />
+<a href="http://www.vgoldseller.com/tibia-c-894.html" rel="nofollow">http://www.vgoldseller.com/tibia-c-894.html</a><br />
+<a href="http://www.vgoldseller.com/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/fiesta-c-896.html</a><br />
+<a href="http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html</a></p>
+<p><a href="http://www.huxiji.net.cn" rel="nofollow">http://www.huxiji.net.cn</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://www.myhuxiji.com/jinkouhuxiji.htm" rel="nofollow">http://www.myhuxiji.com/jinkouhuxiji.htm</a><br />
+<a href="http://aoweiclub.com" rel="nofollow">http://aoweiclub.com</a><br />
+<a href="http://www.itourschina.com" rel="nofollow">http://www.itourschina.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourbeijing.com/china-tour.htm" rel="nofollow">http://www.itourbeijing.com/china-tour.htm</a><br />
+<a href="http://www.itourstibet.com" rel="nofollow">http://www.itourstibet.com</a><br />
+<a href="http://computermonitoringsoftwares.com" rel="nofollow">http://computermonitoringsoftwares.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-500">
+		<div id="comment-500">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vgoldseller.com/runescape-c-599.html' rel='external nofollow' class='url'>xiuying</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-500">February 23, 2009 at 3:23 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a><br />
+<a href="http://www.runescape2store.com" rel="nofollow">http://www.runescape2store.com</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a> <a href="http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html" rel="nofollow">http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html</a><br />
+<a href="http://www.vgoldsupply.com/dofus-c-1054.html" rel="nofollow">http://www.vgoldsupply.com/dofus-c-1054.html</a><br />
+<a href="http://www.buylotrogold.org" rel="nofollow">http://www.buylotrogold.org</a><br />
+<a href="http://www.buy-lotro-gold.cn" rel="nofollow">http://www.buy-lotro-gold.cn</a><br />
+<a href="http://www.vgoldseller.com/lord-rings-onlineus-c-975.html" rel="nofollow">http://www.vgoldseller.com/lord-rings-onlineus-c-975.html</a><br />
+<a href="http://www.800millions.com" rel="nofollow">http://www.800millions.com</a><br />
+<a href="http://www.trainrunescape.com" rel="nofollow">http://www.trainrunescape.com</a><br />
+<a href="http://www.runescape2vip.cn" rel="nofollow">http://www.runescape2vip.cn</a><br />
+<a href="http://www.buydofuskamas.com" rel="nofollow">http://www.buydofuskamas.com</a><br />
+<a href="http://www.runescape4money.net" rel="nofollow">http://www.runescape4money.net</a><br />
+<a href="http://www.vgoldseller.com/hellgate-london-c-1102.html" rel="nofollow">http://www.vgoldseller.com/hellgate-london-c-1102.html</a><br />
+<a href="http://www.vgoldseller.com/tabula-rasa-c-1107.html" rel="nofollow">http://www.vgoldseller.com/tabula-rasa-c-1107.html</a><br />
+<a href="http://www.wow-power-leveling.net" rel="nofollow">http://www.wow-power-leveling.net</a><br />
+<a href="http://www.vgoldseller.com/power_runescape.php" rel="nofollow">http://www.vgoldseller.com/power_runescape.php</a><br />
+<a href="http://www.vgoldseller.com/eve-online-c-892.html" rel="nofollow">http://www.vgoldseller.com/eve-online-c-892.html</a><br />
+<a href="http://www.vgoldsupply.com/eve-online-c-1191.html" rel="nofollow">http://www.vgoldsupply.com/eve-online-c-1191.html</a><br />
+<a href="http://www.vgoldseller.com/tibia-c-894.html" rel="nofollow">http://www.vgoldseller.com/tibia-c-894.html</a><br />
+<a href="http://www.vgoldseller.com/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/fiesta-c-896.html</a><br />
+<a href="http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html</a></p>
+<p><a href="http://www.huxiji.net.cn" rel="nofollow">http://www.huxiji.net.cn</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://www.myhuxiji.com/jinkouhuxiji.htm" rel="nofollow">http://www.myhuxiji.com/jinkouhuxiji.htm</a><br />
+<a href="http://aoweiclub.com" rel="nofollow">http://aoweiclub.com</a><br />
+<a href="http://www.itourschina.com" rel="nofollow">http://www.itourschina.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourbeijing.com/china-tour.htm" rel="nofollow">http://www.itourbeijing.com/china-tour.htm</a><br />
+<a href="http://www.itourstibet.com" rel="nofollow">http://www.itourstibet.com</a><br />
+<a href="http://computermonitoringsoftwares.com" rel="nofollow">http://computermonitoringsoftwares.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-499">
+		<div id="comment-499">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.lotro-gold.eu' rel='external nofollow' class='url'>lotre</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-499">February 20, 2009 at 5:52 am</a></div>
+
+		<div class="comment-body"><p>hi,guy this site lotro-gold.eu it is about online game&#8217;s web,we offer the news and important cheats,The main we sell <b><a href=http://www.lotro-gold.eu>lotro gold</a></b>,if u want to <b><a href=http://www.lotro-gold.eu>buy lotro gold</a></b>,u need <b><a href=http://lotro-eu.virgolds.com>lotro gold</a></b> from this site,it is cheapest,right,u want buy <b><a href=http://www.lotro-gold.eu>lord of the rings online gold</a></b>,<b><a href=http://www.lotro-gold.eu>cheap lotro gold</a></b>,plz click here:<b><a href=http://lotro-eu.igsky.com>lotro gold</a></b>,it is cool,isn&#8217;t it?everyone who play <b><a href=http://www.lotro-gold.eu>lotro</a></b> and want buy <b><a href=http://lotro-eu.virgolds.com>lord of the rings online gold</a></b> can get some help from our.we We have mass available stock of <b><a href=http://lotro-eu.igsky.com>lord of the rings online gold</a></b> on most of the servers,so that we can do a really instant <b><a href=http://lotro-eu.virgolds.com>cheap lotro gold</a></b> delivery.We know what our buyers need so we offer an instant way of cheap <b><a href=http://lotro-eu.igsky.com>cheap lotro gold</a></b>, the cheapest wow gold delivery.lol…</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-498">
+		<div id="comment-498">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.lotro-gold.eu' rel='external nofollow' class='url'>lotre</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-498">February 20, 2009 at 5:48 am</a></div>
+
+		<div class="comment-body"><p>hi,guy this site lotro-gold.eu it is about online game&#8217;s web,we offer the news and important cheats,The main we sell <b><a href=http://www.lotro-gold.eu>lotro gold</a></b>,if u want to <b><a href=http://www.lotro-gold.eu>buy lotro gold</a></b>,u need <b><a href=http://lotro-eu.virgolds.com>lotro gold</a></b> from this site,it is cheapest,right,u want buy <b><a href=http://www.lotro-gold.eu>lord of the rings online gold</a></b>,<b><a href=http://www.lotro-gold.eu>cheap lotro gold</a></b>,plz click here:<b><a href=http://lotro-eu.igsky.com>lotro gold</a></b>,it is cool,isn&#8217;t it?everyone who play <b><a href=http://www.lotro-gold.eu>lotro</a></b> and want buy <b><a href=http://lotro-eu.virgolds.com>lord of the rings online gold</a></b> can get some help from our.we We have mass available stock of <b><a href=http://lotro-eu.igsky.com>lord of the rings online gold</a></b> on most of the servers,so that we can do a really instant <b><a href=http://lotro-eu.virgolds.com>cheap lotro gold</a></b> delivery.We know what our buyers need so we offer an instant way of cheap <b><a href=http://lotro-eu.igsky.com>cheap lotro gold</a></b>, the cheapest wow gold delivery.lol…</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-497">
+		<div id="comment-497">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.innicc.com' rel='external nofollow' class='url'>qwsaa</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-497">February 19, 2009 at 3:52 pm</a></div>
+
+		<div class="comment-body"><p>[url=http://www.viccol.com/]eq2 platinum[/url]<br />
+[url=http://www.viccol.com/]eq2 gold[/url]<br />
+[url=http://www.runescapegogo.com/]runescape[/url]<br />
+[url=http://www.viccol.com/]eq2 plat[/url]<br />
+[url=http://www.viccol.com/]everquest2 plat[/url]<br />
+[url=http://www.runescapegogo.com/]runescape gold[/url]<br />
+[url=http://www.viccol.com/]everquest2 gold[/url]<br />
+[url=http://www.viccol.com/]everquest2 platinum[/url]<br />
+[url=http://www.runescapegogo.com/]rs gold[/url]<br />
+[url=http://www.viccol.com/]buy eq2 platinum[/url]<br />
+[url=http://www.viccol.com/]buy eq2 gold[/url]<br />
+[url=http://www.viccol.com/]buy eq2 plat[/url]<br />
+[url=http://www.runescapeize.com/]rs gold[/url]<br />
+[url=http://www.viccol.com/]buy everquest2 plat[/url]<br />
+[url=http://www.viccol.com/]buy everquest2 gold[/url]<br />
+[url=http://www.viccol.com/]buy everquest2 platinum[/url]<br />
+[url=http://www.viccol.com/2moons-buy.html]2moons dil[/url]<br />
+[url=http://www.viccol.com/2moons-buy.html]buy 2moons dil[/url]<br />
+[url=http://www.viccol.com/Age-Of-Conan-aoc.html]buy Age Of Conan gold[/url]<br />
+[url=http://www.viccol.com/Age-Of-Conan-aoc.html]Age Of Conan gold[/url]<br />
+[url=http://www.viccol.com/cheap-ArchLord-Gold-ArchLord.html]ArchLord Gold[/url]<br />
+[url=http://www.viccol.com/dofus.html]dofus kamas[/url]<br />
+[url=http://www.viccol.com/everquest2-gold-service.html]everquest2 plat[/url]<br />
+[url=http://www.viccol.com/everquest2-gold-service.html]everquest2 platinum[/url]<br />
+[url=http://www.viccol.com/everquest2-gold-service.html]everquest2 gold[/url]<br />
+[url=http://www.viccol.com/everquest2-gold-service.html]eq2 plat[/url]<br />
+[url=http://www.viccol.com/gaia-online-gold.html]gaia gold[/url]<br />
+[url=http://www.viccol.com/guild-service.html]guild wars gold[/url]<br />
+[url=http://www.viccol.com/guild-service.html]GW gold[/url]<br />
+[url=http://www.viccol.com/Lineage2-adena.html]Lineage2 adena[/url]<br />
+[url=http://www.viccol.com/buy-maple-story-MS-moses-eu.html]maple story moses[/url]<br />
+[url=http://www.viccol.com/runescape.html]runescape[/url]<br />
+[url=http://www.viccol.com/cheap-SNW-Vis-SwordoftheNewWorld.html]Sword of the New World Vis/url]<br />
+[url=http://www.viccol.com/lotro-eu.html]lotro gold[/url]<br />
+[url=http://www.viccol.com/cheap-wow-gold-eu.html]wow gold[/url]<br />
+<a href="http://www.viccol.com/" rel="nofollow">http://www.viccol.com/</a><br />
+<a href="http://www.viccol.com/Age-Of-Conan-aoc.html" rel="nofollow">http://www.viccol.com/Age-Of-Conan-aoc.html</a><br />
+<a href="http://www.viccol.com/2moons-buy.html" rel="nofollow">http://www.viccol.com/2moons-buy.html</a><br />
+<a href="http://www.viccol.com/cheap-ArchLord-Gold-ArchLord.html" rel="nofollow">http://www.viccol.com/cheap-ArchLord-Gold-ArchLord.html</a><br />
+<a href="http://www.viccol.com/dofus.html" rel="nofollow">http://www.viccol.com/dofus.html</a><br />
+<a href="http://www.viccol.com/everquest2-gold-service.html" rel="nofollow">http://www.viccol.com/everquest2-gold-service.html</a><br />
+<a href="http://www.viccol.com/gaia-online-gold.html" rel="nofollow">http://www.viccol.com/gaia-online-gold.html</a><br />
+<a href="http://www.viccol.com/guild-service.html" rel="nofollow">http://www.viccol.com/guild-service.html</a><br />
+<a href="http://www.viccol.com/Lineage2-adena.html" rel="nofollow">http://www.viccol.com/Lineage2-adena.html</a><br />
+<a href="http://www.viccol.com/buy-maple-story-MS-moses-eu.html" rel="nofollow">http://www.viccol.com/buy-maple-story-MS-moses-eu.html</a><br />
+<a href="http://www.viccol.com/buy-maple-story-MS-moses.html" rel="nofollow">http://www.viccol.com/buy-maple-story-MS-moses.html</a><br />
+<a href="http://www.viccol.com/runescape.html" rel="nofollow">http://www.viccol.com/runescape.html</a><br />
+<a href="http://www.viccol.com/cheap-SNW-Vis-SwordoftheNewWorld.html" rel="nofollow">http://www.viccol.com/cheap-SNW-Vis-SwordoftheNewWorld.html</a><br />
+<a href="http://www.viccol.com/lotro-eu.html" rel="nofollow">http://www.viccol.com/lotro-eu.html</a><br />
+<a href="http://www.viccol.com/lotro-gold-us.html" rel="nofollow">http://www.viccol.com/lotro-gold-us.html</a><br />
+<a href="http://www.viccol.com/cheap-wow-gold-eu.html" rel="nofollow">http://www.viccol.com/cheap-wow-gold-eu.html</a><br />
+<a href="http://www.viccol.com/cheap-wow-gold-us.html" rel="nofollow">http://www.viccol.com/cheap-wow-gold-us.html</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-496">
+		<div id="comment-496">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.inwowgold.com' rel='external nofollow' class='url'>wow</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-496">February 19, 2009 at 3:20 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.inwowgold.com/">wow gold</a><br />
+<a href="http://www.inwowgold.com/">buy wow gold</a><br />
+<a href="http://www.inwowgold.com/">cheap wow gold</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-495">
+		<div id="comment-495">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.amandaiec.com/' rel='external nofollow' class='url'>yiwu</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-495">February 18, 2009 at 7:12 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.amandaiec.com" rel="nofollow">http://www.amandaiec.com</a> wholesale<br />
+<a href="http://www.amandaiec.com" rel="nofollow">http://www.amandaiec.com</a> China wholesale<br />
+<a href="http://www.chinaamanda.com" rel="nofollow">http://www.chinaamanda.com</a> China manufacturers</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-494">
+		<div id="comment-494">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.rsloads.com' rel='external nofollow' class='url'>buy runescape account</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-494">February 18, 2009 at 6:38 am</a></div>
+
+		<div class="comment-body"><p>If you wanna buy some other things which are not listed in our website:<br />
+<a href="http://www.rs-item.com" rel="nofollow">http://www.rs-item.com</a><br />
+<a href="http://www.rsloads.com" rel="nofollow">http://www.rsloads.com</a><br />
+<a href="http://www.g2gmart.com" rel="nofollow">http://www.g2gmart.com</a><br />
+please contact with our customer service with on-line chat or add our Email,we will stock it for<br />
+you in a short time after you told us what you needed.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-493">
+		<div id="comment-493">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jason@yahoo.com' rel='external nofollow' class='url'>loids</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-493">February 9, 2009 at 3:53 am</a></div>
+
+		<div class="comment-body"><p>Age of Conan Hyborian Adventures, AOC Gold</p>
+<p><a href=http://aoctreasures.com>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Bloodspire>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Cimmeria>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Gwahlur>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Set>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Tyranny>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/US/Wicanna>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/EU/Aquilonia>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/GE/Aries>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/EU/Crom>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/FR/Ferox>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/EU/Fury>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/EU/Hyrkania>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/SP/Indomitus>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/FR/Ishtar>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/GE/Mitra>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/GE/Stygia>aoc gold</a><br />
+<a href=http://aoctreasures.com/AoC-Gold/GE/Zingara>aoc gold</a><br />
+<a href=http://www.hallofgamers.com>aoc gold</a><br />
+<a href=http://www.hallofgamers.com/games/AOC-Gold>aoc gold</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-492">
+		<div id="comment-492">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.rs2server.com' rel='external nofollow' class='url'>apple510</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-492">February 5, 2009 at 5:05 am</a></div>
+
+		<div class="comment-body"><p>Rs2server.com is a professional company.Selling runescape gold(also called rs gold,rs money,rs gp),runescape item,runescape powerleveling,and doing the rs member quest or free quest,Buying or Selling runescape account</p>
+<p><a href="http://www.rs2server.com" rel="nofollow">http://www.rs2server.com</a> rs2server runescape runescape gold runescape money runescape gp cheap runescape gold cheap runescape money cheap runescape gp fast runescape gold fast runescape money fast runescape gp runescape powerleveling runescape quest runescape member quest runescape item Runescape quest helper runescape account selling runescape account rs rs gold rs money rs gp cheap rs gold cheap rs money cheap rs gp fast rs gold fast rs money fast rs gp rs powerleveling rs quest rs member quest rs item rs quest helper rs account selling rs account runescape2 runescape2 gold runescape2 money runescape2 gp cheap runescape2 gold cheap runescape2 money cheap runescape2 gp fast runescape2 gold fast runescape2 money fast runescape2 gp runescape2 powerleveling runescape2 quest runescape2 member quest runescape2 item runescape2 quest helper runescape2 account selling runescape2 account rs2 rs2 gold rs2 money rs2 gp cheap rs2 gold cheap rs2 money cheap rs2 gp fast rs2 gold fast rs2 money fast rs2 gp rs2 powerleveling rs2 quest rs2 member quest rs2 item rs2 quest helper rs2 account selling rs2 account</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-491">
+		<div id="comment-491">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.rs2server.com' rel='external nofollow' class='url'>apple510</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-491">February 5, 2009 at 5:04 am</a></div>
+
+		<div class="comment-body"><p>Rs2server.com is a professional company.Selling  runescape gold(also called rs gold,rs money,rs gp),runescape item,runescape powerleveling,and doing the rs member quest or free quest,Buying or Selling runescape account</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-490">
+		<div id="comment-490">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bigbigwatch.com' rel='external nofollow' class='url'>nfl4sale</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-490">February 3, 2009 at 7:50 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.bigbigwatch.com" rel="nofollow">http://www.bigbigwatch.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-489">
+		<div id="comment-489">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bigbigwatch.com' rel='external nofollow' class='url'>nfl4sale</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-489">February 3, 2009 at 7:48 am</a></div>
+
+		<div class="comment-body"><p>Runescape Accounts<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Runescape Account<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>RS Accounts<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>RS Account<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Buy Runescape Accounts<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Buy Runescape Account<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Buy RS Accounts<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Buy RS Account<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Runescape Powerleveling<br />
+<a href="http://www.runescape-power-leveling.com" rel="nofollow">http://www.runescape-power-leveling.com</a></p>
+<p>Runescape Power leveling<br />
+<a href="http://www.runescape-power-leveling.com" rel="nofollow">http://www.runescape-power-leveling.com</a></p>
+<p>RS Powerleveling<br />
+<a href="http://www.runescape-power-leveling.com" rel="nofollow">http://www.runescape-power-leveling.com</a></p>
+<p>RS Power leveling<br />
+<a href="http://www.runescape-power-leveling.com" rel="nofollow">http://www.runescape-power-leveling.com</a></p>
+<p>Runescape Money<br />
+<a href="http://www.runescape-club.com" rel="nofollow">http://www.runescape-club.com</a></p>
+<p>RS Money<br />
+<a href="http://www.runescape-club.com" rel="nofollow">http://www.runescape-club.com</a></p>
+<p>Runescape Gold<br />
+<a href="http://www.runescape-mall.com" rel="nofollow">http://www.runescape-mall.com</a></p>
+<p>RS Gold<br />
+<a href="http://www.runescape-mall.com" rel="nofollow">http://www.runescape-mall.com</a></p>
+<p>Buy Runescape Gold<br />
+<a href="http://www.ebuyrunescapegold.com" rel="nofollow">http://www.ebuyrunescapegold.com</a></p>
+<p>Buy RS Gold<br />
+<a href="http://www.ebuyrunescapegold.com" rel="nofollow">http://www.ebuyrunescapegold.com</a></p>
+<p>Runescape Items<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>Runescape Item<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>Runescape Equipment<br />
+<a href="http://www.rsluck.com" rel="nofollow">http://www.rsluck.com</a></p>
+<p>RS Accounts<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>RS Powerleveling<br />
+<a href="http://www.runescape-power-leveling.com" rel="nofollow">http://www.runescape-power-leveling.com</a></p>
+<p>RS Money<br />
+<a href="http://www.runescape-club.com" rel="nofollow">http://www.runescape-club.com</a></p>
+<p>RS Gold<br />
+<a href="http://www.runescape-mall.com" rel="nofollow">http://www.runescape-mall.com</a></p>
+<p>Runescape Items<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>Runescape Item<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>RS Item<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>RS Items<br />
+<a href="http://www.salerunescapeitems.com" rel="nofollow">http://www.salerunescapeitems.com</a></p>
+<p>Runescape Equipment<br />
+<a href="http://www.rsluck.com" rel="nofollow">http://www.rsluck.com</a></p>
+<p>RS Equipment<br />
+<a href="http://www.rsluck.com" rel="nofollow">http://www.rsluck.com</a></p>
+<p>Runescape Equipments<br />
+<a href="http://www.rsluck.com" rel="nofollow">http://www.rsluck.com</a></p>
+<p>RS Equipments<br />
+<a href="http://www.rsluck.com" rel="nofollow">http://www.rsluck.com</a></p>
+<p>Runescape Forum<br />
+<a href="http://forum.rs-game.com" rel="nofollow">http://forum.rs-game.com</a></p>
+<p>Runescape Community<br />
+<a href="http://forum.rs-game.com" rel="nofollow">http://forum.rs-game.com</a></p>
+<p>Runescape Board<br />
+<a href="http://forum.rs-game.com" rel="nofollow">http://forum.rs-game.com</a></p>
+<p>RS Game<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Runescape quest<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Runescape Quests<br />
+<a href="http://www.rs-game.com/Runescape-Quests.html" rel="nofollow">http://www.rs-game.com/Runescape-Quests.html</a></p>
+<p>Runescape Coins<br />
+<a href="http://www.rs-game.com/Runescape-Coins.html" rel="nofollow">http://www.rs-game.com/Runescape-Coins.html</a></p>
+<p>Runescape Quests<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+<p>Runescape Coins<br />
+<a href="http://www.rs-game.com" rel="nofollow">http://www.rs-game.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-488">
+		<div id="comment-488">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vgoldseller.com/runescape-c-599.html' rel='external nofollow' class='url'>dfd</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-488">February 2, 2009 at 6:19 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a><br />
+<a href="http://www.runescape2store.com" rel="nofollow">http://www.runescape2store.com</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a> <a href="http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html" rel="nofollow">http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html</a><br />
+<a href="http://www.vgoldsupply.com/" rel="nofollow">http://www.vgoldsupply.com/</a><br />
+<a href="http://www.buylotrogold.org" rel="nofollow">http://www.buylotrogold.org</a><br />
+<a href="http://www.buy-lotro-gold.cn" rel="nofollow">http://www.buy-lotro-gold.cn</a><br />
+<a href="http://www.vgoldseller.com/lord-rings-onlineus-c-975.html" rel="nofollow">http://www.vgoldseller.com/lord-rings-onlineus-c-975.html</a><br />
+<a href="http://www.800millions.com" rel="nofollow">http://www.800millions.com</a><br />
+<a href="http://www.trainrunescape.com" rel="nofollow">http://www.trainrunescape.com</a><br />
+<a href="http://www.runescape2vip.cn" rel="nofollow">http://www.runescape2vip.cn</a><br />
+<a href="http://www.buydofuskamas.com" rel="nofollow">http://www.buydofuskamas.com</a><br />
+<a href="http://www.runescape4money.net" rel="nofollow">http://www.runescape4money.net</a><br />
+<a href="http://www.vgoldseller.com/hellgate-london-c-1102.html" rel="nofollow">http://www.vgoldseller.com/hellgate-london-c-1102.html</a><br />
+<a href="http://www.vgoldseller.com/tabula-rasa-c-1107.html" rel="nofollow">http://www.vgoldseller.com/tabula-rasa-c-1107.html</a><br />
+<a href="http://www.wow-power-leveling.net" rel="nofollow">http://www.wow-power-leveling.net</a><br />
+<a href="http://www.vgoldseller.com/power_runescape.php" rel="nofollow">http://www.vgoldseller.com/power_runescape.php</a><br />
+<a href="http://www.vgoldseller.com/eve-online-c-892.html" rel="nofollow">http://www.vgoldseller.com/eve-online-c-892.html</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/tibia-c-894.html" rel="nofollow">http://www.vgoldseller.com/tibia-c-894.html</a><br />
+<a href="http://www.vgoldseller.com/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/fiesta-c-896.html</a><br />
+<a href="http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html</a></p>
+<p><a href="http://www.huxiji.net.cn" rel="nofollow">http://www.huxiji.net.cn</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://aoweiclub.com" rel="nofollow">http://aoweiclub.com</a><br />
+<a href="http://www.itourschina.com" rel="nofollow">http://www.itourschina.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourstibet.com" rel="nofollow">http://www.itourstibet.com</a><br />
+<a href="http://computermonitoringsoftwares.com" rel="nofollow">http://computermonitoringsoftwares.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-487">
+		<div id="comment-487">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vgoldseller.com/runescape-c-599.html' rel='external nofollow' class='url'>dfd</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-487">February 2, 2009 at 6:18 am</a></div>
+
+		<div class="comment-body"><p>engage in wholesale jewelry,handmade jewelry,fashion jewelry,discount jewelry,handcrafted Jewelry,cheap jewelry,jewelry wholesale,wholesale handmade jewelry,wholesale pearl jewelry,wholesale gemstone jewelry,wholesale crystal jewelry,wholesale turquoise jewelry,wholesale coral jewelry,wholesale shell jewelry,we can supply all styles of handmade jewelry</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-486">
+		<div id="comment-486">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.vgoldseller.com/runescape-c-599.html' rel='external nofollow' class='url'>gfd</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-486">February 2, 2009 at 6:15 am</a></div>
+
+		<div class="comment-body"><p><a href=http://www.sz-window.com>ccba</a><br />
+[url=http://www.sz-window.com]ccbu[/url]<br />
+<a href="http://www.sz-window.com">引号ccb</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-485">
+		<div id="comment-485">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jason@yahoo.com' rel='external nofollow' class='url'>don</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-485">February 1, 2009 at 12:50 pm</a></div>
+
+		<div class="comment-body"><h2>Ultima Online Gold, UO Gold</h2>
+<ul>
+<li><a href=http://www.uotreasures.com>uo gold</a></li>
+<li><a href=http://finduo.com>uo gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/UO-Gold>uo gold</a></li>
+</ul>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-484">
+		<div id="comment-484">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jason@yahoo.com' rel='external nofollow' class='url'>loids</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-484">February 1, 2009 at 12:45 pm</a></div>
+
+		<div class="comment-body"><h2>Ultima Online Gold, UO Gold</h2>
+<ul>
+<li><a href=http://www.uotreasures.com>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/accounts2>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/items>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/gold>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/selltous>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/rares>uo gold</a></li>
+<li><a href=http://www.uotreasures.com/rules>uo gold</a></li>
+<li><a href=http://finduo.com>uo gold</a></li>
+<li><a href=http://finduo.com/search>uo gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/UO-Gold>uo gold</a></li>
+</ul>
+<h2>Age of Conan Hyborian Adventures, AOC Gold</h2>
+<ul>
+<li><a href=http://aoctreasures.com>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Bloodspire>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Cimmeria>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Gwahlur>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Set>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Tyranny>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/US/Wicanna>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/EU/Aquilonia>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/GE/Aries>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/EU/Crom>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/FR/Ferox>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/EU/Fury>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/EU/Hyrkania>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/SP/Indomitus>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/FR/Ishtar>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/GE/Mitra>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/GE/Stygia>aoc gold</a></li>
+<li><a href=http://aoctreasures.com/AoC-Gold/GE/Zingara>aoc gold</a></li>
+<li><a href=http://www.hallofgamers.com>aoc gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/AOC-Gold>aoc gold</a></li>
+</ul>
+<h2>Other Games</h2>
+<ul>
+<li><a href=http://whtreasures.com>warhammer gold</a></li>
+<li><a href=http://whtreasures.com>warhammer gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/WAREU-Gold>warhammer gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/WAR-Gold>uo gold</a></li>
+<li><a href=http://wowtreasures.com>wow gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/UO-Gold>uo gold</a></li>
+<li><a href=http://lotrotreasures.com>lotro gold</a></li>
+<li><a href=http://www.hallofgamers.com/games/LOTRO-Gold>lotro gold</a></li>
+</ul>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-483">
+		<div id="comment-483">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.aypearl.net' rel='external nofollow' class='url'>handmade jewelry</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-483">January 22, 2009 at 2:13 am</a></div>
+
+		<div class="comment-body"><p>wholesale jewelry,wholesale handmade jewelry,discount jewelry,fashion jewelry,wholesale coral jewelry</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-482">
+		<div id="comment-482">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bjbead.com' rel='external nofollow' class='url'>wholesale jewelry</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-482">January 22, 2009 at 2:06 am</a></div>
+
+		<div class="comment-body"><p>engage in wholesale jewelry,handmade jewelry,fashion jewelry,discount jewelry,handcrafted Jewelry,cheap jewelry,jewelry wholesale,wholesale handmade jewelry,wholesale pearl jewelry,wholesale gemstone jewelry,wholesale crystal jewelry,wholesale turquoise jewelry,wholesale coral jewelry,wholesale shell jewelry,we can supply all styles of handmade jewelry,discount jewelry,fashion jewelry,freshwater pearl jewelry,korean jewelry,crystal jewelry,beaded jewelry,agate jewelry,trendy jewelry,china fashion jewelry,jade jewelry,semi precious jewelry,jewelry set and so on.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-481">
+		<div id="comment-481">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">dsfgsfd</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-481">January 21, 2009 at 7:42 pm</a></div>
+
+		<div class="comment-body"><p><a href="http://www.pro-weight-loss.com/" rel="nofollow">http://www.pro-weight-loss.com/</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-480">
+		<div id="comment-480">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://veryge.com/' rel='external nofollow' class='url'>gold5465</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-480">January 20, 2009 at 8:21 am</a></div>
+
+		<div class="comment-body"><p>Take a look at our price of wow gold. You will find it is a loyal and reliable store of cheap wow goldfor sale online. You may compare the price then buy wow gold from us . It will be a great fun that you will save huge money. We know what a gamer need so that we will provide you a really instant way of delivery, if you buy world of warcraft gold, gold wow from us. Just place your order to buy wow gold from us then feel the world class service.<br />
+<a href="http://veryge.com/" rel="nofollow">http://veryge.com/</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-479">
+		<div id="comment-479">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://veryge.com/' rel='external nofollow' class='url'>gold986986</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-479">January 20, 2009 at 8:18 am</a></div>
+
+		<div class="comment-body"><p>Take a look at our price of wow gold. You will find it is a loyal and reliable store of cheap wow goldfor sale online. You may compare the price then buy wow gold from us . It will be a great fun that you will save huge money. We know what a gamer need so that we will provide you a really instant way of delivery, if you buy world of warcraft gold, gold wow from us. Just place your order to buy wow gold from us then feel the world class service.<br />
+<a href="http://veryge.com/" rel="nofollow">http://veryge.com/</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-478">
+		<div id="comment-478">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmoinn.com' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-478">January 18, 2009 at 2:05 am</a></div>
+
+		<div class="comment-body"><p>we sell <a href= <a href="http://www.mmoinn.com" rel="nofollow">http://www.mmoinn.com</a>>world of warcraft gold. Welcome to our website about <a href= <a href="http://www.mmoinn.com" rel="nofollow">http://www.mmoinn.com</a>>cheapest wow gold,delivery in 24 hours,7/24 service.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-477">
+		<div id="comment-477">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmoinn.com' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-477">January 14, 2009 at 6:44 am</a></div>
+
+		<div class="comment-body"><p>More Azeroth sky! mmoinn.com owner cheapest <a href="http://www.mmoinn.com"> wow gold </a>, so that players can open the World of Warcraft advanced air transport network, as soon as possible to buy <a href="http://www.mmoinn.com"> cheap wow gold </a> and <a href="http://www.mmoinn.com/mmoinn_pl/"> wow power leveling </a>!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-476">
+		<div id="comment-476">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmotao.fr' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-476">January 13, 2009 at 11:45 pm</a></div>
+
+		<div class="comment-body"><p>afasdf</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-475">
+		<div id="comment-475">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://field@gmail.com' rel='external nofollow' class='url'>field</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-475">January 13, 2009 at 3:38 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.vgoldseller.com/runescape-c599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c599.html</a><br />
+<a href="http://www.runescape2store.com" rel="nofollow">http://www.runescape2store.com</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/runescape-c-599.html" rel="nofollow">http://www.vgoldseller.com/runescape-c-599.html</a> </p>
+<p><a href="http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html" rel="nofollow">http://www.vgoldseller.com/runescape-runescape-accounts-c-599_988.html</a><br />
+<a href="http://www.vgoldsupply.com/" rel="nofollow">http://www.vgoldsupply.com/</a><br />
+<a href="http://www.buylotrogold.org" rel="nofollow">http://www.buylotrogold.org</a><br />
+<a href="http://www.buy-lotro-gold.cn" rel="nofollow">http://www.buy-lotro-gold.cn</a><br />
+<a href="http://www.vgoldseller.com/lord-rings-onlineus-c-975.html" rel="nofollow">http://www.vgoldseller.com/lord-rings-onlineus-c-975.html</a><br />
+<a href="http://www.800millions.com" rel="nofollow">http://www.800millions.com</a><br />
+<a href="http://www.trainrunescape.com" rel="nofollow">http://www.trainrunescape.com</a><br />
+<a href="http://www.runescape2vip.cn" rel="nofollow">http://www.runescape2vip.cn</a><br />
+<a href="http://www.buydofuskamas.com" rel="nofollow">http://www.buydofuskamas.com</a><br />
+<a href="http://www.runescape4money.net" rel="nofollow">http://www.runescape4money.net</a><br />
+<a href="http://www.vgoldseller.com/hellgate-london-c-1102.html" rel="nofollow">http://www.vgoldseller.com/hellgate-london-c-1102.html</a><br />
+<a href="http://www.vgoldseller.com/tabula-rasa-c-1107.html" rel="nofollow">http://www.vgoldseller.com/tabula-rasa-c-1107.html</a><br />
+<a href="http://www.wow-power-leveling.net" rel="nofollow">http://www.wow-power-leveling.net</a><br />
+<a href="http://www.vgoldseller.com/power_runescape.php" rel="nofollow">http://www.vgoldseller.com/power_runescape.php</a><br />
+<a href="http://www.vgoldseller.com/eve-online-c-892.html" rel="nofollow">http://www.vgoldseller.com/eve-online-c-892.html</a><br />
+<a href="http://www.vgoldsupply.com" rel="nofollow">http://www.vgoldsupply.com</a><br />
+<a href="http://www.vgoldseller.com/tibia-c-894.html" rel="nofollow">http://www.vgoldseller.com/tibia-c-894.html</a><br />
+<a href="http://www.vgoldseller.com/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/fiesta-c-896.html</a><br />
+<a href="http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html" rel="nofollow">http://www.vgoldseller.com/age-of-conan-c-1216.html/fiesta-c-896.html</a></p>
+<p><a href="http://www.huxiji.net.cn" rel="nofollow">http://www.huxiji.net.cn</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://www.myhuxiji.com" rel="nofollow">http://www.myhuxiji.com</a><br />
+<a href="http://aoweiclub.com" rel="nofollow">http://aoweiclub.com</a><br />
+<a href="http://www.itourschina.com" rel="nofollow">http://www.itourschina.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourbeijing.com" rel="nofollow">http://www.itourbeijing.com</a><br />
+<a href="http://www.itourstibet.com" rel="nofollow">http://www.itourstibet.com</a><br />
+<a href="http://computermonitoringsoftwares.com" rel="nofollow">http://computermonitoringsoftwares.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-474">
+		<div id="comment-474">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">asdf</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-474">January 9, 2009 at 5:41 am</a></div>
+
+		<div class="comment-body"><p><a href="http://www.topowerleveling.com">world of warcraft power leveling</a> <a href="http://www.topowerleveling.com">wow power leveling</a> <a href="http://www.topowerleveling.com">power leveling</a> <a href="http://www.mmosgames.com">runescape gold</a> <a href="http://www.mmosgames.com">rs2 gold</a>  <a href="http://www.gowowpowerleveling.com">wow gold</a> <a href="http://www.fc9999.cn">福彩3D</a> <a href="http://www.ac021.com">直流电源</a> <a href="http://www.cn-sanhuan.com">枕式包装机</a> <a href="http://www.cn-sanhuan.com">纸巾机</a> <a href="http://www.rasanxin.com">枕式包装机</a> <a href="http://www.rasanxin.com">湿巾包装机</a> <a href="http://www.rasanxin.com">纸巾包装机</a> <a href="http://www.rasanxin.com/about.asp">湿巾机</a> <a href="http://www.rasanxin.com/about.asp">纸巾机</a> <a href="http://www.rasanxin.com/about.asp">枕包机</a> <a href="http://www.paper-cup-machine.com/cn/index.html">纸杯机</a> <a href="http://www.paper-cup-machine.com">paper cup machine</a> <a href="http://www.liandaauto.com/main.asp">Mass air flow</a> <a href="http://www.pabx365.com">程控交换机</a><a href="http://www.zhongke-china.com/product.asp">automatic rigid box line</a>,<a href="http://www.zhongke-china.com/product.asp">paper converting and wrapping machines</a>,<a href="http://www.zhongke-china.com/product.asp">automatic box makers</a>,<a href="http://www.zhongke-china.com/about.asp">rigid set-up gift box</a>,<a href="http://www.zhongke-china.com/about.asp">paperboard converting equipment</a></p>
+<p><a href="http://www.lszwjx.com">气动马达</a> <a href="http://www.lszwjx.com">气动搅拌机</a> <a href="http://www.lszwjx.com/news.htm">油漆搅拌机,油墨/胶水搅拌器</a> <a href="http://www.ruian2machine.cn">金属探测门</a> <a href="http://www.yszdh.com">runescape money</a> <a href="http://www.yszdh.com">rs2 money</a> <a href="http://www.mmosgames.com">dofus kamas</a> <a href="http://www.plastic-thermoforming-machine.com/product.htm">thermoforming Equipment</a> <a href="http://www.packagemachinery.cn">bag making machine</a> <a href="http://www.todesign.com.cn">产品设计</a> <a href="http://www.shdyf.com">开关电源</a> <a href="http://www.tzonegroup.cn">储罐</a> <a href="http://www.tzonegroup.cn/about.asp">中药提取设备</a> <a href="http://www.tzonegroup.cn/products.asp">乳化机</a> <a href="http://www.rajayj.cn">反应釜</a> <a href="http://www.rajayj.cn">真空干燥箱</a> <a href="http://www.ashuashi.com.cn">厚壁钢管</a></p>
+<p><a href="http://www.gowowpowerleveling.com">power leveling</a> <a href="http://www.gowowpowerleveling.com">wow power leveling</a> <a href="http://www.zhongke-china.com">paper box making lines</a> <a href="http://www.zhongke-china.com">rigid paper box making lines</a> <a href="http://www.zhongke-china.com">paper box making machinery</a> <a href="http://www.zhongke-china.com">rigid paper box making machinery</a> <a href="http://www.zhongke-china.com">paper box forming machinery</a> <a href="http://www.zhongke-china.com">rigid paper box forming machinery</a> <a href="http://www.zhongke-china.com/about.asp">rigid paper box equipment</a> <a href="http://www.zhongke-china.com/about.asp">paper box equipment</a> <a href="http://www.plastic-thermoforming-machine.com">thermoforming machine</a> <a href="http://www.plastic-thermoforming-machine.com">thermoforming Equipment</a> <a href="http://www.plastic-thermoforming-machine.com">Plastic Machinery</a> <a href="http://www.plastic-thermoforming-machine.com">Plastic Thermoforming Machine</a> <a href="http://www.plastic-thermoforming-machine.com/product.htm">Plastic Thermoforming Machinery</a> <a href="http://www.plastic-thermoforming-machine.com/product.htm">Plastic Sheet Unit,Plastic Extruding Machine</a> <a href="http://www.plastic-thermoforming-machine.com/about.htm">Plastic Machine</a> <a href="http://www.66773388.com/xw_160.htm">prada shoes</a> <a href="http://www.66773388.com/xw_159.htm">true religion jeans</a> <a href="http://www.66773388.com/xw_158.htm">evisu jeans</a> <a href="http://www.66773388.com/xw_157.htm">Ed hardy</a> <a href="http://www.66773388.com/xw_156.htm">Gucci shoes</a> <a href="http://www.66773388.com/xw_155.htm">Gucci Handbag</a> <a href="http://www.66773388.com/xw_151.htm">adidas shoes</a> <a href="http://www.66773388.com/xw_150.htm">Ugg Boots</a> <a href="http://www.66773388.com/xw_146.htm">nike shoes</a> <a href="http://www.66773388.com/xw_143.htm">LV handbags</a> <a href="http://www.66773388.com/xw_147.htm">Jordan shoes</a> <a href="http://www.66773388.com/xw_144.htm">new era caps</a></p>
+<p><a href="http://www.wzbtjx.cn">气动马达</a> <a href="http://www.wzbtjx.cn">气动搅拌机</a> <a href="http://www.wzbtjx.cn">叶片式气动马达</a> <a href="http://www.wzbtjx.cn">活塞式气动马达</a> <a href="http://www.wzbtjx.cn/news.htm">滑片式气动马达</a> <a href="http://www.wzbtjx.cn/news.htm">搅拌器</a> <a href="http://www.wzbtjx.cn/about.htm">搅拌机</a> <a href="http://www.wzbtjx.cn/product.htm">卧式气动马达</a> <a href="http://www.jinggong.cc">横切机</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-473">
+		<div id="comment-473">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmoinn.com' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-473">January 6, 2009 at 6:26 am</a></div>
+
+		<div class="comment-body"><p>That&#8217;s right!<a href="http://www.mmoinn.com"> buy wow gold </a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-472">
+		<div id="comment-472">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.mmoinn.com' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-472">January 6, 2009 at 6:25 am</a></div>
+
+		<div class="comment-body"><p>To mmoinn.com purchase <a href="http://www.mmoinn.com"> wow gold </a> it! This is a professional trade platform, we provide you with <a href="http://www.mmoinn.com"> cheap wow gold </a> and the players need to <a href="http://www.mmoinn.com/mmoinn_pl/"> wow power leveling </a>, more surprises waiting for you!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-471">
+		<div id="comment-471">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://free@163.com' rel='external nofollow' class='url'>wow gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-471">January 6, 2009 at 2:49 am</a></div>
+
+		<div class="comment-body"><p>If <a href="http://www.wowgoldvip.com/news_list.asp">wow gold</a>focal point of <a href="http://www.wowgold1000.com">wow gold</a> our new <a href="http://www.wowgoldvip.com">buy wow gold</a>Open RvR <a href="http://www.wowgold1000.com">buy wow gold</a>Influence system <a href="http://www.wowgoldvip.com">cheap wow gold</a> is mortal combat <a href="http://www.wowgold1000.com">cheap wow gold</a>between players of <a href="http://www.wowgoldvip.com/wow-power-leveling.asp">wow power leveling</a>enemy realms. <a href="http://www.wowgold800.com">wow power leveling</a>In order <a href="http://www.wowgoldvip.com/powerleveling.asp">power leveling</a> to ensure that <a href="http://www.wowgold800.com">power leveling</a> Keeps, and Fortresses. <a href=http://www.wowgoldliver.com>wow gold</a> <a href=http://www.wowgoldliver.com/buy-wow-gold/> buy wow gold <a href=http://www.wowgoldliver.com/cheap-wow-gold/>cheap wow gold</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-470">
+		<div id="comment-470">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">asd</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-470">January 6, 2009 at 2:43 am</a></div>
+
+		<div class="comment-body"><p>The game has become the people&#8217;s lives in a large part of the game in the park where, <a href="http://www.dofusvault.com" title="dofus kamas">dofus kamas</a> is a favorite for all of the game,<a href="http://www.dofusvault.com" title="acheter des kamas">acheter des kamas</a> on dofusvault.com we will be very much on the <a href="http://www.dofusmax.com" title="dofus kamas">dofus kamas</a>, Come on, friends, to understand All your favorite,<a href="http://www.dofusmax.com" title="acheter des kamas">acheter des kamas</a> you should feel some happiness.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-469">
+		<div id="comment-469">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">asd</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-469">January 6, 2009 at 2:42 am</a></div>
+
+		<div class="comment-body"><p>The game has become the people&#8217;s lives in a large part of the game in the park where, <a href="http://www.dofusvault.com" title="dofus kamas">dofus kamas</a> is a favorite for all of the game,<a href="http://www.dofusvault.com" title="acheter des kamas">acheter des kamas</a> on dofusvault.com we will be very much on the <a href="http://www.dofusmax.com" title="dofus kamas">dofus kamas</a>, Come on, friends, to understand All your favorite,<a href="http://www.dofusmax.com" title="acheter des kamas">acheter des kamas</a> you should feel some happiness.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-468">
+		<div id="comment-468">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.lotro-shop.com' rel='external nofollow' class='url'>lotro gold</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#comment-468">December 25, 2008 at 8:22 am</a></div>
+
+		<div class="comment-body"><p>For the unaware, the Roheryn server is a “preview server” (not a test server, I’ve been told) for Lord of the Rings Online. It’s the staging ground for the big enhancements they have been introducing into the game since it was launched last April (has it really only been six months?!), and usually it’s not the final version that actually goes into production. As they are getting ready to publish the Book 11 expansion, which includes player housing, the Lotro Gold changes are in Roheryn but no houses were on sale except for a limited period of time yesterday afternoon (1-4 PM EDT). Judging from the turnout at the “Open House” event, considering that it was held during working hours on a working day, a great number of people must have been as excited about the new feature as I was. Here are a couple of pictures to show you what I mean.<br />
+<a href="http://www.lotro-shop.com" rel="nofollow">http://www.lotro-shop.com</a><br />
+<a href="http://www.aocgolds.net/" rel="nofollow">http://www.aocgolds.net/</a><br />
+<a href="http://www.allgametrade.com" rel="nofollow">http://www.allgametrade.com</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davelaribee/2008/09/19/tdd-contracts-and-reading-the-fine-print/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davelaribee/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='70' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7f45cb8262" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.375 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:22:30 -->
+<!-- super cache -->

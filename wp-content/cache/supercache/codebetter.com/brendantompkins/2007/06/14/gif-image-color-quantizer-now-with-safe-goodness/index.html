@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Refactoring Unsafe Code: GIF Image Color Quantizer, Now with Safe Goodness | Brendan Tompkins</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/brendantompkins/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/brendantompkins/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/brendantompkins/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/brendantompkins/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/brendantompkins/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Brendan Tompkins' href='http://codebetter.com/brendantompkins/' />
+<link rel='start' title='Tap. Tap.  Is this thing on?' href='http://codebetter.com/brendantompkins/2003/10/08/tap-tap-is-this-thing-on/' />
+<link rel='prev' title='Book Giveaway &#8211; Final Winner' href='http://codebetter.com/brendantompkins/2006/12/15/book-giveaway-final-winner/' />
+<link rel='next' title='ASP/ASP.NET MVP!' href='http://codebetter.com/brendantompkins/2007/07/02/asp-asp-net-mvp/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/brendantompkins/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness/' />
+<link rel='shortlink' href='http://codebetter.com/brendantompkins/?p=408' />
+<link rel="stylesheet" href="http://codebetter.com/brendantompkins/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/brendantompkins/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/brendantompkins/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-408" class="post-408 post type-post status-publish format-standard hentry category-gdi category-refactoring">
+					<h1 class="entry-title">Refactoring Unsafe Code: GIF Image Color Quantizer, Now with Safe Goodness</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/brendantompkins/author/btompkins/" title="View all posts by Brendan Tompkins">Brendan Tompkins</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/brendantompkins/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness/" title="2:07 pm" rel="bookmark"><span class="entry-date">June 14, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/brendantompkins/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/brendantompkins/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/brendantompkins/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I&#8217;ve had a few requests to create a safe version of the Image Quantization library I&#8217;ve blogged about quite a few times: see <a href="http://codebetter.com/blogs/brendan.tompkins/archive/2004/01/26/6103.aspx">Use GDI+ to Save Crystal-Clear GIF Images with .NET.</a>&nbsp; It turns out this is quite useful for a lot of people, but the old version contained unsafe code, which wouldn&#8217;t run under medium trust with .NET 2.0.</p>
+<p>I spent a few hours yesterday creating a safe version of this library.&nbsp; The re-factoring process was fun, and I found a few cool things you can do with Marshal class with .NET.&nbsp; </p>
+<p><b>Incrementing IntPtrs <br /></b></p>
+<p>I didn&#8217;t know you could do this, and there&#8217;s probably going to be situations where this doesn&#8217;t work, but provided you have used something like the Bitmap&#8217;s LockBits method to lock the bits into system memory, you can increment an IntPtr like so:</p>
+<p><span>IntPtr </span>pSourcePixel;</p>
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+<p style="margin: 0px"><span></span>pSourcePixel = (<span>IntPtr</span>)((<span>long</span>)pSourcePixel + _pixelSize);</p>
+</div>
+<p><b>Pointers To Structures</b></p>
+<p>Never knew about this either, but if you can map a structure to memory by using the Marshal.PtrToStructure method.</p>
+</p>
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+<p style="margin: 0px"><span></span>(<span>Color32</span>) <span>Marshal</span>.PtrToStructure(pSourcePixel, <span style="color: blue">typeof</span>(<span>Color32</span>));</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&#8230; where Color32 is a structure that looks like this specifying FieldOffset, and pSourcePixel points to a 32-Bit color value</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+<p style="margin: 0px">[<span>StructLayout</span>(<span>LayoutKind</span>.Explicit)]</p>
+<p style="margin: 0px"><span style="color: blue">public</span> <span style="color: blue">struct</span> <span>Color32</span></p>
+<p style="margin: 0px">{</p>
+<p></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span>FieldOffset</span>(0)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">byte</span> Blue;</p>
+<p></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span>FieldOffset</span>(1)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">byte</span> Green;</p>
+<p></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span>FieldOffset</span>(2)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">byte</span> Red;</p>
+<p></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span>FieldOffset</span>(3)]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">byte</span> Alpha;</p>
+</div>
+</div>
+<p>&nbsp;} </p>
+<p>&nbsp;So, in the end, a method that looked like this (unsafe)</p>
+</p>
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;summary&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> Execute the first pass through the pixels in the image</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;/summary&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;sourceData&#8221;&gt;</span><span style="color: green">The source data</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;width&#8221;&gt;</span><span style="color: green">The width in pixels of the image</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;height&#8221;&gt;</span><span style="color: green">The height in pixels of the image</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: blue">protected</span> <span style="color: blue">unsafe virtual</span> <span style="color: blue">void</span> FirstPass ( BitmapData sourceData , <span style="color: blue">int</span> width , <span style="color: blue">int</span> height )</p>
+<p style="margin: 0px">{</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// Define the source data pointers. The source row is a byte to</span></p>
+<p style="margin: 0px"><span style="color: green">&nbsp;&nbsp;&nbsp; // keep addition of the stride value easier (as this is in bytes)</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">byte</span>*&nbsp;&nbsp;&nbsp; pSourceRow = (<span style="color: blue">byte</span>*)sourceData.Scan0.ToPointer ( ) ;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span>Int32</span>*&nbsp;&nbsp;&nbsp; pSourcePixel ;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// Loop through each row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> ( <span style="color: blue">int</span> row = 0 ; row &lt; height ; row++ )</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">&nbsp;&nbsp;&nbsp; // Set the source pixel to the first pixel in this row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; pSourcePixel = (<span>Int32</span>*) pSourceRow ;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">&nbsp;&nbsp;&nbsp; // And loop through each column</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> ( <span style="color: blue">int</span> col = 0 ; col &lt; width ; col++ , pSourcePixel++ )</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Now I have the pixel, call the FirstPassQuantize function&#8230;</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; InitialQuantizePixel ( (Color32*)pSourcePixel ) ;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Add the stride to the source row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; pSourceRow += sourceData.Stride ;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">}</p>
+</div>
+<p>Was refactored to this:</p>
+</p>
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;summary&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> Execute the first pass through the pixels in the image</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;/summary&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;sourceData&#8221;&gt;</span><span style="color: green">The source data</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;width&#8221;&gt;</span><span style="color: green">The width in pixels of the image</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;param name=&#8221;height&#8221;&gt;</span><span style="color: green">The height in pixels of the image</span><span style="color: gray">&lt;/param&gt;</span></p>
+<p style="margin: 0px"><span style="color: blue">protected</span>&nbsp; <span style="color: blue">virtual</span> <span style="color: blue">void</span> FirstPass(<span>BitmapData</span> sourceData, <span style="color: blue">int</span> width, <span style="color: blue">int</span> height)</p>
+<p style="margin: 0px">{</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// Define the source data pointers. The source row is a byte to</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// keep addition of the stride value easier (as this is in bytes)&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp; </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span>IntPtr</span> pSourceRow = sourceData.Scan0;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// Loop through each row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> (<span style="color: blue">int</span> row = 0; row &lt; height; row++)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">&nbsp;&nbsp;&nbsp; // Set the source pixel to the first pixel in this row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span>&nbsp;&nbsp;&nbsp; IntPtr</span> pSourcePixel = pSourceRow;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// And loop through each column</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> (<span style="color: blue">int</span> col = 0; col &lt; width; col++)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Color32 color = (<span>Color32</span>) <span>Marshal</span>.PtrToStructure(pSourcePixel, <span style="color: blue">typeof</span>(<span>Color32</span>));</p>
+<div style="background: white none repeat scroll 0% 50%;font-family: Courier New;font-size: 10pt;color: black">
+</div>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Now I have the pixel, call the FirstPassQuantize function&#8230;</span> </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; InitialQuantizePixel(<span style="color: blue">color</span>); </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; pSourcePixel = (<span>IntPtr</span>)((<span style="color: blue">long</span><span></span>)pSourcePixel + _pixelSize);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }&nbsp;&nbsp;&nbsp;<span style="color: green"></span></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Add the stride to the source row</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; pSourceRow = (<span>IntPtr</span>)((<span style="color: blue">long</span>)pSourceRow + sourceData.Stride);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">}</p>
+</div>
+<p>So, get the new improved, <a href="/files/folders/image_quantizer/entry164231.aspx">safe version of the image quantizer here</a>, and <a href="/files/folders/image_quantizer/entry164230.aspx">the source code here</a>.</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://0.gravatar.com/avatar/c1de0fbc0dbc3fd24b285009c123d9b0?s=60&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Brendan Tompkins</h2>
+							By day, I'm a .NET developer working in the transportation and logistics industry... By night I'm a fabulous disco dancer.							<div id="author-link">
+								<a href="http://codebetter.com/brendantompkins/author/btompkins/" title="View all posts by Brendan Tompkins">View all posts by Brendan Tompkins &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/brendantompkins/category/gdi/" title="View all posts in GDI+" rel="category tag">GDI+</a>, <a href="http://codebetter.com/brendantompkins/category/refactoring/" title="View all posts in Refactoring" rel="category tag">Refactoring</a>. Bookmark the <a href="http://codebetter.com/brendantompkins/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness/" title="Permalink to Refactoring Unsafe Code: GIF Image Color Quantizer, Now with Safe Goodness" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/brendantompkins/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness/feed/" title="Comments RSS to Refactoring Unsafe Code: GIF Image Color Quantizer, Now with Safe Goodness" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-408 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/brendantompkins/2006/12/15/book-giveaway-final-winner/" rel="prev"><span class="meta-nav">&larr;</span> Book Giveaway &#8211; Final Winner</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/brendantompkins/2007/07/02/asp-asp-net-mvp/" rel="next">ASP/ASP.NET MVP! <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-3002">
+					<div id="dsq-comment-header-3002" class="dsq-comment-header">
+						<cite id="dsq-cite-3002">
+	http://geekswithblogs.net/scarpenter							<span id="dsq-author-user-3002">Sean Carpenter</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3002" class="dsq-comment-body">
+						<div id="dsq-comment-message-3002" class="dsq-comment-message"><p>I&#8217;m not sure (and I don&#8217;t have an x64 machine to try it on here) but will the cast of an IntPtr to an Int32 cause a problem on a 64-bit machine?  I thought the size of an IntPtr was dependent on the platform.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3003">
+					<div id="dsq-comment-header-3003" class="dsq-comment-header">
+						<cite id="dsq-cite-3003">
+								<span id="dsq-author-user-3003">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3003" class="dsq-comment-body">
+						<div id="dsq-comment-message-3003" class="dsq-comment-message"><p>Sean,</p>
+<p>Good catch, that was a copy-paste error there.  You&#8217;re absolutely right, x64 IntPtrs are 64 Bit</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3004">
+					<div id="dsq-comment-header-3004" class="dsq-comment-header">
+						<cite id="dsq-cite-3004">
+								<span id="dsq-author-user-3004">Lionel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3004" class="dsq-comment-body">
+						<div id="dsq-comment-message-3004" class="dsq-comment-message"><p>You can also use Marshal.ReadInt32 and Marshal.WriteInt32 if you want something a bit more lightweight than Marshal.PtrToStructure.</p>
+<p>protected  void FirstPass(BitmapData sourceData, int width, int height)<br />
+{<br />
+	for (int row = 0; row < height; row++)<br />
+	{<br />
+		for (int col = 0; col < width; col++)<br />
+		{<br />
+			// Now I have the pixel, call the FirstPassQuantize function&#8230;<br />
+			int offset = sourceData.Stride + (_pixelSize * col);<br />
+			Color color = Color.FromArgb(Marshal.ReadInt32(sourceData.Scan0, offset));<br />
+			InitialQuantizePixel(color);<br />
+			Marshal.WriteInt32(sourceData.Scan0, offset);<br />
+		}<br />
+	}<br />
+}</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3005">
+					<div id="dsq-comment-header-3005" class="dsq-comment-header">
+						<cite id="dsq-cite-3005">
+								<span id="dsq-author-user-3005">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3005" class="dsq-comment-body">
+						<div id="dsq-comment-message-3005" class="dsq-comment-message"><p>Lionel,</p>
+<p>I could probably get rid of the struct altogether in that case.  Perhaps I&#8217;ll look at that sometime.  Thanks!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3006">
+					<div id="dsq-comment-header-3006" class="dsq-comment-header">
+						<cite id="dsq-cite-3006">
+								<span id="dsq-author-user-3006">Just Don&#8217;t Know</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3006" class="dsq-comment-body">
+						<div id="dsq-comment-message-3006" class="dsq-comment-message"><p>I think the link to the source code is incorrect &#8211; it points to the same url as the binary link&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3007">
+					<div id="dsq-comment-header-3007" class="dsq-comment-header">
+						<cite id="dsq-cite-3007">
+								<span id="dsq-author-user-3007">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3007" class="dsq-comment-body">
+						<div id="dsq-comment-message-3007" class="dsq-comment-message"><p>Ooops, the links were reversed.  Fixed now.  I&#8217;m getting sloppy in my old age.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3008">
+					<div id="dsq-comment-header-3008" class="dsq-comment-header">
+						<cite id="dsq-cite-3008">
+								<span id="dsq-author-user-3008">Greg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3008" class="dsq-comment-body">
+						<div id="dsq-comment-message-3008" class="dsq-comment-message"><p>Heh no credit? <img src='http://codebetter.com/brendantompkins/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3009">
+					<div id="dsq-comment-header-3009" class="dsq-comment-header">
+						<cite id="dsq-cite-3009">
+								<span id="dsq-author-user-3009">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3009" class="dsq-comment-body">
+						<div id="dsq-comment-message-3009" class="dsq-comment-message"><p>Oh. yes&#8230; Ahem. </p>
+<p>I&#8217;d like to thank my parents, God, and Greg Young for pointing out a very stupid arithmetic error I was having.  Greg is definitely my go-to guy for all things close to the metal.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3010">
+					<div id="dsq-comment-header-3010" class="dsq-comment-header">
+						<cite id="dsq-cite-3010">
+	http://olav.dk							<span id="dsq-author-user-3010">Olav Junker Kj&#230;r</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3010" class="dsq-comment-body">
+						<div id="dsq-comment-message-3010" class="dsq-comment-message"><p>Thank you for the code, it&#8217;s very valuable!<br />
+There seem to be a small bug in the source, in the SecondPass method. In the optimization you compare Marshal.ReadByte for previous and current pixel. However this will only compare the first color channel. You should use Marshal.ReadInt32.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3011">
+					<div id="dsq-comment-header-3011" class="dsq-comment-header">
+						<cite id="dsq-cite-3011">
+								<span id="dsq-author-user-3011">Daniel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3011" class="dsq-comment-body">
+						<div id="dsq-comment-message-3011" class="dsq-comment-message"><p>Hi,</p>
+<p>Downloads are not working !!!</p>
+<p>Thanks,<br />
+Daniel</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3012">
+					<div id="dsq-comment-header-3012" class="dsq-comment-header">
+						<cite id="dsq-cite-3012">
+	http://www.timdown.co.uk							<span id="dsq-author-user-3012">Tim Down</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3012" class="dsq-comment-body">
+						<div id="dsq-comment-message-3012" class="dsq-comment-message"><p>Brendan,</p>
+<p>I have discovered a problem using your OctreeQuantizer that I fixed by replacing it with the unsafe one from the MSDN article from which you copied it. I haven&#8217;t got time to try and figure out exactly what triggers the problem, I&#8217;m afraid. What I found was that on certain images I&#8217;d generated I got rogue black horizontal lines appearing on my quantized image. If you wish I can send you copies of the original image and the version of the image produced by your quantizer.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3013">
+					<div id="dsq-comment-header-3013" class="dsq-comment-header">
+						<cite id="dsq-cite-3013">
+								<span id="dsq-author-user-3013">Logan R</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3013" class="dsq-comment-body">
+						<div id="dsq-comment-message-3013" class="dsq-comment-message"><p>I was having a similar problem to Tim, also confirming the unsafe MS version worked properly.  I was just about to dig into the problem when I noticed Olav&#8217;s note above about Marshall.ReadInt32.  Thanks Olav!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3014">
+					<div id="dsq-comment-header-3014" class="dsq-comment-header">
+						<cite id="dsq-cite-3014">
+								<span id="dsq-author-user-3014">Nathan</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3014" class="dsq-comment-body">
+						<div id="dsq-comment-message-3014" class="dsq-comment-message"><p>Wow, thank you so much for your work.  This problem was killing me (literally).  Unfortunately this was the last stop after browsing every site on the web related to gif and gdi.</p>
+<p>Thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3015">
+					<div id="dsq-comment-header-3015" class="dsq-comment-header">
+						<cite id="dsq-cite-3015">
+								<span id="dsq-author-user-3015">Rosbicn</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3015" class="dsq-comment-body">
+						<div id="dsq-comment-message-3015" class="dsq-comment-message"><p>I met the same problem where Tim wrote above. Black horizontal lines appears on some result images. And I read all comment here and found Olav and Logon&#8217;s note. Their solution was working!!! on line 181, the raw code is &#8220;if (Marshal.ReadByte(pPreviousPixel) != Marshal.ReadByte(pSourcePixel))&#8221;. It is a small bug. Change it to &#8220;if (Marshal.ReadInt32(pPreviousPixel) != Marshal.ReadInt32(pSourcePixel))&#8221;. Because the bitwidth of a pixel is 4 as int32, not 1 as byte. Thanks Olav and Tim.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3016">
+					<div id="dsq-comment-header-3016" class="dsq-comment-header">
+						<cite id="dsq-cite-3016">
+								<span id="dsq-author-user-3016">Stefan GIbney</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3016" class="dsq-comment-body">
+						<div id="dsq-comment-message-3016" class="dsq-comment-message"><p>Hi Brendan</p>
+<p>Great work, except both links seem to direct you to the binary.</p>
+<p>Thanks</p>
+<p>Stefan</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3017">
+					<div id="dsq-comment-header-3017" class="dsq-comment-header">
+						<cite id="dsq-cite-3017">
+	http://www.picsnwallpapers.com							<span id="dsq-author-user-3017">poonam</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3017" class="dsq-comment-body">
+						<div id="dsq-comment-message-3017" class="dsq-comment-message"><p>Nice trick..<br />
+but i am not sure how and where to use it &#8230;<br />
+i&#8217;ll definitely find out some way to use it and make my website more attractive..<br />
+Thanks a lot for this trick..</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3018">
+					<div id="dsq-comment-header-3018" class="dsq-comment-header">
+						<cite id="dsq-cite-3018">
+	http://www.nokiatema.net							<span id="dsq-author-user-3018">nokia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3018" class="dsq-comment-body">
+						<div id="dsq-comment-message-3018" class="dsq-comment-message"><p>thanks for you</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3019">
+					<div id="dsq-comment-header-3019" class="dsq-comment-header">
+						<cite id="dsq-cite-3019">
+	http://www.nokiatema.net							<span id="dsq-author-user-3019">nokia tema</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3019" class="dsq-comment-body">
+						<div id="dsq-comment-message-3019" class="dsq-comment-message"><p>Downloads are not working</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3020">
+					<div id="dsq-comment-header-3020" class="dsq-comment-header">
+						<cite id="dsq-cite-3020">
+								<span id="dsq-author-user-3020">Ben White</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3020" class="dsq-comment-body">
+						<div id="dsq-comment-message-3020" class="dsq-comment-message"><p>I noticed some black artifacts when Quantizing a transparent image. I was able to track down the issue to the optimization code in the SecondPass method.</p>
+<p>if (Marshal.ReadByte(pPreviousPixel) != Marshal.ReadByte(pSourcePixel))</p>
+<p>After commenting out this optimization, the class worked perfectly&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3021">
+					<div id="dsq-comment-header-3021" class="dsq-comment-header">
+						<cite id="dsq-cite-3021">
+								<span id="dsq-author-user-3021">Jake</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3021" class="dsq-comment-body">
+						<div id="dsq-comment-message-3021" class="dsq-comment-message"><p>Awesome code, but I think I&#8217;m mising something.  This code was refactored to be safe, but I still can&#8217;t get it to run under medium trust in ASP.NET 2.  When the constructor is called for the OctreeQuantizer, I get a System.Security.SecurityException, &#8220;The application attempted to perform an operation not allowed by the security policy.&#8221;  Any ideas?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3022">
+					<div id="dsq-comment-header-3022" class="dsq-comment-header">
+						<cite id="dsq-cite-3022">
+								<span id="dsq-author-user-3022">Tucker</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3022" class="dsq-comment-body">
+						<div id="dsq-comment-message-3022" class="dsq-comment-message"><p>I&#8217;d like to add to the stream of thanks &#8211; I stumbled my way in here after trying unsuccessfully to write a custom font onto images. I was seeing lots of compression artifacts, and unless I cranked my JPG quality up high to produce very large images, they wouldn&#8217;t go away. After trying to write gifs on my own, I found an asp.net forums post linking your original post and then this one, and now I&#8217;m spitting out crystal-clear perfect gifs at a mere fraction the size of the fugly jpgs! Thanks again.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3023">
+					<div id="dsq-comment-header-3023" class="dsq-comment-header">
+						<cite id="dsq-cite-3023">
+								<span id="dsq-author-user-3023">marcio</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3023" class="dsq-comment-body">
+						<div id="dsq-comment-message-3023" class="dsq-comment-message"><p>Any chance this code could be fixed to properly deal with transparencies? I am converting an input GIF (which uses as transparency a color which I don&#8217;t know in advance) and when I save the optimized image, it no longer has the transparency. Any chance this bug could be nailed and a patch provided in teh form of a patch file or an updatez src zip? I tried commenting out the optimization code as mentioned above but that did not fix it &#8211; it produced an image that was all black. Thanks!!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3024">
+					<div id="dsq-comment-header-3024" class="dsq-comment-header">
+						<cite id="dsq-cite-3024">
+								<span id="dsq-author-user-3024">Dan</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3024" class="dsq-comment-body">
+						<div id="dsq-comment-message-3024" class="dsq-comment-message"><p>dear Mr Tompkins. Thank you for your hard work.</p>
+<p>I have tried to convert your code to VB.NET, (just for the octree qunatitization) , and although it runs, it is not working properly (the palette is all wrong). If you could cast your eye over it, I would be really grateful. There are others who would like to see this great code in VB.NET.</p>
+<p>Thank you.</p>
+<p>Dan</p>
+<p>Public MustInherit Class Quantizer</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Construct the quantizer<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="singlePass">If true, the quantization only needs to loop through the source pixels once</param>
+        &#8221;&#8217; <remarks><br />
+        &#8221;&#8217; If you construct this class with a true value for singlePass, then the code will, when quantizing your image,<br />
+        &#8221;&#8217; only call the &#8216;QuantizeImage&#8217; function. If two passes are required, the code will call &#8216;InitialQuantizeImage&#8217;<br />
+        &#8221;&#8217; and then &#8216;QuantizeImage&#8217;.<br />
+        &#8221;&#8217; </remarks><br />
+        Public Sub New(ByVal singlePass As Boolean)<br />
+            _singlePass = singlePass<br />
+            _pixelSize = Marshal.SizeOf(GetType(Color32))<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Quantize an image and return the resulting output bitmap<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="source">The image to quantize</param>
+        &#8221;&#8217; <returns>A quantized version of the image</returns><br />
+        Public Function Quantize(ByVal source As System.Drawing.Image) As Bitmap<br />
+            &#8216; Get the size of the source image<br />
+            Dim height As Integer = source.Height<br />
+            Dim width As Integer = source.Width</p>
+<p>            &#8216; And construct a rectangle from these dimensions<br />
+            Dim bounds As New Rectangle(0, 0, width, height)</p>
+<p>            &#8216; First off take a 32bpp copy of the image<br />
+            Dim copy As New Bitmap(width, height, PixelFormat.Format32bppArgb)</p>
+<p>            &#8216; And construct an 8bpp version<br />
+            Dim output As New Bitmap(width, height, PixelFormat.Format8bppIndexed)</p>
+<p>            &#8216; Now lock the bitmap into memory<br />
+            Using g As Graphics = Graphics.FromImage(copy)<br />
+                g.PageUnit = GraphicsUnit.Pixel</p>
+<p>                &#8216; Draw the source image onto the copy bitmap,<br />
+                &#8216; which will effect a widening as appropriate. </p>
+<p>                g.DrawImage(source, bounds)<br />
+            End Using</p>
+<p>            &#8216; Define a pointer to the bitmap data<br />
+            Dim sourceData As BitmapData = Nothing</p>
+<p>            Try<br />
+                &#8216; Get the source image bits and lock into memory<br />
+                sourceData = copy.LockBits(bounds, ImageLockMode.[ReadOnly], PixelFormat.Format32bppArgb)</p>
+<p>                &#8216; Call the FirstPass function if not a single pass algorithm.<br />
+                &#8216; For something like an octree quantizer, this will run through<br />
+                &#8216; all image pixels, build a data structure, and create a palette.<br />
+                If Not _singlePass Then<br />
+                    FirstPass(sourceData, width, height)<br />
+                End If</p>
+<p>                &#8216; Then set the color palette on the output bitmap. I&#8217;m passing in the current palette<br />
+                &#8216; as there&#8217;s no way to construct a new, empty palette.<br />
+                output.Palette = GetPalette(output.Palette)</p>
+<p>                &#8216; Then call the second pass which actually does the conversion<br />
+                SecondPass(sourceData, output, width, height, bounds)<br />
+            Finally<br />
+                &#8216; Ensure that the bits are unlocked<br />
+                copy.UnlockBits(sourceData)<br />
+            End Try</p>
+<p>            &#8216; Last but not least, return the output bitmap<br />
+            Return output<br />
+        End Function</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Execute the first pass through the pixels in the image<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="sourceData">The source data</param>
+        &#8221;&#8217;
+<param name="width">The width in pixels of the image</param>
+        &#8221;&#8217;
+<param name="height">The height in pixels of the image</param>
+        Protected Overridable Sub FirstPass(ByVal sourceData As BitmapData, ByVal width As Integer, ByVal height As Integer)<br />
+            &#8216; Define the source data pointers. The source row is a byte to<br />
+            &#8216; keep addition of the stride value easier (as this is in bytes)<br />
+            Dim pSourceRow As IntPtr = sourceData.Scan0<br />
+            For row As Integer = 0 To height &#8211; 1</p>
+<p>                &#8216; Loop through each row<br />
+                &#8216; Set the source pixel to the first pixel in this row<br />
+                Dim pSourcePixel As IntPtr = pSourceRow<br />
+                For col As Integer = 0 To width &#8211; 1</p>
+<p>                    &#8216; And loop through each column<br />
+                    InitialQuantizePixel(New Color32(pSourcePixel))<br />
+                    pSourcePixel = CType((CType(pSourcePixel, Int32) + _pixelSize), IntPtr)<br />
+                Next<br />
+                &#8216; Now I have the pixel, call the FirstPassQuantize function&#8230;<br />
+                &#8216; Add the stride to the source row<br />
+                pSourceRow = CType((CLng(pSourceRow) + sourceData.Stride), IntPtr)<br />
+            Next<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Execute a second pass through the bitmap<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="sourceData">The source bitmap, locked into memory</param>
+        &#8221;&#8217;
+<param name="output">The output bitmap</param>
+        &#8221;&#8217;
+<param name="width">The width in pixels of the image</param>
+        &#8221;&#8217;
+<param name="height">The height in pixels of the image</param>
+        &#8221;&#8217;
+<param name="bounds">The bounding rectangle</param>
+        Protected Overridable Sub SecondPass(ByVal sourceData As BitmapData, ByVal output As Bitmap, ByVal width As Integer, ByVal height As Integer, ByVal bounds As Rectangle)<br />
+            Dim outputData As BitmapData = Nothing</p>
+<p>            Try<br />
+                &#8216; Lock the output bitmap into memory<br />
+                outputData = output.LockBits(bounds, ImageLockMode.[WriteOnly], PixelFormat.Format8bppIndexed)</p>
+<p>                &#8216; Define the source data pointers. The source row is a byte to<br />
+                &#8216; keep addition of the stride value easier (as this is in bytes)<br />
+                Dim pSourceRow As IntPtr = sourceData.Scan0<br />
+                Dim pSourcePixel As IntPtr = pSourceRow<br />
+                Dim pPreviousPixel As IntPtr = pSourcePixel</p>
+<p>                &#8216; Now define the destination data pointers<br />
+                Dim pDestinationRow As IntPtr = outputData.Scan0<br />
+                Dim pDestinationPixel As IntPtr = pDestinationRow</p>
+<p>                &#8216; And convert the first pixel, so that I have values going into the loop </p>
+<p>                Dim pixelValue As Byte = QuantizePixel(New Color32(pSourcePixel))</p>
+<p>                &#8216; Assign the value of the first pixel<br />
+                Marshal.WriteByte(pDestinationPixel, pixelValue)<br />
+                For row As Integer = 0 To height &#8211; 1</p>
+<p>                    &#8216; Loop through each row<br />
+                    &#8216; Set the source pixel to the first pixel in this row<br />
+                    pSourcePixel = pSourceRow</p>
+<p>                    &#8216; And set the destination pixel pointer to the first pixel in the row<br />
+                    pDestinationPixel = pDestinationRow<br />
+                    For col As Integer = 0 To width &#8211; 1</p>
+<p>                        &#8216; Loop through each pixel on this scan line<br />
+                        &#8216; Check if this is the same as the last pixel. If so use that value<br />
+                        &#8216; rather than calculating it again. This is an inexpensive optimisation.<br />
+                        If Marshal.ReadByte(pPreviousPixel) <> Marshal.ReadByte(pSourcePixel) Then<br />
+                            &#8216; Quantize the pixel<br />
+                            pixelValue = QuantizePixel(New Color32(pSourcePixel))</p>
+<p>                            &#8216; And setup the previous pointer<br />
+                            pPreviousPixel = pSourcePixel<br />
+                        End If</p>
+<p>                        &#8216; And set the pixel in the output<br />
+                        Marshal.WriteByte(pDestinationPixel, pixelValue)</p>
+<p>                        pSourcePixel = CType((CLng(pSourcePixel) + _pixelSize), IntPtr)</p>
+<p>                        pDestinationPixel = CType((CLng(pDestinationPixel) + 1), IntPtr)<br />
+                    Next</p>
+<p>                    &#8216; Add the stride to the source row<br />
+                    pSourceRow = CType((CLng(pSourceRow) + sourceData.Stride), IntPtr)</p>
+<p>                    &#8216; And to the destination row<br />
+                    pDestinationRow = CType((CLng(pDestinationRow) + outputData.Stride), IntPtr)<br />
+                Next<br />
+            Finally<br />
+                &#8216; Ensure that I unlock the output bits<br />
+                output.UnlockBits(outputData)<br />
+            End Try<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Override this to process the pixel in the first pass of the algorithm<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="pixel">The pixel to quantize</param>
+        &#8221;&#8217; <remarks><br />
+        &#8221;&#8217; This function need only be overridden if your quantize algorithm needs two passes,<br />
+        &#8221;&#8217; such as an Octree quantizer.<br />
+        &#8221;&#8217; </remarks><br />
+        Protected Overridable Sub InitialQuantizePixel(ByVal pixel As Color32)<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Override this to process the pixel in the second pass of the algorithm<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="pixel">The pixel to quantize</param>
+        &#8221;&#8217; <returns>The quantized value</returns><br />
+        Protected MustOverride Function QuantizePixel(ByVal pixel As Color32) As Byte</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Retrieve the palette for the quantized image<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="original">Any old palette, this is overrwritten</param>
+        &#8221;&#8217; <returns>The new color palette</returns><br />
+        Protected MustOverride Function GetPalette(ByVal original As ColorPalette) As ColorPalette</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Flag used to indicate whether a single pass or two passes are needed for quantization.<br />
+        &#8221;&#8217; </summary>
+<p>        Private _singlePass As Boolean<br />
+        Private _pixelSize As Integer</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Struct that defines a 32 bpp colour<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217; <remarks><br />
+        &#8221;&#8217; This struct is used to read data from a 32 bits per pixel image<br />
+        &#8221;&#8217; in memory, and is ordered in this manner as this is the way that<br />
+        &#8221;&#8217; the data is layed out in memory<br />
+        &#8221;&#8217; </remarks><br />
+        <structlayout (LayoutKind.Explicit)> _<br />
+        Public Structure Color32</p>
+<p>            Public Sub New(ByVal pSourcePixel As IntPtr)<br />
+                Dim C As Color32 = Marshal.PtrToStructure(pSourcePixel, GetType(Color32))<br />
+                Me.Blue = C.Blue<br />
+                Me.Green = C.Green<br />
+                Me.Red = C.Red<br />
+                Me.Alpha = C.Alpha<br />
+                Me.ARGB = C.ARGB<br />
+            End Sub</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Holds the blue component of the colour<br />
+            &#8221;&#8217; </summary>
+<p>            <fieldoffset (0)> _<br />
+            Public Blue As Byte<br />
+            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Holds the green component of the colour<br />
+            &#8221;&#8217; </summary>
+<p>            </fieldoffset><fieldoffset (1)> _<br />
+            Public Green As Byte<br />
+            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Holds the red component of the colour<br />
+            &#8221;&#8217; </summary>
+<p>            </fieldoffset><fieldoffset (2)> _<br />
+            Public Red As Byte<br />
+            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Holds the alpha component of the colour<br />
+            &#8221;&#8217; </summary>
+<p>            </fieldoffset><fieldoffset (3)> _<br />
+            Public Alpha As Byte</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Permits the color32 to be treated as an int32<br />
+            &#8221;&#8217; </summary>
+<p>            </fieldoffset><fieldoffset (0)> _<br />
+            Public ARGB As Integer</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Return the color for this Color32 object<br />
+            &#8221;&#8217; </summary>
+<p>            Public ReadOnly Property Color() As Color<br />
+                Get<br />
+                    Return Color.FromArgb(Alpha, Red, Green, Blue)<br />
+                End Get<br />
+            End Property<br />
+        End Structure<br />
+    End Class</p>
+<p>    Public Class OctreeQuantizer<br />
+        Inherits Quantizer<br />
+        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Construct the octree quantizer<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217; <remarks><br />
+        &#8221;&#8217; The Octree quantizer is a two pass algorithm. The initial pass sets up the octree,<br />
+        &#8221;&#8217; the second pass quantizes a color based on the nodes in the tree<br />
+        &#8221;&#8217; </remarks><br />
+        &#8221;&#8217;
+<param name="maxColors">The maximum number of colors to return</param>
+        &#8221;&#8217;
+<param name="maxColorBits">The number of significant bits</param>
+        Public Sub New(ByVal maxColors As Integer, ByVal maxColorBits As Integer)<br />
+            MyBase.New(False)<br />
+            If maxColors > 255 Then<br />
+                Throw New ArgumentOutOfRangeException(&#8220;maxColors&#8221;, maxColors, &#8220;The number of colors should be less than 256&#8243;)<br />
+            End If</p>
+<p>            If (maxColorBits < 1) Or (maxColorBits > <img src='http://codebetter.com/brendantompkins/wp-includes/images/smilies/icon_cool.gif' alt='8)' class='wp-smiley' /> Then<br />
+                Throw New ArgumentOutOfRangeException(&#8220;maxColorBits&#8221;, maxColorBits, &#8220;This should be between 1 and 8&#8243;)<br />
+            End If</p>
+<p>            &#8216; Construct the octree<br />
+            _octree = New Octree(maxColorBits)<br />
+            _maxColors = maxColors<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Process the pixel in the first pass of the algorithm<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="pixel">The pixel to quantize</param>
+        &#8221;&#8217; <remarks><br />
+        &#8221;&#8217; This function need only be overridden if your quantize algorithm needs two passes,<br />
+        &#8221;&#8217; such as an Octree quantizer.<br />
+        &#8221;&#8217; </remarks><br />
+        Protected Overloads Overrides Sub InitialQuantizePixel(ByVal pixel As Color32)<br />
+            &#8216; Add the color to the octree<br />
+            _octree.AddColor(pixel)<br />
+        End Sub</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Override this to process the pixel in the second pass of the algorithm<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="pixel">The pixel to quantize</param>
+        &#8221;&#8217; <returns>The quantized value</returns><br />
+        Protected Overloads Overrides Function QuantizePixel(ByVal pixel As Color32) As Byte<br />
+            Dim paletteIndex As Byte = CByte(_maxColors)<br />
+            &#8216; The color at [_maxColors] is set to transparent </p>
+<p>            &#8216; Get the palette index if this non-transparent<br />
+            If pixel.Alpha > 0 Then<br />
+                paletteIndex = CByte(_octree.GetPaletteIndex(pixel))<br />
+            End If</p>
+<p>            Return paletteIndex<br />
+        End Function</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Retrieve the palette for the quantized image<br />
+        &#8221;&#8217; </summary>
+<p>        &#8221;&#8217;
+<param name="original">Any old palette, this is overrwritten</param>
+        &#8221;&#8217; <returns>The new color palette</returns><br />
+        Protected Overloads Overrides Function GetPalette(ByVal original As ColorPalette) As ColorPalette<br />
+            &#8216; First off convert the octree to _maxColors colors<br />
+            Dim palette As ArrayList = _octree.Palletize(_maxColors &#8211; 1)<br />
+            For index As Integer = 0 To palette.Count &#8211; 1<br />
+                original.Entries(index) = CType(palette(index), Color)<br />
+            Next</p>
+<p>            &#8216; Then convert the palette based on those colors </p>
+<p>            &#8216; Add the transparent color<br />
+            original.Entries(_maxColors) = Color.FromArgb(0, 0, 0, 0)</p>
+<p>            Return original<br />
+        End Function</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Stores the tree<br />
+        &#8221;&#8217; </summary>
+<p>        Private _octree As Octree</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Maximum allowed color depth<br />
+        &#8221;&#8217; </summary>
+<p>        Private _maxColors As Integer</p>
+<p>        &#8221;&#8217;<br />
+<summary>
+        &#8221;&#8217; Class which does the actual quantization<br />
+        &#8221;&#8217; </summary>
+<p>        Private Class Octree<br />
+            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Construct the octree<br />
+            &#8221;&#8217; </summary>
+<p>            &#8221;&#8217;
+<param name="maxColorBits">The maximum number of significant bits in the image</param>
+            Public Sub New(ByVal maxColorBits As Integer)<br />
+                _maxColorBits = maxColorBits<br />
+                _leafCount = 0<br />
+                _reducibleNodes = New OctreeNode(8) {}<br />
+                _root = New OctreeNode(0, _maxColorBits, Me)<br />
+                _previousColor = 0<br />
+                _previousNode = Nothing<br />
+            End Sub</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Add a given color value to the octree<br />
+            &#8221;&#8217; </summary>
+<p>            &#8221;&#8217;
+<param name="pixel"></param>
+            Public Sub AddColor(ByVal pixel As Color32)<br />
+                &#8216; Check if this request is for the same color as the last<br />
+                If _previousColor = pixel.ARGB Then<br />
+                    &#8216; If so, check if I have a previous node setup. This will only ocurr if the first color in the image<br />
+                    &#8216; happens to be black, with an alpha component of zero.<br />
+                    If _previousNode Is Nothing Then<br />
+                        _previousColor = pixel.ARGB<br />
+                        _root.AddColor(pixel, _maxColorBits, 0, Me)<br />
+                    Else<br />
+                        _previousNode.Increment(pixel)<br />
+                        &#8216; Just update the previous node<br />
+                    End If<br />
+                Else<br />
+                    _previousColor = pixel.ARGB<br />
+                    _root.AddColor(pixel, _maxColorBits, 0, Me)<br />
+                End If<br />
+            End Sub</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Reduce the depth of the tree<br />
+            &#8221;&#8217; </summary>
+<p>            Public Sub Reduce()<br />
+                Dim index As Integer</p>
+<p>                &#8216; Find the deepest level containing at least one reducible node<br />
+                index = _maxColorBits &#8211; 1<br />
+                While (index > 0) AndAlso (_reducibleNodes(index) Is Nothing)</p>
+<p>                    index -= 1<br />
+                End While</p>
+<p>                &#8216; Reduce the node most recently added to the list at level &#8216;index&#8217;<br />
+                Dim node As OctreeNode = _reducibleNodes(index)<br />
+                _reducibleNodes(index) = node.NextReducible</p>
+<p>                &#8216; Decrement the leaf count after reducing the node<br />
+                _leafCount -= node.Reduce()</p>
+<p>                &#8216; And just in case I&#8217;ve reduced the last color to be added, and the next color to<br />
+                &#8216; be added is the same, invalidate the previousNode&#8230;<br />
+                _previousNode = Nothing<br />
+            End Sub</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Get/Set the number of leaves in the tree<br />
+            &#8221;&#8217; </summary>
+<p>            Public Property Leaves() As Integer<br />
+                Get<br />
+                    Return _leafCount<br />
+                End Get<br />
+                Set(ByVal value As Integer)<br />
+                    _leafCount = value<br />
+                End Set<br />
+            End Property</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Return the array of reducible nodes<br />
+            &#8221;&#8217; </summary>
+<p>            Protected ReadOnly Property ReducibleNodes() As OctreeNode()<br />
+                Get<br />
+                    Return _reducibleNodes<br />
+                End Get<br />
+            End Property</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Keep track of the previous node that was quantized<br />
+            &#8221;&#8217; </summary>
+<p>            &#8221;&#8217;
+<param name="node">The node last quantized</param>
+            Protected Sub TrackPrevious(ByVal node As OctreeNode)<br />
+                _previousNode = node<br />
+            End Sub</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Convert the nodes in the octree to a palette with a maximum of colorCount colors<br />
+            &#8221;&#8217; </summary>
+<p>            &#8221;&#8217;
+<param name="colorCount">The maximum number of colors</param>
+            &#8221;&#8217; <returns>An arraylist with the palettized colors</returns><br />
+            Public Function Palletize(ByVal colorCount As Integer) As ArrayList<br />
+                While Leaves > colorCount<br />
+                    Reduce()<br />
+                End While</p>
+<p>                &#8216; Now palettize the nodes<br />
+                Dim palette As New ArrayList(Leaves)<br />
+                Dim paletteIndex As Integer = 0<br />
+                _root.ConstructPalette(palette, paletteIndex)</p>
+<p>                &#8216; And return the palette<br />
+                Return palette<br />
+            End Function</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Get the palette index for the passed color<br />
+            &#8221;&#8217; </summary>
+<p>            &#8221;&#8217;
+<param name="pixel"></param>
+            &#8221;&#8217; <returns></returns><br />
+            Public Function GetPaletteIndex(ByVal pixel As Color32) As Integer<br />
+                Return _root.GetPaletteIndex(pixel, 0)<br />
+            End Function</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Mask used when getting the appropriate pixels for a given node<br />
+            &#8221;&#8217; </summary>
+<p>            Private Shared mask As Integer() = New Integer(7) {128, 64, 32, 16, 8, 4, _<br />
+            2, 1}</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; The root of the octree<br />
+            &#8221;&#8217; </summary>
+<p>            Private _root As OctreeNode</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Number of leaves in the tree<br />
+            &#8221;&#8217; </summary>
+<p>            Private _leafCount As Integer</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Array of reducible nodes<br />
+            &#8221;&#8217; </summary>
+<p>            Private _reducibleNodes As OctreeNode()</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Maximum number of significant bits in the image<br />
+            &#8221;&#8217; </summary>
+<p>            Private _maxColorBits As Integer</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Store the last node quantized<br />
+            &#8221;&#8217; </summary>
+<p>            Private _previousNode As OctreeNode</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Cache the previous color quantized<br />
+            &#8221;&#8217; </summary>
+<p>            Private _previousColor As Integer</p>
+<p>            &#8221;&#8217;<br />
+<summary>
+            &#8221;&#8217; Class which encapsulates each node in the tree<br />
+            &#8221;&#8217; </summary>
+<p>            Protected Class OctreeNode<br />
+                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Construct the node<br />
+                &#8221;&#8217; </summary>
+<p>                &#8221;&#8217;
+<param name="level">The level in the tree = 0 &#8211; 7</param>
+                &#8221;&#8217;
+<param name="colorBits">The number of significant color bits in the image</param>
+                &#8221;&#8217;
+<param name="octree">The tree to which this node belongs</param>
+                Public Sub New(ByVal level As Integer, ByVal colorBits As Integer, ByVal octree As Octree)<br />
+                    &#8216; Construct the new node<br />
+                    _leaf = (level = colorBits)</p>
+<p>                    _red = _green = _blue = 0<br />
+                    _pixelCount = 0</p>
+<p>                    &#8216; If a leaf, increment the leaf count<br />
+                    If _leaf Then<br />
+                        octree.Leaves += 1<br />
+                        _nextReducible = Nothing<br />
+                        _children = Nothing<br />
+                    Else<br />
+                        &#8216; Otherwise add this to the reducible nodes<br />
+                        _nextReducible = octree.ReducibleNodes(level)<br />
+                        octree.ReducibleNodes(level) = Me<br />
+                        _children = New OctreeNode(7) {}<br />
+                    End If<br />
+                End Sub</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Add a color into the tree<br />
+                &#8221;&#8217; </summary>
+<p>                &#8221;&#8217;
+<param name="pixel">The color</param>
+                &#8221;&#8217;
+<param name="colorBits">The number of significant color bits</param>
+                &#8221;&#8217;
+<param name="level">The level in the tree</param>
+                &#8221;&#8217;
+<param name="octree">The tree to which this node belongs</param>
+                Public Sub AddColor(ByVal pixel As Color32, ByVal colorBits As Integer, ByVal level As Integer, ByVal octree As Octree)<br />
+                    &#8216; Update the color information if this is a leaf<br />
+                    If _leaf Then<br />
+                        Increment(pixel)<br />
+                        &#8216; Setup the previous node<br />
+                        octree.TrackPrevious(Me)<br />
+                    Else<br />
+                        &#8216; Go to the next level down in the tree<br />
+                        Dim shift As Integer = 7 &#8211; level<br />
+                        Dim index As Integer = ((pixel.Red And mask(level)) >> (shift &#8211; 2)) Or ((pixel.Green And mask(level)) >> (shift &#8211; 1)) Or ((pixel.Blue And mask(level)) >> (shift))</p>
+<p>                        Dim child As OctreeNode = _children(index)</p>
+<p>                        If child Is Nothing Then<br />
+                            &#8216; Create a new child node &#038; store in the array<br />
+                            child = New OctreeNode(level + 1, colorBits, octree)<br />
+                            _children(index) = child<br />
+                        End If</p>
+<p>                        &#8216; Add the color to the child node<br />
+                        child.AddColor(pixel, colorBits, level + 1, octree)<br />
+                    End If</p>
+<p>                End Sub</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Get/Set the next reducible node<br />
+                &#8221;&#8217; </summary>
+<p>                Public Property NextReducible() As OctreeNode<br />
+                    Get<br />
+                        Return _nextReducible<br />
+                    End Get<br />
+                    Set(ByVal value As OctreeNode)<br />
+                        _nextReducible = value<br />
+                    End Set<br />
+                End Property</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Return the child nodes<br />
+                &#8221;&#8217; </summary>
+<p>                Public ReadOnly Property Children() As OctreeNode()<br />
+                    Get<br />
+                        Return _children<br />
+                    End Get<br />
+                End Property</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Reduce this node by removing all of its children<br />
+                &#8221;&#8217; </summary>
+<p>                &#8221;&#8217; <returns>The number of leaves removed</returns><br />
+                Public Function Reduce() As Integer<br />
+                    _red = _green = _blue = 0<br />
+                    Dim children As Integer = 0<br />
+                    For index As Integer = 0 To 7</p>
+<p>                        &#8216; Loop through all children and add their information to this node<br />
+                        If _children(index) IsNot Nothing Then<br />
+                            _red += _children(index)._red<br />
+                            _green += _children(index)._green<br />
+                            _blue += _children(index)._blue<br />
+                            _pixelCount += _children(index)._pixelCount<br />
+                            children += 1<br />
+                            _children(index) = Nothing<br />
+                        End If<br />
+                    Next</p>
+<p>                    &#8216; Now change this to a leaf node<br />
+                    _leaf = True</p>
+<p>                    &#8216; Return the number of nodes to decrement the leaf count by<br />
+                    Return (children &#8211; 1)<br />
+                End Function</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Traverse the tree, building up the color palette<br />
+                &#8221;&#8217; </summary>
+<p>                &#8221;&#8217;
+<param name="palette">The palette</param>
+                &#8221;&#8217;
+<param name="paletteIndex">The current palette index</param>
+                Public Sub ConstructPalette(ByVal palette As ArrayList, ByRef paletteIndex As Integer)<br />
+                    If _leaf Then<br />
+                        &#8216; Consume the next palette index<br />
+                        _paletteIndex = System.Math.Max(System.Threading.Interlocked.Increment(paletteIndex), paletteIndex &#8211; 1)</p>
+<p>                        &#8216; And set the color of the palette entry<br />
+                        palette.Add(Color.FromArgb(_red / _pixelCount, _green / _pixelCount, _blue / _pixelCount))<br />
+                    Else<br />
+                        For index As Integer = 0 To 7<br />
+                            &#8216; Loop through children looking for leaves<br />
+                            If _children(index) IsNot Nothing Then<br />
+                                _children(index).ConstructPalette(palette, paletteIndex)<br />
+                            End If<br />
+                        Next<br />
+                    End If<br />
+                End Sub</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Return the palette index for the passed color<br />
+                &#8221;&#8217; </summary>
+<p>                Public Function GetPaletteIndex(ByVal pixel As Color32, ByVal level As Integer) As Integer<br />
+                    Dim paletteIndex As Integer = _paletteIndex</p>
+<p>                    If Not _leaf Then<br />
+                        Dim shift As Integer = 7 &#8211; level<br />
+                        Dim index As Integer = ((pixel.Red And mask(level)) >> (shift &#8211; 2)) Or ((pixel.Green And mask(level)) >> (shift &#8211; 1)) Or ((pixel.Blue And mask(level)) >> (shift))</p>
+<p>                        If _children(index) IsNot Nothing Then<br />
+                            paletteIndex = _children(index).GetPaletteIndex(pixel, level + 1)<br />
+                        Else<br />
+                            Throw New Exception(&#8220;Didn&#8217;t expect this!&#8221;)<br />
+                        End If<br />
+                    End If</p>
+<p>                    Return paletteIndex<br />
+                End Function</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Increment the pixel count and add to the color information<br />
+                &#8221;&#8217; </summary>
+<p>                Public Sub Increment(ByVal pixel As Color32)<br />
+                    _pixelCount += 1<br />
+                    _red += pixel.Red<br />
+                    _green += pixel.Green<br />
+                    _blue += pixel.Blue<br />
+                End Sub</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Flag indicating that this is a leaf node<br />
+                &#8221;&#8217; </summary>
+<p>                Private _leaf As Boolean</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Number of pixels in this node<br />
+                &#8221;&#8217; </summary>
+<p>                Private _pixelCount As Integer</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Red component<br />
+                &#8221;&#8217; </summary>
+<p>                Private _red As Integer</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Green Component<br />
+                &#8221;&#8217; </summary>
+<p>                Private _green As Integer</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Blue component<br />
+                &#8221;&#8217; </summary>
+<p>                Private _blue As Integer</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Pointers to any child nodes<br />
+                &#8221;&#8217; </summary>
+<p>                Private _children As OctreeNode()</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; Pointer to next reducible node<br />
+                &#8221;&#8217; </summary>
+<p>                Private _nextReducible As OctreeNode</p>
+<p>                &#8221;&#8217;<br />
+<summary>
+                &#8221;&#8217; The index of this node in the palette<br />
+                &#8221;&#8217; </summary>
+<p>                Private _paletteIndex As Integer</p>
+<p>            End Class<br />
+        End Class<br />
+    End Class</fieldoffset></structlayout></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3025">
+					<div id="dsq-comment-header-3025" class="dsq-comment-header">
+						<cite id="dsq-cite-3025">
+								<span id="dsq-author-user-3025">Josh</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3025" class="dsq-comment-body">
+						<div id="dsq-comment-message-3025" class="dsq-comment-message"><p>I can&#8217;t get this code to work in medium trust. it seems to have a problem with the marshal calls. any ideas?</p>
+<p>thanks.</p>
+<p>Josh</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3026">
+					<div id="dsq-comment-header-3026" class="dsq-comment-header">
+						<cite id="dsq-cite-3026">
+								<span id="dsq-author-user-3026">Anders</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3026" class="dsq-comment-body">
+						<div id="dsq-comment-message-3026" class="dsq-comment-message"><p>I&#8217;m having problem to get your sample run under medium trust. The problem is an Security Exception in the Quantizer constructor. I believe the reason is the use of the Marchal class. On my hosting site this is not allowed. So i can&#8217;t run your code in my asp.net hosting. Do you have an easy solution how to remove the use of the Marshal class in your solution?</p>
+<p>Can see in the comments others have been having this problem.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3027">
+					<div id="dsq-comment-header-3027" class="dsq-comment-header">
+						<cite id="dsq-cite-3027">
+	http://www.ozgurdurum.net/haber/69-tuba-buyukustun-tuba-buyukustun-e-dair.html							<span id="dsq-author-user-3027">tuba b&#252;y&#252;k&#252;st&#252;n</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3027" class="dsq-comment-body">
+						<div id="dsq-comment-message-3027" class="dsq-comment-message"><p>I have discovered a problem using your OctreeQuantizer that I fixed by replacing it with the unsafe one from the MSDN article from which you copied it. I haven&#8217;t got time to try and figure out exactly what triggers the problem, I&#8217;m afraid. What I found was that on certain images I&#8217;d generated I got rogue black horizontal lines appearing on my quantized image. If you wish I can send you copies of the original image and the version of the image produced by your quantizer.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3028">
+					<div id="dsq-comment-header-3028" class="dsq-comment-header">
+						<cite id="dsq-cite-3028">
+								<span id="dsq-author-user-3028">Marc Krawatsky</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3028" class="dsq-comment-body">
+						<div id="dsq-comment-message-3028" class="dsq-comment-message"><p>I am experiencing the same security exceptions as everyone else.  </p>
+<p>See error details below.</p>
+<p>Please advise.</p>
+<p>Required permissions cannot be acquired.<br />
+Exception Details: System.Security.Policy.PolicyException: Required permissions cannot be acquired.</p>
+<p>[FileLoadException: Could not load file or assembly 'ImageQuantization, Version=1.0.3344.17133, Culture=neutral, PublicKeyToken=null' or one of its dependencies. Failed to grant minimum permission requests. (Exception from HRESULT: 0x80131417)]</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3029">
+					<div id="dsq-comment-header-3029" class="dsq-comment-header">
+						<cite id="dsq-cite-3029">
+	http://www.ermanspiel.com							<span id="dsq-author-user-3029">barbie spiele</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3029" class="dsq-comment-body">
+						<div id="dsq-comment-message-3029" class="dsq-comment-message"><p>this code is very godd</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3030">
+					<div id="dsq-comment-header-3030" class="dsq-comment-header">
+						<cite id="dsq-cite-3030">
+	http://nathanaeljones.com/							<span id="dsq-author-user-3030">Nathanael Jones</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3030" class="dsq-comment-body">
+						<div id="dsq-comment-message-3030" class="dsq-comment-message"><p>The download is broke&#8230; Object Moved error&#8230; loops back to license agreement.</p>
+<p>For the horizontal lines issue, switch Marshal.ReadByte to Marshal.ReadInt32() for both sides of the if() statement in SecondPass.</p>
+<p>Also, follow the comment (from the original post) on moving the transparency color from 255 to 0&#8230; definitely works for more images. GDI likes it a 0, for some reason.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3031">
+					<div id="dsq-comment-header-3031" class="dsq-comment-header">
+						<cite id="dsq-cite-3031">
+	http://codebetter.com/members/btompkins/default.aspx							<span id="dsq-author-user-3031">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3031" class="dsq-comment-body">
+						<div id="dsq-comment-message-3031" class="dsq-comment-message"><p>Sorry for the broken links, I&#8217;ve updated the download with the latest dll and source,  and fixed the ReadByte issue.  </p>
+<p>Cheers!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3032">
+					<div id="dsq-comment-header-3032" class="dsq-comment-header">
+						<cite id="dsq-cite-3032">
+	http://donnyvblog.blogspot.com							<span id="dsq-author-user-3032">Donny V</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3032" class="dsq-comment-body">
+						<div id="dsq-comment-message-3032" class="dsq-comment-message"><p>To find the unsafe portions just right click the project and go into properties and uncheck &#8220;Allow unsafe code&#8221;</p>
+<p>The unsafe code is in the BitmapFilter class. I think Brendan has checked out and doesn&#8217;t have time to fix this. If someone could please convert this unsafe code to  safe code we would all be very grateful.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3033">
+					<div id="dsq-comment-header-3033" class="dsq-comment-header">
+						<cite id="dsq-cite-3033">
+	http://donnyvblog.blogspot.com							<span id="dsq-author-user-3033">Donny V</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3033" class="dsq-comment-body">
+						<div id="dsq-comment-message-3033" class="dsq-comment-message"><p>To find the unsafe portions just right click the project and go into properties and uncheck &#8220;Allow unsafe code&#8221;</p>
+<p>The unsafe code is in the BitmapFilter class. I think Brendan has checked out and doesn&#8217;t have time to fix this. If someone could please convert this unsafe code to  safe code we would all be very grateful.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3034">
+					<div id="dsq-comment-header-3034" class="dsq-comment-header">
+						<cite id="dsq-cite-3034">
+	http://codebetter.com/members/btompkins/default.aspx							<span id="dsq-author-user-3034">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3034" class="dsq-comment-body">
+						<div id="dsq-comment-message-3034" class="dsq-comment-message"><p>I&#8217;m afraid I have checked out to a degree.  I&#8217;m just not sure when I&#8217;m going to have the time to fix the remaining unsafe portion&#8230;  You should be able to use the same techniques I described to deal with this.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3035">
+					<div id="dsq-comment-header-3035" class="dsq-comment-header">
+						<cite id="dsq-cite-3035">
+	http://www.gmorsecode.com							<span id="dsq-author-user-3035">Greg Morse</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3035" class="dsq-comment-body">
+						<div id="dsq-comment-message-3035" class="dsq-comment-message"><p>Simple fix for VB.NET code above is as follows:<br />
+_paletteIndex = System.Math.Max(System.Threading.Interlocked.Increment(paletteIndex), paletteIndex &#8211; 1)<br />
+To:<br />
+_paletteIndex = paletteIndex<br />
+paletteIndex = paletteIndex + 1</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-3036">
+					<div id="dsq-comment-header-3036" class="dsq-comment-header">
+						<cite id="dsq-cite-3036">
+	http://www.ceptema.org							<span id="dsq-author-user-3036">nokia tema</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-3036" class="dsq-comment-body">
+						<div id="dsq-comment-message-3036" class="dsq-comment-message"><p>thanks, good article <img src='http://codebetter.com/brendantompkins/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/brendantompkins/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness/ ';
+	var disqus_identifier = '408 /blogs/brendan.tompkins/archive/2007/06/14/gif-image-color-quantizer-now-with-safe-goodness.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'brendantompkins';
+	var disqus_title = "Refactoring Unsafe Code: GIF Image Color Quantizer, Now with Safe Goodness";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=408');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/brendantompkins/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/brendantompkins\/2007\/06\/14\/gif-image-color-quantizer-now-with-safe-goodness\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">About Me</h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: left;"><img alt='' src='http://0.gravatar.com/avatar/c1de0fbc0dbc3fd24b285009c123d9b0?s=96&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>By day, I'm a .NET developer working in the transportation and logistics industry... By night I'm a fabulous disco dancer.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.373 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 18:55:21 -->
+<!-- super cache -->

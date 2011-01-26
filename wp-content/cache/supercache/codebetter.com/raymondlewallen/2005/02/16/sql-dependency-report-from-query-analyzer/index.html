@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Sql dependency report from query analyzer | Raymond Lewallen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/raymondlewallen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/raymondlewallen/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/raymondlewallen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/raymondlewallen/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Raymond Lewallen' href='http://codebetter.com/raymondlewallen/' />
+<link rel='start' title='Moving some blog entries' href='http://codebetter.com/raymondlewallen/2004/12/01/moving-some-blog-entries/' />
+<link rel='prev' title='How do you like CodeBetter.com so far?' href='http://codebetter.com/raymondlewallen/2005/02/14/how-do-you-like-codebetter-com-so-far/' />
+<link rel='next' title='State Class Management Presentation on March 7th' href='http://codebetter.com/raymondlewallen/2005/02/16/state-class-management-presentation-on-march-7th/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/' />
+<link rel='shortlink' href='http://codebetter.com/raymondlewallen/?p=53' />
+<link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-53" class="post-53 post type-post status-publish format-standard hentry category-sql-development">
+					<h1 class="entry-title">Sql dependency report from query analyzer</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/raymondlewallen/author/raymondlewallen/" title="View all posts by raymondlewallen">raymondlewallen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/" title="2:22 pm" rel="bookmark"><span class="entry-date">February 16, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/raymondlewallen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/raymondlewallen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/raymondlewallen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>If you take a bunch of code from sp_help and kinda move it around and rearrange it, you can produce a pretty good little object dependency report. Just take this code, plop it right into query analyzer, select the database and hit F5.&nbsp; Viola, dependency report.&nbsp; Looks better if you hit CTRL-T first so you get it in text format and not columns.&nbsp; Some portions, such as line the &#8216;query&#8217; column manipulation in the first select statement, should be a UDF, but then I&#8217;d have to provide code for both and this is just easier.&nbsp; Sorry about not coloring it in HTML. Also, this is not optimized for speed so don&#8217;t expect it to run to quickly. You would have to replace the temp tables with normal tables, run the query to build the tables (against a small database), then hit CTRL-L to get the execution plan and look at where you will want to create your stats and build your indexes.&nbsp; Guage it against the master database, which running this against the master database takes 31 seconds on the machine I have Sql installed on.&nbsp; I tested it against a single proc P4 1.8 with 256 RAM.</p>
+<fieldset>
+<p>set nocount on</p>
+<p>select &#8216;name&#8217; = (o1.name),<br />&nbsp;&#8217;id&#8217; = (o1.id),<br />&nbsp;&nbsp;&nbsp; &#8216;type&#8217; = substring(v2.name, 5, 16),<br />&nbsp;&nbsp;&nbsp;&#8217;query&#8217; = <br />&nbsp;&nbsp;replace(replace(<br />&nbsp;&nbsp;substring(c7.,charindex(&#8216;@&#8217;,left(c7.,charindex(&#8216;AS&#8217;+Char(13)+Char(10),replace(Upper(c7.),&#8217;AS &#8216;+Char(13)+Char(10),&#8217;AS&#8217;+Char(13)+Char(10)),1)),1),<br />&nbsp;&nbsp;charindex(&#8216;AS&#8217;+Char(13)+Char(10),replace(Upper(c7.),&#8217;AS &#8216;+Char(13)+Char(10),&#8217;AS&#8217;+Char(13)+Char(10)),1)-charindex(&#8216;@&#8217;,left(c7.,charindex(&#8216;AS&#8217;+Char(13)+Char(10),replace(Upper(c7.),&#8217;AS &#8216;+Char(13)+Char(10),&#8217;AS&#8217;+Char(13)+Char(10)),1)),1))<br />&nbsp;&nbsp;,&#8217;))&#8217;,')&#8217;)<br />&nbsp;&nbsp;,&#8217;nt])&#8217;,'nt]&#8217;)<br />&nbsp;&nbsp;into [dbo].#Initial<br />&nbsp;&nbsp;from&nbsp; [dbo].sysobjects o1<br />&nbsp;&nbsp;&nbsp;inner join master.dbo.spt_values v2 on o1.xtype = substring(v2.name,1,2) collate database_default and v2.type = &#8216;O9T&#8217;<br />&nbsp;&nbsp;&nbsp;inner join [dbo].syscomments c7 on o1.id = c7.id and o1.xtype = &#8216;p&#8217;<br />&nbsp;&nbsp;where&nbsp; o1.xtype &lt;&gt; &#8216;s&#8217;<br />&nbsp;&nbsp;and&nbsp; o1.xtype &lt;&gt; &#8216;c&#8217;<br />&nbsp;&nbsp;and&nbsp; left(o1.name,3) &lt;&gt; &#8216;dt_&#8217;<br />&nbsp;&nbsp;and&nbsp; left(o1.name,2) &lt;&gt; &#8216;dd&#8217;<br />&nbsp;&nbsp;order by &#8216;type&#8217;, &#8216;name&#8217;</p>
+<p>update [dbo].#Initial set query = &#8221; where charindex(&#8216;CREATE&#8217;,query,1) &gt; 0<br />update [dbo].#Initial set query = replace(query,Char(13)+Char(10),&#8221;)</p>
+<p>while exists(select * from [dbo].#Initial where charindex(&#8216;&nbsp; &#8216;,query,1) &gt; 0)<br />&nbsp;update [dbo].#Initial set query = replace(query,&#8217;&nbsp; &#8216;,&#8217; &#8216;)</p>
+<p>CREATE TABLE [dbo].[#Report] (<br />&nbsp;[IDC] [int] IDENTITY (1,1) NOT NULL ,<br />&nbsp;[objectid] [int] NULL ,<br />&nbsp;[objectname] [nvarchar] (776) NULL ,<br />&nbsp;[objecttype] [varchar] (100) NULL ,<br />&nbsp;[depname] [varchar] (776) NULL ,<br />&nbsp;[deptype] [varchar] (100) NULL ,<br />&nbsp;[depupdated] [varchar] (10) NULL ,<br />&nbsp;[depselected] [varchar] (10) NULL ,<br />&nbsp;[depcolumn] [varchar] (100) NULL <br />) ON [PRIMARY]</p>
+<p>declare @objid int&nbsp;&nbsp;&nbsp;/* the id of the object we want */<br />declare @found_some bit&nbsp;&nbsp;&nbsp;/* flag for dependencies found */<br />declare @dbname sysname</p>
+<p>declare lcReport cursor LOCAL FAST_FORWARD for select &#8216;name&#8217; = (o1.name),<br />&nbsp;&nbsp;&nbsp; &#8216;type&#8217; = substring(v2.name, 5, 16),<br />&nbsp;&nbsp;&nbsp;&#8217;oid&#8217; = (o1.id)<br />&nbsp;&nbsp;from&nbsp; [dbo].sysobjects&nbsp;&nbsp;o1<br />&nbsp;&nbsp;&nbsp;,master.dbo.spt_values&nbsp;v2<br />&nbsp;&nbsp;&nbsp;,[dbo].sysusers&nbsp;&nbsp;s6<br />&nbsp;&nbsp;where&nbsp; o1.xtype = substring(v2.name,1,2) collate database_default and v2.type = &#8216;O9T&#8217;<br />&nbsp;&nbsp;and&nbsp; o1.uid = s6.uid<br />&nbsp;&nbsp;and&nbsp; left(o1.[name],3) &lt;&gt; &#8216;dt_&#8217;<br />&nbsp;&nbsp;and&nbsp; (o1.xtype = &#8216;p&#8217;<br />&nbsp;&nbsp;or&nbsp; o1.xtype = &#8216;u&#8217;<br />&nbsp;&nbsp;or&nbsp; o1.xtype = &#8216;v&#8217;<br />&nbsp;&nbsp;or&nbsp; o1.xtype = &#8216;fn&#8217;)<br />&nbsp;&nbsp;order by &#8216;type&#8217;, &#8216;name&#8217;</p>
+<p>open lcReport<br />declare @objname nvarchar(776)<br />declare @objtype varchar(50)<br />declare @oid int</p>
+<p>fetch next from lcReport into @objname, @objtype, @oid</p>
+<p>while @@fetch_status = 0<br />begin<br />&nbsp;set @dbname = parsename(@objname,3)</p>
+<p>&nbsp;/*<br />&nbsp;**&nbsp; See if @objname exists.<br />&nbsp;*/<br />&nbsp;select @objid = object_id(@objname)<br />&nbsp;if @objid is not null<br />&nbsp;BEGIN<br />&nbsp;&nbsp;/*<br />&nbsp;&nbsp;**&nbsp; Initialize @found_some to indicate that we haven&#8217;t seen any dependencies.<br />&nbsp;&nbsp;*/<br />&nbsp;&nbsp;set @found_some = 0</p>
+<p>&nbsp;&nbsp;insert [dbo].#Report select @oid, @objname, @objtype, &#8221;, &#8221;, &#8221;, &#8221;, &#8221;<br />&nbsp;<br />&nbsp;&nbsp;/*<br />&nbsp;&nbsp;**&nbsp; Print out the particulars about the local dependencies.<br />&nbsp;&nbsp;*/<br />&nbsp;&nbsp;if exists (select *<br />&nbsp;&nbsp;&nbsp;from [dbo].sysdepends<br />&nbsp;&nbsp;&nbsp;&nbsp;where id = @objid)<br />&nbsp;&nbsp;begin<br />&nbsp;&nbsp;&nbsp;insert [dbo].#Report select @oid, @objname, @objtype, &#8216;name&#8217; = (o1.name),<br />&nbsp;&nbsp;&nbsp;&nbsp; type = substring(v2.name, 5, 16),<br />&nbsp;&nbsp;&nbsp;&nbsp; updated = substring(u4.name, 1, 7),<br />&nbsp;&nbsp;&nbsp;&nbsp; selected = substring(w5.name, 1, 8),<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#8216;column&#8217; = ISNULL(col_name(d3.depid, d3.depnumber),&#8221;)<br />&nbsp;&nbsp;&nbsp;from&nbsp; [dbo].sysobjects&nbsp;&nbsp;o1<br />&nbsp;&nbsp;&nbsp;&nbsp;,master.dbo.spt_values&nbsp;v2<br />&nbsp;&nbsp;&nbsp;&nbsp;,[dbo].sysdepends&nbsp;&nbsp;d3<br />&nbsp;&nbsp;&nbsp;&nbsp;,master.dbo.spt_values&nbsp;u4<br />&nbsp;&nbsp;&nbsp;&nbsp;,master.dbo.spt_values&nbsp;w5 &#8211;11667<br />&nbsp;&nbsp;&nbsp;&nbsp;,[dbo].sysusers&nbsp;&nbsp;s6<br />&nbsp;&nbsp;&nbsp;where&nbsp; o1.id = d3.depid<br />&nbsp;&nbsp;&nbsp;and&nbsp; o1.xtype = substring(v2.name,1,2) collate database_default and v2.type = &#8216;O9T&#8217;<br />&nbsp;&nbsp;&nbsp;and&nbsp; u4.type = &#8216;B&#8217; and u4.number = d3.resultobj<br />&nbsp;&nbsp;&nbsp;and&nbsp; w5.type = &#8216;B&#8217; and w5.number = d3.readobj|d3.selall<br />&nbsp;&nbsp;&nbsp;and&nbsp; d3.id = @objid<br />&nbsp;&nbsp;&nbsp;and&nbsp; o1.uid = s6.uid<br />&nbsp;&nbsp;&nbsp;and deptype &lt; 2<br />&nbsp;&nbsp;&nbsp;order by &#8216;name&#8217;,'column&#8217;</p>
+<p>&nbsp;&nbsp;&nbsp;set @found_some = 1<br />&nbsp;&nbsp;end</p>
+<p>&nbsp;&nbsp;/*<br />&nbsp;&nbsp;**&nbsp; Now check for things that depend on the object.<br />&nbsp;&nbsp;*/<br />&nbsp;&nbsp;if exists (select *<br />&nbsp;&nbsp;&nbsp;from [dbo].sysdepends<br />&nbsp;&nbsp;&nbsp;&nbsp;where depid = @objid)<br />&nbsp;&nbsp;begin<br />&nbsp;&nbsp;&nbsp;insert [dbo].#Report select distinct @oid, @objname, @objtype, &#8216;name&#8217; = (o.name)+ &#8216; depends on&#8217;,<br />&nbsp;&nbsp;&nbsp;&nbsp;type = substring(v.name, 5, 16),<br />&nbsp;&nbsp;&nbsp;&nbsp;&#8221;, &#8221;, &#8221;<br />&nbsp;&nbsp;&nbsp;&nbsp;from .[dbo].sysobjects o, master.dbo.spt_values v, [dbo].sysdepends d,<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[dbo].sysusers s<br />&nbsp;&nbsp;&nbsp;&nbsp;where o.id = d.id<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and o.xtype = substring(v.name,1,2) collate database_default and v.type = &#8216;O9T&#8217;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and d.depid = @objid<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and o.uid = s.uid<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and deptype &lt; 2</p>
+<p>&nbsp;&nbsp;&nbsp;set @found_some = 1<br />&nbsp;&nbsp;end<br />&nbsp;END</p>
+<p>&nbsp;fetch next from lcReport into @objname, @objtype, @oid<br />end</p>
+<p>close lcReport<br />deallocate lcReport</p>
+<p>CREATE CLUSTERED&nbsp; INDEX [idx_TDR] ON [dbo].[#Report]([IDC]) ON [PRIMARY]</p>
+<p>update [dbo].#Report set objectname = &#8221;, objecttype = &#8221; where depname &lt;&gt; &#8221;</p>
+<p>select IDC,<br />&nbsp;&#8217;Object&#8217;=case when objecttype &lt;&gt; &#8221; then &#8216;Database Object &#8216;+objecttype+&#8217; &#8216;+objectname<br />&nbsp;when depcolumn &lt;&gt; &#8221; And CharIndex(&#8216;depends on&#8217;,depname,1) = 0 then &#8216;&nbsp;&nbsp;&nbsp;&nbsp; Depends on &#8216;+deptype+&#8217; &#8216;+depname + &#8216; column &#8216; + depcolumn<br />&nbsp;when deptype &lt;&gt; &#8221; And CharIndex(&#8216;depends on&#8217;,depname,1) = 0 then &#8216;&nbsp;&nbsp;&nbsp;&nbsp; Depends on &#8216;+deptype+&#8217; &#8216;+depname<br />&nbsp;when depcolumn &lt;&gt; &#8221; then &#8216;&nbsp;&nbsp;&nbsp;&nbsp; Required by &#8216;+deptype+&#8217; &#8216;+replace(depname,&#8217; depends on&#8217;,&#8221;) + &#8216; column &#8216; + depcolumn<br />&nbsp;when deptype &lt;&gt; &#8221; then &#8216;&nbsp;&nbsp;&nbsp;&nbsp; Required by &#8216;+deptype+&#8217; &#8216;+replace(depname,&#8217; depends on&#8217;,&#8221;) end,<br />&nbsp;&#8217;Input&#8217;=ISNULL((select top 1 replace(replace(query,Char(9),&#8217; &#8216;),&#8217;,@&#8217;,', @&#8217;) from [dbo].#Initial where [id] = [objectid] and objecttype &lt;&gt; &#8221;),&#8221;)<br />&nbsp;into [dbo].#Final<br />&nbsp;from [dbo].#Report<br />&nbsp;ORDER BY IDC ASC</p>
+<p>select object,input from [dbo].#Final</p>
+<p>drop table [dbo].#Report<br />drop table [dbo].#Initial<br />drop table [dbo].#Final</p>
+<p>set nocount off<br />GO</p>
+</fieldset>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/raymondlewallen/category/sql-development/" title="View all posts in Sql Development" rel="category tag">Sql Development</a>. Bookmark the <a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/" title="Permalink to Sql dependency report from query analyzer" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/feed/" title="Comments RSS to Sql dependency report from query analyzer" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-53 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/raymondlewallen/2005/02/14/how-do-you-like-codebetter-com-so-far/" rel="prev"><span class="meta-nav">&larr;</span> How do you like CodeBetter.com so far?</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/raymondlewallen/2005/02/16/state-class-management-presentation-on-march-7th/" rel="next">State Class Management Presentation on March 7th <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">11 Responses to <em>Sql dependency report from query analyzer</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-126">
+		<div id="comment-126">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Rob</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-126">February 12, 2009 at 3:39 pm</a></div>
+
+		<div class="comment-body"><p>I have not inspected the output yet, but so far it seems very impresive!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-125">
+		<div id="comment-125">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://Russia' rel='external nofollow' class='url'>Leha</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-125">April 22, 2008 at 8:42 am</a></div>
+
+		<div class="comment-body"><p>Awesome!!!!! Great, fantastic !!!!!!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-124">
+		<div id="comment-124">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.codelake.com' rel='external nofollow' class='url'>Nirav Patel</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-124">September 7, 2007 at 4:04 am</a></div>
+
+		<div class="comment-body"><p>Hi Raymond,</p>
+<p>Fantastic piece of work man. Saves me a lot of money compared to buying a third party tool (being a small freelance developer).</p>
+<p>Would you mind if I use this code for private and non-commercial use with my own little modifications?</p>
+<p>Cheers,<br />
+Nirav</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-123">
+		<div id="comment-123">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Satish Panwar</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-123">September 22, 2006 at 6:44 am</a></div>
+
+		<div class="comment-body"><p>Nice rearrenging of code. Really help when we modify a particular object in sql server, now we can know what will require changes , instead of getting bugs after we have made changes. Wonderful work done. Thanks Buddy&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-122">
+		<div id="comment-122">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.ironserver.com' rel='external nofollow' class='url'>Eric</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-122">April 18, 2006 at 3:51 pm</a></div>
+
+		<div class="comment-body"><p>test</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-121">
+		<div id="comment-121">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.ironserver.com' rel='external nofollow' class='url'>Eric</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-121">April 18, 2006 at 3:47 pm</a></div>
+
+		<div class="comment-body"><p>test</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-120">
+		<div id="comment-120">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blahblahg.blogspot.com' rel='external nofollow' class='url'>Oskar Austegard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-120">February 21, 2005 at 11:57 am</a></div>
+
+		<div class="comment-body"><p>Copy to Word first, then to your SQL editor.  Preserves line-breaks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-119">
+		<div id="comment-119">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/raymond.lewallen' rel='external nofollow' class='url'>Raymond Lewallen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-119">February 17, 2005 at 2:40 pm</a></div>
+
+		<div class="comment-body"><p>That is odd.  That is something that w.bloggar does automatically I think, even though I put &lt;pre&gt; around the code.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-118">
+		<div id="comment-118">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>Stephen Hebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-118">February 17, 2005 at 2:38 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m not certain why this is happening, but I changed your code&#8217;s html &lt;br&gt; tags to &lt;p&gt; tags and now it copies fine.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-117">
+		<div id="comment-117">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/raymond.lewallen' rel='external nofollow' class='url'>Raymond Lewallen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-117">February 17, 2005 at 2:36 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m not having that problem, it comes out fine in query analyzer to me. If anybody wants the file, just let me know by posting a comment here with your email address and I&#8217;ll send you the .sql file with this code.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-116">
+		<div id="comment-116">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>Stephen Hebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#comment-116">February 17, 2005 at 2:26 pm</a></div>
+
+		<div class="comment-body"><p>When I copy and paste the code, it all comes out on one line.  This happens whether I go straight into QueryAnalyzer or Notepad.  This is a nice piece of code, I&#8217;m going through it to get it running&#8230; Just thought I&#8217;d let you know.</p>
+<p>-Steve</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/raymondlewallen/2005/02/16/sql-dependency-report-from-query-analyzer/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/raymondlewallen/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fraymondlewallen%2F2005%2F02%2F16%2Fsql-dependency-report-from-query-analyzer%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.245 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:09:41 -->
+<!-- super cache -->

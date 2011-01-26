@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>DDD:  The Generic Repository | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='DDDD: Master-Detail Question' href='http://codebetter.com/gregyoung/2009/01/13/dddd-master-detail-question/' />
+<link rel='next' title='DDD: Specification or Query Object' href='http://codebetter.com/gregyoung/2009/01/20/ddd-specification-or-query-object/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=108' />
+<link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-108" class="post-108 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">DDD:  The Generic Repository</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/" title="5:16 pm" rel="bookmark"><span class="entry-date">January 16, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>This discussion came up on the alt.net list last night and I had this post about half way done so I agreed to push it to the top of my stack and get it done for today given the timeliness of the information. I apologize that I lied about what the next post would be. I will have the follow up on the last DDDD post next.</p>
+<p>Consider the following code:</p>
+<p>Repository&lt;Customer&gt; repository = new Repository&lt;Customer&gt;();<br />foreach(Customer c in repository.FetchAllMatching(CustomerAgeQuery.ForAge(19)) { }</p>
+<p>The intent of this code is to enumerate all of the customers in my repository that match the criteria of being 19 years old. This code is fairly good at expressing its intent in a readable way to someone who may have varying levels of experience dealing with the code. This code also is highly factored allowing for aggressive reuse. <br />&nbsp;&nbsp; &nbsp;<br />Especially due to the aggressive reuse the above code is commonly seen in domains. Developers are trained that reuse is good and therefore tend towards designs where reuse is applied. The reuse can be seen two-fold. The first is in the definition of an IRepository&lt;T&gt; interface something like:</p>
+<p>interface IRepository&lt;T&gt; {<br />IList&lt;T&gt; FindAllBy(IQuery&lt;T&gt; query);<br />void Add(T item);<br />void Delete(T item);<br />&#8230;<br />}</p>
+<p>Then people using Object Relation Mappers such as Hibernate will tend to make a generic implementation of this interface since the ORM does most of the heavy lifting for them ex: Repository&lt;T&gt;<br /><b><br />Show me the polymorphism!</b><br />A main reason why one would favor a generic contract that is possibly specialized such as in the example of IRepository&lt;T&gt; is that one could write code that operated upon IRepository&lt;T&gt; directly to perhaps do things like be a “generic object editor”. That is it uses the various repositories in a polymorphic fashion.</p>
+<p>Quite simply, where and more importantly why would someone want to do this? Finding a place or a reason for how this polymorphism would be used is extremely difficult under the guise of domain driven design. Perhaps in some sort of admin interface, but even this would fail to the forms over data complexity test and is likely better off being done in another methodology such as Active Record.</p>
+<p>As if the utter lack of necessity of a shared interface were not enough the introduction of such an interface actually causes further issues.</p>
+<p><b>C(?)R(?)U(?)(D(?)</b><br />Some objects have different requirements than others. A customer object may not be deleted, a PurchaseOrder cannot be updated, and a ShoppingCart object can only be created. When one is using the generic IRepository&lt;T&gt; interface this obviously causes problems in implementation. </p>
+<p>Those implementing the anti-pattern often will implement their full interface then will throw exceptions for the methods that they don’t support. Aside from disagreeing with numerous OO principles this breaks their hope of being able to use their IRepository&lt;T&gt; abstraction effectively unless they also start putting methods on it for whether or not given objects are supported and further implement them.</p>
+<p>A common workaround to this issue is to move to more granular interfaces such as ICanDelete&lt;T&gt;, ICanUpdate&lt;T&gt;, ICanCreate&lt;T&gt; etc etc. This while working around many of the problems that have sprung up in terms of OO principles also greatly reduces the amount of code reuse that is being seen as most of the time one will not be able to use the Repository&lt;T&gt; concrete instance any more.</p>
+<p><b>Revisiting the intent.</b><br />What exactly was the intent of the repository pattern in the first place? Looking back to [DDD, Evans] one will see that it is to represent a series of objects as if they were a collection in memory so that the domain can be freed of persistence concerns. In other words the goal is to put collection semantics on the objects in persistence.</p>
+<p>The key here is that as a rule there should be no persistence logic within the domain. This allows the domain to be more easily tested, tested independently of persistence and moved easily from a persistence mechanism (this is more important as a long term maintainability goal as opposed to “we want to use XML files now”).</p>
+<p>Simply put the contract of the Repository represents the contract of the domain to the persistence mechanism for the aggregate root that the repository supports. The realization that the Repository is less of an object and more of a contract to infrastructure is both a subtle and important one.</p>
+<p><b>The importance of the “Contract”</b><br />The Repository represents the domain’s contract with a data store (another common word we may use here is that it is the seam). This is extremely important as one can tell every possible way that the domain interacts with the data store by looking at the contract. When it comes time to optimize the database for performance as an example one can look at the repositories and figure out what the domain requires of the data store.</p>
+<p>The unfortunately is only useful if the contract is narrow and specific. Consider the conceptual difference between the following.</p>
+<p>Repository&lt;T&gt;.FindAllMatching(QueryObject o);<br />CustomerRepository.FindCustomerByFirstName(string);</p>
+<p>In terms of figuring out what the contract to the data store actually is the first example gives us no information. It could literally be running any query that could be expressed within the QueryObject (read: any possible query). In order to now figure out what the contract actually entails one would have to go look through the domain (and possibly the UI (ugh) depending on where the query objects originate). </p>
+<p>Simply put: allowing query objects to be passed into the repository widens the contract to a point of uselessness.</p>
+<p><b>But reuse is good?</b><br />None of us like writing the same code over and over. However a repository contract as is an architectural seam is the wrong place to widen the contract to make it more generic. </p>
+<p>You will note that nothing has precluded the use of Repository&lt;T&gt; only really of IRepository&lt;T&gt;. So the answer here is to still use a generic repository but to use composition instead of inheritance and not expose it to the domain as a contract. Consider:</p>
+<p>public interface ICustomerRepository {<br />&nbsp;&nbsp;&nbsp; IEnumerable&lt;Customer&gt; GetCustomersWithFirstNameOf(string _Name);<br />}</p>
+<p>In the customer repository composition would be used.</p>
+<p>Public class CustomerRepository {<br />&nbsp;&nbsp;&nbsp; private Repository&lt;Customer&gt; internalGenericRepository;<br />&nbsp;&nbsp;&nbsp; Public IEnumerable&lt;Customer&gt; GetCustomersWithFirstNameOf(string _Name) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; internalGenericRepository.FetchByQueryObject(new CustomerFirstNameOfQuery(_Name)); //could be hql or whatever<br />&nbsp;&nbsp;&nbsp;&nbsp; }<br />}</p>
+<p>The key here is that our seam as exposed to the domain is a very specific architectural seam as opposed to the open/generic seam that allows us to do anything. Composition is used as opposed to inheritance to gain reuse while minimizing the width of the repository contract within the domain.<br /><b><br />Hint: Minimize the complexity at the entry/exist seams of your domain by making the seams as explicit as possible.</b></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/" title="Permalink to DDD:  The Generic Repository" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/feed/" title="Comments RSS to DDD:  The Generic Repository" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-108 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2009/01/13/dddd-master-detail-question/" rel="prev"><span class="meta-nav">&larr;</span> DDDD: Master-Detail Question</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2009/01/20/ddd-specification-or-query-object/" rel="next">DDD: Specification or Query Object <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">40 Responses to <em>DDD:  The Generic Repository</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2547">
+		<div id="comment-2547">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">rusl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2547">November 4, 2010 at 8:14 am</a></div>
+
+		<div class="comment-body"><p>thanks for response:</p>
+<p>the question is  I saw some implementation whereas  IList<t>  _repository maintained. say when I am constructing my Repository I am filling it with _repository = LoadAllItems() in ctor. Then in my Find(lambda expression) function   I do _repository.Where(lambdaEx). </p>
+<p> my main headache actually comes when I have subcategory as my customers has orders.. so what is the convenient way of loading? my agregate root is customer should I keep a reference to order as an object or just id number.  I know there is a way of achieving lazy loading  however I just want pretty plain solution.  I mean if I want to follow DDD and do everything through Root then my Customer should actually hold all orders as list of objects.. assume that I have thousands of customers? <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />   thank you in advance</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2546">
+		<div id="comment-2546">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2546">November 3, 2010 at 1:58 pm</a></div>
+
+		<div class="comment-body"><p>@rusl:</p>
+<p>I am not sure I understand your question. You mention an internal collection, if your repository is over say SQL server why would you need an internal list?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2545">
+		<div id="comment-2545">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">rusl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2545">November 3, 2010 at 8:31 am</a></div>
+
+		<div class="comment-body"><p>hi Greg,</p>
+<p>one question, maybe a bit off topic or naive&#8230; I just was wondering should I have to maintain internal collection in my repository. I mean when I have a function like getallcustomers() should I keep in my memory and further refer to this list.. or my function should only return a list and thats it.  in that way my repository in loading data acts just like some DAL function. is not it? could you please help me with this&#8230; I got tons of other question however this one of essential ones.thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2544">
+		<div id="comment-2544">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2544">September 19, 2010 at 10:26 pm</a></div>
+
+		<div class="comment-body"><p>Besnik,</p>
+<p>What is the actual contact? what do they produce back? How wide is that contract?</p>
+<p>Have you looked at CQRS? Why would you want to do this in your domain, that is pretty obviously a report.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2543">
+		<div id="comment-2543">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://besnikgeek.blogspot.com' rel='external nofollow' class='url'>Besnik</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2543">September 13, 2010 at 1:04 pm</a></div>
+
+		<div class="comment-body"><p>Hi Greg,</p>
+<p>I&#8217;m trying to solve this problem (and querying of the data in respect to Open-Closed principle) in open source project <a href="http://code.google.com/p/genericrepository/" rel="nofollow">http://code.google.com/p/genericrepository/</a>.</p>
+<p>The idea is to separate specifications (queries) from the repository interface.</p>
+<p>You would load the domain entity like this:<br />
+IList<customer> = customerRepository.Specify<icustomerspecification>()<br />
+  .NameStartsWith(&#8220;Greg&#8221;)<br />
+  .OlderThan(18)<br />
+  .ToResult()<br />
+  .Take(3)<br />
+  .ToList();</icustomerspecification></customer></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2542">
+		<div id="comment-2542">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">JohnA</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2542">April 20, 2010 at 10:19 pm</a></div>
+
+		<div class="comment-body"><p>Very nice distinction and explanation &#8212; for someone just getting started in DDD.</p>
+<p>I like the more specific v. generic repositories but share Christian&#8217;s worry about a very large contract.  </p>
+<p>What if we defined a middle ground with constants in the domain repository interface instead of a multitude of methods, ex.<br />
+findStudentsBy(FIRST_NAME)?</p>
+<p>It would keep the contract simple and the implementation in the infrastructure.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2541">
+		<div id="comment-2541">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">kitchai yong</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2541">October 9, 2009 at 9:07 am</a></div>
+
+		<div class="comment-body"><p>Can&#8217;t we just define our query using the Specification pattern and  centralized them into the repository assembly. Then have the Application Service assembly pass the specification  query to the Find method on the repository? So, that we have less permutation of Find** methods &#8230;</p>
+<p>Thanks</p>
+<p>Regards</p>
+<p>kitchai yong</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2540">
+		<div id="comment-2540">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.christianposta.com/blog' rel='external nofollow' class='url'>Christian Posta</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2540">September 30, 2009 at 6:09 pm</a></div>
+
+		<div class="comment-body"><p>Greg, </p>
+<p>Thanks for writing this. I agree with most of the things you&#8217;ve pointed out.</p>
+<p>I do have one question, however, about specifying the contract/seam between a domain model and a data store layer. </p>
+<p>From what I understand, we do not want to have a &#8220;generic&#8221; contract (like the example you gave) because it becomes too &#8220;wide&#8221; and renders it useless as a contract. I agree. However, if we have methods such as &#8220;findStudentByFirstName&#8221;, &#8220;findStudentByLastName&#8221;, &#8220;findStudentByOrganization&#8221;, &#8220;findStudentBasedOnHairColor&#8221;, etc, etc, won&#8217;t we end up with a rather large contract? For a sufficiently large domain aggregate, it&#8217;s possible to have hundreds of those very specific &#8220;find*&#8221; methods. </p>
+<p>What would be an elegant solution for something like this?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2539">
+		<div id="comment-2539">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dakrrvlr.com/' rel='external nofollow' class='url'>Nljmsuft</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2539">July 14, 2009 at 4:21 am</a></div>
+
+		<div class="comment-body"><p>NlFKyt</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2538">
+		<div id="comment-2538">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2538">May 19, 2009 at 2:13 am</a></div>
+
+		<div class="comment-body"><p>first 3 letters of the title DDD</p>
+<p>Certainly most of DDD is overkill for pure CRUD but you shouldn&#8217;t be using it for CRUD either</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2537">
+		<div id="comment-2537">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">ryzam</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2537">May 19, 2009 at 1:54 am</a></div>
+
+		<div class="comment-body"><p>But do you think to many layer of encapsulation and the application services function just wrapping what repository have to do is useless for CRUD scenario?</p>
+<p>I dont think we get so much benefit to have custom repository.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2536">
+		<div id="comment-2536">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2536">May 18, 2009 at 6:51 pm</a></div>
+
+		<div class="comment-body"><p>ryzam</p>
+<p>I believe the reasons why have been answered in this post.</p>
+<p>An application service is not a replacement for proper encapsulation of your domain.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2535">
+		<div id="comment-2535">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">ryzam</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2535">May 18, 2009 at 8:41 am</a></div>
+
+		<div class="comment-body"><p>Hi Greg<br />
+Why dont we let our service that control that behaviour. For example instead we have all custom repository handle the related persistence job, we move to services to control that behavior</p>
+<p>Ex:</p>
+<p>public class LecturerService : ILecturerService<br />
+{<br />
+ void CanCreateLecturer(Lecturer lecturer)<br />
+ {<br />
+     genericRepo<lecturer>.Save(lecturer);<br />
+ }<br />
+}</lecturer></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2534">
+		<div id="comment-2534">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://zoomblab.blogspot.com/' rel='external nofollow' class='url'>Dimitris Menounos</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2534">February 13, 2009 at 9:14 am</a></div>
+
+		<div class="comment-body"><p>Good post! I have written a similar item on my blog a while ago. </p>
+<p><a href="http://zoomblab.blogspot.com/2009/01/data-access-using-command-pattern.html" rel="nofollow">http://zoomblab.blogspot.com/2009/01/data-access-using-command-pattern.html</a></p>
+<p>My only &#8220;objection&#8221; is that I find a bit too much having to keep all the custom repositories only to constrain the amplitude of the generic one. Services do that for me,  and clients only have direct access to them but never to the repositories. So instead of a CustomerRepository I would have a CustomerService making the calls to the generic repository.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2533">
+		<div id="comment-2533">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottmuc.com/' rel='external nofollow' class='url'>Scott Muc</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2533">January 28, 2009 at 11:09 pm</a></div>
+
+		<div class="comment-body"><p>Interestingly enough I was coming to the same conclusion as you!</p>
+<p>I kept on looking at my Repository classes thinking about how I could generalize them, but ended up fighting that urge to generalize because I like the fact that my UserRepository had some methods on it specific to User concerns.</p>
+<p>The only difference is that I am using inheritance rather than composition. (eg UserRepository : BaseRepository<user>, IRepository</user><user>)</user></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2532">
+		<div id="comment-2532">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ian Chamberlain</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2532">January 21, 2009 at 1:15 am</a></div>
+
+		<div class="comment-body"><p>I thought it better to write up my view as a whole and then we can discuss it on Alt.Net.</p>
+<p><a href="http://systemfutures.spaces.live.com/blog/cns!AD5058A4F6569231!242.entry" rel="nofollow">http://systemfutures.spaces.live.com/blog/cns!AD5058A4F6569231!242.entry</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2531">
+		<div id="comment-2531">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">inexperienced developer</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2531">January 19, 2009 at 3:59 pm</a></div>
+
+		<div class="comment-body"><p>I read alt.net mails too. And I think people are confused when they see Repository word in both CustomerRepository and Repository<t>. What I understand is Repository</t><t> is  a contract between DataMapper and Domain Model while CustomerRepository is a contract between Repository</t><t> and Presentaion Layer( UI). the Repositories are different in terms of purpose of usage. right?</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2530">
+		<div id="comment-2530">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.Marisic.Net' rel='external nofollow' class='url'>Chris Marisic</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2530">January 19, 2009 at 3:39 pm</a></div>
+
+		<div class="comment-body"><p>I recommend everyone that reads this article to make sure they click on &#8220;Think Before Coding&#8221; to see what he has to add to this pattern.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2529">
+		<div id="comment-2529">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.Marisic.Net' rel='external nofollow' class='url'>Chris Marisic</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2529">January 19, 2009 at 3:16 pm</a></div>
+
+		<div class="comment-body"><p>Greg,</p>
+<p>This was a great write up, I just recently came across the Repository<t> pattern while looking through the S#arp Architecture project and I definitely saw the strengths of it (and the perhaps over zealousness of it in some aspects) but using it in delegation seems like a perfect fit.</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2528">
+		<div id="comment-2528">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.thinkbeforecoding.com/post/2009/01/19/Repositories-and-IQueryable-the-paging-case' rel='external nofollow' class='url'>Think Before Coding</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2528">January 19, 2009 at 11:00 am</a></div>
+
+		<div class="comment-body"><p>This is a manual pingback&#8230;<br />
+Repositories and IQueryable the paging case.<br />
+This is an extension of the discution about leting IQueryable flow oustide of repositories or not.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2527">
+		<div id="comment-2527">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://richarddingwall.name' rel='external nofollow' class='url'>Richard Dingwall</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2527">January 19, 2009 at 4:19 am</a></div>
+
+		<div class="comment-body"><p>I just wrote a post where I came to a similar conclusion, but using granular repository traits (ICanDelete<t>, ICanSave</t><t> etc) to build up an interface that exposes a subset of methods from a mainly-generic concrete implementation.</p>
+<p>&#8220;A common workaround to this issue is to move to more granular interfaces such as ICanDelete</t><t>, ICanUpdate</t><t>, ICanCreate</t><t> etc etc. This while working around many of the problems that have sprung up in terms of OO principles also greatly reduces the amount of code reuse that is being seen as most of the time one will not be able to use the Repository</t><t> concrete instance any more.&#8221;</p>
+<p>Not true &#8211; my concrete ProjectRepository subclasses Repository</t><t>, so it uses all generic public methods. Common methods we do want like GetById() and Save() pass straight through to the generic base. Common methods we don&#8217;t want like Remove() aren&#8217;t exposed by IPersonRepository, so the domain doesn&#8217;t know about them. Heaps of re-use, and without having to write a whole load of little bridge methods from your CustomerRepository to the Repository</t><t> inside.</p>
+<p><a href="http://richarddingwall.name/2009/01/19/irepositoryt-one-size-does-not-fit-all/" rel="nofollow">http://richarddingwall.name/2009/01/19/irepositoryt-one-size-does-not-fit-all/</a> (last )</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2526">
+		<div id="comment-2526">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.demandmedia.com/' rel='external nofollow' class='url'>Tom Dean</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2526">January 19, 2009 at 1:15 am</a></div>
+
+		<div class="comment-body"><p>I feel the same way in so much as internal repositories should never be exposed to the client (e.g. the one developing in the domain). However, I still see plenty of merit in an inheritance-based public repository model instead of composition.</p>
+<p>I&#8217;m a firm believer in building for the rule and not the exception, and the examples you provided (non-updatable domain objects, the shopping cart) are the exception &#8211; it feels unnecessary to change the repository API for a few objects which may not conform to the rule.</p>
+<p>For most data-driven applications, a concrete inheritance-based repository model with an internal generic repository is a perfectly suitable solution. It&#8217;s not too advanced for developers unaccustomed to S.O.L.I.D, and it&#8217;s flexible enough to support more advanced scenario&#8217;s while giving developers their generic juice.</p>
+<p>As an example, lets take a newsfeed style service into consideration. Each story involves 1) an author, and 2) a target domain object on which the story is about. We&#8217;ll need the target domain object of each story, and this is incredibly easy to do in a simple loop over any number of domain objects when your public repositories are of Repository<t>.</p>
+<p>Without the support of polymorphism, I might have to rely on reflection, or still revert back to IReadRepository</t><t> style of inheritance (which always feels like smell to me).</p>
+<p>Also you made a very important point when you said &#8220;[make] the seams as explicit as possible&#8221;. If you&#8217;re going to use query objects, don&#8217;t expose them in your contract! Use them the same way as you would an internal repository &#8211; the repository exists to say &#8220;this is how you can find instances of me&#8221;, and providing an arbitrary query mechanism can mean an arbitrary death to your persistent storage (especially if it&#8217;s a relational database).</p>
+<p>At the end of the day, either solution is equally workable, and there is no one-size fits all pattern. My experience is generally against entirely mutable domain objects, with a few that are not (.e.g categories).</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2525">
+		<div id="comment-2525">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.codethinked.com' rel='external nofollow' class='url'>Justin Etheredge</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2525">January 18, 2009 at 4:55 pm</a></div>
+
+		<div class="comment-body"><p>I completely agree with this. It has always bothered me when people implement generic repositories in this way because you are now shifting potentially database specific concerns back out of the repository. By exposing a query object and allowing them to be built anywhere within the domain it makes it impossible to control (and limit) what kind of queries are formed.</p>
+<p>Your solution through composition is a nice middle ground that would still reduce a huge amount of repetitive code. Excellent post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2524">
+		<div id="comment-2524">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.lostechies.com' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2524">January 18, 2009 at 1:20 pm</a></div>
+
+		<div class="comment-body"><p>Good stuff, as you know I feel exactly the same. Few comments:</p>
+<p> 1) Reuse &#8211; Couldn&#8217;t agree more, I&#8217;ve had massive reuse using concrete repositories for years using exactly this sort of technique (though I consider the composed repository to really be just a persistence helper class, an artifact of the implementation).<br />
+ 2) Polymorphism &#8211; I agree its not necessarily that useful and if you need it you can get it with concrete repositories (IDelete<t> and ISave</t><t> etc). I found the polymorphism made my persistence tests cleaner, for example SaveTestHelper</t><t> took an ISave</t><t>, but as you said on the forums delegates might have worked too (though I find they can lead to less readable test code and had complaints from other devs about my existing use of them in test code).<br />
+ 3) C(?)R(?)U(?)(D(?) &#8211; ICanDelete</t><t> etc, agree you can&#8217;t use Repository</t><t> but you can still get lots of reuse. I think its a valid approach.<br />
+ 4) The importance of the “Contract” &#8211; Nicely put, agree completely. When you say &#8220;every possible way that the domain interacts with the data store&#8221; its also the way clients of the domain do, which is very useful.<br />
+ 5) Specifications &#8211; I think passing them in can be useful, but only if they are constrained (so not just allowing clients to pass in Specification</t><t> or QueryObject).</p>
+<p>On DDDD, it might be worth backtracking and explaining why we need it and where. Understanding the problems you see it fixing for the average DDD project would be very useful.</t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2523">
+		<div id="comment-2523">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://popcoder.com' rel='external nofollow' class='url'>Ed McPadden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2523">January 18, 2009 at 12:58 pm</a></div>
+
+		<div class="comment-body"><p>Great post.  I think the point you made about making the seams explicit is a great one.  This point is really made clear in this post when talking about repositories.  Thanks!!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2522">
+		<div id="comment-2522">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://elegantcode.com' rel='external nofollow' class='url'>Jan Van Ryswyck</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2522">January 17, 2009 at 5:04 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;I avoid using sql databases as my transactional store and as such don&#8217;t have these issues.&#8221;</p>
+<p>Are you saying that when using as relational database, the wheels are turning and that a generic repository is a viable solution in case one can use fetching strategies à la Udi for optimizing load? </p>
+<p>I agree with your options for an RDBMS, but for me, selling an OODB or distributed hashtable is mission impossible.</p>
+<p>Again, great mind provoking post and looking forward to the one(s).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2521">
+		<div id="comment-2521">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://blog.unhandled-exceptions.com' rel='external nofollow' class='url'>Steve Bohlen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2521">January 17, 2009 at 2:39 am</a></div>
+
+		<div class="comment-body"><p>Greg:</p>
+<p>We have long-since used BOTH the Repository<t> implementation to get our reuse AND an ICustomerRepository to get the best of both worlds.</p>
+<p>ICustomerRepository would have the &#8216;GetCustomerByFirstName(&#8230;) method defined on it and all consumers of customers would use just this repository interface only.</p>
+<p>CustomerRepository *dereives* from Repository<customer> but *implements* ICustomerRepository.  This way, it gets the benefit of the reuse of the generics-enabled repository base-class but since consumers depend only on the ICustomerRepository interface, they aren&#8217;t &#8216;aware&#8217; of the .FindAll<t>(&#8230;) etc. methods that are actually there on the class.</p>
+<p>This gives us both the benefit of the reusable generics-enabled Repository base class AND the intention-revealing methodnames hanging off the interface for the consumers of the repository to access.</p>
+<p>Curious your opinion on this approach&#8230;?</t></customer></t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2520">
+		<div id="comment-2520">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2520">January 16, 2009 at 10:50 pm</a></div>
+
+		<div class="comment-body"><p>yes by readonly I mean in terms of operations you are performing to it (it is updated by some process that keeps it in sync but as far as you are concerned you see it as being readonly).</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2519">
+		<div id="comment-2519">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Matt Gilbert</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2519">January 16, 2009 at 10:45 pm</a></div>
+
+		<div class="comment-body"><p>@Greg, re: &#8220;&#8230;hitting a read only reporting model&#8230;&#8221;</p>
+<p>Describing the reporting model as read-only surprised me.  As changes are made to the transactional model, in many cases you would want those changes reflected in the reporting model as well correct?</p>
+<p>Can I assume that you mean read-only in the transactional context of DDD/repositories?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2518">
+		<div id="comment-2518">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2518">January 16, 2009 at 9:16 pm</a></div>
+
+		<div class="comment-body"><p>Me thinks another post will be required on that? here are some options..</p>
+<p>Object Database<br />
+Unstructured storage (think bigtable/couch db)<br />
+Event stream persistence (reassemble object based on their histories).</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2517">
+		<div id="comment-2517">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jiho Han</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2517">January 16, 2009 at 9:11 pm</a></div>
+
+		<div class="comment-body"><p>What, if not sql database, do you use as your transactional store?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2516">
+		<div id="comment-2516">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Nick</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2516">January 16, 2009 at 6:33 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;I avoid using sql databases as my transactional store and as such don&#8217;t have these issues.&#8221;</p>
+<p>I don&#8217;t get this, but I expect this is a whole series of blog posts unto itself.</p>
+<p>Oh you silly Habs fans <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2515">
+		<div id="comment-2515">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Shaun</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2515">January 16, 2009 at 6:28 pm</a></div>
+
+		<div class="comment-body"><p>Are your domain repositories ignorant to the persistence/ORM technology? Do they just rely on your infrastructure repositories to handle the details or are the infrastructure repositories just for code re-use?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2514">
+		<div id="comment-2514">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2514">January 16, 2009 at 6:23 pm</a></div>
+
+		<div class="comment-body"><p>Nick I believe the problem you are running into is a function of the impedance mismatch.</p>
+<p>I avoid using sql databases as my transactional store and as such don&#8217;t have these issues.</p>
+<p>In general Udi&#8217;s solution (I have seen it before) is a pretty good one to the problem though still painful in general.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2513">
+		<div id="comment-2513">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2513">January 16, 2009 at 6:21 pm</a></div>
+
+		<div class="comment-body"><p>Shaun a better question would be why are you running reports in your domain. Note that by report here I am referring to something that sounds like it should be hitting a read only reporting model as opposed to your transactional model.</p>
+<p>Adhoc queries have no place in a domain that is modeling transactional behaviors.</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2512">
+		<div id="comment-2512">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Shaun</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2512">January 16, 2009 at 6:19 pm</a></div>
+
+		<div class="comment-body"><p>I curious if your domain repositories are ignorant to the persistence/ORM technology and just rely on your infrastructure repositories to handle the details? If so, how do you effectively abstract ad-hoc queries to your infrastructure repositories?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2511">
+		<div id="comment-2511">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://sharpbites.blogspot.com' rel='external nofollow' class='url'>alberto</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2511">January 16, 2009 at 6:18 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;So the answer here is to still use a generic repository but to use composition instead of inheritance and not expose it to the domain as a contract.&#8221;</p>
+<p>Hehe, I was thinking of suggesting just that while reading your post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2510">
+		<div id="comment-2510">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Nick</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2510">January 16, 2009 at 6:13 pm</a></div>
+
+		<div class="comment-body"><p>This is how I&#8217;ve been doing things until now for pretty much the reasons you&#8217;ve posted, but have always had trouble figuring out how to optimize queries (which I why I started the thread on alt.net.) E.g. I can have a CustomerRepository.GetCustomerByLastName used in many different use cases. Some use cases are more perfomant if the customer&#8217;s orders are eager loaded and others more performant if not. How do I handle this? The options I can think of are:</p>
+<p>1. Udi&#8217;s solution of interfaces. (Sorry his site seems to be down so can&#8217;t get the link.)<br />
+2. One repo method per use case.<br />
+3. Having a parameter on the repo method indicating the fetch strategy.</p>
+<p>Anyway, still stumped.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2509">
+		<div id="comment-2509">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2509">January 16, 2009 at 5:53 pm</a></div>
+
+		<div class="comment-body"><p>huh?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2508">
+		<div id="comment-2508">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://16randombytes.blogspot.com' rel='external nofollow' class='url'>Bill Barry</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2009/01/16/ddd-the-generic-repository/#comment-2508">January 16, 2009 at 5:48 pm</a></div>
+
+		<div class="comment-body"><p>Does this mean that the method Find on List<t> is just as bad?</p>
+<p>What exactly is the difference between<br />
+internalGenericRepository.FetchByQueryObject(new someclass(_name))<br />
+and<br />
+List<customer> l = getallcustomers();<br />
+var c = l.Find(new someclass(_name).finder)</p>
+<p>???</customer></t></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2009/01/16/ddd-the-generic-repository/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2009%2F01%2F16%2Fddd-the-generic-repository%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.317 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:01:10 -->
+<!-- super cache -->

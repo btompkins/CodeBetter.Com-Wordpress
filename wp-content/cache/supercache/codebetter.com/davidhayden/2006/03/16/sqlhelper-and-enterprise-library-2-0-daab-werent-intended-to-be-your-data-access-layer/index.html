@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter' href='http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/' />
+<link rel='next' title='Orlando CodeCamp Rocked &#8211; Enterprise Library 2.0 and SQL Server Management Objects Tutorials and Resources' href='http://codebetter.com/davidhayden/2006/03/27/enterpriselibrarytutorials/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=102' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-102" class="post-102 post type-post status-publish format-standard hentry category-ado-net category-application-blocks">
+					<h1 class="entry-title">SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/" title="5:46 pm" rel="bookmark"><span class="entry-date">March 16, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>After several discussions recently, I am suspecting a number of people are using the old SqlHelper and the new <A href="http://davidhayden.com/blog/dave/archive/2006/01/08/2686.aspx">Enterprise Library Data Access Application Block</A> as their data access layer, but I don&#8217;t believe this is the original intent of the Patterns and Practices Group.</P><br />
+<P>I think of SqlHelper and DAAB as the pipes in&nbsp;my house.&nbsp;I hide them behind the wall and stick a &#8220;sink&#8221;, &#8220;shower&#8221;, or &#8220;toilet&#8221; on the end of them depending on&nbsp;my needs.&nbsp; Using them as a DAL is like running around the house and drinking from the hose bib <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>When I use the DAAB, I&nbsp;wrap it&nbsp;in a DbHelper class that implements IDbHelper.&nbsp; Except for a few changes, there is usually a 1:1 ratio between the public &#8220;interface&#8221; on the DAAB and my IDbHelper interface:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> DbHelper : IDbHelper<br />
+{<br />
+    </SPAN><SPAN>//</SPAN><SPAN> Enterprise Library DAAB &#8211; Hidden</SPAN><SPAN><br />
+</SPAN><SPAN>    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> Database _database </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> DbHelper()<br />
+    {<br />
+        _database </SPAN><SPAN>=</SPAN><SPAN> DatabaseFactory.CreateDatabase();<br />
+    }</p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> IDbHelper Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> IDataReader ExecuteReader(CommandType commandType, </SPAN><SPAN>string</SPAN><SPAN> storedProcedureName)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> _database.ExecuteReader(commandType, storedProcedureName);<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>One could argue if one really needs to go through all this work of wrapping up the DAAB in a helper class. I do it for a few reasons:</P><br />
+<UL><br />
+<LI>It gains me a bit more flexibility so that I can add additional public methods via the interface not directly supported by DAAB.</LI><br />
+<LI>I can&nbsp;easily replace the DAAB with a different solution without requiring much effort.</LI><br />
+<LI>The IDbHelper Interface gives&nbsp;me a bit more fine grained testability.</LI></UL><br />
+<P>&nbsp;</P><br />
+<P>Now from here at the minimum you would have a class that uses IDbHelper ( there&nbsp;should be&nbsp;some value add to this class and not just an empty shell around IDbHelper ):</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> SqlDataSource : IDataSource<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> IDbHelper _helper </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> SqlDataSource(IDbHelper helper)<br />
+    {<br />
+        _helper </SPAN><SPAN>=</SPAN><SPAN> helper;<br />
+    }</p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> IDataSource Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> IDataReader GetReader(</SPAN><SPAN>string</SPAN><SPAN> spName)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> _helper.ExecuteReader(CommandType.StoredProcedure, spName);<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>And you could continue this further if again you are looking for some more granularity in functionality and loose coupling ( or you could remove the intermediate step of SqlDataSource and add the IDbHelper to this class ):</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> CustomerDataSource : ICustomerDataSource<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> IDataSource _dataSource </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> CustomerDataSource(IDataSource dataSource)<br />
+    {<br />
+        _dataSource </SPAN><SPAN>=</SPAN><SPAN> dataSource;<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> IDataReader GetCustomers()<br />
+    {<br />
+        </SPAN><SPAN>//</SPAN><SPAN> Do some stuff</SPAN><SPAN><br />
+</SPAN><SPAN>        IDataReader dr </SPAN><SPAN>=</SPAN><SPAN> _dataSource.GetReader(</SPAN><SPAN>&#8220;</SPAN><SPAN>GetCustomers</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+        </SPAN><SPAN>//</SPAN><SPAN> Do some stuff</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+        </SPAN><SPAN>return</SPAN><SPAN> dr;<br />
+    }<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>This might all get consumed into a business&nbsp;class using, for example, the ActiveRecord Pattern, if you like using classes and have minimal business rules:</P><br />
+<P>&nbsp;</P><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Customer<br />
+{<br />
+    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> List</SPAN><SPAN>&lt;</SPAN><SPAN>Customer</SPAN><SPAN>&gt;</SPAN><SPAN> GetCustomers()<br />
+    {<br />
+        ICustomerDataSource source </SPAN><SPAN>=</SPAN><SPAN> &#8230;</p>
+<p>        </SPAN><SPAN>//</SPAN><SPAN> Return customers&#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>    }<br />
+}</SPAN></PRE><br />
+<P>&nbsp;</P><br />
+<P>A lot of the classes here are subject to one&#8217;s development style, opinion, and application needs. Some developers would remove some of the classes and some would rather return a disconnected object ( like DataSet or Entity ) to the business layer rather than an open DataReader.&nbsp; Many developers smirk at the whole idea of the ActiveRecord Pattern as the idea of combining business rules and data access is crazy. Some people prefer creating custom dataproviders using the built-in DataProvider model in the .NET 2.0 Framework. Many would grab the nearest O/R Mapper to avoid the process <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>My point isn&#8217;t to argue or defend different architectures, but to merely point out that SqlHelper or DAAB is a helper class. It is the pipes IMHO.&nbsp; It is low on the food chain and needs to be very much disposable and replaceable.&nbsp; When SqlHelper or <A href="http://davidhayden.com/blog/dave/category/50.aspx?Show=All">Enterprise Library 2.0</A> DAAB starts to define or limit your data access layer, you are probably using it wrong <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>&nbsp;</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/ado-net/" title="View all posts in ADO.NET" rel="category tag">ADO.NET</a>, <a href="http://codebetter.com/davidhayden/category/application-blocks/" title="View all posts in Application Blocks" rel="category tag">Application Blocks</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/" title="Permalink to SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/feed/" title="Comments RSS to SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-102 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2006/03/12/open-closed-principle-iformattable-iformatprovider-icustomformatter/" rel="prev"><span class="meta-nav">&larr;</span> Open-Closed Principle &#8211; IFormattable, IFormatProvider, ICustomFormatter</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2006/03/27/enterpriselibrarytutorials/" rel="next">Orlando CodeCamp Rocked &#8211; Enterprise Library 2.0 and SQL Server Management Objects Tutorials and Resources <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">10 Responses to <em>SqlHelper and Enterprise Library 2.0 DAAB Weren&#8217;t Intended to be Your Data Access Layer</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-214">
+		<div id="comment-214">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-214">March 17, 2006 at 5:34 am</a></div>
+
+		<div class="comment-body"><p>Jeremy,</p>
+<p>I suspected you weren&#8217;t a big fan of the Active Record Pattern <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>I can&#8217;t say I am either for more sophisticated projects, but it is a nice middle ground for those primarily database-driven applications that have very little business rules but for which a bit of abstraction from the database may be in order.</p>
+<p>It would be interesting to read a similar post from you on the subject, because I think your superior TDD skills would probably illuminate the subject even more. Your MVP posts associated with the UI were excellent. It would be awesome to see your thoughts on the data side.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-213">
+		<div id="comment-213">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-213">March 17, 2006 at 5:13 am</a></div>
+
+		<div class="comment-body"><p>Good points, Eric. I have yet to pull out the helper classes as well, but like you said, wrapping it is child&#8217;s play.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-212">
+		<div id="comment-212">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/jeremy.miller' rel='external nofollow' class='url'>Jeremy Miller</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-212">March 16, 2006 at 9:30 pm</a></div>
+
+		<div class="comment-body"><p>Nice post David.  We use a homegrown equivalent to the DAAB or NHibernate for persistence,  but either way we always have strongly-typed wrapper services and interfaces around the low level plumbing.  It&#8217;s a definite no-brainer.  Business logic classes should never get exposed to low level ADO.Net plumbing.</p>
+<p>And chalk me up as one of those people that don&#8217;t care for the Active Record style of persistence, at least in .Net anyway.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-211">
+		<div id="comment-211">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.codebetter.com/blogs/eric.wise' rel='external nofollow' class='url'>ewise</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-211">March 16, 2006 at 9:29 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;ve actually gone both routes before with abstracting and just using it.  I have to go with David that it is entirely situational but I also lean towards nathan in that most times when I was done I looked back and never really needed to pull it out.</p>
+<p>I will say in david&#8217;s defense that the amount of work to create a wrapper isn&#8217;t substantial at all so *shrug*.</p>
+<p>I will add a point though that the Ent. Lib is a community pattern with excellent documentation and the chances of having a new dev come on board and know how to use it are pretty good compared to a new developer coming on board and having to use a wrapper whose naming conventions may not be like anything else out there.  This would represent a learning curve spike and productivity lose from a business perspective.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-210">
+		<div id="comment-210">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-210">March 16, 2006 at 9:11 pm</a></div>
+
+		<div class="comment-body"><p>Thanks, John. Those were the points I was trying to convey, albeit perhaps a bit unsuccessfully <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-209">
+		<div id="comment-209">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/john.papa' rel='external nofollow' class='url'>johnpapa</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-209">March 16, 2006 at 8:03 pm</a></div>
+
+		<div class="comment-body"><p>I think what David is getting at here is that it is better to abstract the Ent Lib DAAB from your application rather than have Ent Lib code embedded througout your app. The 2 upsides to this aproach that I see immediately are that you can pull Ent Lib&#8217;s DAAB out and swap it with something else if need be and you can extend its features with your own custom features. Like David said, you don&#8217;t get batch update support directly through the Ent Lib DAAB, so if you want it you should consider abstracting it. Thus, the Ent Lib DAAB is part of your DAL, but not solely you DAL. </p>
+<p>I agree that the Ent Lib is not enough on its own so I generally extend it. Do I have as many classes as shown in this post, no. But David is not saying you need all of these classes and inerfaces. It is just an example as he clearly states.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-208">
+		<div id="comment-208">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-208">March 16, 2006 at 7:34 pm</a></div>
+
+		<div class="comment-body"><p>You don&#8217;t like IDbHelper?  Alright, make it IDatabase.  Make it IPipe. Like I said, you don&#8217;t need to create it at all if you don&#8217;t want to.</p>
+<p>I don&#8217;t care if you inject SqlHelper or DAAB as an Interface or assimilate it as part of an abstract DataSource class with common public mehods and abstract methods. You will need the pipe functionality, so you can&#8217;t call it a smell. It&#8217;s a necessary evil <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>The fact that you can create the data layer in so many ways is not the point. The point is that SqlHelper or DAAB plays a &#8220;minor&#8221; role and is not dealt with directly by the upper layers of your application.</p>
+<p>Tough crowd <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />   Please use your real name in the future <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-207">
+		<div id="comment-207">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-207">March 16, 2006 at 6:55 pm</a></div>
+
+		<div class="comment-body"><p>Like I said above, one could argue it <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>However, you would have to play with the DAAB to appreciate IDbHelper a bit more. For example, the DAAB doesn&#8217;t support the return of just a DataTable nor new .NET 2.0 Features like Batch Updates.</p>
+<p>The use of DbHelper and IDbHelper eliminate a lot of code redundancy in the DataSource Classes as well as expose additional functionality not directly available in the DAAB.</p>
+<p>So I can agree with YAGNI to an extent, but I think it is debatable depending on the reasoning.</p>
+<p>Thanks for the comment, Nathan.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-206">
+		<div id="comment-206">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Naming is important</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-206">March 16, 2006 at 6:48 pm</a></div>
+
+		<div class="comment-body"><p>IDbHelper?  What a crap name! That&#8217;s an obvious smell.  If you can only give something a really vague name there&#8217;s something really wrong with your design &#8212; responsibilities have not been allocated among objects correctly.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-205">
+		<div id="comment-205">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Nathan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#comment-205">March 16, 2006 at 6:34 pm</a></div>
+
+		<div class="comment-body"><p>IDbHelper: You Aint Gonna Need It.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2006/03/16/sqlhelper-and-enterprise-library-2-0-daab-werent-intended-to-be-your-data-access-layer/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='102' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="4a92fdcfb0" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.253 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:41:24 -->
+<!-- super cache -->

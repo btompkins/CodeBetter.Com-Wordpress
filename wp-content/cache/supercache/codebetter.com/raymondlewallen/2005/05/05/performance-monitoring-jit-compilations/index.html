@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Performance Monitoring &#8211; JIT compilations | Raymond Lewallen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/raymondlewallen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/raymondlewallen/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/raymondlewallen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/raymondlewallen/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Raymond Lewallen' href='http://codebetter.com/raymondlewallen/' />
+<link rel='start' title='Moving some blog entries' href='http://codebetter.com/raymondlewallen/2004/12/01/moving-some-blog-entries/' />
+<link rel='prev' title='Generate an Excel XLS spreadsheet from T-Sql in Sql Server' href='http://codebetter.com/raymondlewallen/2005/05/04/generate-an-excel-xls-spreadsheet-from-t-sql-in-sql-server/' />
+<link rel='next' title='The difference in TRUNCATE and DELETE in Sql Server' href='http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/' />
+<link rel='shortlink' href='http://codebetter.com/raymondlewallen/?p=116' />
+<link rel="stylesheet" href="http://codebetter.com/raymondlewallen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/raymondlewallen/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-116" class="post-116 post type-post status-publish format-standard hentry category-net-development">
+					<h1 class="entry-title">Performance Monitoring &#8211; JIT compilations</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/raymondlewallen/author/raymondlewallen/" title="View all posts by raymondlewallen">raymondlewallen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/" title="11:00 am" rel="bookmark"><span class="entry-date">May 5, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/raymondlewallen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/raymondlewallen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/raymondlewallen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Alrighty, another topic about performance monitoring, this time<br />
+about viewing JIT information.&nbsp; The previous performance<br />
+monitoring topic was on <a HREF="/blogs/raymond.lewallen/archive/2005/03/31/60938.aspx">garbage collection</a>.</p>
+<p>When you compile your application with Visual Studio or the command<br />
+line, you are compiling your C# or VB.Net code into Microsoft<br />
+Intermediate Language, aka MSIL.&nbsp; The reason for this is so that<br />
+the IL code can be compiled to native code by the Just In Time (JIT)<br />
+compiler on the fly, based on the machine the code is executing<br />
+on.&nbsp; This allows the JIT to create native code that is optimal for<br />
+the machine the code is running on.&nbsp; Take Omea Reader for<br />
+example.&nbsp; The MSIL code is identical on my machine and your<br />
+machine, but when the application is executed, the JIT may produce<br />
+different native code for your machine than it does for my<br />
+machine.&nbsp; The JIT is a very in-depth topic, and I’m not going to<br />
+get into it very much here, but there are plenty of resources out there<br />
+if you want to know more, such as:</p>
+<p><a href="http://blogs.msdn.com/davidnotario/default.aspx">David Notario&#8217;s WebLog &#8211; CLR and JIT Compiler</a>. Specifically, you may want to start with his article <a href="http://blogs.msdn.com/davidnotario/archive/2004/10/26/247792.aspx">The CLR x86 JIT, an overview</a>.</p>
+<p>So I’m going to open up my performance monitor and add a few<br />
+counters that can be found under the Performance Object heading of .Net<br />
+CLR Jit.&nbsp; I open up my Omea Reader so that it shows up in the box<br />
+on the right so I can select the Omea Reader instance as the<br />
+application I want to gather information from.&nbsp; _Global_ is<br />
+usually never a good choice, as it captures information about every CLR<br />
+hosted application running on your machine.&nbsp; I select the<br />
+following counters:</p>
+<p><strong># of Methods Jitted</strong> – This counter displays the<br />
+total number of methods compiled Just-In-Time (JIT) by the CLR JIT<br />
+compiler since the start of the application. This counter does not<br />
+include the pre-jitted methods.</p>
+<p><strong>% Time in Jit</strong> – This counter displays the<br />
+percentage of elapsed time spent in JIT compilation since the last JIT<br />
+compilation phase. This counter is updated at the end of every JIT<br />
+compilation phase. A JIT compilation phase is the phase when a method<br />
+and its dependencies are being compiled.</p>
+<p><strong>Standard Jit Failures</strong> – This counter displays the<br />
+peak number of methods the JIT compiler has failed to JIT since the<br />
+start of the application. This failure can occur if the IL cannot be<br />
+verified or if there was an internal error in the JIT compiler.</p>
+<p><strong>Total # of IL Bytes Jitted</strong> – This counter displays<br />
+the total IL bytes jitted since the start of the application. This<br />
+counter is exactly equivalent to the &#8220;# of IL Bytes Jitted&#8221; counter.</p>
+<p>Now I have everything selected that I want.&nbsp; I click OK and<br />
+stop the performance monitor and close Omea Reader.&nbsp; Now I start<br />
+the performance monitor and open Omea Reader because I want to know<br />
+what all is going on and startup, which is where the vast majority of<br />
+jitting takes place, although, by design, not all of it as we will see<br />
+below.</p>
+<p>Here is what the report and graph look like after Omea Reader has finished loading up.</p>
+<fieldset>
+<legend>Report showing JIT information at startup</legend>
+<p><img src="/photos/raymond.lewallen/images/62804/original.aspx"></fieldset>
+<fieldset>
+<legend>Graph showing JIT information at startup</legend>
+<p><img src="/photos/raymond.lewallen/images/62803/original.aspx"></fieldset>
+<p>As you can see, over 2400 methods were JITted at startup, as<br />
+inidicated by the blue line.&nbsp; This isn’t all too common due to the<br />
+number of methods that run in order to startup an application, which is<br />
+also evident by the yellow line that indicates the percentage of time<br />
+we have spent in the JIT.&nbsp; You’ll probaby wonder “Why does the max<br />
+say 147%?”&nbsp; This is because of how the calculations are done,<br />
+which is <em>percentage of elapsed time spent in JIT compilation since the last JIT compilation phase</em>.</p>
+<p>So now that everything is loaded up, Omea Reader is just sitting<br />
+there doing nothing.&nbsp; Now lets click on the update feeds and see<br />
+what happens.</p>
+<fieldset>
+<legend>Graph showing JIT information during initial update of feeds</legend>
+<p><img src="/photos/raymond.lewallen/images/62805/original.aspx"></fieldset>
+<p>You can see from this graph that 413 methods had to be jitted in<br />
+order for the update my feeds process to occur.&nbsp; That’s one of the<br />
+great things about the JIT.&nbsp; It didn’t just go in and compile<br />
+everything possible in the application in anticipation that we might<br />
+use it.&nbsp; It waited until we actually needed it before it went<br />
+ahead and did the compilations.&nbsp; You may think this is not so good<br />
+of a thing, but it greatly increases initial load time for an<br />
+application running on the .Net framework.&nbsp; It only compiles what<br />
+it knows it has to use, not what it thinks it is going to use.</p>
+<p>You can’t tell, but I’ve actually waited 10 minutes and now am going<br />
+to click the update feed button again.&nbsp; Since I have over 200<br />
+subscriptions, something out there is likely to have been updated, even<br />
+though it is 10:30 PM for me.&nbsp; Let’s click the update feed button<br />
+again.</p>
+<fieldset>
+<legend>Clicking the update feeds button again</legend>
+<p><img src="/photos/raymond.lewallen/images/62806/original.aspx"></fieldset>
+<p>Viola!&nbsp; Nothing happened!&nbsp; See how cool that is?&nbsp; All<br />
+the methods and code that is required for the process of updating my<br />
+feeds has already been compiled into machine level assembly language,<br />
+therefore nothing had to be done other than an execution.&nbsp; Now,<br />
+everytime I update my feeds, its going to happen lickity-split because<br />
+everything is already in place and ready to go for that happen.&nbsp;<br />
+Execution of machine level code only is all that will be required from<br />
+now on.</p>
+<p>So, that is a quick and dirty look at how the JIT works and how to<br />
+view its measurements.&nbsp; Usually when you do something in an<br />
+application after startup for the first time, you will see the number<br />
+of methods increase slightly.&nbsp; Do the same task again, the<br />
+likelyhood of seeing any increments to the # of methods jitted counter<br />
+is unlikely.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/raymondlewallen/category/net-development/" title="View all posts in .Net Development" rel="category tag">.Net Development</a>. Bookmark the <a href="http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/" title="Permalink to Performance Monitoring &#8211; JIT compilations" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/feed/" title="Comments RSS to Performance Monitoring &#8211; JIT compilations" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-116 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/raymondlewallen/2005/05/04/generate-an-excel-xls-spreadsheet-from-t-sql-in-sql-server/" rel="prev"><span class="meta-nav">&larr;</span> Generate an Excel XLS spreadsheet from T-Sql in Sql Server</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/raymondlewallen/2005/05/09/the-difference-in-truncate-and-delete-in-sql-server/" rel="next">The difference in TRUNCATE and DELETE in Sql Server <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/raymondlewallen/2005/05/05/performance-monitoring-jit-compilations/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/raymondlewallen/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fraymondlewallen%2F2005%2F05%2F05%2Fperformance-monitoring-jit-compilations%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.217 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:05:08 -->
+<!-- super cache -->

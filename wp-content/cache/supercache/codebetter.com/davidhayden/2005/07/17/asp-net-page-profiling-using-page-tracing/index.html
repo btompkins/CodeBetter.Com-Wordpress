@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>ASP.NET Page Profiling using Page Tracing | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Avoid Chatty Interfaces Between the Tiers in Your ASP.NET Web Application' href='http://codebetter.com/davidhayden/2005/07/03/avoid-chatty-interfaces-between-the-tiers-in-your-asp-net-web-application/' />
+<link rel='next' title='Web Applications: N-Tier vs. N-Layer' href='http://codebetter.com/davidhayden/2005/07/23/web-applications-n-tier-vs-n-layer/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/07/17/asp-net-page-profiling-using-page-tracing/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=55' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-55" class="post-55 post type-post status-publish format-standard hentry category-asp-net">
+					<h1 class="entry-title">ASP.NET Page Profiling using Page Tracing</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/07/17/asp-net-page-profiling-using-page-tracing/" title="10:15 pm" rel="bookmark"><span class="entry-date">July 17, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>I wrote two previous posts about building high performance and scalable ASP.NET websites:</P><br />
+<UL><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/07/02/1881.aspx">Developing High Performance and Scalable ASP.NET Websites</A></LI><br />
+<LI><A href="http://davidhayden.com/blog/dave/archive/2005/07/03/1882.aspx">Avoid Chatty Interfaces Between the Tiers in Your ASP.NET Web Application</A></LI></UL><br />
+<P>The point I was trying to make in these two posts is that creating high performance and scalable ASP.NET websites is perhaps easier than you think.&nbsp; As I mentioned in the previous two posts, you can get the biggest bang for your buck in terms of performance by leveraging 1)&nbsp; ASP.NET Output Caching, and 2)&nbsp; a good user interface and business layer that eliminate excessive round trips between other tiers in your applications.&nbsp; These are simple techniques that&nbsp;don&#8217;t require a lot of experience, expertise, or even effort.</P><br />
+<P>In keeping with this idea of keeping things simple and sticking to the basics, I wanted to mention a very simple way to profile an ASP.NET Page:&nbsp; <STRONG>ASP.NET Page Tracing</STRONG>.&nbsp; This was on my mind&nbsp;Saturday after attending a Tampa Code Camp Session, called <STRONG>Page Profiling &amp; Performance Testing ASP.NET Pages</STRONG>.&nbsp; It was a good session, but one of the things not mentioned by the presenter was&nbsp;Page Tracing to profile your ASP.NET pages.&nbsp; Since&nbsp;tracing requires&nbsp;almost no effort or expertise to pull off, it only makes sense that we discuss this topic in&nbsp;what is becoming a series of posts on <STRONG>High Performance and Scalable ASP.NET Websites Made Easy!</STRONG> <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>ASP.NET Page Tracing Basics</STRONG></P><br />
+<P>ASP.NET Page Tracing is a no brainer.&nbsp; On a page by page basis, you can simply add an attribute to the Page Directive on you ASPX file:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Enable Tracing: Page Directive</LEGEND><PRE><SPAN>&lt;%</SPAN><SPAN>@ Page &#8230; Trace</SPAN><SPAN>=</SPAN><SPAN>”</SPAN><SPAN>true</SPAN><SPAN>” &#8230; </SPAN><SPAN>%&gt;</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Or, if you want to manage it globally without messing with each and every page, you can add some settings to the web.config file:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>Enable Tracing: Web.Config</LEGEND><PRE><SPAN>&lt;</SPAN><SPAN>configuration</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>&lt;</SPAN><SPAN>system.web</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+        </SPAN><SPAN>&lt;</SPAN><SPAN>trace<br />
+            enabled</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>true</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+            requestlimit</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>10</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+            pageoutput</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>true</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+            tracemode</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>SortByTime</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+        </SPAN><SPAN>/&gt;</SPAN><SPAN><br />
+    </SPAN><SPAN>&lt;/</SPAN><SPAN>system.web</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>configuration</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>where you have the following options: </P><br />
+<UL><br />
+<LI><SPAN><STRONG>enabled</STRONG> = &#8220;[true/false]&#8221; &#8211; Tracing is either enabled at an application level, or it is disabled at the application level. If we set enabled=false, page tracing is still supported using the Trace directive discussed earlier.</SPAN></LI><br />
+<LI><SPAN><STRONG>requestlimit</STRONG> = &#8220;[int]&#8221; &#8211; Total number of trace requests to keep cached in memory on a per-application basis. Tracing exposes a special resource, called Trace.axd, that is used to view trace output when pageoutput is set to false.</SPAN></LI><br />
+<LI><SPAN><STRONG>pageoutput </STRONG>= &#8220;[true/false]&#8221; &#8211; The pageoutput tracing enables tracing details for every page within an application. However, pageoutput tracing may be turned off while application-level tracing is still enabled (enabled = &#8220;true&#8221;). This keeps trace requests in memory, such that they are available via trace.axd, but not displayed within the output of a page.</SPAN></LI><br />
+<LI><SPAN><STRONG>tracemode</STRONG> = &#8220;[SortByTime | SortByCategory]&#8220;—The tracemode setting gives us control over how trace detail information is output. Data may be sorted by time or category, where category is differentiated between the settings made by the system and the Trace.Write() settings enabled by the developer.</SPAN></LI></UL><br />
+<P><SPAN></SPAN>&nbsp;</P><br />
+<P><SPAN><STRONG>ASP.NET Page Tracing Example</STRONG></SPAN></P><br />
+<P><SPAN>Here is a simple ASP.NET Page that I have created to trace.&nbsp; All it does is fill an ArrayList with a list of Customers and then binds it to a Repeater object on the page.&nbsp; In my Page_Load event I have added a couple of <STRONG>Trace.Warn</STRONG> statements to inject a couple of messages into the trace output.</SPAN></P><br />
+<P><SPAN></SPAN>&nbsp;</P><br />
+<FIELDSET><LEGEND>ASP.NET Page With Tracing Enabled</LEGEND><SPAN><PRE><SPAN>&lt;%</SPAN><SPAN>@ Page Language</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>C#</SPAN><SPAN>&#8220;</SPAN><SPAN> Trace</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>true</SPAN><SPAN>&#8220;</SPAN><SPAN> ContentType</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>text/html</SPAN><SPAN>&#8220;</SPAN><SPAN> ResponseEncoding</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>iso-8859-1</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>%&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;%</SPAN><SPAN>@ Import Namespace</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>System.Diagnostics</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>%&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>script runat</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>server</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN></p>
+<p>    ArrayList _data </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArrayList();</p>
+<p>    </SPAN><SPAN>class</SPAN><SPAN> Customer<br />
+    {<br />
+        </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _firstname </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>.Empty;<br />
+        </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _lastname </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>.Empty;</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Firstname<br />
+        {<br />
+            </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _firstname; }<br />
+            </SPAN><SPAN>set</SPAN><SPAN> { _firstname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+        }</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Lastname<br />
+        {<br />
+            </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _lastname; }<br />
+            </SPAN><SPAN>set</SPAN><SPAN> { _lastname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+        }</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> Customer() {}</p>
+<p>        </SPAN><SPAN>public</SPAN><SPAN> Customer(</SPAN><SPAN>string</SPAN><SPAN> firstname, </SPAN><SPAN>string</SPAN><SPAN> lastname)<br />
+        {<br />
+            _firstname </SPAN><SPAN>=</SPAN><SPAN> firstname;<br />
+            _lastname </SPAN><SPAN>=</SPAN><SPAN> lastname;<br />
+        }<br />
+    }</p>
+<p>    </SPAN><SPAN>void</SPAN><SPAN> Page_Load(</SPAN><SPAN>object</SPAN><SPAN> sender, System.EventArgs e)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (</SPAN><SPAN>!</SPAN><SPAN>IsPostBack)<br />
+        {<br />
+            Trace.Warn(</SPAN><SPAN>&#8220;</SPAN><SPAN>Begin Load Data</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+            LoadData();<br />
+            Trace.Warn(</SPAN><SPAN>&#8220;</SPAN><SPAN>End Load Data</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+            Trace.Warn(</SPAN><SPAN>&#8220;</SPAN><SPAN>Begin Bind Data</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+            BindData();<br />
+            Trace.Warn(</SPAN><SPAN>&#8220;</SPAN><SPAN>End Bind Data</SPAN><SPAN>&#8220;</SPAN><SPAN>);<br />
+        }<br />
+    }</p>
+<p>    </SPAN><SPAN>void</SPAN><SPAN> LoadData()<br />
+    {<br />
+        </SPAN><SPAN>for</SPAN><SPAN> (</SPAN><SPAN>int</SPAN><SPAN> i </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>; i </SPAN><SPAN>&lt;</SPAN><SPAN> </SPAN><SPAN>5</SPAN><SPAN>; i</SPAN><SPAN>++</SPAN><SPAN>)<br />
+        {<br />
+            _data.Add(</SPAN><SPAN>new</SPAN><SPAN> Customer(</SPAN><SPAN>&#8220;</SPAN><SPAN>David</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Johnson</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+            _data.Add(</SPAN><SPAN>new</SPAN><SPAN> Customer(</SPAN><SPAN>&#8220;</SPAN><SPAN>Bill</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Smith</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+            _data.Add(</SPAN><SPAN>new</SPAN><SPAN> Customer(</SPAN><SPAN>&#8220;</SPAN><SPAN>Steve</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>McTurney</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+            _data.Add(</SPAN><SPAN>new</SPAN><SPAN> Customer(</SPAN><SPAN>&#8220;</SPAN><SPAN>Ben</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Hardgrave</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+            _data.Add(</SPAN><SPAN>new</SPAN><SPAN> Customer(</SPAN><SPAN>&#8220;</SPAN><SPAN>Mary</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Stenweck</SPAN><SPAN>&#8220;</SPAN><SPAN>));<br />
+        }<br />
+    }</p>
+<p>    </SPAN><SPAN>void</SPAN><SPAN> BindData()<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (_data </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+        {<br />
+            Customers.DataSource </SPAN><SPAN>=</SPAN><SPAN> _data;<br />
+            Customers.DataBind();<br />
+        }<br />
+    }<br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>script</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;!</SPAN><SPAN>DOCTYPE HTML PUBLIC </SPAN><SPAN>&#8220;</SPAN><SPAN>-//W3C//DTD HTML 4.01 Transitional//EN</SPAN><SPAN>&#8220;</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>http://www.w3.org/TR/html4/loose.dtd</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>html</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>head</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>meta http</SPAN><SPAN>-</SPAN><SPAN>equiv</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Content-Type</SPAN><SPAN>&#8220;</SPAN><SPAN> content</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>text/html; charset=iso-8859-1</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>title</SPAN><SPAN>&gt;</SPAN><SPAN>Untitled Document</SPAN><SPAN>&lt;/</SPAN><SPAN>title</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>head</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>body</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>asp:Repeater id</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>Customers</SPAN><SPAN>&#8220;</SPAN><SPAN> runat</SPAN><SPAN>=</SPAN><SPAN>&#8220;</SPAN><SPAN>server</SPAN><SPAN>&#8220;</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>headertemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>UL</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>headertemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>itemtemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+  </SPAN><SPAN>&lt;</SPAN><SPAN>LI</SPAN><SPAN>&gt;&lt;%</SPAN><SPAN># DataBinder.Eval(Container.DataItem, </SPAN><SPAN>&#8220;</SPAN><SPAN>Lastname</SPAN><SPAN>&#8220;</SPAN><SPAN>) </SPAN><SPAN>%&gt;</SPAN><SPAN>, </SPAN><SPAN>&lt;%</SPAN><SPAN># DataBinder.Eval(Container.DataItem, </SPAN><SPAN>&#8220;</SPAN><SPAN>Firstname</SPAN><SPAN>&#8220;</SPAN><SPAN>) </SPAN><SPAN>%&gt;&lt;/</SPAN><SPAN>LI</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>itemtemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;</SPAN><SPAN>footertemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>UL</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>footertemplate</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>asp:Repeater</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>body</SPAN><SPAN>&gt;</SPAN><SPAN><br />
+</SPAN><SPAN>&lt;/</SPAN><SPAN>html</SPAN><SPAN>&gt;</SPAN></PRE><PRE><SPAN></SPAN>&nbsp;</PRE></SPAN></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The trace specific output placed at the end of the page looks like the following:</P><br />
+<P>&nbsp;</P><br />
+<P align="center"><IMG src="/photos/david.hayden/images/129298/original.aspx"></P><br />
+<P>&nbsp;</P><br />
+<P>Now you have some information about how long it takes to load and bind the data to the page.&nbsp; If you were getting your information from a database, you would probably see much larger times loading the data.&nbsp; And, if you then cached the database data, you could see the effects of caching on subsequent load times of the data.</P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Conclusion</STRONG></P><br />
+<P>For most developers, I am sure none of this is new and is pretty trivial.&nbsp; However, here again, I am just trying to convey that built into ASP.NET is a very simple to use page tracing mechanism that can help you profile your ASP.NET pages and finely tune your application to be highly performant and scalable.&nbsp; By injecting custom <STRONG>Trace.Write</STRONG> or <STRONG>Trace.Warn</STRONG> messages into your page code, you can get finely grained performance information on specific tasks occuring during the lifecycle of the page as well as&nbsp;measure the impact of caching and various other performance techniques.</P><br />
+<P>&nbsp;</P><br />
+<P><STRONG>Listening To</STRONG>:&nbsp; <A href="http://www.amazon.com/exec/obidos/tg/detail/-/B000159EWO/ref=pd_sxp_f/103-4472231-3118204?v=glance&amp;s=music">As the Rush Comes by Motorcycle</A></P><br />
+<P><STRONG>Drinking</STRONG>:&nbsp; <A href="http://www.relaxsipenjoy.com/jasmine_pearls_china_green_tea.aspx">Jasmine Pearls</A> <A href="http://www.relaxsipenjoy.com/default.aspx">Green Tea</A></P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/asp-net/" title="View all posts in ASP.NET" rel="category tag">ASP.NET</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/07/17/asp-net-page-profiling-using-page-tracing/" title="Permalink to ASP.NET Page Profiling using Page Tracing" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/07/17/asp-net-page-profiling-using-page-tracing/feed/" title="Comments RSS to ASP.NET Page Profiling using Page Tracing" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-55 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/07/03/avoid-chatty-interfaces-between-the-tiers-in-your-asp-net-web-application/" rel="prev"><span class="meta-nav">&larr;</span> Avoid Chatty Interfaces Between the Tiers in Your ASP.NET Web Application</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/07/23/web-applications-n-tier-vs-n-layer/" rel="next">Web Applications: N-Tier vs. N-Layer <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/07/17/asp-net-page-profiling-using-page-tracing/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='55' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="0d071207af" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.321 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 18:55:44 -->
+<!-- super cache -->

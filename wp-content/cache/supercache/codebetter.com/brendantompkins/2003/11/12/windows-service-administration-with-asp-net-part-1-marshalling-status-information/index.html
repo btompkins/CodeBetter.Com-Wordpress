@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Windows Service Administration with ASP.NET &#8211; Part 1 &#8211; Marshalling Status Information | Brendan Tompkins</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/brendantompkins/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/brendantompkins/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/brendantompkins/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/brendantompkins/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/brendantompkins/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Brendan Tompkins' href='http://codebetter.com/brendantompkins/' />
+<link rel='start' title='Tap. Tap.  Is this thing on?' href='http://codebetter.com/brendantompkins/2003/10/08/tap-tap-is-this-thing-on/' />
+<link rel='prev' title='IIS 6 on Win 2003 Image Caching Problem' href='http://codebetter.com/brendantompkins/2003/11/07/iis-6-on-win-2003-image-caching-problem/' />
+<link rel='next' title='Windows Service Administration with ASP.NET &#8211; Part 2 &#8211; Remoting to the Marshalled Object' href='http://codebetter.com/brendantompkins/2003/11/13/windows-service-administration-with-asp-net-part-2-remoting-to-the-marshalled-object/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/brendantompkins/2003/11/12/windows-service-administration-with-asp-net-part-1-marshalling-status-information/' />
+<link rel='shortlink' href='http://codebetter.com/brendantompkins/?p=22' />
+<link rel="stylesheet" href="http://codebetter.com/brendantompkins/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/brendantompkins/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/brendantompkins/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-22" class="post-22 post type-post status-publish format-standard hentry category-asp-net-tutorials">
+					<h1 class="entry-title">Windows Service Administration with ASP.NET &#8211; Part 1 &#8211; Marshalling Status Information</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/brendantompkins/author/btompkins/" title="View all posts by Brendan Tompkins">Brendan Tompkins</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/brendantompkins/2003/11/12/windows-service-administration-with-asp-net-part-1-marshalling-status-information/" title="5:30 pm" rel="bookmark"><span class="entry-date">November 12, 2003</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/brendantompkins/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/brendantompkins/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/brendantompkins/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P><FONT size="2">This is the first of a three-part&nbsp;blog post&nbsp;on how to monitor and control a .NET Windows Service from an ASP.NET page.&nbsp; The general approach I&#8217;ve taken involves using remoting to marshal a singleton&nbsp;object over a tcp channel.&nbsp; If you&#8217;re not familiar with Singleton objects, remoting, serialization and marshalling, you may want to go figure out that stuff first, then come back here&nbsp;to the specifics.&nbsp; I&#8217;m not an expert on these in general, so I&#8217;m not going to even try to do them justice with explanations here.&nbsp; This approach does work well for me, I&#8217;m using it to monitor a service that checks for status changes on shipping containers. It looks like this:</FONT></P><br />
+<P><IMG src="http://www.intrinsigo.com/bsblog/ServiceAdmin1.gif"></P><br />
+<P><FONT size="2"><STRONG>Step 1:</STRONG> Add a reference to System.Runtime.Remoting to your Service project.&nbsp; You also want to use the following namespaces in your .cs code:</FONT></P><FONT color="#0000ff" size="2"><br />
+<P>using</FONT><FONT size="2"> System.Runtime.Remoting;<BR></FONT><FONT color="#0000ff" size="2">using</FONT><FONT size="2"> System.Runtime.Remoting.Channels;<BR></FONT><FONT color="#0000ff" size="2">using</FONT><FONT size="2"> System.Runtime.Remoting.Channels.Http;<BR></FONT><FONT color="#0000ff" size="2">using</FONT><FONT size="2"> System.Runtime.Remoting.Channels.Tcp;</P></FONT><br />
+<P><FONT size="2"><STRONG>Step 2:</STRONG> Create a Serializable object that will be marshalled over the tcp channel. What I&#8217;ve done here create an object that contains the service information I want to monitor.&nbsp; This class keeps information about how long the service has been running, how often it executes its checks, and an array of items that have info about each status check. It looks like this, sorta (I&#8217;ve simplified the code for this example).</FONT></P><FONT size="2"><br />
+<P><FONT face="Courier New">[Serializable]<BR></FONT></FONT><FONT face="Courier New"><FONT color="#0000ff" size="2">public</FONT><FONT size="2"> </FONT><FONT color="#0000ff" size="2">class</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListStatus<BR>{<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> TimeSpan ExecutionInterval;<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListStatusItem [ ] StatusItems;<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> DateTime ServiceStarted; <BR></FONT><FONT size="2">}</FONT></FONT></P><br />
+<P><FONT face="Courier New"><FONT size="2">[Serializable]<BR></FONT><FONT color="#0000ff" size="2">public</FONT><FONT size="2"> </FONT><FONT color="#0000ff" size="2">class</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListStatusItem<BR>{<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT><FONT size="2"> </FONT><FONT color="#0000ff" size="2">int</FONT></FONT><FONT face="Courier New"><FONT size="2"> NumberEvents;<BR></FONT><FONT color="#0000ff" size="2">&nbsp;&nbsp; public</FONT></FONT><FONT face="Courier New"><FONT size="2"> DateTime CheckDateTime;<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> TimeSpan ExecutionTime;<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListCheckResult Result;<BR></FONT><FONT size="2">}</FONT></FONT></P><br />
+<P><FONT face="Courier New" size="2">[Serializable]<BR></FONT><FONT size="2"><FONT face="Courier New"><FONT color="#0000ff">public</FONT> <FONT color="#0000ff">enum</FONT> WatchListCheckResult<BR></FONT></FONT><FONT face="Courier New" size="2">{<BR>&nbsp;&nbsp; </FONT><FONT face="Courier New" size="2">Successful,<BR>&nbsp;&nbsp; </FONT><FONT face="Courier New" size="2">FailedTimeOut,<BR>&nbsp;&nbsp; </FONT><FONT face="Courier New"><FONT size="2">FailedError<BR></FONT><FONT size="2">}</FONT></FONT></P><br />
+<P><FONT size="2"><STRONG>Step 3:</STRONG> Create a wrapper class that inherits from MarshalByRefObject.&nbsp; This will be the remotable object. I&#8217;ve been calling these wrapper classes [wrapped-classname]Remotable for consistency. You can control the time-to-live for your object, by overriding the InitializeLifetimeService().&nbsp; To make your object live for the life of the service process, return null here.</FONT></P><FONT color="#0000ff" size="2"><br />
+<P><FONT face="Courier New">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> </FONT><FONT color="#0000ff" size="2">class</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListStatusRemotable : MarshalByRefObject<BR>{<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT></FONT><FONT face="Courier New"><FONT size="2"> WatchListStatus ServiceStatus;<BR>&nbsp;&nbsp;&nbsp;<BR>&nbsp;&nbsp; </FONT></FONT><FONT face="Courier New"><FONT color="#008000" size="2">// Sets the time to live for this object. When this expires, the object will have to<BR>&nbsp;&nbsp;&nbsp;//&nbsp;be re-marshalled<BR>&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">public</FONT><FONT size="2"> </FONT><FONT color="#0000ff" size="2">override</FONT></FONT><FONT face="Courier New"><FONT size="2"> Object InitializeLifetimeService()<BR>&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp; </FONT><FONT color="#0000ff" size="2">return</FONT><FONT size="2"> </FONT><FONT color="#0000ff" size="2">null</FONT></FONT><FONT face="Courier New" size="2">;<BR>&nbsp;&nbsp; }<BR>}</FONT></P><br />
+<P><FONT size="2"><FONT size="3"><FONT size="2"><STRONG>Step 4:</STRONG> Add a private instance member object to your service class.&nbsp; This is where the singleton model stuff becomes important.&nbsp; You only want to have one instance of this object per service.</FONT><BR><FONT color="#0000ff" size="2"><BR><FONT face="Courier New">private</FONT></FONT><FONT size="2"><FONT face="Courier New"> WatchListStatusRemotable m_Status;</FONT></P></FONT></FONT></FONT><br />
+<P><FONT size="2"><STRONG>Step 5:</STRONG> On &#8211; Startup of the service, marshal the object like so:</FONT></P><FONT size="2"><br />
+<P><FONT face="Courier New"><FONT color="#008000">//&nbsp;Register the TCP Channel on port 8001<BR></FONT>ChannelServices.RegisterChannel(<FONT color="#0000ff">new</FONT></FONT><FONT face="Courier New"> TcpChannel(8001));<BR></FONT><FONT color="#008000"><BR><FONT face="Courier New">//&nbsp;Register the type</FONT></FONT><BR><FONT face="Courier New">RemotingConfiguration.RegisterWellKnownServiceType (<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <FONT color="#0000ff">typeof</FONT></FONT><FONT face="Courier New">(WatchListStatusRemotable),&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#8220;WatchListStatus&#8221;,&nbsp;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WellKnownObjectMode.Singleton);<BR></FONT><FONT color="#0000ff"><FONT color="#008000"><BR><FONT face="Courier New">//&nbsp;Now, Marshal it&nbsp; this will make it available to other processes via the TCP remoting channel<BR></FONT></FONT></FONT><FONT face="Courier New" color="#0000ff">try</FONT><FONT face="Courier New">&nbsp;<BR>{<BR>&nbsp;&nbsp;&nbsp;&nbsp; RemotingServices.Marshal(m_Status, &#8220;WatchListStatus&#8221;);<BR>&nbsp;&nbsp;&nbsp;&nbsp; System.Diagnostics.Trace.WriteLine(&#8220;Watch List Status Marshalled&#8221;);<BR>}&nbsp;<BR><FONT color="#0000ff">catch</FONT></FONT><FONT face="Courier New"> (System.Exception ex)<BR>{<BR>&nbsp;&nbsp;&nbsp;&nbsp; System.Diagnostics.Trace.WriteLine(ex.Message);<BR>&nbsp;&nbsp;&nbsp;&nbsp; System.Diagnostics.Trace.WriteLine(ex.InnerException);<BR>}</FONT> </P><br />
+<P>That&#8217;s it!&nbsp; You can modify the object as the service does it&#8217;s thing and other processes that remote to this object will have access to this information.&nbsp; All you have to do is consume it with&nbsp;a call to Activator.GetObject from your ASP.NET code. <A href="http://dotnetjunkies.com/WebLog/bsblog/archive/2003/11/13/3523.aspx">In part two</A>, I&#8217;ll go into the details of how I did this in my app and how to control the service.</P><br />
+<P>-Brendan</P><br />
+<P><FONT size="1">Music tip: Have I mentioned </FONT><A href="http://www.britishseapower.co.uk/"><FONT size="1">British Sea Power</FONT></A><FONT size="1">?</FONT></P></FONT></p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://0.gravatar.com/avatar/c1de0fbc0dbc3fd24b285009c123d9b0?s=60&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Brendan Tompkins</h2>
+							By day, I'm a .NET developer working in the transportation and logistics industry... By night I'm a fabulous disco dancer.							<div id="author-link">
+								<a href="http://codebetter.com/brendantompkins/author/btompkins/" title="View all posts by Brendan Tompkins">View all posts by Brendan Tompkins &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/brendantompkins/category/asp-net-tutorials/" title="View all posts in ASP.NET Tutorials" rel="category tag">ASP.NET Tutorials</a>. Bookmark the <a href="http://codebetter.com/brendantompkins/2003/11/12/windows-service-administration-with-asp-net-part-1-marshalling-status-information/" title="Permalink to Windows Service Administration with ASP.NET &#8211; Part 1 &#8211; Marshalling Status Information" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/brendantompkins/2003/11/12/windows-service-administration-with-asp-net-part-1-marshalling-status-information/feed/" title="Comments RSS to Windows Service Administration with ASP.NET &#8211; Part 1 &#8211; Marshalling Status Information" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-22 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/brendantompkins/2003/11/07/iis-6-on-win-2003-image-caching-problem/" rel="prev"><span class="meta-nav">&larr;</span> IIS 6 on Win 2003 Image Caching Problem</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/brendantompkins/2003/11/13/windows-service-administration-with-asp-net-part-2-remoting-to-the-marshalled-object/" rel="next">Windows Service Administration with ASP.NET &#8211; Part 2 &#8211; Remoting to the Marshalled Object <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-99">
+					<div id="dsq-comment-header-99" class="dsq-comment-header">
+						<cite id="dsq-cite-99">
+								<span id="dsq-author-user-99">Philip_C</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-99" class="dsq-comment-body">
+						<div id="dsq-comment-message-99" class="dsq-comment-message"><p>Hello! i thank you for this article very helpful and i would like to know how you&#8217;ve done your web control which picture is on the top of this page. Cause i&#8217;ve just learnt that it&#8217;s not possible to use a ListView control in an ASP.Net control or page. Though, your control on the picture seems very similar or close to a ListView, which i need !<br />
+<br />If you could tell me how to proceed to create a complex multicolumn list in C# it would be very nice or at least just a lead idea to do it.<br />
+<br />Thanks.<br /></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-100">
+					<div id="dsq-comment-header-100" class="dsq-comment-header">
+						<cite id="dsq-cite-100">
+								<span id="dsq-author-user-100">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-100" class="dsq-comment-body">
+						<div id="dsq-comment-message-100" class="dsq-comment-message"><p>Philip.</p>
+<p>The control you see is a System.Web.UI.WebControls.DataGrid, which you can bind directly to a DataSet or View.  </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-101">
+					<div id="dsq-comment-header-101" class="dsq-comment-header">
+						<cite id="dsq-cite-101">
+								<span id="dsq-author-user-101">Philip_C</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-101" class="dsq-comment-body">
+						<div id="dsq-comment-message-101" class="dsq-comment-message"><p>Thanks a lot ! I thought it was another control cause i&#8217;m starting in designing ASP.Net pages.<br />
+<br />I&#8217;m searching tutorials to use DataList but i would like to know if i can use a DataList even if i&#8217;m not using any database as datasource. I just want to display data that i retrieve from my Windows Service as a string[][] array.<br />
+<br />Anyway, thanks again.<br /></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-102">
+					<div id="dsq-comment-header-102" class="dsq-comment-header">
+						<cite id="dsq-cite-102">
+								<span id="dsq-author-user-102">Brendan Tompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-102" class="dsq-comment-body">
+						<div id="dsq-comment-message-102" class="dsq-comment-message"><p>Philip&#8230; There is a DataList in the System.Web.UI.WebControls namespace. You should be able to bind this to any object that implements System.Collections.IEnumerable</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-103">
+					<div id="dsq-comment-header-103" class="dsq-comment-header">
+						<cite id="dsq-cite-103">
+								<span id="dsq-author-user-103">ahad zubair</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-103" class="dsq-comment-body">
+						<div id="dsq-comment-message-103" class="dsq-comment-message"><p>good work!</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/brendantompkins/2003/11/12/windows-service-administration-with-asp-net-part-1-marshalling-status-information/ ';
+	var disqus_identifier = '22 /blogs/brendan.tompkins/archive/2003/11/12/3504.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'brendantompkins';
+	var disqus_title = "Windows Service Administration with ASP.NET &#8211; Part 1 &#8211; Marshalling Status Information";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=22');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/brendantompkins/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/brendantompkins\/2003\/11\/12\/windows-service-administration-with-asp-net-part-1-marshalling-status-information\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">About Me</h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: left;"><img alt='' src='http://0.gravatar.com/avatar/c1de0fbc0dbc3fd24b285009c123d9b0?s=96&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>By day, I'm a .NET developer working in the transportation and logistics industry... By night I'm a fabulous disco dancer.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.238 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 18:56:15 -->
+<!-- super cache -->

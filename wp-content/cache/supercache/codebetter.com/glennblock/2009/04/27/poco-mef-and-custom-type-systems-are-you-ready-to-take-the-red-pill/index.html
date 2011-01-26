@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Poco, Mef, and custom type systems. Are you ready to take the red pill? | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='MEF Preview 5, changes and enhancements' href='http://codebetter.com/glennblock/2009/04/12/mef-preview-5-changes-and-enhancements/' />
+<link rel='next' title='“View Model” &#8211; the movie, cast your vote.' href='http://codebetter.com/glennblock/2009/05/05/view-model-the-movie-cast-your-vote/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=91' />
+<link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-91" class="post-91 post type-post status-publish format-standard hentry category-mef category-poco">
+					<h1 class="entry-title">Poco, Mef, and custom type systems. Are you ready to take the red pill?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill/" title="10:36 am" rel="bookmark"><span class="entry-date">April 27, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><img style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" border="0" alt="The Matrix" src="http://datacore.sciflicks.com/the_matrix/images/the_matrix_large_08.jpg" width="360" height="480" /></p>
+<p><a title="http://datacore.sciflicks.com/the_matrix/images/the_matrix_large_08.jpg" href="http://datacore.sciflicks.com/the_matrix/images/the_matrix_large_08.jpg">http://datacore.sciflicks.com/the_matrix/images/the_matrix_large_08.jpg</a></p>
+<p>I am about to show you in this post an approach to how poco (Plain Old Clr Objects [without attributes]) can be achieved with our current MEF codebase through creation of a new type system.</p>
+<h2>Are you ready t0 take the red pill? </h2>
+<p>Before you do, let’s set a bit of context. You may find it surprising to know that in general I am not a huge fan of attributes, at least from the aspect of consumer code. There are several reasons for this, but at the top of my list is that they increase the signal-to-noise ratio of the code, reduce scan-ability, and also couple the code to a specific implementation. </p>
+<p>That being said, MEF uses attributes (at least our attributed programming model does) for discovery of parts. Attributes provide a means for part authors to express that a part is part, thus making it discoverable. They provide a means for a host to interrogate the available parts, and make decisions on what to load, as well as adapt dynamically based on that present set. Attributes provide another benefit which is static analyzability meaning that tooling can scan assemblies and automatically determine what is present. It works really well for extensible systems like Visual Studio, where there are 1 to n implementations of extensions provided by an unlimited set of ISVs. We like to refer to this as external extensibility, or implicit composition (composing based on what is present, rather than registration).</p>
+<p>But what happens when the set is not open-ended, which is common when you are composing within your application (otherwise known as internal extensibility)? In these cases adding attributes may seem unnecessary as you know the set of parts that you have available. Isn’t there some way to just tell MEF, “Use these!”? Up until now our answer to this question has been that our attributed model does not support this, but in the future custom programming models can be created that sit side-by-side with our attributed model which will support non-attributed configurations. </p>
+<p>As a matter of fact, someone has already proven this to be true. <a href="http://www.thecodejunkie.com">Andreas Håkansson</a> has gone and implemented a <a href="http://mefcontrib.codeplex.com/">generic provider based model</a> that allows providing alternative means for defining parts. He’s got some great sample providers that work with his model that allow doing fluent interface configuration, or app.config style. These models introduce a bunch of rich capabilities that our current model does not such as explicit defaults, custom activation, etc. As far as I know, Andreas model is the only current available <em>programming model</em> for non-attributed parts.</p>
+<h2>Achieving Poco through a custom type system.</h2>
+<p>Recently we discovered however there is an additional alternative approach to new programming models which we are exploring. That is, build a custom type system <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  This may sound like you’ve stepped into the Matrix, but it’s not as crazy as it seems.&#160; In this case I’d argue though that ignorance is<em> not</em> bliss. <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<h2>A few caveats and warnings on this approach</h2>
+<p>Creating custom derived System.Type implementations is not fool-proof, and there are a bunch of known issues. </p>
+<p>For one thing support for custom types is not throughout the framework, there are a few places in the framework which actually depend on RuntimeType, the default concrete implementation of type in the framework. In our case this doesn’t effect us because MEF ‘s attributed model does not have this dependency. If however you tried to pass custom Types throughout the framework you will find that some things might break. </p>
+<p>Creating custom type systems allows you to break&#160; a lot of rules that tend to take for granted, similar to stepping into the matrix <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> . You can easily have side-effects in your custom type system that could have ripple effects throughout your app. In the cases here, we are additive, and are not changing the existing underlying functionality.</p>
+<h2>The Red Pill &#8211; Type is Abstract</h2>
+<p>Before we go further, let me let out a small, but apparently not well known secret. <strong>System.Type is abstract. </strong></p>
+<p>Don’t believe me? Check this screenshot below from Reflector. Actually not only is Type abstract, but ConstructorInfo, PropertyInfo and all the other infos are also abstract.</p>
+<p><a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/glenn.block/image_5F00_0243EAAB.png"><img style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" border="0" alt="image" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/glenn/block/image_thumb_2C43E8D3.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1920566609&amp;Signature=gBuAU%2bMzkCpE961QBrjtBliI6hs%3d" width="393" height="166" /></a> </p>
+<p>Your probably sitting in shock at this point, and rethinking everything you thought you knew about the type system. Hmm. OK, so once we’ve digested that, we can think whether not it has any implications for MEF? Well MEF has a TypeCatalog which accepts a collection of types. Our attributed model reads through the collection of types and their attributes to build up part definitions of imports, and exports.</p>
+<p>If <strong>THAT </strong>is the case, then conceptually can’t we create a new type (basically an adapter) which will take an underlying non-attributed type, read it’s members and then create attributes for those types based on a set of conventions? It is possible.</p>
+<p> Here’s passing unit tests to prove it.</p>
+<div>
+<div>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_poco_type_is_reflected_then_export_attribute_is_returned()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var mefType = <span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;();</pre>
+<p><!--CRLF--></p>
+<pre>    var exportAttribute = mefType.GetAttributes&lt;ExportAttribute&gt;().FirstOrDefault();</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.IsNotNull(exportAttribute != <span style="color: #0000ff">null</span>);</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_export_attribute_is_returned_then_contract_name_matches()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var mefType = <span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;();</pre>
+<p><!--CRLF--></p>
+<pre>    var exportAttribute = mefType.GetAttributes&lt;ExportAttribute&gt;().FirstOrDefault();</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.AreEqual(<span style="color: #0000ff">typeof</span>(IPoco), exportAttribute.ContractType);   </pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_poco_type_is_reflected_then_part_creation_policy_attribute_is_returned()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var mefType = <span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;(CreationPolicy.Shared);</pre>
+<p><!--CRLF--></p>
+<pre>    var partCreationPolicyAttribute = mefType.GetAttributes&lt;PartCreationPolicyAttribute&gt;().FirstOrDefault();</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.IsNotNull(partCreationPolicyAttribute != <span style="color: #0000ff">null</span>);</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_part_creation_policy_attribute_is_returned_then_is_shared()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var mefType = <span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;(CreationPolicy.Shared);</pre>
+<p><!--CRLF--></p>
+<pre>    var partCreationPolicyAttribute = mefType.GetAttributes&lt;PartCreationPolicyAttribute&gt;().FirstOrDefault();</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.AreEqual(CreationPolicy.Shared, partCreationPolicyAttribute.CreationPolicy);</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_poco_type_is_reflected_then_importing_constructor_is_returned()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var mefType = <span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;();</pre>
+<p><!--CRLF--></p>
+<pre>    var constructors =</pre>
+<p><!--CRLF--></p>
+<pre>        mefType.GetConstructors().Where(c =&gt; c.GetAttributes&lt;ImportingConstructorAttribute&gt;().Count() == 1);</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.IsTrue(constructors.Count() ==1 );</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_poco_type_is_added_to_type_catalog_then_part_is_created()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var catalog = <span style="color: #0000ff">new</span> TypeCatalog(<span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;(CreationPolicy.Shared));</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.AreEqual(1, catalog.Parts.Count());</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></p>
+<pre>&#160;</pre>
+<p><!--CRLF--></p>
+<pre>[Test]</pre>
+<p><!--CRLF--></p>
+<pre><span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> When_poco_type_is_added_to_type_catalog_then_ipoco_export_can_be_retrieved()</pre>
+<p><!--CRLF--></p>
+<pre>{</pre>
+<p><!--CRLF--></p>
+<pre>    var catalog = <span style="color: #0000ff">new</span> TypeCatalog(<span style="color: #0000ff">new</span> ComposablePartType&lt;MyPoco, IPoco&gt;(CreationPolicy.Shared));</pre>
+<p><!--CRLF--></p>
+<pre>    var part = catalog.Parts.First();</pre>
+<p><!--CRLF--></p>
+<pre>    var export = part.ExportDefinitions.Where(ed =&gt; ed.ContractName == AttributedModelServices.GetContractName(<span style="color: #0000ff">typeof</span>(IPoco)));</pre>
+<p><!--CRLF--></p>
+<pre>    Assert.IsNotNull(export);</pre>
+<p><!--CRLF--></p>
+<pre>}</pre>
+<p><!--CRLF--></div>
+</div>
+<p><strong>If you are thinking at this point, “Show me the code”, go get it from my skydrive </strong><a href="http://cid-f8b2fd72406fb218.skydrive.live.com/self.aspx/blog/TypeExtensions.zip"><strong>here.</strong></a><strong> In the download you’ll find a new TypeExtensions library along with unit tests. Disclaimer: This is a prototype at this point and is not production code. </strong></p>
+<h2>Creating a new type</h2>
+<p>Take a look at the first test. I am creating a new type called ComposablePartType which is generic, and I am passing in MyPoco as the implementation type, and IPoco as the contract type. </p>
+<pre><span style="color: blue">public class </span><span style="color: #2b91af">ComposablePartType</span>&lt;TImplementation, TContract&gt; : <span style="color: #2b91af">TypeDelegator
+</span>{}</pre>
+<p>Notice it inherits from TypeDelegator, well what the heck is that?</p>
+<p><a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/glenn.block/image_5F00_64162CF6.png"><img style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" border="0" alt="image" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/glenn/block/image_thumb_782F497F.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1920566609&amp;Signature=cbuGlbXxCLku%2bctDwiH6XkY7dPg%3d" width="346" height="177" /></a> </p>
+<p>TypeDelegator is a lesser known member of the framework. It inherits from System.Type, accepts a type which it wraps, and then delegates all calls on itself to. TypeDelegator is really handy, because without it I would have to manually implement and delegate to all members myself</p>
+<h2>Export and PartCreationPolicy attributes</h2>
+<p>Below is the code for MyPoco and IPoco, “Look Ma, no attributes”</p>
+<pre><span style="color: blue">public class </span><span style="color: #2b91af">MyPoco </span>: <span style="color: #2b91af">IPoco
+</span>{
+    <span style="color: blue">public </span>MyPoco(<span style="color: blue">bool </span>isPoco, <span style="color: blue">int </span>theAnswer, <span style="color: #2b91af">ILogger </span>logger)
+    {
+        <span style="color: blue">this</span>.IsPoco = isPoco;
+        <span style="color: blue">this</span>.TheAnswer = theAnswer;
+        <span style="color: blue">this</span>.Logger = logger;
+    }
+
+    <span style="color: blue">public bool </span>IsPoco { <span style="color: blue">get</span>; <span style="color: blue">internal set</span>; }
+    <span style="color: blue">public int </span>TheAnswer { <span style="color: blue">get</span>; <span style="color: blue">internal set</span>; }
+    <span style="color: blue">public </span><span style="color: #2b91af">ILogger </span>Logger { <span style="color: blue">get</span>; <span style="color: blue">internal set</span>; }
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IPoco
+</span>{
+    <span style="color: blue">bool </span>IsPoco { <span style="color: blue">get</span>; }
+    <span style="color: blue">int </span>TheAnswer { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">ILogger </span>Logger { <span style="color: blue">get</span>; }
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>The unit test is then querying the attributes on this “type” to then see if it can find an ExportAttribute, which assuming the test succeeds it will. ComposablePartType is for all intents and purposes just like System.Type. With one major difference, it creates attributes on the fly based on underlying conventions on the Type it wraps. In this case it has created an Export attribute, exporting the IPoco contract, which is verified in the second test. </p>
+<p>Let’s look at the next two tests which relates to part creation policy. The first test is checking whether or not the type has a PartCreationPolicyAttribute it, and the second test is checking that the attribute is set to shared. OK, that’s just an extension pattern wise of the previous tests.</p>
+<p>Here’s how it’s done under the hood.</p>
+<pre><span style="color: blue">public override object</span>[] GetCustomAttributes(<span style="color: blue">bool </span>inherit)
+{
+    <span style="color: blue">if </span>(_attributes == <span style="color: blue">null</span>)
+    {
+        _attributes =  <span style="color: blue">base</span>.GetCustomAttributes(inherit);
+        <span style="color: #2b91af">Array</span>.Resize(<span style="color: blue">ref </span>_attributes, _attributes.Length + 2);
+        _attributes[_attributes.Length - 2] =
+            <span style="color: blue">new </span><span style="color: #2b91af">ExportAttribute</span>(_contractName, <span style="color: blue">typeof</span>(TContract));
+        _attributes[_attributes.Length - 1] =
+            <span style="color: blue">new </span><span style="color: #2b91af">PartCreationPolicyAttribute</span>(_partCreationPolicy);
+    }
+    <span style="color: blue">return </span>_attributes;
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Above, I am taking the collection of attributes returned from the underlying type, increasing the size of the collection and adding the Export and PartCreationPolicy attributes. Once i do this, the type has become attributed <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<h2></h2>
+<h2>Greedy Constructors and parameter name conventions</h2>
+<p>Allright, let’s peel back the onion a little bit further and look at the next test, this one relates to constructors. In the test, I am querying for a constructor to see if I can find one that has an [ImportingConstructor] attribute. Notice that MyPoco has a single constructor and it is not parameterless. The new type system supports finding the greediest constructor. It finds that constructor and then adds an [ImportingConstructor] on it in order to make MEF’s attributed model happy.</p>
+<p>I have to say, I just adore Linq. Look at this code which handles finding the greediest constructor.</p>
+<pre><span style="color: blue">public override </span><span style="color: #2b91af">ConstructorInfo</span>[] GetConstructors(<span style="color: #2b91af">BindingFlags </span>bindingAttr)
+{
+    <span style="color: blue">if </span>(_constructors == <span style="color: blue">null</span>)
+    {
+        _constructors =
+        <span style="color: blue">base</span>.GetConstructors(bindingAttr).OrderByDescending(
+        c =&gt; c.GetParameters().Count()).ToArray();
+        _constructors[0] = <span style="color: blue">new </span><span style="color: #2b91af">ComposablePartConstructorInfo</span>(
+            _constructors[0],_alwaysUseConstructorParamNameAsContract);
+    }
+    <span style="color: blue">return </span>_constructors;
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>Once I have the greediest constructor, I replace it with a new custom ComposablePartConstructorInfo which wraps the existing constructor.</p>
+<pre><span style="color: blue">public class </span><span style="color: #2b91af">ComposablePartConstructorInfo </span>: <span style="color: #2b91af">ConstructorInfo <font color="#000000">{}</font></span></pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>_alwaysUseConstructorParamNameAsContract specifies whether or not the imports on the params for that constructor should be the parameter name or the contract. In MEF today, we default to use the type. Having this level of control at the type level allows me to augment that with additional conventions.</p>
+<p>ComposablePartConstructorInfo looks at the parameters of the constructor. If they are primitives, or types String/DateTime, or if the override params is set,&#160; it will create a ComposablePartParameterInfo which in turn adds an [Import] attribute specifying the <em>parameter name</em> as the contract. This is useful for cases where you have a sender parameter of type string where the contract is “Sender”.</p>
+<pre><span style="color: blue">public override </span><span style="color: #2b91af">ParameterInfo</span>[] GetParameters()
+{
+    <span style="color: blue">if </span>(_parameterInfos == <span style="color: blue">null</span>)
+    {
+        <span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">ParameterInfo</span>&gt; parameters = <span style="color: blue">new </span><span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">ParameterInfo</span>&gt;();
+        <span style="color: blue">foreach </span>(<span style="color: #2b91af">ParameterInfo </span>param <span style="color: blue">in </span>_constructorInfo.GetParameters())
+        {
+            <span style="color: blue">if </span>(_alwaysUseParamNameAsContract ||
+                param.ParameterType.IsPrimitive ||
+                param.ParameterType == <span style="color: blue">typeof </span>(<span style="color: blue">string</span>) ||
+                param.ParameterType == <span style="color: blue">typeof </span>(<span style="color: #2b91af">DateTime</span>))
+                parameters.Add(<span style="color: blue">new </span><span style="color: #2b91af">ComposablePartParameterInfo</span>(param));
+            <span style="color: blue">else
+                </span>parameters.Add(param);
+        }
+        _parameterInfos = parameters.ToArray();
+    }
+    <span style="color: blue">return </span>_parameterInfos;
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>By now, I think you’re starting to get the picture of how this all fits together. I’ll leave you to explore ComposablePartParameterInfo yourself <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>I’ll leave you with one other thought, you can take ComposablePartConstructorInfo&#160; even further to do AOP-style interception and dynamic proxying. Can you see how? </p>
+<h2>Registering poco types with Part Registries</h2>
+<p>Now that we have our custom type system, we can start to feed these types to MEF. One approach to doing this is to simply use our TypeCatalog.&#160; Combined with Linq you can do some pretty nifty things once you have an assembly in hand like registering all types that end in Service, or all types that live in the MyApp.Services namespace. That’s all well and good, but the one thing you lose in doing so is the reflect-ability and static-analysis that our attributed model currently provides, as these parts are registered on the fly at runtime. It would be nice if there was a way to combine the two approaches. There is, ComposablePartRegistry and PartRegistryCatalog.</p>
+<p>A registry is a class that contains a catalog. Catalogs in MEF contain parts. ComposablePartRegistry is below.</p>
+<pre><span style="color: blue">public abstract class </span><span style="color: #2b91af">ComposablePartRegistry
+</span>{
+    <span style="color: blue">protected abstract </span><span style="color: #2b91af">ComposablePartCatalog </span>GetCatalog();
+    <span style="color: blue">public </span><span style="color: #2b91af">ComposablePartCatalog </span>Catalog
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return </span>GetCatalog(); }
+    }
+}</pre>
+<p><a href="http://11011.net/software/vspaste"></a></p>
+<p>To register a set of pocos, you simply derive from ComposablePartRegistry and implement the GetCatalog method to return a TypeCatalog. </p>
+<pre><span style="color: blue">public class </span><span style="color: #2b91af">TestRegistry </span>: <span style="color: #2b91af">ComposablePartRegistry
+</span>{
+    <span style="color: blue">protected override </span><span style="color: #2b91af">ComposablePartCatalog </span>GetCatalog()
+    {
+        <span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">Type</span>&gt; types = <span style="color: blue">new </span><span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">Type</span>&gt;();
+        types.Add(<span style="color: blue">new </span><span style="color: #2b91af">ComposablePartType</span>&lt;<span style="color: #2b91af">MyPoco</span>, <span style="color: #2b91af">IPoco</span>&gt;
+            (<span style="color: #2b91af">CreationPolicy</span>.Shared));
+        types.Add(<span style="color: blue">new </span><span style="color: #2b91af">ComposablePartType</span>&lt;<span style="color: #2b91af">Logger</span>, <span style="color: #2b91af">ILogger</span>&gt;
+            (<span style="color: #2b91af">CreationPolicy</span>.Shared));
+        <span style="color: blue">return new </span><span style="color: #2b91af">TypeCatalog</span>(types);
+    }
+}</pre>
+<p>Above TestRegistry is registering two parts, MyPoco and Logger both as shared. The last piece of the puzzle is to make registries discoverable. Once they are discoverable we can get back our full analyzability. This is where PartRegistryCatalog comes in.&#160; This new catalog inherits from our AssemblyCatalog and adds in additional discovery of part registries. The important part is in the method below.</p>
+<pre><span style="color: blue">private void </span>LoadRegistries()
+{
+    <span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">ComposablePartDefinition</span>&gt; parts =
+        <span style="color: blue">new </span><span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">ComposablePartDefinition</span>&gt;();
+    <span style="color: blue">var </span>registries = <span style="color: blue">new </span><span style="color: #2b91af">List</span>&lt;<span style="color: #2b91af">ComposablePartRegistry</span>&gt;();
+
+    <span style="color: blue">var </span>registryTypes = Assembly.GetTypes().
+        Where(t =&gt; t.IsSubclassOf(<span style="color: blue">typeof</span>(<span style="color: #2b91af">ComposablePartRegistry</span>)));
+
+    <span style="color: blue">foreach </span>(<span style="color: blue">var </span>registryType <span style="color: blue">in </span>registryTypes)
+    {
+        <span style="color: blue">var </span>registry = (<span style="color: #2b91af">ComposablePartRegistry</span>)<span style="color: #2b91af">Activator</span>.
+            CreateInstance(registryType);
+        registries.Add(registry);
+        parts.AddRange(registry.Catalog.Parts);
+    }
+    _parts = parts.AsQueryable();
+    <span style="color: blue">this</span>.Registries = registries;
+}</pre>
+<p>The method grabs all registries that it finds and then instantiates them. Once the registry is created, it’s parts are queried and stored within the registry catalog. When the catalog’s Part property is invoked, it will return a combination of parts discovered through registries and those discovered through the normal means.</p>
+<h2>Bringing it all together</h2>
+<p>Now with all the pieces in place, we can start composing pocos in the container. First we setup our container. Our current assembly has TestRegistry which will be discovered by the registry catalog. Next we can add our values to the container so that they can be injected.</p>
+<pre><span style="color: blue">public </span><span style="color: #2b91af">CompositionContainer </span>SetupContainerUsingConstructorParamTypes...()
+{
+    <span style="color: blue">var </span>catalog = <span style="color: blue">new
+        </span><span style="color: #2b91af">PartRegistryCatalog</span>(<span style="color: blue">typeof</span>(<span style="color: #2b91af">ComposablePartTypeFixture</span>).Assembly);
+    <span style="color: blue">var </span>container = <span style="color: blue">new </span><span style="color: #2b91af">CompositionContainer</span>(catalog);
+
+    <span style="color: green">//forcefully add some values to the container.
+    </span>_isPoco = <span style="color: blue">true</span>;
+    _theAnswer = 42;
+    container.ComposeExportedObject(<span style="color: #a31515">&quot;IsPoco&quot;</span>,_isPoco);
+    container.ComposeExportedObject(<span style="color: #a31515">&quot;TheAnswer&quot;</span>,_theAnswer);
+    <span style="color: blue">return </span>container;
+}</pre>
+<p>Finally we can run our tests which should be self-explanatory.</p>
+<pre>[<span style="color: #2b91af">Test</span>]
+<span style="color: blue">public void </span>When_..._queried_from_the_container_then_Wow_is_injected...()
+{
+    <span style="color: blue">var </span>container =
+        SetupContainerUsingConstructorParamTypesAsTheContractName();
+    <span style="color: blue">var </span>poco = container.GetExportedObject&lt;<span style="color: #2b91af">IPoco</span>&gt;();
+    <span style="color: #2b91af">Assert</span>.AreEqual(_isPoco, poco.IsPoco);
+}
+
+[<span style="color: #2b91af">Test</span>]
+<span style="color: blue">public void </span>When_..._queried_from_the_container_then_42_is_injected...()
+{
+    <span style="color: blue">var </span>container =
+        SetupContainerUsingConstructorParamTypesAsTheContractName();
+    <span style="color: blue">var </span>poco = container.GetExportedObject&lt;<span style="color: #2b91af">IPoco</span>&gt;();
+    <span style="color: #2b91af">Assert</span>.AreEqual(_theAnswer, poco.TheAnswer);
+}</pre>
+<h2>Summing up and what’s next?</h2>
+<p>At this point this is just a prototype illustrating a modified type system which dynamically creates attributes on non-attributed part through a set of conventions. This approach is very powerful in that it allows managing a closed set of parts, such as the internals of an application, and works harmoniously within our existing attributed programming model.</p>
+<p>A few differences / limitations of the current prototype.</p>
+<p>1. The Type is the export and there is only one contract exported. The model does not currently support exporting methods and properties. It could, it just doesn’t. This was deliberate in order to keep the model simplified. </p>
+<p>2. No metadata support. Currently ComposablePartType does not provide any means for providing metadata for the part. This was also to keep things simple, though it is possible to support it.</p>
+<p>3. Recomposition is not supported. Currently all imports that are created are not recomposable.</p>
+<p>We’d like your feedback on the approach in order to let us know whether we should take it further, or even consider putting it into Mef V1.</p>
+<p>Let us know!</p>
+<p><strong>Download the code </strong><a href="http://cid-f8b2fd72406fb218.skydrive.live.com/self.aspx/blog/TypeExtensions.zip"><strong>here</strong></a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/mef/" title="View all posts in MEF" rel="category tag">MEF</a>, <a href="http://codebetter.com/glennblock/category/poco/" title="View all posts in poco" rel="category tag">poco</a>. Bookmark the <a href="http://codebetter.com/glennblock/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill/" title="Permalink to Poco, Mef, and custom type systems. Are you ready to take the red pill?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill/feed/" title="Comments RSS to Poco, Mef, and custom type systems. Are you ready to take the red pill?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-91 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2009/04/12/mef-preview-5-changes-and-enhancements/" rel="prev"><span class="meta-nav">&larr;</span> MEF Preview 5, changes and enhancements</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2009/05/05/view-model-the-movie-cast-your-vote/" rel="next">“View Model” &#8211; the movie, cast your vote. <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-337">
+					<div id="dsq-comment-header-337" class="dsq-comment-header">
+						<cite id="dsq-cite-337">
+	http://www.twitter.com/talktomikesmith							<span id="dsq-author-user-337">Michael A. Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-337" class="dsq-comment-body">
+						<div id="dsq-comment-message-337" class="dsq-comment-message"><p>Very cool. To offer the feedback you are looking for, I&#8221;ll have to consider it some more.  Just might add that the paragraph that goes &#8220;TypeDelegator is a lesser known&#8230;  to all members myself&#8221; took me a few times to read to grok.  Thanks as always, Glenn.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-338">
+					<div id="dsq-comment-header-338" class="dsq-comment-header">
+						<cite id="dsq-cite-338">
+	http://www.twitter.com/talktomikesmith							<span id="dsq-author-user-338">Michael A. Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-338" class="dsq-comment-body">
+						<div id="dsq-comment-message-338" class="dsq-comment-message"><p>Unless, I&#8217;m overshooting, I see the &#8220;new type system&#8221; approach as a beginning to being able to augment MEF with capabilities normally reserved for IoC containers. </p>
+<p>There&#8217;s always something to be said about not re-inventing the wheel, and given that strategies exist for IoC containers and MEF to interop well, clearly this feature is not crucial. Nevertheless, there will be folks who will feel more comfortable using MEF in this manner in conjunction with the attribute programming model, and avoiding the additional complexity of adapting an IoC container.</p>
+<p>As I&#8217;m still not fully across the bounds of using a custom Type system across the .NET Framework, it is hard for me to weigh this approach up against the Provider Model in MEF Contrib. Either way, I think some approach for supporting POCO&#8217;s like this should be core.  Give us our cake and we&#8217;ll decide whether or not to eat it (please).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-339">
+					<div id="dsq-comment-header-339" class="dsq-comment-header">
+						<cite id="dsq-cite-339">
+	http://blog.shirmanov.com							<span id="dsq-author-user-339">Leonid Shirmanov</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-339" class="dsq-comment-body">
+						<div id="dsq-comment-message-339" class="dsq-comment-message"><p>I believe it absolutely should be in MEF 1.0</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-340">
+					<div id="dsq-comment-header-340" class="dsq-comment-header">
+						<cite id="dsq-cite-340">
+	http://blogs.windowsclient.net/joeyw							<span id="dsq-author-user-340">Joe</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-340" class="dsq-comment-body">
+						<div id="dsq-comment-message-340" class="dsq-comment-message"><p>I&#8217;m not sure &#8211; this just feels a bit hacky to me.<br />
+Surely the right way to go would be to have a type registration catalog, with attributes as just one way to feed into it.   Just like an IoC Container.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-341">
+					<div id="dsq-comment-header-341" class="dsq-comment-header">
+						<cite id="dsq-cite-341">
+	http://www.paulbatum.com							<span id="dsq-author-user-341">Paul Batum</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-341" class="dsq-comment-body">
+						<div id="dsq-comment-message-341" class="dsq-comment-message"><p>Great post Glenn, I had no idea that Type and the xInfo classes were abstract! </p>
+<p>My mind is awash with half-possibilities. Awesome stuff.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-342">
+					<div id="dsq-comment-header-342" class="dsq-comment-header">
+						<cite id="dsq-cite-342">
+	http://www.bluespire.com							<span id="dsq-author-user-342">Rob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-342" class="dsq-comment-body">
+						<div id="dsq-comment-message-342" class="dsq-comment-message"><p>My brain just &#8216;sploded and a whole lota&#8217; awesome was splattered everywhere!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-343">
+					<div id="dsq-comment-header-343" class="dsq-comment-header">
+						<cite id="dsq-cite-343">
+	http://adventuresinsoftware.com/blog							<span id="dsq-author-user-343">Michael L Perry</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-343" class="dsq-comment-body">
+						<div id="dsq-comment-message-343" class="dsq-comment-message"><p>Maybe it&#8217;s just the trip down the rabbit hole, but it looks like your use of IsNotNull is incorrect. It expects an object reference, not a condition. The way you are using it, you&#8217;ll always pass a boxed boolean, which would of course not be null.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-344">
+					<div id="dsq-comment-header-344" class="dsq-comment-header">
+						<cite id="dsq-cite-344">
+	http://www.vcskicks.com							<span id="dsq-author-user-344">Visual C# Kicks</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-344" class="dsq-comment-body">
+						<div id="dsq-comment-message-344" class="dsq-comment-message"><p>Creative solution, really makes you think</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-345">
+					<div id="dsq-comment-header-345" class="dsq-comment-header">
+						<cite id="dsq-cite-345">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-345">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-345" class="dsq-comment-body">
+						<div id="dsq-comment-message-345" class="dsq-comment-message"><p>Hi Michael </p>
+<p>Thanks for the feedback. Yes there are strategies for IoC containers to work with MEF, and we will continue to develop these further. At a minimum it will require work on each of the IoC container authors in order to support MEF as one of their component sources.</p>
+<p>On the other hand there are a large set of folks that want to use MEF internally within their apps that do not currently today use any of the existing IoC containers. The model proposed here allows them to do so, without incurring the maintainability costs of additional attributes.</p>
+<p>Granted it does introduce ambiguity. Personally I think the benefits outweigh the risks.</p>
+<p>What do you think?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-346">
+					<div id="dsq-comment-header-346" class="dsq-comment-header">
+						<cite id="dsq-cite-346">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-346">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-346" class="dsq-comment-body">
+						<div id="dsq-comment-message-346" class="dsq-comment-message"><p>@Joe.</p>
+<p>What about it feels hacky? It is basically an adapter which layers on top of a non-attributed type.</p>
+<p>MEF actually is not bound to attributes, our attributed programming model is. However, today we do not have a non-attributed model&nbsp;yet. This is a good feedback though.</p>
+<p>Actually as I am writing this, one of the devs on my team just emailed me a very simple programming model for doing just that on our new ReflectionModel abstractions in preview 5. You may get what you are asking for. <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-347">
+					<div id="dsq-comment-header-347" class="dsq-comment-header">
+						<cite id="dsq-cite-347">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-347">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-347" class="dsq-comment-body">
+						<div id="dsq-comment-message-347" class="dsq-comment-message"><p>@Rob I hope it didn&#8217;t splatter too much, we still need you for Caliburn <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-348">
+					<div id="dsq-comment-header-348" class="dsq-comment-header">
+						<cite id="dsq-cite-348">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-348">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-348" class="dsq-comment-body">
+						<div id="dsq-comment-message-348" class="dsq-comment-message"><p>@Michael</p>
+<p>Thanks for reviewing and finding my bugs <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> , where exacty is it, which test?</p>
+<p>Thanks<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-349">
+					<div id="dsq-comment-header-349" class="dsq-comment-header">
+						<cite id="dsq-cite-349">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-349">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-349" class="dsq-comment-body">
+						<div id="dsq-comment-message-349" class="dsq-comment-message"><p>@Leonid, why?</p>
+<p>@Paul thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-350">
+					<div id="dsq-comment-header-350" class="dsq-comment-header">
+						<cite id="dsq-cite-350">
+	http://home.infusionblogs.com/kszklenski/default.aspx							<span id="dsq-author-user-350">Kyle Szklenski</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-350" class="dsq-comment-body">
+						<div id="dsq-comment-message-350" class="dsq-comment-message"><p>The test error with IsNotNull is in your first test.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-351">
+					<div id="dsq-comment-header-351" class="dsq-comment-header">
+						<cite id="dsq-cite-351">
+	http://blogs.windowsclient.net/joeyw							<span id="dsq-author-user-351">Joe</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-351" class="dsq-comment-body">
+						<div id="dsq-comment-message-351" class="dsq-comment-message"><p>Glenn, I see your point that is additive.  In that case, if it&#8217;s replaced with something more strategic later there&#8217;s no real damage done.</p>
+<p>The reason why I say hacky is that MEF depends on the type system, so we simulate attributes using a new type system on top of the existing one.  OK, easy enough &#8211; but as you allude to &#8211; attributes should be just one way of registering types.  Maybe there just needs to be some underlying API that some existing IoC libraries can use if they wanted to leverage MEF&#8217;s dependency resolution engine.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-352">
+					<div id="dsq-comment-header-352" class="dsq-comment-header">
+						<cite id="dsq-cite-352">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-352">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-352" class="dsq-comment-body">
+						<div id="dsq-comment-message-352" class="dsq-comment-message"><p>@Joe that underlying API is our primitives (ComposablePartDefinition, ImportDefinition, ExportDefintion), none of these know anything about attributes. This meansIoC containers can use and integrate with them, but they would need to do the work to do so. The question is when/where that makes sense.</p>
+<p>Nick Blumhardt has a good post on this on his blog here. </p>
+<p><a href="http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx" rel="nofollow">http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-353">
+					<div id="dsq-comment-header-353" class="dsq-comment-header">
+						<cite id="dsq-cite-353">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-353">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-353" class="dsq-comment-body">
+						<div id="dsq-comment-message-353" class="dsq-comment-message"><p>@Joe, here&#8217;s a simple model from one of our devs that can do just that without requiring a custom type. Our new APIs do make it far simpler <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  </p>
+<p><a href="http://pastie.org/460259" rel="nofollow">http://pastie.org/460259</a></p>
+<p>Is this along the lines of what you are thinking?</p>
+<p>The one thing it does not cover is AOP, however a cut down version of ComposablePartType / ComposablePartConstructorInfo can be introduced to allow adding custom activation hooks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-354">
+					<div id="dsq-comment-header-354" class="dsq-comment-header">
+						<cite id="dsq-cite-354">
+	http://www.twitter.com/talktomikesmith							<span id="dsq-author-user-354">Michael A. Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-354" class="dsq-comment-body">
+						<div id="dsq-comment-message-354" class="dsq-comment-message"><p>@Glenn Thanks for responding.  Oh, I absolutely agree, the benefits definitely outweigh the risks, and it should be prioritised as such.  As you said, full AOP support would be terrific. </p>
+<p>On a side note, with respect to potential MEF features, is your team encountering any that produce the sort of risk whereas they won&#8217;t be able to ship in time?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-355">
+					<div id="dsq-comment-header-355" class="dsq-comment-header">
+						<cite id="dsq-cite-355">
+	http://blogs.windowsclient.net/joeyw							<span id="dsq-author-user-355">Joe</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-355" class="dsq-comment-body">
+						<div id="dsq-comment-message-355" class="dsq-comment-message"><p>Thanks for the responses Glenn.  I think it&#8217;s great work that you and your team are doing.</p>
+<p>My problem is that we have an in-house IoC and I want to be ready for .NET 4 and adopt MEF.  At the same time I&#8217;m looking for guidance of how MEF and PRISM can work together.  This is long-term planning, rather than immediate solutions &#8211; so it&#8217;s a matter of trying to second guess the roadmap for MEF further down the road.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-356">
+					<div id="dsq-comment-header-356" class="dsq-comment-header">
+						<cite id="dsq-cite-356">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-356">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-356" class="dsq-comment-body">
+						<div id="dsq-comment-message-356" class="dsq-comment-message"><p>Hi Joe</p>
+<p>Thanks for the kind words on the team. </p>
+<p>As far as using an IoC, I wouldn&#8217;t say you have to choose between an IoC and MEF. We are trying to make MEF more palatable in terms of removing attributes for internal composition, but there are still significant differences. Each IoC container offers different things that make it special, we do NOT want to force people to give that up. </p>
+<p>We are working on a path to how IoC containers could integrate cleanly with MEF&#8217;s underlying part model therefore having a single container in the app. We are working with p&#038;p for example on MEF-enabling Unity. We are also working with a bunch of the IoC authors including Hammett, Nate, Jeremy, et al to get similar support added to their containers.</p>
+<p>You can see a preview of what this might look like on Nick Blumhardt&#8217;s blog post here <a href="http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx" rel="nofollow">http://blogs.msdn.com/nblumhardt/archive/2009/03/16/hosting-mef-extensions-in-an-ioc-container.aspx</a>, or in his MEF integration library for Autofac which you can get on the Autofac site here <a href="http://code.google.com/p/autofac/wiki/MefIntegration" rel="nofollow">http://code.google.com/p/autofac/wiki/MefIntegration</a>,</p>
+<p>Appreciate your thoughts.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-357">
+					<div id="dsq-comment-header-357" class="dsq-comment-header">
+						<cite id="dsq-cite-357">
+								<span id="dsq-author-user-357">Tim Lovell-Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-357" class="dsq-comment-body">
+						<div id="dsq-comment-message-357" class="dsq-comment-message"><p>This seems extremely hacky &#8211; the way the custom types generated will only attach a single attribute  in each custom type generated and there is no &#8216;common fake type&#8217; that all attributes for a particular &#8216;real type&#8217; can attach to (when multiple components want to modify the same type).</p>
+<p>Aren&#8217;t there already established ways of attaching attributes after the fact like using e.g. TypeDescriptionProvider from System.ComponentModel, or MetadataStore from Windows.Design</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-358">
+					<div id="dsq-comment-header-358" class="dsq-comment-header">
+						<cite id="dsq-cite-358">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-358">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-358" class="dsq-comment-body">
+						<div id="dsq-comment-message-358" class="dsq-comment-message"><p>@Tim, TypeDescriptionProvider is an opton however, it only works if you access the information through a specific set of APIs, which our attributed model does not use. </p>
+<p>A further option is having a class that implements ICustomAttributeProvider which is actually what MEF looks for under the hood, however it would require a bunch of custom work and would not work with our existing catalogs.</p>
+<p>The goal of this &#8220;spike&#8221; was to provide an adaption mechanism that worked with all of our existing MEF infrastructure.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-359">
+					<div id="dsq-comment-header-359" class="dsq-comment-header">
+						<cite id="dsq-cite-359">
+	http://wizardsofsmart.net/							<span id="dsq-author-user-359">Ryan Riley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-359" class="dsq-comment-body">
+						<div id="dsq-comment-message-359" class="dsq-comment-message"><p>I love it, at least the theory. I&#8217;ll have to have a play to grok it better, but this is really cool. So many possibilities seem so open. One thing that I liked about attributed-MEF that I didn&#8217;t see here was the ability to auto-register contracts from assemblies. Maybe there&#8217;s another convention that could be used here (folder for contracts/interfaces and another for types?), but we&#8217;ve tried hard to keep the noise of manual registration down in our apps. I can&#8217;t imagine that would be hard to do.</p>
+<p>As for your questions, I may just be too young in the tooth with containers to understand, but I&#8217;ve never used 1, I&#8217;m not sure what you mean by 2 (we can&#8217;t attribute it in any other way and have it retained, e.g. Serializable?), and I don&#8217;t understand what you mean by not recomposable in question 3. Can you elaborate more?</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill/ ';
+	var disqus_identifier = '91 /blogs/glenn.block/archive/2009/04/27/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "Poco, Mef, and custom type systems. Are you ready to take the red pill?";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=91');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2009\/04\/27\/poco-mef-and-custom-type-systems-are-you-ready-to-take-the-red-pill\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.302 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:12:27 -->
+<!-- super cache -->

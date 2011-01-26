@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Leaky Abstractions and the Last Responsible Moment for Design | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Of Spikes and Prototypes' href='http://codebetter.com/jeremymiller/2006/01/13/of-spikes-and-prototypes/' />
+<link rel='next' title='Is anybody using StructureMap?' href='http://codebetter.com/jeremymiller/2006/01/19/is-anybody-using-structuremap/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2006/01/18/leaky-abstractions-and-the-last-responsible-moment-for-design/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=120' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-120" class="post-120 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Leaky Abstractions and the Last Responsible Moment for Design</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2006/01/18/leaky-abstractions-and-the-last-responsible-moment-for-design/" title="5:22 am" rel="bookmark"><span class="entry-date">January 18, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p class="MsoNormal" style="margin: 0in 0in 0pt">If you haven’t read it before, go check out Joel’s <a href="http://www.joelonsoftware.com/articles/LeakyAbstractions.html">Law of Leaky Abstractions</a>.<span>&nbsp;&nbsp; </span>I bumped into some code in one of our projects last week that is a classic case of a leaky abstraction.<span>&nbsp; </span>It looked something like this:</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span> DataTransferObject ProcessTheMessage(Message message)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>IMessageHandler[] handlers = createHandlersForMessage(message);</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>DataTransferObject dto = <span style="color: blue">new</span> DataTransferObject();</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">foreach</span> (IMessageHandler handler <span style="color: blue">in</span> handlers)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// Check for special case</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span> (handler <span style="color: blue">is</span> SpecialMessageHandler)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// Downcast to the specific MessageHandler</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>SpecialMessageHandler special = (SpecialMessageHandler) handler;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// Check if the message is from our BigClient with special</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// &#8220;needs&#8221; – Our code didn’t do this, but I’ve seen this</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;color: green;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>// far too frequently</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span> (message.ClientId = &#8220;BigClient&#8221;)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>special.SendEmail(message);</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">else</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>special.Audit(message.Header, message.ClientId);</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">else</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>handler.Process(message, dto);</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// Another exception case if the MessageHandler is Security</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span> (handler <span style="color: blue">is</span> SecurityMessageHandler)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span> (!(SecurityMessageHandler).Authorized)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>dto.Success = <span style="color: blue">false</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">break</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span> dto;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">There is a generalized array of <span style="font-family: 'Courier New'">IMessageHandler</span> objects that take their turn processing a <span style="font-family: 'Courier New'">Message</span> object, or at least that’s the way it started.<span>&nbsp; </span>At some point the developers needed to code a special case to short circuit the message handling chain if a specific handler was encountered, or a specific client.<span>&nbsp; </span>For whatever reasons, the developers chose to go outside the convention of the existing <span style="font-family: 'Courier New'">IMessageHandler</span> abstraction.<span>&nbsp; </span>Once the abstraction springs a leak with one exception case, <a href="http://www.artima.com/intv/fixitP.html">more exception cases are sure to follow rapidly</a>.<span>&nbsp; </span>A leaky abstraction is a very clear sign that the overall structure and design of an application is succumbing to entropy and heading for its end of life as changes to the system become too risky or costly. </p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>Preventing Leaky Abstractions</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>&nbsp;</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">I’d say that there are a couple different causes of abstractions springing a leak.<span>&nbsp; </span>System design and architecture has to be socialized throughout the development team to be successful.<span>&nbsp; </span>I think there is a “this is the way we do this” factor that has to be in place within a development team for any abstraction to truly work.<span>&nbsp; </span>Developers that don’t understand the purpose and usage of an abstraction will go around it anytime they’re under schedule pressure – i.e. almost always.</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">The second big cause is abstracting too early.<span>&nbsp; </span>When you make a design decision too early you are speculating without all the facts.<span>&nbsp; </span>To some degree I think very experienced developers and architects can accurately predict what will be useful, but it’s still a gamble.<span>&nbsp; </span>When you reach too far ahead in your architecture you incur a risk of creating unnecessary infrastructure or creating an unnecessary amount of complexity.<span>&nbsp; </span>It’s taken me a couple of years now but I think I finally buy (most of the way) into the XP idea of <a href="http://xp.c2.com/YouArentGonnaNeedIt.html">YAGNI</a>.<span>&nbsp; </span>Abstracting too early is acerbated by changes in requirements or priorities.<span>&nbsp; </span>The facts and understanding of the business process that underpinned your abstraction have changed and the abstracted model is busted.<span>&nbsp; </span>Wait to introduce the abstraction until it’s necessary or valuable.<span>&nbsp; </span>More on this subject below.</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>Architect Hubris and the Siren Call of Metadata-Driven Architectures</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>&nbsp;</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">One of the biggest, most colossal mistakes a software architect can make is that of hubris.<span>&nbsp; </span>“Architect Hubris” is the belief that the architect(s) can design and code an application framework upfront that will reduce the remaining development to a mere exercise in configuration.<span>&nbsp; </span>I came awfully close one time with a workflow system that was almost completely configurable – via no less than 65 database tables!<span>&nbsp; </span>The “now its just configuration” moment never arrived.<span>&nbsp; </span>There was always some kind of exception case that didn’t quite fit into the abstracted model.<span>&nbsp; </span>It’s really too bad that we spent so much time getting the workflow framework upfront instead of just coding what the business asked for in specific.<span>&nbsp; </span>We delivered what we had to, but there was a lot of wasted effort in architectural infrastructure that provided no real business benefit.</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>Favor Composition over Inheritance</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">I think metadata driven design and extensibility mechanisms still has its place, but I use it differently today than I did back then.<span>&nbsp; </span>Where I extensibility I do it by abstracting at coarse-grained interfaces, not abstract classes.<span>&nbsp; </span>I then use <a href="http://structuremap.sourceforge.net/">StructureMap</a> (shameless plug) to configure object graphs.<span>&nbsp; </span>I never assume anymore that all implementations of an interface can inherit from a single superclass or be described by an identical set of configured metadata.<span>&nbsp; </span>Read more from Erich Gamma about the “<a href="http://www.artima.com/lejava/articles/designprinciples4.html">Favor Composition over Inheritance</a>” principle.</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b>The Last Responsible Moment</b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">I got to participate in a panel on TDD in Austin with <a href="http://www.poppendieck.com/">Mary Poppendieck</a> last fall.<span>&nbsp; </span>She spent quite a bit of time talking about the value in making decisions at the <a href="/blogs/darrell.norton/articles/50341.aspx">last responsible moment</a>.<span>&nbsp; </span>The key is to make decisions as late as you can responsibly wait because that is the point at which you have the most information on which to base the decision.<span>&nbsp; </span>In software design it means you forgo creating generalized solutions or class structures until you know that they’re justified or necessary.<span>&nbsp; </span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">Abstracting too early is problematic, but waiting too long to introduce an abstraction is almost as bad.<span>&nbsp; </span>You either end up living with duplication in the code (bad) or pay a cost in a larger refactoring to introduce an abstraction to remove the duplication.<span>&nbsp; </span>Continuous design as practiced by Agilists is not another flavor of chaotic “code n’fix.”<span>&nbsp; </span>It’s design all the time.<span>&nbsp; </span>You have to be constantly scanning your code and design and looking for code smells creeping in and opportunities to create abstraction that remove duplication or create greater efficiencies.</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">I’ve worked with some people who interpret Agile development to mean that you never do any design activity outside of coding.<span>&nbsp; </span>Let me say this as clearly and forcefully as possible, always be thinking ahead!<span>&nbsp; </span>Consider different abstractions, research design patterns to reduce conditional logic, and look for reoccurring patterns in the code that can be generalized.<span>&nbsp; </span>Just don’t <b>implement</b> anything more than you have to for the functionality at hand.<span>&nbsp; </span>Large refactorings shouldn’t sneak up on you.<span>&nbsp; </span>You should always have a list of possible improvements to your design floating around both in your head and in conversations with your teammates.<span>&nbsp; </span></p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2006/01/18/leaky-abstractions-and-the-last-responsible-moment-for-design/" title="Permalink to Leaky Abstractions and the Last Responsible Moment for Design" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2006/01/18/leaky-abstractions-and-the-last-responsible-moment-for-design/feed/" title="Comments RSS to Leaky Abstractions and the Last Responsible Moment for Design" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-120 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2006/01/13/of-spikes-and-prototypes/" rel="prev"><span class="meta-nav">&larr;</span> Of Spikes and Prototypes</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2006/01/19/is-anybody-using-structuremap/" rel="next">Is anybody using StructureMap? <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-446">
+					<div id="dsq-comment-header-446" class="dsq-comment-header">
+						<cite id="dsq-cite-446">
+	http://volzsoftware.com							<span id="dsq-author-user-446">jdvolz</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-446" class="dsq-comment-body">
+						<div id="dsq-comment-message-446" class="dsq-comment-message"><p>This is an excellent article that brings up several points in way that I had not previously envisioned them.  </p>
+<p>While I agree that one should not design the software before the requirements are well known, it is also irresponsible to jump into a project without some plan as to how you are going to handle change, or the introduction of new abstractions.  If you enter coding without a plan, and then deny your coders the chance to create helpful abstractions because it &#8220;will take too much time&#8221; then you are headed for a disaster.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-447">
+					<div id="dsq-comment-header-447" class="dsq-comment-header">
+						<cite id="dsq-cite-447">
+								<span id="dsq-author-user-447">aliostad</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-447" class="dsq-comment-body">
+						<div id="dsq-comment-message-447" class="dsq-comment-message"><p>Great stuff Jeremy like the rest.</p>
+<p>I have one issue over interface vs. inheritance (I take composition over inheritance synonymous to it) that you do not get code reuse with interfaces. </p>
+<p>For what it is worth, I would use inheritance for code re-use and interface for infra-structure or service re-use as well as loose-coupling. So internally a subsystem or service can use inheritance to help with code reuse (behaviour reuse) but for integration or loose-couling I will only expose interfaces.</p>
+<p>I find it a bit too shallow that we sometimes we forget what we have achieved by using an approach that is not fashionable anymore. Nowadays TDD and XP are good and OO is bad. OO works what does not work is OO purism. And to be honest I have now -thanks God &#8211; lived enough to see rise and fall of all many approaches  when it is taken to the level of purism. It applies pretty much to everything, XP purism, TDD purism, interface-based programming purism  &#8211; maybe it is too early for some of them.</p>
+<p>I have already seenadverse effects of using XP. It is bad, rushy design. I would personally design for tomorrow &#8211; and not the day after tomorrow or next week &#8211; and implement for today.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-448">
+					<div id="dsq-comment-header-448" class="dsq-comment-header">
+						<cite id="dsq-cite-448">
+								<span id="dsq-author-user-448">jmiller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-448" class="dsq-comment-body">
+						<div id="dsq-comment-message-448" class="dsq-comment-message"><p>Hold on Aliostad,</p>
+<p>- Composition based structures in some circumstances lead to more potential reuse than inheritance<br />
+- TDD w/o OO in C#/VB.Net/Java doesn&#8217;t work all that great, so TDD purism often leads to OOP purism<br />
+- Favoring composition over inheritance for OOP is an old, old piece of advice that long predates the rise of TDD<br />
+- XP (or RUP or whatever) doesn&#8217;t lead to bad designs, bad designers lead to bad designs</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-449">
+					<div id="dsq-comment-header-449" class="dsq-comment-header">
+						<cite id="dsq-cite-449">
+								<span id="dsq-author-user-449">Bernie Woolfrey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-449" class="dsq-comment-body">
+						<div id="dsq-comment-message-449" class="dsq-comment-message"><p>This is very timely and interesting.<br />
+Design is one of the many problems I&#8217;m trying to resolve as our team attempts to apply Agile techniques:<br />
+How can you expect to create a good design before the details of (at least most) requirements have been discovered?<br />
+When the Leaky Abstraction appears, it probably means that a previously unknown requirement has surfaced.<br />
+I guess that most Agile exponents will say &#8220;refactor&#8221;, but that cna be expensive (both in time and in spirit). And what does the PM say when you tell them for the nth time that &#8220;We&#8217;ll have to refactor the UI/Business Facade/Database/whatever..&#8221;?<br />
+Designing (and building) from a user story like: &#8220;As a user, I want to be able to submit and validate a data file&#8221; is a death sentence for whatever gets done in its first iteration, and the idea of using an iteration as a tool for eliciting requirement detail seems plain wasteful.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-450">
+					<div id="dsq-comment-header-450" class="dsq-comment-header">
+						<cite id="dsq-cite-450">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-450">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-450" class="dsq-comment-body">
+						<div id="dsq-comment-message-450" class="dsq-comment-message"><p>Ok Bernie, </p>
+<p>&#8220;How can you expect to create a good design before the details of (at least most) requirements have been discovered?&#8221;</p>
+<p>You design ONLY what you need for the requirements you&#8217;re working on right now.  You do know, or should know, the requirements for the current iteration.  Iterative development doesn&#8217;t mean endless design churn.  If there is, you&#8217;re doing something wrong.  </p>
+<p>- Keep it simple upfront.  No elaborate abstractions until there&#8217;s an obvious need. </p>
+<p>- Pay very, very close attention to good OO design in every single iteration.  Highly cohesive classes with loose coupling promotes evolutionary design.  Classes with low cohesion and coupling between classes is generally what will make the kind of design churn you&#8217;re worried about much worse.</p>
+<p>- Follow the Open Closed Principle and the Single Responsibility Principle.  That maximizes your ability to do evolutionary design.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-451">
+					<div id="dsq-comment-header-451" class="dsq-comment-header">
+						<cite id="dsq-cite-451">
+								<span id="dsq-author-user-451">Bernie Woolfrey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-451" class="dsq-comment-body">
+						<div id="dsq-comment-message-451" class="dsq-comment-message"><p>(Wow&#8230; fast turnaround. Don&#8217;t you Yanks sleep?)</p>
+<p>Open, flexible design, good OO and loose coupling help, and for simple stories, we&#8217;re avoiding the sort of churn you mean.</p>
+<p>Good design practices make dealing with discovery requirement detail possible, not easy.</p>
+<p>It&#8217;s mainly where complex business rules and processes are involved.<br />
+I think that at root, our difficulties are caused by failing to completely capture and understand the details of complex rules and processes.  The penalty involves code and database re-design and re-implementation: Potentially heavyweight activities that Agile proponents describe by the lightweight name of &#8220;refactoring&#8221;.<br />
+Waterfall development, although it has many defects, attempts to formalize the analysis and documentation of business processes and rules. The design phase then is easy(er).<br />
+Of course we may just end up designing and implementing something that utterly fails the end-user&#8217;s needs.</p>
+<p>I&#8217;m conscious of this potentially wandering a little off-topic because what initially caught my attention was the title of this blog. Dealing with the iterative nature of requirements discovery is one facet of the challenges we&#8217;re facing putting Agile into practice. I guess the reality is that we will NEVER be able to get the whole picture before we begin design. Using a flexible methodology and a flexible design and implementation recognises this reality.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-452">
+					<div id="dsq-comment-header-452" class="dsq-comment-header">
+						<cite id="dsq-cite-452">
+								<span id="dsq-author-user-452">Paul</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-452" class="dsq-comment-body">
+						<div id="dsq-comment-message-452" class="dsq-comment-message"><p>Nothing to say except great article.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2006/01/18/leaky-abstractions-and-the-last-responsible-moment-for-design/ ';
+	var disqus_identifier = '120 /blogs/jeremy.miller/archive/2006/01/18/136648.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Leaky Abstractions and the Last Responsible Moment for Design";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=120');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2006\/01\/18\/leaky-abstractions-and-the-last-responsible-moment-for-design\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.587 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 13:48:05 -->
+<!-- super cache -->

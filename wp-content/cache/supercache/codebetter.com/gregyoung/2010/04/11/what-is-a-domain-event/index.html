@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>What is a Domain Event? | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='The 98th Thing Every Programmer Should Know' href='http://codebetter.com/gregyoung/2010/03/24/the-98th-thing-every-programmer-should-know/' />
+<link rel='next' title='Quick Thoughts on Eventual Consistency' href='http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=141' />
+<link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-141" class="post-141 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">What is a Domain Event?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/" title="11:14 am" rel="bookmark"><span class="entry-date">April 11, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><h5>There has been much confusion of late over the definition of what a Domain Event is. I was writing some stuff that will go into both the course manual and the book and figured that it might be timely to put it up on the blog as well.</h5>
+<p><b>An event is something that has happened in the past. </b></p>
+<p>All events should be represented as verbs in the past tense such as CustomerRelocated, CargoShipped, or InventoryLossageRecorded. For those who speak French, it should be Passé Composé, they are things that have <b>completed </b>in the past. There are interesting examples in the English language where one may be tempted to use nouns as opposed to verbs in the past tense, an example of this would be “Earthquake” or “Capsize”, as a congressman recently worried about Guam, but avoid the temptation to use names like this for Domain Events and stick with the usage of verbs in the past tense when creating Domain Events. These nouns tend to match up with “Transaction Objects” discussed later from Streamlined Object Modelling. It is imperative that events always be verbs in the past tense as they are part of the Ubiquitous Language.</p>
+<p>Consider the differences in the Ubiquitous Language when we discuss the side effects from relocating a customer, the event makes the concept explicit where as previously the changes that would occur within an aggregate or between multiple aggregates were left as an implicit concept that needed to be explored and defined. As an example, in most systems the fact that a side effect occurred is simply found by a tool such as Hibernate or Entity Framework, if there is a change to the side effects of a use case, it is an implicit concept. The introduction of the event makes the concept explicit and part of the Ubiquitous Language; relocating a customer does not just change some stuff, relocating a customer produces a CustomerRelocatedEvent which is explicitly defined within the language.</p>
+<p>In terms of code, an event is simply a data holding structure as can be seen in Listing 1.<br />
+<table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="653">
+<table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td>
+<p>Listing 1 A Simple Event</p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td width="654">
+<table cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td>
+<p>public class InventoryItemDeactivatedEvent {                      <br />&#160;&#160;&#160; public readonly Guid InventoryItemId;                       <br />&#160;&#160;&#160; public readononly string Comment;                       <br />&#160;&#160;&#160; public InventoryItemDeactivatedEvent(Guid id, string comment) {                       <br />&#160;&#160;&#160;&#160;&#160; InventoryItemId = id;                       <br />&#160;&#160;&#160;&#160;&#160; Comment = comment;                       <br />&#160;&#160;&#160; }                       <br />}</p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>   <a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/gregyoung/clip_5F00_image001_5F00_404CD604.gif"><img style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" border="0" alt="clip_image001" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/gregyoung/clip_image001_thumb_3155811D.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1920566612&amp;Signature=L6jE94Dk0Voy3jAcjqNUEQ6SsOg%3d" width="240" height="67" /></a></p>
+<p>The code listing looks very similar to the code listing that was provided for a Command the main differences exist in terms of significance and intent.</p>
+<h3>Other Definitions and Discussion</h3>
+<p>There is a related concept to a Domain Event in this description that is defined in Streamlined Object Modeling (SOM). Many people use the term “Domain Event” In SOM when discussing “The Event Principle”</p>
+<blockquote><p>Model the event of people interacting at a place with a thing with a transaction object. Model a point-in-time interaction as a transaction with a single timestamp; model a time-interval interaction as a transaction with multiple timestamps. (Jill Nicola, 2001, p. 23)</p>
+</blockquote>
+<p>Although many people use the terminology of a Domain Event to describe this concept the terminology is not having the same definition as a Domain Event in the context of this document. SOM uses another terminology for the concept that better describes what the object is, a Transaction. The concept of a transaction object is an important one in a domain and absolutely deserves to have a name. An example of such a transaction might be a player swinging a bat, this is an action that occurred at a given point in time and should be modeled as such in the domain, this is not however the same as a Domain Event.</p>
+<p>This also differs from Martin Fowler’s definition of what a Domain Event is.</p>
+<blockquote><p>Example: I go to Babur’s for a meal on Tuesday, and pay by credit card. This might be modeled as an event, whose type is “Make Purchase”, whose subject is my credit card, and whose occurred date is Tuesday. If Babur’s uses and old manual system and doesn’t transmit the transaction until Friday, then the noticed date would be Friday. (Fowler)</p>
+</blockquote>
+<p>Further along</p>
+<blockquote><p>By funneling inputs of a system into streams of Domain Events you can keep a record of all the inputs to a system. This helps you to organize your processing logic, and also allows you to keep an audit log of the system (Fowler)</p>
+</blockquote>
+<p>The astute reader may pick up on the fact that what Martin is actually describing here is a Command as was discussed previously when discussing Task Based UIs. The language of “Make Purchase” is wrong. A purchase was made. It makes far more sense to introduce a PurchaseMade event. Martin did actually make a purchase at the location, they did actually charge his credit card, and he likely ate and enjoyed his food. All of these things are in the past tense.</p>
+<p>An example such as the sales example given here also tends to lead towards a secondary problem when applied within a system. The problem is that the domain may be responsible for filling in parts of the event. Consider a system where the sale is processed by the domain itself, how much is the sales tax? Often the domain would be calculating this as part of its calculations. This leads to a dual definition of the event, there is the event as is sent from the client without the sales tax then the domain would receive that and add in the sales tax, it causes the event to have multiple definitions, as well as forcing mutability on some attributes. One can bypass this by having dual events (one for the client with just what it provides and another for the domain including what it has enriched the event from the client with) but this is basically the command event model and the linguistic problems still exist.</p>
+<p>A further example of the linguistic problems involved can be shown in error conditions. How should the domain handle the fact that a client told it to do something that it cannot? This condition can exist for many reasons but let’s imagine a simple one of the client simply not having enough information to be able to source the event in a known correct way. Linguistically the command/event separation makes much more sense here as the command arrives in the imperative “Place Sale” while the event is in the past tense “SaleCompleted”. It is quite natural for the domain to reject a client attempting to “Place a sale”, it is not natural for the domain to tell the client that something in the past tense no longer happened. Consider the discussion with a domain expert, does the domain have a time machine? Parallel realities are far too complex and costly to model in most business systems.</p>
+<p>These are exactly the problems that have led to the separation of the concepts of Commands and Events. This separation makes the language much clearer and although subtle it tends to lead developers towards a clearer understanding of context based solely on the language being used. Anytime one ends up with dual definitions of a concept there is a weight placed on the developer to recognize and distinguish context, this weight can translate into both ramp up time for new developers on a project and another thing a member of the team needs to “remember”. Anytime a team member needs to remember something to distinguish context there is a higher probability that it will be overlooked or mistook for another context. Being explicit in the language and avoiding dual definitions helps make things clearer both for domain experts, the developers, and anyone who may be consuming the API.</p>
+<p>&#160;</p>
+<h3>Works Cited</h3>
+<p>Fowler, M. (n.d.). <i>Domain Event.</i> Retrieved from EAA Dev: http://martinfowler.com/eeaDev/DomainEvent.html</p>
+<p>Jill Nicola, M. M. (2001). <i>Streamlined Object Modelling.</i> Prentice Hall.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/" title="Permalink to What is a Domain Event?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/feed/" title="Comments RSS to What is a Domain Event?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-141 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2010/03/24/the-98th-thing-every-programmer-should-know/" rel="prev"><span class="meta-nav">&larr;</span> The 98th Thing Every Programmer Should Know</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2010/04/14/quick-thoughts-on-eventual-consistency/" rel="next">Quick Thoughts on Eventual Consistency <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">24 Responses to <em>What is a Domain Event?</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2967">
+		<div id="comment-2967">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.Bebebedding.com/' rel='external nofollow' class='url'> Baby Bedding</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2967">April 29, 2010 at 6:53 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m opposed to the orthodoxy of standardized human grammars that are purported to exist outside of human contextualization.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2966">
+		<div id="comment-2966">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.symprise.net' rel='external nofollow' class='url'>Rafael Peixoto de Azevedo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2966">April 20, 2010 at 3:53 am</a></div>
+
+		<div class="comment-body"><p>Hi, Scott and Greg</p>
+<p>&#8220;Ultimately, anything processed after the user clicks the submit button is in past tense.&#8221;</p>
+<p>I think the key point here is to recognise that software systems are not necessarily just event recorders. They can assume a more active role. </p>
+<p>For instance, in a system where credit approval is automated, the command AcceptOrder may result in an OrderAccepted event, but it could also result in an OrderDeclined event.</p>
+<p>In this case, the difference between AcceptOrder and OrderAccepted is relevant for the domain model. It is *not* &#8220;entirely a matter of perspective and the arbitrary point at which you begin running the clock.&#8221;</p>
+<p>In general, I think it is essential do make very clear the difference between commands and events. Adopting distinct naming styles (eg. imperative vs. past participle forms) is an immediate way to achieve this and has worked best for me. </p>
+<p>Considering the Ubiquitous Language&#8217;s value as a premisse, it is of course possible to adopt other linguistic conventions, as long as the difference is made explicit.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2965">
+		<div id="comment-2965">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2965">April 14, 2010 at 3:22 pm</a></div>
+
+		<div class="comment-body"><p>@Scott </p>
+<p>If the definition of a domain event is &#8220;a notification provided of something that occurred within the domain&#8221; then past tense is the only thing that makes sense &#8230; it is specified within the definition that it occurred (past tense).</p>
+<p>The definition in this way is deliberate. As I mentioned there is a very large difference in intent if I raise an event during a process (so others can join in a decoupled way) and after the process (so others can be notified of it). To put both of the contexts under a single pattern would lead to a very broad pattern that did not really expose the intent of either pattern. Making them separate makes the intents explicit. It also allows me to say the word &#8220;Domain Event&#8221; to someone and for them to have it carry with it the context and intent that I intend.</p>
+<p>A secondary reason of the definition is that the same events are used as an integration model later where they are necessarily asynchronous. This really forces the idea that the action already completed.</p>
+<p>This is not to say that the other type does not have value. This is to say that keeping them separate has value. The two have very different properties (including linguistics). This is roughly as if I am using a proxy to add functionality to an object is it still a proxy? No its a decorator, part of the value of the patterns being separated though structurally identical is that the name carries the intent as well as the structure.</p>
+<p>That said people have misused patterns as long as they have existed. If you feel the need to use an event that is representing &#8220;a notification of an action that occurred&#8221; and wish to name it with a present tense verb or a noun, its not that big of a deal. The only issue is that you won&#8217;t be able to use them in a sentence of your ubiquitous language with domain experts to concisely represent the context that you are in. </p>
+<p>What you seem to be arguing more with is the concept of maintaining the Ubiquitous Language than the specifics of Domain Events, frankly I don&#8217;t feel inclined towards a meta-discussion on the validity of the ubiquitous language. You may have found it to be of little value, I have found it of value, I am prepared to agree to disagree on this point.  Though I must admit that discussion would be interesting in a more generalized way on the DDD list.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2964">
+		<div id="comment-2964">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottbellware.com' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2964">April 14, 2010 at 2:35 pm</a></div>
+
+		<div class="comment-body"><p>Greg,</p>
+<p>From whence does this definition that prescribes past tense come? If I do everything else in the architecture pattern other than using past tense naming am I not using the pattern or the architecture?</p>
+<p>Ultimately, where can I go to have my architecture Domain Event Certified &#8482;?</p>
+<p>Definitely not buying it. I sure wish that we could transfer knowledge of successful and sustainable development without the intellectual rigidity that makes sure that our best ideas have a shelf life of only a few months to a year.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2963">
+		<div id="comment-2963">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2963">April 14, 2010 at 9:05 am</a></div>
+
+		<div class="comment-body"><p>@JeffG yes that is something that you would want to do in many cases for integration purposes.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2962">
+		<div id="comment-2962">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2962">April 14, 2010 at 9:04 am</a></div>
+
+		<div class="comment-body"><p>@Scott </p>
+<p>&#8220;The tense depends entirely on the perspective you choose when modeling. While a purchase event is being processed, the purchase as a whole can still be seen as in-progress. There are parts of the whole that are still incomplete unless completeness is arbitrarily confined to a particular or a smaller perspective.&#8221;</p>
+<p>As I said previously the perspective is included in the defintion of what a domain event is. It is a notification of something that happenned. You could make up a different concept of a notification of something that is happening as I mention above, I do not even doubt the usefulness fo such a concept, but it would cease to be a domain event. Perhaps in the naming of these other things it may make sense to have different naming but in the context of a domain event it does not. </p>
+<p>The usage of past tense naming is directly related to the definition of a domain event. It really doesn&#8217;t make any sense in the context of a domain event to use any other form of naming.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2961">
+		<div id="comment-2961">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jeff G</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2961">April 14, 2010 at 12:05 am</a></div>
+
+		<div class="comment-body"><p>Great stuff.<br />
+I haven&#8217;t yet used an ESB, but it sounds like Domain Events are the type of events that others modules are interested in and are typically published via an ESB.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2960">
+		<div id="comment-2960">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottbellware.com' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2960">April 13, 2010 at 10:23 pm</a></div>
+
+		<div class="comment-body"><p>Greg,</p>
+<p>It&#8217;s perfectly clear. It never was unclear. It&#8217;s not that I don&#8217;t understand what you&#8217;re proposing, but that I refute it utterly and completely on the basis that a finer analysis of context and contextualization presents a meaningful challenge to this language fundamentalism.</p>
+<p>Ultimately, anything processed after the user clicks the submit button is in past tense. Even the receipt of the web request on the front controller is in the past tense. The language tense is entirely a matter of perspective and the arbitrary point at which you begin running the clock.</p>
+<p>The message processor is doing its work in the present tense, regardless of atomicity of transactions.</p>
+<p>In the end, there&#8217;s no such thing as an atomic transaction in material space. It&#8217;s turtles all the way down&#8230; until you get to the message loop, and then it&#8217;s turtles and anti-turtles. Some of the anti-turtles are executed transparently, providing a semblance of atomic transactional. It&#8217;s still just an act when you get down to the bare metal.</p>
+<p>The tense depends entirely on the perspective you choose when modeling. While a purchase event is being processed, the purchase as a whole can still be seen as in-progress. There are parts of the whole that are still incomplete unless completeness is arbitrarily confined to a particular or a smaller perspective.</p>
+<p>I don&#8217;t symbolize or identify events as past tense because this couples a particular perspective to them. It binds them to a particular dimension that is ultimately superfluous.</p>
+<p>If any particular dimension is significant, to how an event is processed, it can become part of the event&#8217;s data itself, its metadata, or it can be represented as a naming convention.</p>
+<p>The naming convention isn&#8217;t significant unless we give it significance. If we choose to give it significance, then we respect in within the confines of the software where it has significance. Nonetheless, it&#8217;s still a choice, and a choice that should be driven by context and perspective, which in the end doesn&#8217;t necessarily dictate an orthodox prescription for naming convention and tense.</p>
+<p>I don&#8217;t think the community in particular or society in general benefits from more orthodoxy, which is what I see this proposal as.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2959">
+		<div id="comment-2959">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2959">April 13, 2010 at 6:08 pm</a></div>
+
+		<div class="comment-body"><p>Scott &#8220;When purchasing an item&#8221; is perfectly valid for something that is in the use case of purchasing an item in terms of a context specification. remember that the event is being processed asynchronously some point *after* the use case has run (it may be done synchronously but is assumed to be asynchronous). The context is not that an item is being purchased it is that an item was purchased (the operation has already completed by the time you get the event). This is also put forward in the definition of an event being a notification of something that has occurred.</p>
+<p>If you accept the definition of a domain event as being &#8220;a notification of something that has occurred&#8221; then &#8220;purchasing&#8221; doesn&#8217;t work, it is not something that has occurred it is something that is occurring. The contextual differences between something that has occurred and something that is occurring are large.</p>
+<p>If we were in the context of &#8220;when purchasing and item&#8221; it would be feasible to stop the purchasing of an item as its &#8220;in process&#8221;. An event handler can&#8217;t just cancel the event it receives, it needs to apply a compensating action, it can&#8217;t undo the thing that occurred. The contextual differences here are being expressed in the language.</p>
+<p>That said there may be a case where you could could have use for something operating in the context of the process utilizing a code pattern similar to a domain event, I do not discount this possibility (.net events come to mind, they can be cancelled and are considered to be running in the same transaction as the producer). It would however not be a Domain Event, it would be another pattern as it has a slightly different intent. My linguistic discussion here is limited to the scope of a Domain Event not an Event or even Message. Does that make sense?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2958">
+		<div id="comment-2958">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottbellware.com' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2958">April 13, 2010 at 4:21 pm</a></div>
+
+		<div class="comment-body"><p>Greg,</p>
+<p>> When a purchase in the sales system then &#8230;.</p>
+<p>You can specify the same thing in present tense and it can mean the exact same thing:</p>
+<p>&#8220;When purchasing, then &#8230;&#8221;</p>
+<p>Which, by the way is the basis of the Context Specification method that I use. It&#8217;s feasible because context is also communicated as part of the specification:</p>
+<p>&#8220;Event Processing<br />
+- When purchasing, then &#8230; &#8221;</p>
+<p> It matters more how disambiguation is done within the very human realm of communication of meaning within an organization. Naming conventions for systems artifacts are useful, but not definitive without the human considerations that they ultimately serve.</p>
+<p>I find a lot of discussion about ubiquitous language to be a bit shallow when it has too much of the 1990&#8242;s OOA&#038;D predilections.</p>
+<p>Ultimately, I value this discussion about the grammar and cultural linguistic particularities that are usually left implicit in discussions about ubiquitous language. In the end, I&#8217;m not in favor of a grammar than tries to have the formality of a machine-processed language that can live outside the contextualization that serves shared meaning between people and organizations.</p>
+<p>I&#8217;m not just opposed to the particular grammar that you&#8217;ve proposed as an orthodoxy, I&#8217;m opposed to the orthodoxy of standardized human grammars that are purported to exist outside of human contextualization.</p>
+<p> There&#8217;s little doubt in my mind that I still have much to learn from you about the particularities of implementing the patterns that you have great expertise in, but I remain unphased by the propositions for human specification and human communication that we&#8217;re presently debating, and have been debating for the past few years.</p>
+<p>I respectfully disagree and suggest that there&#8217;s more to this issue than the kind of mere linguistic standardization that programmers are prone to use as a lens to see the world that they are caused to serve.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2957">
+		<div id="comment-2957">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2957">April 13, 2010 at 11:23 am</a></div>
+
+		<div class="comment-body"><p>@Ryzam moment-interval is roughly the same as SOM&#8217;s Transaction Object. I will include it in the full version of the text. Thanks for the heads up.</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2956">
+		<div id="comment-2956">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2956">April 13, 2010 at 11:22 am</a></div>
+
+		<div class="comment-body"><p>@Gabriel perhaps you are missing that this is involved with Domain Driven Design and these &#8220;Domain Events&#8221; are part of the Ubiquitous Language? This is not being brought up in a general context of what is an event.</p>
+<p>It is extremely important what language the events are in and has nothing to do with coding standards in an organization etc. It has to do with how you talk with domain experts. All of the examples you gave in the past tense are valid, and its a matter of how the domain experts talk about it. The others are not as there is no way the domain experts would possibly use those words.</p>
+<p>I still welcome you to come up with a sentence from a domain expert that would use the noun form (transaction object) to describe a notification. The fact is that you cannot, you need to introduce a helper verb. If you cannot make a valid English sentence in that form how can you expect it to be in your Ubiquitous Language? Will you just use incorrect grammar in all of your conversations with your domain experts?</p>
+<p>Also you should never have an &#8220;OrderIsProcessing&#8221; Event. Events are by their nature asynchronous, you have no idea how long it will take to get to a receiver or if the order will still be processing when the receiver gets the event. This is a well known messaging anti-pattern instead use &#8220;OrderBeganProcessing&#8221;. Note again we are back to a verb that has completed in the past. This is not some fluffy rule where organizational preferences come into play, the usage of verbs in the past tense is always more correct as you can&#8217;t build English sentences in any other way and these events are part of the Ubiquitous Language.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2955">
+		<div id="comment-2955">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">ryzam</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2955">April 12, 2010 at 5:25 pm</a></div>
+
+		<div class="comment-body"><p>What is the different between your Domain Events definition compare to Moment Interval (Peter Coad) Color Modeling?</p>
+<p>Is it similar</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2954">
+		<div id="comment-2954">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Gabriel Lozano-Moran</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2954">April 12, 2010 at 1:34 pm</a></div>
+
+		<div class="comment-body"><p>Depending on the needs from the business there might be a need for a &#8220;OrderIsProcessing&#8221; event and a  &#8220;OrderIsProcessed&#8221; event but in all honestly when I encounter this, I would look for a better name for this event.</p>
+<p>I am just saying that in all honestly it does not matter what YOUR naming convention is. Just accept that fact that neither mine, yours nor Scotts convention is BEST convention. Just agree on a convention @ your company and stick to that convention. Don&#8217;t mix conventions and don&#8217;t start a holy war on naming conventions. </p>
+<p>You can name the event whatever you want such as &#8220;OrderProcess&#8221;, &#8220;OrderProcessed&#8221;, &#8220;OrderBecameProcessed&#8221;, &#8220;OrderIsProcessed&#8221;, &#8220;ProcessedOrder&#8221; &#8230; as long as we don&#8217;t forget the main purpose of domain events. And that is what I meant whith my comment. Your blog post is titled what is a domain event and the discussion ends up arguing about naming conventions for the events&#8230; This is some kind of illness I am starting to see more and more with technical people.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2953">
+		<div id="comment-2953">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2953">April 12, 2010 at 11:42 am</a></div>
+
+		<div class="comment-body"><p>@Gabriel Love the tone in your comment&#8230;</p>
+<p>I spend most of my time WORKING with domain experts. The whole problem with using the noun there is that they end using a helper verb when they discuss it as a trigger for an action. A &#8220;purchase was created&#8221; you can&#8217;t actually build a valid english sentence describing an event you can trigger off of if you use the &#8220;Transaction Object&#8221; noun form from SOM. </p>
+<p>The &#8220;Transaction Object&#8221; is not meaningless. It is often used within the domain to model that particular transaction within the domain as an entity, it is however not something that is being published to trigger off of. In many cases you will actually end up with a pair of objects, the first a SOM style &#8220;Transaction Object&#8221; in the domain the second a &#8220;Domain Event&#8221; that the domain publishes to anyone subscribing to it. The second concept is a &#8220;Notification of an Occurence&#8221; not a modeling of the occurrence. I will make this point clearer in my original text. This goes to Nuno&#8217;s comment as well though I put up a comment on the DDD list. Its not that the Domain Event replaces the SOM transaction object, they are different things with different goals.</p>
+<p>@Gabriel Of course if you believe it depends on context and domain maybe you can make me a sentence involving a notification of an occurence that doesn&#8217;t use a helper verb? </p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2952">
+		<div id="comment-2952">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2952">April 12, 2010 at 11:26 am</a></div>
+
+		<div class="comment-body"><p>Szymon the events as Eric is describing there a &#8220;Transient Event Stream&#8221; would be the same style events as described above. </p>
+<p>I am pretty sure Udi and I have been in agreement on the definition of an Event for a long time. You will note he is also using the past tense structure. There may be some slight differentiations in how we use them but the fundamental definition probably doesn&#8217;t change.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2951">
+		<div id="comment-2951">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Nuno Lopes</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2951">April 12, 2010 at 10:11 am</a></div>
+
+		<div class="comment-body"><p>Hi Greg,</p>
+<p>If the domain-events are suppose to capture for events in the domain I find some challenges with your interpretation of it. </p>
+<p>As you describe them, they fundamentally report about domain occurrences rather then actually model The Occurrence. I think that is why the wording in the past tense as well as being anaemic works quite well (its about data, message, although well named)</p>
+<p>If they aren&#8217;t suppose to capture the actual occurrences then I can live with the name <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  </p>
+<p>Interesting read anyway. Glad that SOM is getting some recognition amongst DDD.</p>
+<p>Cheers</p>
+<p>Nuno</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2950">
+		<div id="comment-2950">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Gabriel Lozano-Moran</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2950">April 12, 2010 at 8:36 am</a></div>
+
+		<div class="comment-body"><p>Whether the event should be called Purchase or Purchased depends on the event it itself and the actions it triggers. Maybe from the viewpoint of the business there should be two domain events? Purchase and Purchased? I love how technical guys always have these theological debates about these, and if you really think about it you will admit it, meaningless details.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2949">
+		<div id="comment-2949">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Szymon-Pobiega/default.aspx' rel='external nofollow' class='url'>Szymon Pobiega</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2949">April 12, 2010 at 6:12 am</a></div>
+
+		<div class="comment-body"><p>AFAIK Eric was talking about what he learned since the book at QCon. The video is here: <a href="http://www.infoq.com/presentations/ddd-eric-evans" rel="nofollow">http://www.infoq.com/presentations/ddd-eric-evans</a>. Event-related part starts after 13 minutes. Actually Eric discusses three different event implementation options (including yours).  I agree that immutable entity one is similar to SOM style you discussed. He also mentions the option of publishing &#8216;transient&#8217; event stream, for example used to decouple transaction and reporting systems. This seems similar to Udi Dahan&#8217;s domain events described here: <a href="http://www.udidahan.com/2009/06/14/domain-events-salvation/" rel="nofollow">http://www.udidahan.com/2009/06/14/domain-events-salvation/</a>. I am not sure, but Eric mentions something called system events and what Udi describes seems to fit in that definition. What do you think?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2948">
+		<div id="comment-2948">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.markdavidrogers.com' rel='external nofollow' class='url'>Mark Rogers</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2948">April 11, 2010 at 6:23 pm</a></div>
+
+		<div class="comment-body"><p>Your work cited url for Fowler&#8217;s &#8216;DomainEvent&#8217; article is off by one letter, the &#8216;eea&#8217; in &#8216;http://martinfowler.com/eeaDev/DomainEvent.html&#8217; should be &#8216;eaa&#8217;, for the correct url is: &#8216;http://martinfowler.com/eaaDev/DomainEvent.html&#8217;.</p>
+<p>It might help people who want to look it up.</p>
+<p>Thanks,<br />
+Mark</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2947">
+		<div id="comment-2947">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2947">April 11, 2010 at 5:40 pm</a></div>
+
+		<div class="comment-body"><p>Scott,</p>
+<p>Purchase is a great example of the SOM style event definition it is a transaction that occurred at a point in time, it has temporal information associated with it. For these types of events it can feel natural to use the noun form as you do in some scenarios (say as  a transaction object in the domain which it probably would be and the linguistics there make sense). </p>
+<p>Outside though it becomes a bit weirder when you are triggering behaviors off of it. Triggering a behavior off of &#8220;Purchase&#8221; becomes interesting  in terms of building a sentence.</p>
+<p>When a purchase in the sales system then &#8230;.<br />
+When an item was purchased  in the sales system then &#8230;.</p>
+<p>What is happening here is that you are using a noun that is representing a verb. The &#8220;purchase&#8221; is in fact representing a verb that happened. The differences are indeed subtle and one can especially with a good team get over any problems that may come up, I would still say though that as a general rule one should be using events in the past tense to avoid confusion.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2946">
+		<div id="comment-2946">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/members/Greg/default.aspx' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2946">April 11, 2010 at 4:53 pm</a></div>
+
+		<div class="comment-body"><p>Can you provide citings for these so I can better understand their context? I would be happy to add a section with contrasts with these definitions. I have been writing this in a very formal style and would need citations in order to put them in.</p>
+<p>Off the cuff it sounds like Eric is talking more about the SOM definition &#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2945">
+		<div id="comment-2945">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://scottbellware.com' rel='external nofollow' class='url'>Scott Bellware</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2945">April 11, 2010 at 4:30 pm</a></div>
+
+		<div class="comment-body"><p>I completely disagree that events need to be named in past tense and they must be named as verbs. This seems to me to be a vestige of programming language culture, and specifically the static object-oriented language culture.</p>
+<p>I&#8217;ve found a greater willingness in myself to break from the orthodoxy of VerbNoun naming forms since adopting programming languages that are more amenable to language-oriented development, and I&#8217;ve found myself looking back on the strictures of my mind as primarily a C# or Java programmers as a kind of naivete and the kind of cognitive attachment that obstructs learning and seeing the next evolutionary stage.</p>
+<p>I&#8217;ve got no problem with symbolizing a purchase that has been made with an event named &#8220;Purchase&#8221;, is in, &#8220;this event represents a purchase that has been made&#8221;. What matters more is semantics and how they&#8217;re treated both by the team and by the event listeners. It&#8217;s how we disambiguate as cognitive beings and how we inform our systems to do the same.</p>
+<p>In the end, the machines will do what they&#8217;re told, and tenses of verbs don&#8217;t make a lick of difference except if the machines are told to respect a certain convention implicitly.</p>
+<p>There are so many meaningful ways to semantically model the goings-on in our systems, and while it may be confusing for a system to have both a &#8220;Purchase&#8221; event and a &#8220;Purchase&#8221; command, I wouldn&#8217;t agree at all that it&#8217;s necessary to impose a single orthodoxy on the means of disambiguation, and it&#8217;s possible that Martin &#8211; having also been quite deeply entwined in language-oriented approaches &#8211; may also be reflecting this nascent tendency.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2944">
+		<div id="comment-2944">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://simon-says-architecture.com/' rel='external nofollow' class='url'>Szymon Pobiega</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2010/04/11/what-is-a-domain-event/#comment-2944">April 11, 2010 at 1:14 pm</a></div>
+
+		<div class="comment-body"><p>There are at least two more Domain Event definitions which confuse me more than these two you&#8217;ve just described (although I must say you did awesome work contrasting your understanding with Fowler&#8217;s and not being afraid to not agree with him):<br />
+* Udi Dahan&#8217;s &#8216;transient&#8217; events as a way of pushing data out of the domain<br />
+* I saw a presentation where Eric Evans discussed gaps in his Blue Book and was speaking about Domain Events are immutable entities, possibly aggregate roots in the model<br />
+Could you clarify how, in your opinion, these additional definitions relate to your understanding of Domain Events?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2010/04/11/what-is-a-domain-event/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2010%2F04%2F11%2Fwhat-is-a-domain-event%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.292 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:30:11 -->
+<!-- super cache -->

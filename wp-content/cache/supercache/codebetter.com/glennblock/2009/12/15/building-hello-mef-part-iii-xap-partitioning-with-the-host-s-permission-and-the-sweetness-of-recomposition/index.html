@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Building Hello MEF – Part III – XAP Partitioning (with the host’s permission) and the sweetness of recomposition. | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='Building Hello MEF – Part II – Metadata and why being Lazy is a good thing.' href='http://codebetter.com/glennblock/2009/12/05/building-hello-mef-part-ii-metadata-and-why-being-lazy-is-a-good-thing/' />
+<link rel='next' title='CodePaste is the bee’s knees, my new favorite way to share code.' href='http://codebetter.com/glennblock/2009/12/17/codepaste-is-the-bee-s-knees-my-new-favorite-way-to-share-code/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=109' />
+<link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-109" class="post-109 post type-post status-publish format-standard hentry category-hellomef category-mef category-silverlight category-sl4">
+					<h1 class="entry-title">Building Hello MEF – Part III – XAP Partitioning (with the host’s permission) and the sweetness of recomposition.</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition/" title="9:25 pm" rel="bookmark"><span class="entry-date">December 15, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In our last&nbsp;<a href="/blogs/glenn.block/archive/2009/12/04/building-hello-mef-part-ii-metadata-and-why-being-lazy-is-a-good-thing.aspx">post</a> we saw how using metadata in MEF allows us to provide additional self-describing information about exports. This has a range of uses including providing hints on how the export should be handled (such as UI location) as well as allowing us to filter out creating exports that we don&rsquo;t need or which are not relevant to the current application context. In this post, we&rsquo;ll see how we can now take our parts which all currently reside in a single XAP and we can split them up into multiple XAPs. We can use this for several reasons including reducing the general download time of our application, as well as allowing third-parties to extend our Silverlight applications. We&rsquo;ll also see how we can combine dynamic download with a winning feature in MEF called recomposition.</p>
+<p>Just to remind you, this is what our dashboard looked like when we left off.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIMetadataCustomExp_2681/image_4.png"><img height="375" width="653" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIMetadataCustomExp_2681/image_thumb_1.png" alt="image" border="0" /></a></p>
+<p>You can get the code for where we left out <a href="http://cid-f8b2fd72406fb218.skydrive.live.com/self.aspx/blog/Hello%20MEF/HelloMEF%5E_Part%5E_II.zip"><strong><span style="color: #006bad">here</span></strong></a></p>
+<p>For our next exercise, we&rsquo;re going to do something contrived though this is &ldquo;based on a real story&rdquo;, don&rsquo;t worry. We&rsquo;re going to take our dashboard app and extend it so that when we hit the &ldquo;Hello MEF&rdquo; button, new parts show up that are dynamically downloaded from a separate XAP on the server. I&rsquo;ll show you two different ways of doing this, in this post we&rsquo;ll do it with the host&rsquo;s permission and in the next post without. </p>
+<p>Below is a diagram of what this looks like.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_20.png"><img height="151" width="566" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_7.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<h2>Where is the dynamic XAP download support in MEF? I don&rsquo;t see it.</h2>
+<p>If you are familiar with MEF&rsquo;s apis in Silverlight 4, you might be asking this question. The question is a valid one. The reason you don&rsquo;t see it, is because it&rsquo;s not there <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' />  Instead we have initially shipped this feature as part of the Silverlight 4 Beta Toolkit, which you can download <a href="http://www.codeplex.com/Silverlight/Release/ProjectReleases.aspx"><strong><span style="color: #006bad">here</span></strong></a>. You&rsquo;ll need this to follow along on this post.</p>
+<h2>Introducing the Package apis</h2>
+<p>If you download the toolkit, you&rsquo;ll find our dynamic XAP support in the System.ComponentModel.Composition.Packaging.Toolkit.dll. The apis are below.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> Package
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Package(Uri packageUri, IEnumerable&lt;Assembly&gt; assemblies);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> IEnumerable&lt;Assembly&gt; Assemblies { <span style="color: #0000ff">get</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> Package Current { <span style="color: #0000ff">get</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Uri Uri { <span style="color: #0000ff">get</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> <span style="color: #0000ff">void</span> DownloadPackageAsync(Uri packageUri, Action&lt;AsyncCompletedEventArgs, Package&gt; packageDownloadCompleted);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }</pre>
+</pre>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> PackageCatalog : ComposablePartCatalog, INotifyComposablePartCatalogChanged
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> PackageCatalog();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> IEnumerable&lt;Package&gt; Packages { <span style="color: #0000ff">get</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">override</span> IQueryable&lt;ComposablePartDefinition&gt; Parts { <span style="color: #0000ff">get</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">event</span> EventHandler&lt;ComposablePartCatalogChangeEventArgs&gt; Changed;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">event</span> EventHandler&lt;ComposablePartCatalogChangeEventArgs&gt; Changing;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> AddPackage(Package package);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }</pre>
+</pre>
+<p>The api has two parts. First there is the Package class. Package has a static method called DownloadPackageAsync which you pass a Uri for a XAP as well as a completed action. As soon as you call this method, MEF will begin the download. Once the XAP is received, it will invoke the callback passing in an instance of Package. In the callback handler, the next step is to add the Package to a PackageCatalog. In order for MEF to see the PackageCatalog it must have been added to an instance of MEF&rsquo;s container. Until now we&rsquo;ve avoided talking about the container but well learn a bit about it shortly. Once the new package is added, it will then be available to parts in the container. We&rsquo;ll see how with recomposition, parts that import any of the exports in the new package will suddenly &ldquo;light up&rdquo; with the newly available parts.</p>
+<p>OK, let&rsquo;s get going.</p>
+<h2>Creating a separate XAP.</h2>
+<p>The first thing we need to do to get going is create a separate XAP. You might be surprised if you go looking for the &ldquo;Create Secondary XAP&rdquo; template, as there is none <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  However, all hope is not lost. Fortunately we can create a XAP by using the Silverlight Application template. Right click on the HelloMEF solution can click&nbsp; &ldquo;Add New Project&rdquo;. Enter HelloMEF.Extensions as the project name.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_8.png"><img height="521" width="751" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_3.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>Once you do, hit OK on the next page and you&rsquo;ll get a new Silverlight application. Next go into the project and remove the App.Xaml and </p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image19.png"><img height="182" width="485" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image19_thumb.png" alt="image" border="0" style="border-width: 0px" /></a>&nbsp;</p>
+<p>One last step, we need to set our web application so it copies our new XAP to the output folder. Fortunately the tooling support for SL4 brings this to VS2010 out of the box. If you right click on the HelloMEF.Web project and check the &ldquo;Silverlight Applications&rdquo; tab, you&rsquo;ll see.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_12.png"><img height="495" width="732" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_5.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>I am guessing this was not intended for the application partitioning solution and was rather for having multiple Silverlight applications in a single web application. However, it works great for our scenario so we&rsquo;re not complaining! </p>
+<p>Once you create the new application, VS automatically creates a new start page in your web site which it sets as the default. We need to reset it back, so go right-click on HelloMEFTestPage.html under HelloMEF.Web and set it as the startup page.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_18.png"><img height="508" width="442" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_6.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<h2>Create a contract assembly</h2>
+<p>Now that we&rsquo;ve created our separate XAP, we can now go start building our new extension. OK, all we do is go and create our widget, but wait, how do we get access to the Widget contract? Currently all the widget definition information resides in the app. We could just go and a reference back to the application right? Technically you could as the app won&rsquo;t be referencing us directly, but please DON&rsquo;T do it. Every time you do a puppy dies <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>What we need to is to split our contracts out into a separate assembly so that those definitions can be shared across XAPs. We don&rsquo;t have to embed the shared library over and over fortunately.</p>
+<p>First thing we&rsquo;ll do is create a new Silverlight Class library project. You know the drill, right click the solution, new project&hellip;</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_2.png"><img height="509" width="735" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>Delete the Class1.cs file. Then go cut/paste ExportWidgetAttribute.cs, WidgetLocation.cs and IWidgetMetadata.cs from the HelloMEF project into HelloMEF.Contracts. You will then need to add a reference to System.ComponentModel.Composition (which should be in your recent references) in the new project. Remember it&rsquo;s in the &ldquo;.\Program Files\Microsoft SDKs\Silverlight\v4.0\Libraries\Client folder. </p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_15.png"><img height="524" width="655" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_2.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>Next go add back to the HelloMEF project and add a reference to the new HelloMEF.Contracts assembly.</p>
+<p>Compile the project. If you followed each of the above step correctly it &ldquo;should&rdquo; compile. If it doesn&rsquo;t work, you can grab a working version <a href="http://cid-f8b2fd72406fb218.skydrive.live.com/self.aspx/blog/Hello%20MEF/HelloMEF%5E_Part%20IIIa.zip"><strong><span style="color: #006bad">here</span></strong></a></p>
+<h2>Building a dynamically downloadable widget</h2>
+<p>First we need to add a reference to MEF in our HelloMEF.Extensions project as we did above. Next we&rsquo;ll add a reference to HelloMEF.Contracts. After adding it, go right-click on the reference and set Copy-Local to false in the reference properties. As our shared library is referenced by the app we know it will be loaded into memory and we shouldn&rsquo;t copy the assembly over and over. If we do, we could run into trouble.</p>
+<p>Now go add a new UserControl to the HelloMEF.Extensions project. Call it Widget3. We&rsquo;ll make this have a textbox with a green border. Below is the Widget3.xaml.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">&lt;</span><span style="color: #800000">UserControl</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Class</span>=<span style="color: #0000ff">"HelloMEF.Extensions.Widget3"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">xmlns</span>=<span style="color: #0000ff">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">xmlns</span>:<span style="color: #ff0000">x</span>=<span style="color: #0000ff">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">xmlns</span>:<span style="color: #ff0000">d</span>=<span style="color: #0000ff">"http://schemas.microsoft.com/expression/blend/2008"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">xmlns</span>:<span style="color: #ff0000">mc</span>=<span style="color: #0000ff">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">mc</span>:<span style="color: #ff0000">Ignorable</span>=<span style="color: #0000ff">"d"</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #ff0000">d</span>:<span style="color: #ff0000">DesignHeight</span>=<span style="color: #0000ff">"300"</span> <span style="color: #ff0000">d</span>:<span style="color: #ff0000">DesignWidth</span>=<span style="color: #0000ff">"400"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">       <span style="color: #0000ff">&lt;</span><span style="color: #800000">Grid</span> <span style="color: #ff0000">x</span>:<span style="color: #ff0000">Name</span>=<span style="color: #0000ff">"LayoutRoot"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"Auto"</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            <span style="color: #0000ff">&lt;</span><span style="color: #800000">TextBox</span> <span style="color: #ff0000">Background</span>=<span style="color: #0000ff">"Green"</span> <span style="color: #ff0000">Text</span>=<span style="color: #0000ff">"Hello MEF!"</span> <span style="color: #ff0000">TextAlignment</span>=<span style="color: #0000ff">"Center"</span> <span style="color: #ff0000">Height</span>=<span style="color: #0000ff">"100"</span> <span style="color: #ff0000">Width</span>=<span style="color: #0000ff">"300"</span><span style="color: #0000ff">/&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">       <span style="color: #0000ff">&lt;/</span><span style="color: #800000">Grid</span><span style="color: #0000ff">&gt;</span>
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">&lt;/</span><span style="color: #800000">UserControl</span><span style="color: #0000ff">&gt;</span></pre>
+</pre>
+<p>&nbsp;</p>
+<p>Next go drop in the code behind and make it a widget.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">namespace</span> HelloMEF.Extensions
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    [ExportWidget(Location=WidgetLocation.Bottom)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> Widget3 : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Widget3()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+</pre>
+<h2>Initializing the container to support dynamic download</h2>
+<p>If you are new to MEF, you might not be aware that behind the scenes the&nbsp;PartInitializer uses a class called the CompositionContainer to do all the work. By default we create a container which has all the exports in the current XAP. You can however override that container to do special things, like support dynamic XAP download. You override the container by calling the CompositionHost.InitializeContainer method. </p>
+<p>Add the following code to the App.xaml.cs class in the main app.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">private</span> <span style="color: #0000ff">void</span> InitializeContainer()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    var catalog = <span style="color: #0000ff">new</span> PackageCatalog();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    catalog.AddPackage(Package.Current);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    var container = <span style="color: #0000ff">new</span> CompositionContainer(catalog);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    container.ComposeExportedValue(catalog);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    CompositionHost.InitializeContainer(container);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+</pre>
+<p>The code above is performing several functions.</p>
+<ul>
+<li>It creates a PackageCatalog. Catalogs are a generic concept and they provide parts to the container. In this case the PackageCatalog will provide parts found in XAPs. Future downloaded XAPs will get added to this catalog. </li>
+<li>It adds Package.Current, which contains all the assemblies in the main XAP. </li>
+<li>Creates a container which uses the new catalog. </li>
+<li>Composes the catalog into the container. This makes the PackageCatalog available to importers so they can use it. You can also wrap the PackageCatalog in a service like IPackageService if you like and export it that way, but I am keeping it simple. </li>
+<li>Finally it overrides PartInitializer&rsquo;s container with this new container. </li>
+</ul>
+<p>Now we have one more thing to do which is to call our new method. Replace the Application_Startup method with the following code.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">private</span> <span style="color: #0000ff">void</span> Application_Startup(<span style="color: #0000ff">object</span> sender, StartupEventArgs e)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    InitializeContainer();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">this</span>.RootVisual = <span style="color: #0000ff">new</span> MainPage();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+</pre>
+<p>Now compile and run the app to test that the overridden container is working. You should the same result.</p>
+<h2>Enabling a widget to download new widgets</h2>
+<p>We&rsquo;ve added our widget, but it&rsquo;s not showing up, why? Well, because we haven&rsquo;t used the Package class to download it. Let&rsquo;s do that now. First thing we need to do is add a reference to the packaging dll. You&rsquo;ll need to look in your Toolkit folder.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_22.png"><img height="388" width="486" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_8.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>Next we&rsquo;ll change Widget1 to go and download our new widgets. We&rsquo;ll start with adding a using statement for System.ComponentModel.Composition.Packaging at the top, and then we&rsquo;ll implement the logic.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.ComponentModel.Composition;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.Windows.Controls;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.Windows;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.ComponentModel.Composition.Packaging;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">namespace</span> HelloMEF
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    [ExportWidget(Location=WidgetLocation.Top)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> Widget1 : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        [Import]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> PackageCatalog Packages { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Widget1()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            Button.Click += <span style="color: #0000ff">new</span> RoutedEventHandler(Button_Click);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">void</span> Button_Click(<span style="color: #0000ff">object</span> sender, RoutedEventArgs e)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            Package.DownloadPackageAsync(<span style="color: #0000ff">new</span> Uri("<span style="color: #8b0000">HelloMEF.Extensions.xap</span>",UriKind.Relative), (args, p) =&gt; Packages.AddPackage(p));
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+</pre>
+<p>Here&rsquo;s what we&rsquo;ve done.</p>
+<ul>
+<li>We&nbsp;added an import to get to our PackageCatalog that was explicitly added to the container. </li>
+<li>We&rsquo;ve subscribed to the button click event. </li>
+<li>In the handler, we&rsquo;ve used the static Package.DownloadPackageAsync method to grab &ldquo;HelloMEF.Extensions.xap&rdquo;. The method takes a delegate, which we are passing a lambda to for adding the package upon it&rsquo;s receipt. </li>
+</ul>
+<p>Now compile and run the app. Once the app is running, press the button and&hellip;&hellip;.<strong>Exception</strong>!</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_24.png"><img height="379" width="621" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_9.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>What&rsquo;s happening is our new package has been downloaded, but it has been rejected by MEF, why? Oh, due to non-recomposable import, of course <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  What in the world is that? <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  Let&rsquo;s scroll and look at the rest of the exception.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_26.png"><img height="91" width="468" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_10.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>What MEF is basically saying here is that new exports have showed up in our XAP which will satisfy the import MainPage.Widgets, but they have been rejected because the Widgets import itself is not recomposable.</p>
+<h2>Rejection and Recomposition</h2>
+<p>We just saw two things coming into play here. First MEF rejects things sometimes. In this case it is rejecting the new parts in the catalog due to recomposition, but it will also reject for other reasons such as a part having an import which cannot be satisfied because no exports are present. Rejecting is part of a very powerful feature called Stable Composition feature which we built MEF on top of and which your systems can rely on. For more on Stable Composition, check this <a href="http://blogs.msdn.com/gblock/archive/2009/08/02/stable-composition-in-mef-preview-6.aspx"><strong><span style="color: #006bad">post</span></strong></a>.</p>
+<p>But what is Recomposition? Recomposition means that parts in MEF are not static once they are composed and&nbsp;they can opt in to be recomposed as new things show up, recomposed means all recomposable imports are re-satisfied. If you connect the dots, that means your systems on top of MEF are dynamic. There&rsquo;s one caveat though, you have to opt-in to recomposition, otherwise parts are rejected. </p>
+<p>Doing that is as simple as setting AllowComposition = True in the Import / ImportMany attribute as we&rsquo;ve done below.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.Windows.Controls;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.ComponentModel.Composition;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">namespace</span> HelloMEF
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> MainPage : UserControl
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> MainPage()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            PartInitializer.SatisfyImports(<span style="color: #0000ff">this</span>);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            <span style="color: #0000ff">foreach</span> (var widget <span style="color: #0000ff">in</span> Widgets)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Top)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                    TopWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Bottom)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                    BottomWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        [ImportMany(AllowRecomposition=<span style="color: #0000ff">true</span>)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Lazy&lt;UserControl,IWidgetMetadata&gt;[] Widgets { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+</pre>
+<p>Now run the app, press the button and we don&rsquo;t get an exception.</p>
+<p>&nbsp;</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIMetadataCustomExp_2681/image_4.png"><img height="375" width="653" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIMetadataCustomExp_2681/image_thumb_1.png" alt="image" border="0" /></a></p>
+<p>Awesome, but aren&rsquo;t we back where we started? There&rsquo;s no new widget, where is it?</p>
+<h2>Designing for Recomposition</h2>
+<p>The widgets are there, they are just not showing. Why? Because we populated the widgets when the control loaded. The Widgets property has been updated, but the MainPage doesn&rsquo;t know to do anything when it is. What we need to do is make some changes to our MainPage to make it recomposition aware. There are two ways we could do this. First we could change our auto property to a real property, and override the getter when it is set. This is a bit ugly, so let&rsquo;s not do that. </p>
+<p>Instead let&rsquo;s take advantage of an interface in MEF which although it has a hideous name, is very nice. It&rsquo;s called IPartImportsSatisfactionNotification <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  What it does is allow the part to get notified by MEF whenever recomposition occurs. Thus, the perfect place for our logic for populating the widgets, AND we can still use automatic properties.</p>
+<p>Below is the code for MainPage to do this.</p>
+<pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.Windows.Controls;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">using</span> System.ComponentModel.Composition;
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"><span style="color: #0000ff">namespace</span> HelloMEF
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">{
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    <span style="color: #0000ff">public</span> partial <span style="color: #0000ff">class</span> MainPage : UserControl, IPartImportsSatisfiedNotification
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> MainPage()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            InitializeComponent();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            PartInitializer.SatisfyImports(<span style="color: #0000ff">this</span>);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        [ImportMany(AllowRecomposition=<span style="color: #0000ff">true</span>)]
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> Lazy&lt;UserControl,IWidgetMetadata&gt;[] Widgets { <span style="color: #0000ff">get</span>; <span style="color: #0000ff">set</span>; }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        #region IPartImportsSatisfiedNotification Members
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        <span style="color: #0000ff">public</span> <span style="color: #0000ff">void</span> OnImportsSatisfied()
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            TopWidgets.Items.Clear();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            BottomWidgets.Items.Clear();
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            <span style="color: #0000ff">foreach</span> (var widget <span style="color: #0000ff">in</span> Widgets)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            {
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Top)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                    TopWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                <span style="color: #0000ff">else</span> <span style="color: #0000ff">if</span> (widget.Metadata.Location == WidgetLocation.Bottom)
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">                    BottomWidgets.Items.Add(widget.Value);
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">            }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px"></pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">        #endregion
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">    }
+</pre>
+<pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas, 'Courier New', courier, monospace;font-size: 10px">}
+</pre>
+</pre>
+<p>You can see now that when composition occurs, we are clearing our two controls and repopulating. In future post we&rsquo;ll see how we can use a ViewModel to make this code much cleaner.</p>
+<p>OK, drum roll please. Compile and Run the app, press the button and&hellip;.</p>
+<p><a href="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_28.png"><img height="498" width="837" src="http://blogs.msdn.com/blogfiles/gblock/WindowsLiveWriter/BuildingHelloMEFPartIIIXAPPartitioninga_1543/image_thumb_11.png" alt="image" border="0" style="border-width: 0px" /></a> </p>
+<p>Voila, dynamic download of XAPs!</p>
+<h2>A few caveats about our Package API</h2>
+<p>I am sure by now you are thinking, wow this looks great! However, there are some unsupported capabilities when using our Package API that you should be aware of.</p>
+<ul>
+<li>Does not support Silverlight caching. Meaning if your XAP has references to things that are not in the XAP, the will only be found if they have been previously loaded, as&nbsp;the contracts are because the main app&nbsp;references them.&nbsp; </li>
+<li>Does not support loose resources such as images, xaml files, etc sitting in the XAP. They must be resources embedded in assemblies. </li>
+<li>Does not support versioning. Let&rsquo;s say you have a XAP that uses version 1 of a type, and another XAP that uses version 2. The loader will load both rather than unify on the latest version. </li>
+<li>Does not support localization, though you can probably come up with your own localization mechanism. </li>
+</ul>
+<h2>Summary</h2>
+<p>In this post, we learned how we can add dynamic XAP downloading support to our applications. </p>
+<p>Along the way we also learned the following:</p>
+<ul>
+<li>MEF has a CompositionContainer behind the scenes which it uses for composition. This container can be overridden. </li>
+<li>MEF Contracts can be shared across XAPs and do not need to be embedded in every XAP. </li>
+<li>MEF rejects parts that it cannot work with. </li>
+<li>MEF supports recomposition allowing parts to be recomposed when new things show up. </li>
+<li>IPartImportsSatisfiedNotification allows us to get notifications within our parts when they are recomposed. </li>
+</ul>
+<p>This opens up a Pandora&rsquo;s box of power. It can be used for good or evil <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  On the good side we can use it to allow our Silverlight apps to be extended by third-parties, as well as to partition our apps for a better user experience.</p>
+<h2>What&rsquo;s next</h2>
+<p>In the next post we&rsquo;ll explore this scenario a bit further. We&rsquo;ll see how you can create a part that dynamically downloads XAPs without needing PartInitializer to be configured to allow it. MEF on!</p>
+<p>Code is attached.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/hellomef/" title="View all posts in HelloMEF" rel="category tag">HelloMEF</a>, <a href="http://codebetter.com/glennblock/category/mef/" title="View all posts in MEF" rel="category tag">MEF</a>, <a href="http://codebetter.com/glennblock/category/silverlight/" title="View all posts in silverlight" rel="category tag">silverlight</a>, <a href="http://codebetter.com/glennblock/category/sl4/" title="View all posts in SL4" rel="category tag">SL4</a>. Bookmark the <a href="http://codebetter.com/glennblock/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition/" title="Permalink to Building Hello MEF – Part III – XAP Partitioning (with the host’s permission) and the sweetness of recomposition." rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition/feed/" title="Comments RSS to Building Hello MEF – Part III – XAP Partitioning (with the host’s permission) and the sweetness of recomposition." rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-109 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2009/12/05/building-hello-mef-part-ii-metadata-and-why-being-lazy-is-a-good-thing/" rel="prev"><span class="meta-nav">&larr;</span> Building Hello MEF – Part II – Metadata and why being Lazy is a good thing.</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2009/12/17/codepaste-is-the-bee-s-knees-my-new-favorite-way-to-share-code/" rel="next">CodePaste is the bee’s knees, my new favorite way to share code. <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-474">
+					<div id="dsq-comment-header-474" class="dsq-comment-header">
+						<cite id="dsq-cite-474">
+	http://www.caliburnproject.org							<span id="dsq-author-user-474">Rob Eisenberg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-474" class="dsq-comment-body">
+						<div id="dsq-comment-message-474" class="dsq-comment-message"><p>Interesting Glenn. I would like to see you address several other real world issues related to dynamic download with your MEF extensions:</p>
+<p>1. You would almost never download an extension without displaying some sort of loading or progress indicator, so I would like to see how this would work in.</p>
+<p>2. In complex applications, you can come across scenarios which would repeatedly trigger the downloading of the same dynamic resource. So, I would like to see how you would prevent downloading of already downloaded packages (if the present API doesn&#8217;t do that automatically).</p>
+<p>3. Often times, when a dynamic module is downloaded, it needs to not only load its parts into the container, but needs to initiate some sort of action. For example, lets say I click on a menu item that should display a screen which is part of a package that has not been downloaded&#8230;and that screen must fit into a larger screen activation framework.</p>
+<p>4. In a navigation style application, you often have deep linking through urls.  Suppose someone links to a url for a page that has not yet been downloaded?</p>
+<p>5. How would you test that the proper actions initiated the download and activation of a package?</p>
+<p>On another note, I would really like to see you blog a bit less about plugging user controls together and more about ViewModel composition. In my experience, almost all the scenarios I mentioned above are easier to solve outside of the context of views.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-475">
+					<div id="dsq-comment-header-475" class="dsq-comment-header">
+						<cite id="dsq-cite-475">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-475">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-475" class="dsq-comment-body">
+						<div id="dsq-comment-message-475" class="dsq-comment-message"><p>Thanks Rob as always. Comments to your points below.</p>
+<p>1. Yes, thanks. Currently&nbsp;we don&#8217;t report progress in our API. &nbsp;We are currently making some design changes though based on feedback and adding a progress notification. As far as why mine does not have a spinny thing, well I am still a noob <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>2. We currently don&#8217;t prevent that, however with the redesign we plan on addressing this as well. Today you could check on the PackageCatalog a property to see what was downloaded already.</p>
+<p>3. That is actually very easy. The module would have logic in it&#8217;s constructor that executes when it creates it. Or it could implement IPartImportSatisfacationNotification if it wants to have property imports as well. Finally the importing part which pulls in modules could also implement IPartImportSatisfactionNotification to run logic when new modules show up. Do you think&nbsp;any of these&nbsp;would work?&nbsp; Are you asking me to illustrate this in my sample?</p>
+<p>4. Brad A I believe has a post on his blog about using MEF&#8217;s dynamic download with the navigation infrastructure.</p>
+<p>5. You get a call back from the Package, the catalog also sends a notification. You could have the delegate invoke a service that was injected thus you could mock it. What would you expect here?</p>
+<p>Appreciate where you are coming from. I deliberately did not do MVVM initially as I don&#8217;t want to stay very focused on the MEF specifics and not cloud it with philosophical debate. However, if you read through my post, I said I will be getting to MVVM, TDD, etc soon. </p>
+<p>It felt ugly initially, but then I got used to it. Regardless of how much I love SRP / SOC, I dont&#8217; want folks who want to use MEF have to buy in to those precepts in order to use it.</p>
+<p>Thanks!</p>
+<p>Glenn </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-476">
+					<div id="dsq-comment-header-476" class="dsq-comment-header">
+						<cite id="dsq-cite-476">
+								<span id="dsq-author-user-476">Bruno Martinez</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-476" class="dsq-comment-body">
+						<div id="dsq-comment-message-476" class="dsq-comment-message"><p>What&#8217;s the difficulty in supporting assembly caching?  You can take a look at our assembly loader in component one&#8217;s control explorer.</p>
+<p>About Rob question number 2, repeated downloading of the same assemblies, you will find that nothing needs to be done. The browser caches the .xaps and .zips and re loading an assembly has no effect.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-477">
+					<div id="dsq-comment-header-477" class="dsq-comment-header">
+						<cite id="dsq-cite-477">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-477">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-477" class="dsq-comment-body">
+						<div id="dsq-comment-message-477" class="dsq-comment-message"><p>Bruno there is several problems with the caching. I am not sure if you and I are speaking of the same thing. What I mean is the feature in SL that allows a xap to automatically download references it needs when it loads. These assemblies are stored in a cache on the server.</p>
+<p>Reasons why we can&#8217;t do it: </p>
+<p>Top of the list is the manifest does not give you the information necessary to find the cached zip. We would need to create a standard convention which would indicate where it would reside, and we don&#8217;t think that&#8217;s the right thing to do long term.</p>
+<p>Second, the feature is something that Silverlight needs to support proper, it is not the feature for the MEF team to implement. The SL team unfortunately does not have time prior to SL4 shipping to add the necessary functionality, which requires a signficant amount of work.</p>
+<p>Hope this explains things</p>
+<p>Thanks<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-478">
+					<div id="dsq-comment-header-478" class="dsq-comment-header">
+						<cite id="dsq-cite-478">
+								<span id="dsq-author-user-478">Wouter</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-478" class="dsq-comment-body">
+						<div id="dsq-comment-message-478" class="dsq-comment-message"><p>Really interesting, love the series, thanks!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-479">
+					<div id="dsq-comment-header-479" class="dsq-comment-header">
+						<cite id="dsq-cite-479">
+								<span id="dsq-author-user-479">Bruno Martinez</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-479" class="dsq-comment-body">
+						<div id="dsq-comment-message-479" class="dsq-comment-message"><p>Glenn: What do you need beyond the contents of the AppManifest.xaml ?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-480">
+					<div id="dsq-comment-header-480" class="dsq-comment-header">
+						<cite id="dsq-cite-480">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-480">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-480" class="dsq-comment-body">
+						<div id="dsq-comment-message-480" class="dsq-comment-message"><p>For TPEs you need to know the assembly within the zip that you are pulling out. The manifest just tells you the URI of the XAP.</p>
+<p>It is possible to have  convention that requires the XAP filename to contain the assembly name (minus dll), thus you can use the XAP name to figure out the assembly.</p>
+<p>The big problem with adding TPE support for us now  is that it is late in the cycle and it will dramatically increase our test cost.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-481">
+					<div id="dsq-comment-header-481" class="dsq-comment-header">
+						<cite id="dsq-cite-481">
+								<span id="dsq-author-user-481">Albert</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-481" class="dsq-comment-body">
+						<div id="dsq-comment-message-481" class="dsq-comment-message"><p>Hi,</p>
+<p>I&#8217;m a newbie to silverlight and like MEF to setup a modular application. I also like the provided examples, but I was wondering how to hide or delete a previous loaded widget. Let&#8217;s say I&#8217;ve got to buttons (module 1 and module 2). If I click on the first button module 1 will be loaded. If I click on the second button I would like to hide or delete the first module and show the second module. If I say Topwigets.children.clear it won&#8217;t work. What am I doing wrong?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-482">
+					<div id="dsq-comment-header-482" class="dsq-comment-header">
+						<cite id="dsq-cite-482">
+								<span id="dsq-author-user-482">Fallon Massey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-482" class="dsq-comment-body">
+						<div id="dsq-comment-message-482" class="dsq-comment-message"><p>Where is the dynamic XAP download support in MEF? I don’t see it.</p>
+<p>I don&#8217;t understand why this was taken out of MEF, but it does cause major problems.  Firstly, I really don&#8217;t need to have to depend on the toolkit, that&#8217;s a forced dependency.</p>
+<p>However, secondly, it has caused major problems in building Silverlight 3 apps when moving to the latest code.  The support is gone in MEF, and it doesn&#8217;t exist in the SL3 version of the toolkit.  Has SL3 become a red headed step child so soon?</p>
+<p>If this dependency on the toolkit persists, could you please provide an example of how we can integrate our existing XAP downloading code to play well with MEF.</p>
+<p>Thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-483">
+					<div id="dsq-comment-header-483" class="dsq-comment-header">
+						<cite id="dsq-cite-483">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-483">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-483" class="dsq-comment-body">
+						<div id="dsq-comment-message-483" class="dsq-comment-message"><p>@Fallon, we pulled PackageCatalog from MEF because we were not happy with the implementation / design. We moved it into the PictureViewer sample in MEF 3.5. It was not a decision taken lightly. </p>
+<p>We think very hard about what we put &#8220;in the box&#8221;. If we are really not happy with the design we pull it, as we always have the option to add it later. We don&#8217;t have the option to pull it once it ships.</p>
+<p>MEF in SL3 was never our final target, though we had planned to support it on CodePlex. The reasoning for not putting the package stuff in the Toolkit for Sl3, was based on test/dev cost.</p>
+<p>However, I am happy to say we have revamped the design of the PackageCatalog and are now looking to bring support into MEF proper (not the same API but similar capabilities and more)  in SL4. This mens it will likely also show up in one of our our next few CodePlex drops for SL3. </p>
+<p>Thanks<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-484">
+					<div id="dsq-comment-header-484" class="dsq-comment-header">
+						<cite id="dsq-cite-484">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-484">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-484" class="dsq-comment-body">
+						<div id="dsq-comment-message-484" class="dsq-comment-message"><p>@Albert, if you are using the app with the current design, that won&#8217;t work. Everytime recomposition happens all of the available widgets are populated. </p>
+<p>If you want to have different logic, you should look at changing the design. You will start with the code OnImportsSatisfed method which currently loops through all.</p>
+<p>Hope this helps<br />
+Glenn</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-485">
+					<div id="dsq-comment-header-485" class="dsq-comment-header">
+						<cite id="dsq-cite-485">
+	http://denisvuyka.wordpress.com							<span id="dsq-author-user-485">Denis Vuyka</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-485" class="dsq-comment-body">
+						<div id="dsq-comment-message-485" class="dsq-comment-message"><p>Extremely nice article, Glenn. I&#8217;ve just finished introducing loose modules support for my application in SL3. Had to rip the &#8220;PackageCatalog&#8221; and &#8220;Package&#8221; from SL4 toolkit. The rest works pretty fine.</p>
+<p>As a hint: in order to minimize the module I&#8217;m setting &#8220;CopyLocal=False&#8221; for MEF-related and some other stuff that I&#8217;m 100% sure are already loaded by the main shell. In the very basic scenario the resulting package contains only &#8220;AppManifest.xaml&#8221; and module assembly.</p>
+<p>Thanks for the article, nice one as always</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-486">
+					<div id="dsq-comment-header-486" class="dsq-comment-header">
+						<cite id="dsq-cite-486">
+								<span id="dsq-author-user-486">Nk54</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-486" class="dsq-comment-body">
+						<div id="dsq-comment-message-486" class="dsq-comment-message"><p>Hi ! I have done your mef I, II tuto, and now make this one.</p>
+<p>I love your style, easy to understand, we know what we are doing and why.</p>
+<p>You just forget to say that we need to add references in the main app :<br />
+when you are talking about Initializing the container to support dynamic download</p>
+<p>(in your tuto, after making ExportWidgetAttribute with export&#8230;, you say that we can delete the other references.</p>
+<p>So at this point, we do not have the references needed.<br />
+using System.ComponentModel.Composition.Hosting;<br />
+using System.ComponentModel.Composition.Packaging;</p>
+<p>They are needed to use Catalog.</p>
+<p>And using System.ComponentModel.Composition;<br />
+is needed to get container.ComposeExportedValue() method. Else, container will just have Compose() method.</p>
+<p>Thanks a lot, i can&#8217;t wait to read your amazing post on MEF IV and MEF V !</p>
+<p>++</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-487">
+					<div id="dsq-comment-header-487" class="dsq-comment-header">
+						<cite id="dsq-cite-487">
+								<span id="dsq-author-user-487">Troy Nothnagel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-487" class="dsq-comment-body">
+						<div id="dsq-comment-message-487" class="dsq-comment-message"><p>It looks like with the April 2010 release of the Toolkit that System.ComponentModel.Composition.Packaging.Toolkit.dll is no longer available, and functionality has been moved to CompositionHost and DeploymentCatalog?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-488">
+					<div id="dsq-comment-header-488" class="dsq-comment-header">
+						<cite id="dsq-cite-488">
+								<span id="dsq-author-user-488">Clarrs</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-488" class="dsq-comment-body">
+						<div id="dsq-comment-message-488" class="dsq-comment-message"><p>This code no longer works with the April release.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-489">
+					<div id="dsq-comment-header-489" class="dsq-comment-header">
+						<cite id="dsq-cite-489">
+								<span id="dsq-author-user-489">Clarrs</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-489" class="dsq-comment-body">
+						<div id="dsq-comment-message-489" class="dsq-comment-message"><p>This code is outdated and no longer even compiles in VS 2010 and SL4</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-490">
+					<div id="dsq-comment-header-490" class="dsq-comment-header">
+						<cite id="dsq-cite-490">
+	http://codebetter.com/members/gblock/default.aspx							<span id="dsq-author-user-490">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-490" class="dsq-comment-body">
+						<div id="dsq-comment-message-490" class="dsq-comment-message"><p>@Clarrs if you look at the later posts in the series they work with the latest bits. Starting with Part IV.</p>
+<p><a href="http://codebetter.com/blogs/glenn.block/archive/2010/03/07/building-hello-mef-part-iv-deploymentcatalog.aspx" rel="nofollow">http://codebetter.com/blogs/glenn.block/archive/2010/03/07/building-hello-mef-part-iv-deploymentcatalog.aspx</a></p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition/ ';
+	var disqus_identifier = '109 /blogs/glenn.block/archive/2009/12/15/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "Building Hello MEF – Part III – XAP Partitioning (with the host’s permission) and the sweetness of recomposition.";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=109');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2009\/12\/15\/building-hello-mef-part-iii-xap-partitioning-with-the-host-s-permission-and-the-sweetness-of-recomposition\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.784 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 18:57:05 -->
+<!-- super cache -->

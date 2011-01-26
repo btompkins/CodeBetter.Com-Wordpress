@@ -75,7 +75,6 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 			
 		<?php endif; ?>
 		<wfw:commentRss><?php echo get_post_comments_feed_link(null, 'rss2'); ?></wfw:commentRss>
-		<slash:comments><?php echo get_comments_number(); ?></slash:comments>
 		<?php rss_enclosure(); ?>
 		<?php do_action('rss2_item'); ?>
 	</item>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Define Recursion &#8211; See Recursion | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Reminder- DC ALT.NET Meeting &#8211; 6/24/2008 &#8211; Applied Functional Programming with F#' href='http://codebetter.com/matthewpodwysocki/2008/06/24/reminder-dc-alt-net-meeting-6-24-2008-applied-functional-programming-with-f/' />
+<link rel='next' title='RockNUG Meeting &#8211; 7/9/2008 &#8211; Functional C#' href='http://codebetter.com/matthewpodwysocki/2008/07/02/rocknug-meeting-7-9-2008-functional-c/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/07/02/define-recursion-see-recursion/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=33' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-33" class="post-33 post type-post status-publish format-standard hentry category-c category-f category-functional-programming">
+					<h1 class="entry-title">Define Recursion &#8211; See Recursion</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/07/02/define-recursion-see-recursion/" title="4:35 am" rel="bookmark"><span class="entry-date">July 2, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Lately, I&#8217;ve noticed a few blogs are doing the come back to basics post, such as <a href="http://hanselman.com/blog/">Scott Hanselman&#8217;s</a>.&nbsp; I think that&#8217;s an effort that should be lauded, because many have a tendency to go off on pretty advanced topics, yet not provide enough for those just starting to get the full context.&nbsp; So, with that, I&#8217;m going to dig into one piece of programming that should have been ingrained should you have been a CS major in college or at least took some courses.</p>
+<p><span style="font-weight: bold">Recursion</span></p>
+<p>Recursion is one of those basic topics that come up time and time again as one of the core topics.&nbsp; It&#8217;s not as often talked about in the imperative and object oriented world, but in the functional programming world, it matters a whole bunch.&nbsp; Not only to be able to describe what it is, but the benefits, and where you might be able to break your problem down into using it.</p>
+<p>So, before we get too far, what exactly is it, and how do we get there?&nbsp; Basically recursion is to allow a function to call itself repeatedly during the body of that function.&nbsp; Most imperative languages from the C world use for loops, while loops and so on, so many times recursion isn&#8217;t needed.&nbsp; Functional languages such as F#, allow for recursion, but makes them a special designation to enforce its behaviors.&nbsp; </p>
+<p>When coming to a place such as Microsoft, understanding these concepts are key.&nbsp; Chances are you may get asked some of these questions, because people like me, when walking through complex structures, use recursive algorithms.&nbsp; It&#8217;s a nice tool to have in the toolbox.</p>
+<p>Let&#8217;s first look at an example not using recursion, then move towards recursion.&nbsp; First start off with a pretty obvious one in computing a factorial:</p>
+<p>public static int Factorial(int n)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; int result = 1;</p>
+<p>&nbsp;&nbsp;&nbsp; for (int i = 1; i &lt;= n; i++)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result *= i;</p>
+<p>&nbsp;&nbsp;&nbsp; return result;<br />
+}</p>
+<p>To me, that&#8217;s pretty horridly imperative.&nbsp; We can make the code much more concise through the use of recursion and not mutate state during the operation.&nbsp; With the proper attention of course to decrementing the counter so that we don&#8217;t get into infinite loops.&nbsp; An important lesson to learn is to not recurse infinitely, but in a controlled manner towards termination through a technique called <span style="font-weight: bold">&#8220;Well Founded Recursion&#8221;</span>.&nbsp; Let&#8217;s rewrite this to a much more manageable way:</p>
+<p><span style="text-decoration: underline">C#</span><br />
+public static int Factorial(int n)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; if (n &lt;= 1) // Exit condition<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;</p>
+<p>&nbsp;&nbsp;&nbsp; return n * Factorial(n &#8211; 1);<br />
+}</p>
+<p><span style="text-decoration: underline">F#</span><br />
+let rec factorial n =<br />
+&nbsp; if n &lt;= 1 then 1 else n * factorial (n &#8211; 1)</p>
+<p>The basic idea is to break down your problems into smaller instances of the same problem.&nbsp; Sometimes, the last thing we do in this function is return the recursion of the function.&nbsp; This is called <span style="font-weight: bold">&#8220;Tail Recursion&#8221;</span>.&nbsp; Below is a simple example of tail recursion:</p>
+<p>let rec last l = <br />
+&nbsp; match l with <br />
+&nbsp; | [] -&gt; invalid_arg &#8220;l&#8221;<br />
+&nbsp; | [head] -&gt; head<br />
+&nbsp; | head :: tail -&gt; last tail</p>
+<p>The above sample will ultimately give me the last item in a list since F# has pointers to the head of the list, we need to get the last one.&nbsp; We&#8217;ll get more into tail recursion in the next post, but I thought I&#8217;d introduce it now.&nbsp; It&#8217;s very important as well to know.</p>
+<p>Let&#8217;s take another example, this time walking a directory structure to lazily display all files in a directory.&nbsp; Of course we can note that the Directory.GetFiles already has the capability of getting all files in all folders, but for this exercise, let&#8217;s pretend it doesn&#8217;t exist.&nbsp; How might we do this?&nbsp; Let&#8217;s try the lazy approach the first time around through IEnumerable&lt;string&gt;.</p>
+<p><span style="text-decoration: underline">C#</span><br />
+public static IEnumerable&lt;string&gt; GetFiles(string rootPath)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; foreach(var file in Directory.GetFiles(rootPath))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yield return file;<br />
+&nbsp;&nbsp;&nbsp; foreach (var directory in Directory.GetDirectories(rootPath))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; foreach (var file in GetFiles(directory))<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; yield return file;<br />
+}</p>
+<p><span style="text-decoration: underline">F#</span><br />
+let rec getFiles rootFolder =<br />
+&nbsp;&nbsp;&nbsp; seq {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for file in Directory.GetFiles(rootFolder) -&gt; file<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for dir in Directory.GetDirectories(rootFolder) -&gt;&gt; getFiles dir<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</p>
+<p>What this allows me to do is recurse through a given directory hierarchy by first grabbing all the files and then going through a tail recursion through all the subdirectories.&nbsp; The F# way is a bit more concise through the use of Sequence Workflows, which I&#8217;ll get to at another time.&nbsp; If you understand anything about F#, understanding workflows is by far one of the most important.</p>
+<p><span style="font-weight: bold">Mututal Recursion</span></p>
+<p>Another interesting way to express recursion is to define them simultaneously by separating the definitions.&nbsp; This allows the functions to play off each other and work towards a deterministic end.&nbsp; The cannonical example of this is the odd/even sample.&nbsp; Let&#8217;s walk through that quickly in both C# and F#:</p>
+<p><span style="text-decoration: underline">C#</span><br />
+public static bool IsEven(int number)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; if (number == 0)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return true;<br />
+&nbsp;&nbsp;&nbsp; else<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return IsOdd(number &#8211; 1);<br />
+}</p>
+<p>public static bool IsOdd(int number)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; if (number == 0)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return false;<br />
+&nbsp;&nbsp;&nbsp; else<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return IsEven(number &#8211; 1);<br />
+}</p>
+<p><span style="text-decoration: underline">F#</span><br />
+let rec even n = (n = 0) || odd(n &#8211; 1)<br />
+&nbsp; and odd n = (n &lt;&gt; 0) &amp;&amp; even(n &#8211; 1)</p>
+<p>As you can see, I decrement the counter each time and call the complement function until I reach 0 and at that point, I can determine which one hits 0 and then it becomes apparent whether it is odd or even.&nbsp; F# goes a bit further to simplify this so that I can declare those functions as a pair through the use of the and keyword.&nbsp; Parsing of trees is particularly useful using mutual recursion.&nbsp; But just as easily, we could have done the above sequence without using recursion at all such as this:</p>
+<p>public static bool IsEven(int number)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; return number % 2 == 0;<br />
+}</p>
+<p>public static bool IsOdd(int number)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; return !IsEven(number);<br />
+}</p>
+<p>So, that&#8217;s not really a good example.&nbsp; instead, let&#8217;s look at a <a href="http://en.wikipedia.org/wiki/Hofstadter_sequence#Hofstadter_Female_and_Male_sequences">Hofstadter Male-Female Sequences</a> instead.&nbsp; </p>
+<p>The pair of sequences is defined by Female(0) = 1 and Male(0) = 0 and</p>
+<div style="margin-left: 40px">Female(n) = n &#8211; Male(Female(n &#8211; 1)<br />
+Male(n) = n &#8211; Female(Male(n &#8211; 1)
+</div>
+<p>
+This is defined as the same way as before, but we recursively call in the Male to the Female and back to the male, whereas it&#8217;s the opposite in the FemaleSequence method.&nbsp; This is just a simple implementation of the above algorithm in our C# and F# code respectively.</p>
+<p><span style="text-decoration: underline">C#</span><br />
+public static int MaleSequence(int n)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; if (0 == n)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 0;</p>
+<p>&nbsp;&nbsp;&nbsp; return n &#8211; FemaleSequence(MaleSequence(n &#8211; 1));<br />
+}</p>
+<p>public static int FemaleSequence(int n)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; if (0 == n)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return 1;</p>
+<p>&nbsp;&nbsp;&nbsp; return n &#8211; MaleSequence(FemaleSequence(n &#8211; 1));<br />
+}</p>
+<p><span style="text-decoration: underline">F#</span><br />
+let rec maleSequence n = if n = 0 then 0 else n &#8211; femaleSequence(maleSequence n &#8211; 1)<br />
+&nbsp; and femaleSequence n = if n = 0 then 1 else n &#8211; maleSequence(femaleSequence n &#8211; 1)</p>
+<p>There are more examples out there, but in the mean time, there&#8217;s plenty more to cover with recursion.&nbsp; Next, let&#8217;s cover lists.</p>
+<p><span style="font-weight: bold">Walking Lists</span></p>
+<p>Another thing we can do with recursion is the ability to walk lists.&nbsp; Most people think of lists as an ordered collection with a beginning and an end, with one right after another.&nbsp; How terribly imperative if you think that way&#8230;&nbsp; When we think of lists in a recursive way, we think of a list to have an item, and the rest of the list, or just an empty list.&nbsp; C# and the base class library does not have this of course defined in any meaningful way, so let&#8217;s look at the F# version of a list. &nbsp; </p>
+<p>module List = <br />
+&nbsp; val hd: &#8216;a list -&gt; &#8216;a<br />
+&nbsp; val tl: &#8216;a list -&gt; &#8216;a list</p>
+<p>What that tells us is that the head item is the first, and the tail is the rest.&nbsp; Let&#8217;s do a quick recursion to calculate the length of a list using some pattern matching:</p>
+<p>let rec length l =<br />
+&nbsp; match l with<br />
+&nbsp; | [] -&gt; 0<br />
+&nbsp; | head :: tail -&gt; 1 + length tail</p>
+<p>What I&#8217;m doing is pattern matching against the list.&nbsp; What the pattern matching allows me to do is short circuit if it&#8217;s an empty list, else, I&#8217;m splitting the head and the tail, and adding one to the length of the tail call with the tail of the list.&nbsp; Let&#8217;s look at another to concat a list of lists into a single list:</p>
+<p>let listOfList = [[1;2;3;];[4;5;6;];[7;8;9]]</p>
+<p>let rec concatList l =<br />
+&nbsp; match l with<br />
+&nbsp; | [] -&gt; []<br />
+&nbsp; | head :: tail -&gt; head @ concatList tail</p>
+<p>There is much more to cover here and I&#8217;ll do that in subsequent posts.</p>
+<p><span style="font-weight: bold">Why Recursion?</span></p>
+<p>Now that we covered some of the basics, it&#8217;s time to ask the question why.&nbsp; Why is recursion important and why use it?&nbsp; Well, to answer that lightly, in order to walk such things as trees, directories, and so on, it&#8217;s an absolute essential.&nbsp; But, let&#8217;s consider just a general functional programming question of why use it.</p>
+<p>It&#8217;s often the case that when people first start out with programming in F#, they are often in the imperative and OO mindset still.&nbsp; That&#8217;s ok since F# allows for this, but there are better ways to accomplish in the functional mindset.&nbsp; Many times, people will port over their C# code directly to F# with the mutable variables or reference cells and leave an ugly mess.&nbsp; Some of that can be solved with recursion.&nbsp; Let&#8217;s take a pretty naive example:</p>
+<p><span style="text-decoration: underline">C#</span><br />
+public static void CountDown(int n)<br />
+{<br />
+&nbsp;&nbsp;&nbsp; while(n &gt; 0)<br />
+&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DoOperation();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WaitSome();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n -= 1;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}</p>
+<p>When translated directly to F# looks like this:<br />
+let countDown n =<br />
+&nbsp; let mutable localN = n<br />
+&nbsp; while localN &gt; 0 do<br />
+&nbsp;&nbsp;&nbsp; DoOperation()<br />
+&nbsp;&nbsp;&nbsp; WaitSome()<br />
+&nbsp;&nbsp;&nbsp; localN &lt;- localN &#8211; 1</p>
+<p>What we&#8217;ve had to do is use reference cells so that we could change the value of n directly.&nbsp; From there, we have to use special operators to change and alias the value of n.&nbsp; Not the prettiest code.&nbsp; Not only that, but there is mutation galore, and I have to do extra work when creating a local iterating variable.&nbsp; instead, we should focus on recursion and look at the problem slightly differently.</p>
+<p>let rec countDown n =<br />
+&nbsp;&nbsp;&nbsp; match n with <br />
+&nbsp;&nbsp;&nbsp; | 0 -&gt; 0<br />
+&nbsp;&nbsp;&nbsp; | _ -&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DoOperation()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WaitSome()<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; countDown (n &#8211; 1)</p>
+<p>What this allows me to do is get rid of the local mutables, but also helps me break my problems into smaller, more similar problems which can be recursed.&nbsp; This allows for better code reuse and maintenance I think.</p>
+<p><span style="font-weight: bold">Wrapping It Up</span></p>
+<p>I&#8217;d like to spend some more time with tail recursion as I think it&#8217;s pretty important.&nbsp; As well, I&#8217;ll also talk about how you can do the same in C# as well (with a little work of course).&nbsp; But in the mean time, I hope I&#8217;ve demonstrated the simple act of recursion, when to look for it, and how to exploit it.&nbsp; Not all problems are ready for recursion, but when you find the right opportunities for them, it&#8217;s quite powerful. </p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/07/02/define-recursion-see-recursion/" title="Permalink to Define Recursion &#8211; See Recursion" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/07/02/define-recursion-see-recursion/feed/" title="Comments RSS to Define Recursion &#8211; See Recursion" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-33 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/06/24/reminder-dc-alt-net-meeting-6-24-2008-applied-functional-programming-with-f/" rel="prev"><span class="meta-nav">&larr;</span> Reminder- DC ALT.NET Meeting &#8211; 6/24/2008 &#8211; Applied Functional Programming with F#</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/07/02/rocknug-meeting-7-9-2008-functional-c/" rel="next">RockNUG Meeting &#8211; 7/9/2008 &#8211; Functional C# <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-94">
+					<div id="dsq-comment-header-94" class="dsq-comment-header">
+						<cite id="dsq-cite-94">
+	http://www.lazycoder.com							<span id="dsq-author-user-94">Scott</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-94" class="dsq-comment-body">
+						<div id="dsq-comment-message-94" class="dsq-comment-message"><p>For more on recursion, see this post. <a href="http://tinyurl.com/6bxyb5" rel="nofollow">http://tinyurl.com/6bxyb5</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-95">
+					<div id="dsq-comment-header-95" class="dsq-comment-header">
+						<cite id="dsq-cite-95">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-95">Matthew Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-95" class="dsq-comment-body">
+						<div id="dsq-comment-message-95" class="dsq-comment-message"><p>@Scott</p>
+<p>Well played sir.  LOL!</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-96">
+					<div id="dsq-comment-header-96" class="dsq-comment-header">
+						<cite id="dsq-cite-96">
+	http://www.managed-world.com							<span id="dsq-author-user-96">Jason Olson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-96" class="dsq-comment-body">
+						<div id="dsq-comment-message-96" class="dsq-comment-message"><p>Ahhhh, I love me a good cup of recursion <img src='http://codebetter.com/matthewpodwysocki/wp-includes/images/smilies/icon_razz.gif' alt=':P' class='wp-smiley' /> . As you showed with your examples of F#, getting into a functional programming language is a great way to really start to see the power of recursion. </p>
+<p>I personally like how Erlang uses recursion. For instance, the Factorial function (hopefully the HTML formatting doesn&#8217;t eat my code):</p>
+<p>Factorial(0) -> 1;<br />
+Factorial(N) -> N * Factorial(N-1).</p>
+<p>What REALLY warps my noggin&#8217; is when you start combining list comprehensions with recursion. For instance, code that generated all anagrams of a given sequence of letters/numbers would be the following in Erlang (for instance, for 123, it would generate 123, 132, 213, 231, 312, 321):</p>
+<p>perms([]) -> [[]];<br />
+perms(L) -> [[H|T] || H < - L, T <- perms(L&#8211;[H])].</p>
+<p>Now _that&#8217;s_ a mind-bender <img src='http://codebetter.com/matthewpodwysocki/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> .</p>
+<p>Rock on Matt!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-97">
+					<div id="dsq-comment-header-97" class="dsq-comment-header">
+						<cite id="dsq-cite-97">
+	http://www.managed-world.com							<span id="dsq-author-user-97">Jason Olson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-97" class="dsq-comment-body">
+						<div id="dsq-comment-message-97" class="dsq-comment-message"><p>Matt, I have no luck clicking the &#8220;add&#8221; button for adding a comment in IE7 (not sure if you know about that or not).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-98">
+					<div id="dsq-comment-header-98" class="dsq-comment-header">
+						<cite id="dsq-cite-98">
+	http://ralfkret.blogger.com							<span id="dsq-author-user-98">Ralf Kretzschmar</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-98" class="dsq-comment-body">
+						<div id="dsq-comment-message-98" class="dsq-comment-message"><p>One more advantage of recursion over iteration: If you get your exit condition wrong, a recursive algorithm will fail fast with a stack overflow exception.<br />
+And on using recursion for walking (I just try to not to use the term iterating) a list: Have a look at the parse class from the Fit.Net library. It opened my eyes on how elegantly use lists.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-99">
+					<div id="dsq-comment-header-99" class="dsq-comment-header">
+						<cite id="dsq-cite-99">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-99">Matthew Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-99" class="dsq-comment-body">
+						<div id="dsq-comment-message-99" class="dsq-comment-message"><p>@Jason</p>
+<p>Yeah, Haskell and Erlang have very nice shorthand for doing those operations.  To do something similar in F# would look like this:</p>
+<p>let rec remove x l =<br />
+    match l with<br />
+    | [] -> []<br />
+    | h::t when h = x -> t<br />
+    | h::t -> h:: remove x t</p>
+<p>let rec permutation xs =<br />
+    match xs with<br />
+    | [] -> [[]]<br />
+    | _ -> [for x in xs<br />
+            for ys in permutation (remove x xs)<br />
+            yield x::ys] </p>
+<p>[1..3] |> permutation |> print_any</p>
+<p>It still works, but not as elegant.  Recursion is indeed a fun topic!</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-100">
+					<div id="dsq-comment-header-100" class="dsq-comment-header">
+						<cite id="dsq-cite-100">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-100">Matthew Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-100" class="dsq-comment-body">
+						<div id="dsq-comment-message-100" class="dsq-comment-message"><p>@Jason </p>
+<p>Pesky comment emoticons!</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-101">
+					<div id="dsq-comment-header-101" class="dsq-comment-header">
+						<cite id="dsq-cite-101">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-101">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-101" class="dsq-comment-body">
+						<div id="dsq-comment-message-101" class="dsq-comment-message"><p>@Ralf</p>
+<p>True, unless it&#8217;s a tail recursive function, then it could go infinitely and I&#8217;m not sure you want that.  But if you&#8217;re talking linear recursion, binary recursion and so on, absolutely, it will fail fast.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-102">
+					<div id="dsq-comment-header-102" class="dsq-comment-header">
+						<cite id="dsq-cite-102">
+	http://www.managed-world.com							<span id="dsq-author-user-102">jolson88</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-102" class="dsq-comment-body">
+						<div id="dsq-comment-message-102" class="dsq-comment-message"><p>@Matt</p>
+<p>LOL, yeah, I noticed that. Oh well <img src='http://codebetter.com/matthewpodwysocki/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> .</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/07/02/define-recursion-see-recursion/ ';
+	var disqus_identifier = '33 /blogs/matthew.podwysocki/archive/2008/07/02/define-recursion-see-recursion.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Define Recursion &#8211; See Recursion";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=33');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/07\/02\/define-recursion-see-recursion\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.250 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 19:17:28 -->
+<!-- super cache -->

@@ -47,7 +47,7 @@
 		<input type="hidden" name="cof" value="FORID:9" />
 		<input type="hidden" name="ie" value="UTF-8" />
 		<input type="text"  class="text-input" id="s" name="q" size="31" />
-		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
 	</fieldset>
   </div>
 </form>
@@ -58,7 +58,7 @@
 			
 		<div id="main" class="container_12">
 		
-			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - <?php bloginfo('description'); ?>"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - <?php bloginfo('description'); ?>"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
 			<div id="ad_leaderboard" class="grid_9">			</div>
 			
 			<div id="globalNav" class="grid_12">

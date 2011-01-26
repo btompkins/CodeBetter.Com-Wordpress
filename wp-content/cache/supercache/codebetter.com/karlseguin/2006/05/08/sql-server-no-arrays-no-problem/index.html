@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>SQL Server &#8211; No Arrays? No Problem! | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='QueryString separated by something other than &amp; (ampersand)?' href='http://codebetter.com/karlseguin/2006/05/04/querystring-separated-by-something-other-than-ampersand/' />
+<link rel='next' title='ASP.NET isn&#8217;t always the right tool' href='http://codebetter.com/karlseguin/2006/05/12/asp-net-isnt-always-the-right-tool/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=22' />
+<link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-22" class="post-22 post type-post status-publish format-standard hentry category-grab-a-coffee-before-reading">
+					<h1 class="entry-title">SQL Server &#8211; No Arrays? No Problem!</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/" title="2:32 pm" rel="bookmark"><span class="entry-date">May 8, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Just a couple weeks ago <a HREF="/blogs/karlseguin/archive/2006/04/17/142964.aspx">I was pointing to the lack of a LIMIT keyword in SQL Server 2005</a>. Last week, I was reminded about the lack of arrays.&nbsp; I have a hard time believing that a platform/language/framework/anything aimed at developers in this day and age doesn&#8217;t support arrays, but we&#8217;ll assume the SQL Server team had more important things to do the past 6 years.</p>
+<p>You&#8217;ll run into the array-wall frequently while doing SQL Server programming, but to me, the most obvious example is when dealing with a CheakBoxList. The CheckBoxList is a perfect example; because it&#8217;s typically varying length (the user could pick any number of values). Take for example a blogging system that support &#8220;tags&#8221;. An author could pick 0 or more tags and then hit the &#8220;Post&#8221; button.</p>
+<p><font face="Courier New" size="2"><font color="#0000ff">private sub</font> Post_Click(o as object, e as EventArg)<br />&nbsp; <font color="#0000ff">dim </font>post <font color="#0000ff">as new</font> Post()<br />&nbsp; post.Subject = Subject.Text<br />&nbsp; post.Body = body.Text<br />&nbsp; <font color="#0000ff">foreach </font>item <font color="#0000ff">as</font> ListItem <font color="#0000ff">in </font>Tags.Items<br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">if </font>(item.Selected) <font color="#0000ff">then</font><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; post.Tags.Add(new Tag(item.Name, item.Value))<br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">end if</font><br />&nbsp; <font color="#0000ff">next</font><br />&nbsp; post.Save()<br />&nbsp; <font color="#008000">&#8216;do something nice here&#8230;</font><br /><font color="#0000ff">end sub</font></font></p>
+<p>You&#8217;ll eventually end up into a method that looks like:<br /><font color="#0000ff"><br /><font face="Courier New" size="2">friend sub</font></font><font face="Courier New" size="2"> SavePost(post as Post)<br />&nbsp; </font><font color="#0000ff" face="Courier New" size="2">using </font><font face="Courier New" size="2">connection </font><font color="#0000ff" face="Courier New" size="2">as new</font><font face="Courier New" size="2"> SqlConnectio(GET_FROM_CONFIG)<br />&nbsp;&nbsp;&nbsp; </font><font color="#0000ff" face="Courier New" size="2">using </font><font face="Courier New" size="2">command </font><font color="#0000ff" face="Courier New" size="2">as new</font><font face="Courier New" size="2"> SqlCommand()<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#8216;now what? <br /></font><font color="#0000ff" face="Courier New" size="2">&nbsp;&nbsp;&nbsp; end using<br />&nbsp; end using<br />end sub</font></p>
+<p>It&#8217;d be sweet if we could pass in an array of TagIds, like:</p>
+<p><font face="Courier New" size="2">command.Parameters.Add(&#8220;@TagIds&#8221;, SqlDbType.Int()).Value = post.TagIds</font></p>
+<p>But we can&#8217;t.&nbsp; One solution might be to write some dynamic SQL&#8230;but that&#8217;s no fun to maintain. Another is to hit the database multiple times:<br /><font color="#000000"><br /></font><font color="#000000" face="Courier New" size="2"><font color="#0000ff">foreach </font>tag <font color="#0000ff">as </font>Tag <font color="#0000ff">in</font> post.Tags<br />&nbsp;&nbsp; SaveTag(post.Id, tag.Id)<br /><font color="#0000ff">next</font></font></p>
+<p>This isn&#8217;t a bad idea, and can even be done in a single connection.Open(). I prefer a third solution though. In SQL Server 2000, I would pass in a comma-delimited string and convert it into a table, something like:</p>
+<p><font face="Courier New" size="2"><font color="#0000ff">CREATE PROCEDURE</font> SavePost<br />(<br />&nbsp; &#8230;<br />&nbsp; @Tags <font color="#0000ff">VARCHAR</font>(2000)<br />)<br /><font color="#0000ff">AS<br />SET NOCOUNT ON</font></p>
+<p>&nbsp;&nbsp; <font color="#0000ff">DECLARE</font> @tagIds <font color="#0000ff">Table</font><br />&nbsp;&nbsp; <font color="#0000ff">SELECT </font>@tagIds = dbo.CsvToInt(@Tags)<br />&nbsp; <br />&nbsp; <br />&nbsp;&nbsp; <font color="#008000">&#8211;INSERT THE POST</font><br />&nbsp;&nbsp; <font color="#0000ff">DECLARE </font>@postId <font color="#0000ff">INT </font><br />&nbsp;&nbsp; <font color="#0000ff">SET </font>@postId = SCOPE_IDENTITY()<br />&nbsp; &nbsp;<br />&nbsp;&nbsp; <font color="#0000ff">INSERT INTO </font>PostTags<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">SELECT </font>@postId, [value]<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">FORM </font>@tagIds</p>
+<p><font color="#0000ff">SET NOCOUNT OFF</font></font></p>
+<p>Here&#8217;s what my CsvToInt function might look like:<br /><font color="#000000" face="Courier New" size="2"><font color="#0000ff">CREATE&nbsp; Function</font> dbo.CsvToInt<br />( <br />&nbsp;&nbsp; @Array <font color="#0000ff">VARCHAR</font>(2000)<br />) <br /><font color="#0000ff">RETURNS </font>@IntTable <font color="#0000ff">TABLE </font>(IntValue <font color="#0000ff">INT</font>)<br /><font color="#0000ff">AS<br />BEGIN</font><br />&nbsp; <font color="#0000ff">IF </font>@Array &lt;&gt; &#8221; <font color="#0000ff">BEGIN</font><br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">DECLARE </font>@separator char(1)<br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">SET </font>@separator = &#8216;,&#8217;</p>
+<p>&nbsp;&nbsp;&nbsp; <font color="#0000ff">DECLARE </font>@separator_position INT <br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">DECLARE </font>@array_value VARCHAR(2000) </p>
+<p>&nbsp;&nbsp;&nbsp; <font color="#0000ff">SET </font>@array = @array + &#8216;,&#8217;<br />&nbsp;&nbsp;&nbsp; <font color="#0000ff">WHILE </font>patindex(&#8216;%,%&#8217; , @array) &lt;&gt; <font color="#0000ff">0 BEGIN</font><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">SELECT </font>@separator_position =&nbsp; patindex(&#8216;%,%&#8217; , @array)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">SELECT </font>@array_value = <font color="#0000ff">LEFT(@</font>array, @separator_position &#8211; 1)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">INSERT </font>@IntTable Values (<font color="#0000ff">CAST</font>(@array_value AS INT))<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">SELECT </font>@array = stuff(@array, 1, @separator_position, &#8221;)<br />&nbsp;&nbsp;&nbsp;<font color="#0000ff"> END<br />&nbsp; END<br />&nbsp; RETURN<br />END</font></font></p>
+<p>This solution has a number of limitations. The first being the length which might prove problematic in some situations. Worse though is that it only really works for comma delimited integers. What happens if you want to pass in a more complexe structure, like a name=&gt;value collection.</p>
+<p>Well, with SQL Server 2005, things have gotten a lot better. Instead of passing in a CSV, we can leverage the SQL Server&#8217;<font color="#008000">s XML </font>capabilities.&nbsp; Changing the paramters of what we are trying to do (from a simple csv, to a key=&gt;name bulk insert), we first need to convert our collection into some XML:</p>
+<p><font face="Courier New" size="2"><font color="#0000ff">friend shared function </font>NameValueToXml(data as NameValueCollection) <font color="#0000ff">as string</font><br />&nbsp; <font color="#0000ff">dim </font>sb <font color="#0000ff">as new</font> StringBuilder(&#8220;<font color="#a52a2a">&lt;data&gt;</font>&#8220;)<br />&nbsp; <font color="#0000ff">foreach </font>key <font color="#0000ff">as string</font> <font color="#7fffd4">in </font>data<br />&nbsp;&nbsp;&nbsp; sb.Append(&#8220;<font color="#a52a2a">&lt;meta&gt;</font>&#8220;)<br />&nbsp;&nbsp;&nbsp; sb.AppendFormat(&#8220;<font color="#a52a2a">&lt;key&gt;{0}&lt;/key&gt;</font>&#8220;, key)<br />&nbsp;&nbsp;&nbsp; sb.AppendFormat(&#8220;<font color="#a52a2a">&lt;value&gt;{0}&lt;/value&gt;</font>&#8220;,data(key))<br />&nbsp;&nbsp;&nbsp; sb.Append(&#8220;<font color="#a52a2a">&lt;/meta&gt;</font>&#8220;)<br /><font color="#0000ff">&nbsp; next<br />end function</font></font></p>
+<p>Which means we&#8217;ll end up with a string that looks like:<br /><font face="Courier New" size="2">&lt;data&gt;<br />&nbsp; &lt;meta&gt;<br />&nbsp;&nbsp;&nbsp; &lt;key&gt;Some Key&lt;/key&gt;<br />&nbsp;&nbsp;&nbsp; &lt;value&gt;Some Value&lt;/value&gt;<br />&nbsp; &lt;/meta&gt;<br />&nbsp; &lt;meta&gt;<br />&nbsp;&nbsp;&nbsp; &lt;key&gt;Some Key 1&lt;/key&gt;<br />&nbsp;&nbsp;&nbsp; &lt;value&gt;Some Value 1&lt;/value&gt;<br />&nbsp; &lt;/meta&gt;<br />&nbsp; &lt;meta&gt;<br />&nbsp;&nbsp;&nbsp; &lt;key&gt;Some Key 2&lt;/key&gt;<br />&nbsp;&nbsp;&nbsp; &lt;value&gt;Some Value 2&lt;/value&gt;<br />&nbsp; &lt;/meta&gt;<br />&lt;/data&gt;</font></p>
+<p>Next, we pass the value into stored procedure:</p>
+<p><font face="Courier New" size="2">command.Parameters.Add(&#8220;@Tags&#8221;, SqlDbType.Xml).Value = NameValueToXml(post.Tags)</font></p>
+<p>And finally, we store the values into our table:</p>
+<p><font face="Courier New" size="2"><font color="#0000ff">CREATE PROCEDURE</font> SavePost<br />(<br />&nbsp; &#8230;<br />&nbsp; @Tags XML<br />)<br /><font color="#0000ff">AS<br />SET NOCOUNT ON</font><br />&nbsp; &nbsp;<br />&nbsp;&nbsp; &#8230;</p>
+<p>&nbsp;&nbsp; <font color="#0000ff">INSERT INTO</font> XX<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">SELECT </font>ItemData.row.value(&#8216;key[1]&#8216;, &#8216;varchar(200)&#8217;),<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ItemData.row.value(&#8216;value[1]&#8216;, &#8216;varchar(200)&#8217;)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">FROM </font>@Tags.nodes(&#8216;/data/meta&#8217;) ItemData(row)</p>
+<p><font color="#0000ff">SET NOCOUNT OFF</font></font></p>
+<p>The syntax isn&#8217;t the most obvious. In my mind, it creates a node at ItemData.row for each child of /data/meta which can be access via the value method. Note that you can also access attributes by using the @name syntax.</p>
+<p></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/grab-a-coffee-before-reading/" title="View all posts in Grab a coffee before reading" rel="category tag">Grab a coffee before reading</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/" title="Permalink to SQL Server &#8211; No Arrays? No Problem!" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/feed/" title="Comments RSS to SQL Server &#8211; No Arrays? No Problem!" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-22 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2006/05/04/querystring-separated-by-something-other-than-ampersand/" rel="prev"><span class="meta-nav">&larr;</span> QueryString separated by something other than &amp; (ampersand)?</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2006/05/12/asp-net-isnt-always-the-right-tool/" rel="next">ASP.NET isn&#8217;t always the right tool <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">11 Responses to <em>SQL Server &#8211; No Arrays? No Problem!</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-220">
+		<div id="comment-220">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Sushant</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-220">August 11, 2006 at 5:38 am</a></div>
+
+		<div class="comment-body"><p>I think we can implement a betetr code&#8230;. the 1 which i had seen on <a href="http://www.sommarskog.se/arrays-in-sql.html#iter-list-of-integers" rel="nofollow">http://www.sommarskog.se/arrays-in-sql.html#iter-list-of-integers</a><br />
+works good for even characters.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-219">
+		<div id="comment-219">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://haacked.com/' rel='external nofollow' class='url'>Haacked</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-219">June 2, 2006 at 5:07 pm</a></div>
+
+		<div class="comment-body"><p>I agree with piers in that parsing comma-separated string is not well suited to a set-based language like SQL.</p>
+<p>But wouldn&#8217;t being able to pass in a set be ideally suited to a set-based language?  Having to pass in XML seems like overkill just to pass in a set of integers to a set based language.  </p>
+<p>Unfortunately, there&#8217;s not much else you can do other than call the same sproc over and over.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-218">
+		<div id="comment-218">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-218">May 9, 2006 at 1:40 am</a></div>
+
+		<div class="comment-body"><p>I don&#8217;t think this logic belongs in the middle tier. It&#8217;s very specific to a particular vendor &#8211; SQL Server. Perhaps this is classical impedance, but it seems to me that it isn&#8217;t up to the business layer to worry about the workings of the database layer &#8211; why should it care what SQL server does and doesn&#8217;t support (let alone try to solve the problem). We might just have two different points of view on this, and I would quite welcome any enlightement you can provide. To me, this is the prime responsability of the data access and data layers..</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-217">
+		<div id="comment-217">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">piers7</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-217">May 9, 2006 at 12:29 am</a></div>
+
+		<div class="comment-body"><p>Parsing a comma-seperated string in SQL is the canonical example of what *not* to do at the database layer, because it&#8217;s the canonical example of what *not* to do in a set-based language like SQL.</p>
+<p>Now true you can get round this using the XML syntax, and/or using SQL-CLR, but you&#8217;ve really got to ask yourself should this logic not sit in the middle tier?</p>
+<p>&#8220;&#8230;assume the SQL Server team had more important things to do the past 6 years&#8221;</p>
+<p>Yeah, core database functionality, rather than replicating what&#8217;s best done elsewhere.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-216">
+		<div id="comment-216">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://adamv.com/' rel='external nofollow' class='url'>Adam Vandenberg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-216">May 8, 2006 at 10:09 pm</a></div>
+
+		<div class="comment-body"><p>If you&#8217;re building an XML string from user entered input, you probably do not want to be using StringBuilder and String.Format to pull it together.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-215">
+		<div id="comment-215">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/jgalloway' rel='external nofollow' class='url'>Jon Galloway</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-215">May 8, 2006 at 6:38 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;d love to see a SQLCLR JSON parser. JSON&#8217;s arrays are much more lightweight than XML, which makes a difference when pushing thousands of rows.</p>
+<p>Oren (Ayende) has an interesting solution &#8211; use SqlBulkCopy to push an entire table over, then join onto it:<br />
+<a href="http://www.ayende.com/Blog/2006/04/18/BulkDataOperationsUsingNHibernate.aspx" rel="nofollow">http://www.ayende.com/Blog/2006/04/18/BulkDataOperationsUsingNHibernate.aspx</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-214">
+		<div id="comment-214">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/john.papa' rel='external nofollow' class='url'>johnpapa</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-214">May 8, 2006 at 6:07 pm</a></div>
+
+		<div class="comment-body"><p>Yeah, you could use the SQL CLR, but its somewhat overkill just to pass an array, IMO. I like the XML fragment approach using the new XQuery extensions in SQL 2005 (as you showed in your post, Karl). I think the XML aproach is the cleanest of the dirty shirts.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-213">
+		<div id="comment-213">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-213">May 8, 2006 at 5:16 pm</a></div>
+
+		<div class="comment-body"><p>Yes, I thought about the SQLCLR also. I&#8217;m not there at all (ie, 0 experience with it). If anyone wanted to provide an example for completeness it&#8217;d be welcome.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-212">
+		<div id="comment-212">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/sahil.malik' rel='external nofollow' class='url'>sahilmalik</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-212">May 8, 2006 at 4:27 pm</a></div>
+
+		<div class="comment-body"><p>Well you could do this using OPENXML in SQL2k also. So nothing new there, but OPENXML had a few downsides.</p>
+<p>Another cool thing you could do in SQL2k5, is use SQLCLR to send in a serialized object as a bytearray &#8211; which is then deserialized inside SQL Server. In most situations the extra memory overhead won&#8217;t balance out the peformance gain you get, but it could be a good solution where you are not fully sure of the parameters being passed in, when the code is written.</p>
+<p>There is IMO, still no good solution for passing in arrays. In Oracle you can get around this problem but SQL Server still needs these workarounds.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-211">
+		<div id="comment-211">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-211">May 8, 2006 at 3:43 pm</a></div>
+
+		<div class="comment-body"><p>Ya, it could. Here are a couple links for anyone interested:<br />
+<a href="http://www.sql-server-performance.com/jb_openxml.asp" rel="nofollow">http://www.sql-server-performance.com/jb_openxml.asp</a><br />
+<a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;315968" rel="nofollow">http://support.microsoft.com/default.aspx?scid=kb;en-us;315968</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-210">
+		<div id="comment-210">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">jfranco</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2006/05/08/sql-server-no-arrays-no-problem/#comment-210">May 8, 2006 at 3:23 pm</a></div>
+
+		<div class="comment-body"><p>Couldn&#8217;t this also be accomplished in SQL 2000?? I&#8217;ve been doing this for years using the OPENXML function.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.288 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 18:49:10 -->
+<!-- super cache -->
