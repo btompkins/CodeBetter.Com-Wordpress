@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Separate Assemblies != Loose Coupling | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Agile is more disciplined than Waterfal, so sayeth Jason Yip (and me)' href='http://codebetter.com/jeremymiller/2008/09/28/agile-is-more-disciplined-than-waterfal-so-sayeth-jason-yip-and-me/' />
+<link rel='next' title='If the .Net BCL is drywall, Extension Methods are spackle' href='http://codebetter.com/jeremymiller/2008/10/07/if-the-net-bcl-is-drywall-extension-methods-are-spackle/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2008/09/30/separate-assemblies-loose-coupling/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=591' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-591" class="post-591 post type-post status-publish format-standard hentry category-ranting">
+					<h1 class="entry-title">Separate Assemblies != Loose Coupling</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2008/09/30/separate-assemblies-loose-coupling/" title="6:49 pm" rel="bookmark"><span class="entry-date">September 30, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Sorry guys, but it&#8217;s time to rant.&nbsp; I see so many people needlessly complicating their architecture and deployment by insisting on using separate assemblies for every layer of the app or even doing the trick where interfaces are in one assembly and the concrete classes are in another assembly.&nbsp; Stop it!&nbsp; It&#8217;s a waste of time.&nbsp; <b>Logical</b> de-coupling from UI to business logic to infrastructure to the database is <b>very</b> important, but using separate assemblies doesn&#8217;t do anything to guarantee that decoupling.&nbsp; You can separate your assemblies all you want, but making the UI depend on the implementation details of the business code in the other assembly is still harmful tight coupling.&nbsp; Likewise, you can lump data access, the domain model, and even UI concerns in the same assembly and still maintain separation of concerns in <b>every way that really matters</b> to the success of your project.&nbsp; Our Domain Model and our persistence infrastructure is all in one assembly named &#8220;DovetailCRM.Core,&#8221; but yet there is zero coupling from the Domain Model to the NHibernate mechanism.&nbsp; We could slide another persistence mechanism (assuming that there actually was another POCO-compliant persistence mechanism with rich functionality in existence for .Net) without changing anything in our Domain Model.</p>
+<p>Here&#8217;s what&#8217;s important about coupling between two things (class/module/infrastructure/subsystem/whatever) named X and Y:</p>
+<ul>
+<li>Can I understand X in isolation, or do I also have to understand Y at the same time?</li>
+<li>Can I change X independently of Y?&nbsp; Or to put it differently, will changing X likely break Y or vice versa, &#8217;cause that would be bad?</li>
+<li>Can I test X in isolation without Y hanging around and getting in the way?&nbsp; Or can I verify that X works independently of Y?</li>
+<li>Can I use X with a Z instead of a Y?</li>
+<li>If I want to reuse X in another context, even if it&#8217;s in the same application, can I do that without having to drag Y along with me?&nbsp; And all of the things that Y needs for that matter?</li>
+</ul>
+<p>I&#8217;m very firmly in the camp that says you should only split assemblies by deployment targets, and even then, I don&#8217;t think you need to be strict about assembly separation.&nbsp; More assemblies == slower compile times (Don&#8217;t believe me?&nbsp; Try it out in VS.Net.&nbsp; I took 56 projects one time and consolidated them down to 10-12 and cut the compile time from 4 minutes to 20 seconds with the same LOC), circular reference problems, and more complicated usage and deployment.&nbsp; Nothing is more irritating to me than using 3rd party toolkits that force you to reference a dozen different assemblies just to do one simple thing.&nbsp; Ok, truth be told, nothing irritates me more than using 3rd party control kits in general &#8212; all the worst API&#8217;s ever created come from .Net control toolkits.</p>
+<p>If you don&#8217;t think your team won&#8217;t adequately follow the basic separation of concerns rules you&#8217;ve determined in your architecture, you&#8217;ll be better off doing something like using CQL constraints with NDepend in your automated build script to find coupling violations.&nbsp; Even with the separate assembly strategy you would still need to use static code analysis to find every coupling violation. </p>
+<p>&nbsp;</p>
+<p>One more rant, and I may be leaving the reservation on this one.&nbsp; Obviously, the following rule applies equally to me, but don&#8217;t ever assume for a second that just because someone is an MVP/INETA Speaker/MS Regional Director/&#8221;Professional .Net Gloryhound&#8221; that they know WTF they&#8217;re talking about.&nbsp; Remember that all of those awards are mostly based on visibility and successful self-promotion rather than on strict technical merit.</p>
+<p>&nbsp;</p>
+<p>Ok, I&#8217;m done now.&nbsp; Thank you for listening, I feel better now. </p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/ranting/" title="View all posts in Ranting" rel="category tag">Ranting</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2008/09/30/separate-assemblies-loose-coupling/" title="Permalink to Separate Assemblies != Loose Coupling" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2008/09/30/separate-assemblies-loose-coupling/feed/" title="Comments RSS to Separate Assemblies != Loose Coupling" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-591 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2008/09/28/agile-is-more-disciplined-than-waterfal-so-sayeth-jason-yip-and-me/" rel="prev"><span class="meta-nav">&larr;</span> Agile is more disciplined than Waterfal, so sayeth Jason Yip (and me)</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2008/10/07/if-the-net-bcl-is-drywall-extension-methods-are-spackle/" rel="next">If the .Net BCL is drywall, Extension Methods are spackle <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-4605">
+					<div id="dsq-comment-header-4605" class="dsq-comment-header">
+						<cite id="dsq-cite-4605">
+	http://blowmage.com/							<span id="dsq-author-user-4605">Mike Moore</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4605" class="dsq-comment-body">
+						<div id="dsq-comment-message-4605" class="dsq-comment-message"><p>Couldn&#8217;t agree more. Its like you took the smartest parts of my mind, removed the Ruby infatuation, and committed them to your blog.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4606">
+					<div id="dsq-comment-header-4606" class="dsq-comment-header">
+						<cite id="dsq-cite-4606">
+	http://devlicio.us/blogs/casey							<span id="dsq-author-user-4606">Casey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4606" class="dsq-comment-body">
+						<div id="dsq-comment-message-4606" class="dsq-comment-message"><p>>>>I&#8217;m very firmly in the camp that says you should only split assemblies by deployment targets, and even then, I don&#8217;t think you need to be strict about assembly separation<<<</p>
+<p>I think the physical separation of code can also be useful in keeping developers wary of the boundaries &#8211; logical separation is too easy to accidentally break, especially for less experienced devs &#8211; adding a reference is a dead give away that something may not be a good idea.</p>
+<p>That said, I rarely have a project that goes over 10 assemblies, and even then those are likely over a number of deployment targets &#8211; usually it breaks down to .Core a few .UI or .Web assemblies, perhaps an interfaces assembly, and sometimes a data assembly.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4607">
+					<div id="dsq-comment-header-4607" class="dsq-comment-header">
+						<cite id="dsq-cite-4607">
+								<span id="dsq-author-user-4607">pmlarocque</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4607" class="dsq-comment-body">
+						<div id="dsq-comment-message-4607" class="dsq-comment-message"><p>Good post, I know a lot of people who insist<br />
+On the interace/concrete assemblies seperation.<br />
+Everytime I ask them have you ever changed the concrete DLL<br />
+Without the one for interface&#8230;. Answer is always No!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4608">
+					<div id="dsq-comment-header-4608" class="dsq-comment-header">
+						<cite id="dsq-cite-4608">
+	http://weblogs.asp.net/astopford							<span id="dsq-author-user-4608">Andy Stopford</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4608" class="dsq-comment-body">
+						<div id="dsq-comment-message-4608" class="dsq-comment-message"><p>Good post! I&#8217;m a little curious as how to how you have structured StructureMap, I know it&#8217;s very different to an business solution but I&#8217;m curious all the same</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4609">
+					<div id="dsq-comment-header-4609" class="dsq-comment-header">
+						<cite id="dsq-cite-4609">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-4609">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4609" class="dsq-comment-body">
+						<div id="dsq-comment-message-4609" class="dsq-comment-message"><p>@Andy,</p>
+<p>StructureMap.dll has everything related to IoC and DI.  There&#8217;s another assembly called StructureMap.AutoMocking that has the auto mocker that would only be used in test scenarios.  And finally, there&#8217;s StructureMap.DataAccess that is my ancient data access toolkit from the bad old days when we mucked around with ADO.Net directly.</p>
+<p>I do keep the testing project separate, and there&#8217;s a couple other assemblies with fake classes just to have something to point StructureMap at.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4610">
+					<div id="dsq-comment-header-4610" class="dsq-comment-header">
+						<cite id="dsq-cite-4610">
+	http://www.adronbhall.name							<span id="dsq-author-user-4610">Adron</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4610" class="dsq-comment-body">
+						<div id="dsq-comment-message-4610" class="dsq-comment-message"><p>That makes me think&#8230; I need to cleanup my codeplex/highball project.  It&#8217;s a mess right now.</p>
+<p>Thanks for the kick in the ass.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4611">
+					<div id="dsq-comment-header-4611" class="dsq-comment-header">
+						<cite id="dsq-cite-4611">
+	http://devlicio.us/blogs/derik_whittaker/default.aspx							<span id="dsq-author-user-4611">Derik Whittaker</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4611" class="dsq-comment-body">
+						<div id="dsq-comment-message-4611" class="dsq-comment-message"><p>I would agree with Casey in regards that separate assemblies help to keep developers honest.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4612">
+					<div id="dsq-comment-header-4612" class="dsq-comment-header">
+						<cite id="dsq-cite-4612">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-4612">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4612" class="dsq-comment-body">
+						<div id="dsq-comment-message-4612" class="dsq-comment-message"><p>@Casey &#038; Derik,</p>
+<p>No, it doesn&#8217;t.  Or at least no more than having separate namespaces within a single assembly.  Even so, all you&#8217;ve done is enforce some ceremony but not the actual intent (i.e. actual, real separation of concerns).</p>
+<p>How many times have you worked with devs and said &#8220;we&#8217;re doing MVP&#8221; but still find a lot of logical view behavior embedded directly into the code behind?  Separate assemblies are the exact same thing.  You don&#8217;t have separation of concerns because you&#8217;ve got separate assemblies, and neither does a single assembly preclude separation of concerns.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4613">
+					<div id="dsq-comment-header-4613" class="dsq-comment-header">
+						<cite id="dsq-cite-4613">
+	http://www.afterkickoff.com							<span id="dsq-author-user-4613">Craig</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4613" class="dsq-comment-body">
+						<div id="dsq-comment-message-4613" class="dsq-comment-message"><p>&#8220;You don&#8217;t have separation of concerns because you&#8217;ve got separate assemblies, and neither does a single assembly preclude separation of concerns.&#8221;</p>
+<p>I think you missed their point, of course it doesn&#8217;t stop people doing things the wrong way, what it does is constantly reminding the developers of how things should be structured. </p>
+<p>Personally I normally have 5 assemblies for each project.<br />
+1. Core &#8211; common classes used across multiple projects<br />
+2. Data &#8211; basically entity classes<br />
+3. Services &#8211; service classes<br />
+4. Web &#8211; the web site itself<br />
+5. Test &#8211; unit tests</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4614">
+					<div id="dsq-comment-header-4614" class="dsq-comment-header">
+						<cite id="dsq-cite-4614">
+	http://samgentile.com/							<span id="dsq-author-user-4614">Sam Gentile</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4614" class="dsq-comment-body">
+						<div id="dsq-comment-message-4614" class="dsq-comment-message"><p>I agree with you my friend and agree with the strong stance. However, I am bothered by:</p>
+<p>> Remember that all of those awards are mostly based on visibility and successful self-promotion rather than on strict technical merit.</p>
+<p>All of them? None are based on merit? Do you really want or need to speak like that?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4615">
+					<div id="dsq-comment-header-4615" class="dsq-comment-header">
+						<cite id="dsq-cite-4615">
+	http://chadmyers.lostechies.com							<span id="dsq-author-user-4615">Chad Myers</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4615" class="dsq-comment-body">
+						<div id="dsq-comment-message-4615" class="dsq-comment-message"><p>@Sam:  I have known several MVP&#8217;s and MS RD&#8217;s that didn&#8217;t have a lot of depth-of-knowledge/experience but were quite popular and prominent in the community.  </p>
+<p>This leads me to believe that MVP and the RD title isn&#8217;t necessarily about technical merit.</p>
+<p>Having said that, many MVP&#8217;s and RD&#8217;s I know are quite experienced and knowledgeable.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4616">
+					<div id="dsq-comment-header-4616" class="dsq-comment-header">
+						<cite id="dsq-cite-4616">
+	http://blog.wekeroad.com							<span id="dsq-author-user-4616">Rob Conery</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4616" class="dsq-comment-body">
+						<div id="dsq-comment-message-4616" class="dsq-comment-message"><p>I&#8217;ll jump on this&#8230; why not <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> . </p>
+<p>>>>I have known several MVP&#8217;s and MS RD&#8217;s that didn&#8217;t have a lot of depth-of-knowledge/experience but were quite popular and prominent in the community.  < <<</p>
+<p>That would be me <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> . I don&#8217;t have a CS degree, didn&#8217;t know SQUAT about DI/IOC until Jeremy walked me through it 3 months ago, and as anyone in Building 42 will tell you, I can write some serious trashy code.</p>
+<p>Yet I was an MVP for 2 years running (ASP.NET), was awarded PayPal Developer of the Year (whatever that means) and was recruited by ScottGu to work at the Monster. I don&#8217;t consider myself a GloryHound per se, and if you look at my blog you won&#8217;t see any type of &#8220;badging&#8221; anywhere, short of my Bio (so people know who I am).</p>
+<p>Technical Merit is a very small part of what we do. My strengths lie elsewhere: Community, Insight, Ideas, and most of all Execution. I can put things together that frankly many others can&#8217;t &#8211; it&#8217;s just a skill I have.</p>
+<p>But take a look at the code I write &#8211; you&#8217;ll laugh. And I invite you to laugh because it allows me to learn &#8211; which is at the core of it all, is it not?</p>
+<p>Jeremy I might side with Sam on this a bit &#8211; there really is no need to further the &#8220;Alt.NET Bull##it&#8221; that has come to divide this industry. I&#8217;ve met you and know that you are a lot better than that comment.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4617">
+					<div id="dsq-comment-header-4617" class="dsq-comment-header">
+						<cite id="dsq-cite-4617">
+								<span id="dsq-author-user-4617">Steve</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4617" class="dsq-comment-body">
+						<div id="dsq-comment-message-4617" class="dsq-comment-message"><p>I tried to make a circular reference today and was stopped.  I then had to rethink why I was wanting to do that.</p>
+<p>It ended up in me rethinking the solution &#8211; which ended up in a good refactor because code wasn&#8217;t where it needed to be.</p>
+<p>Personally, I like good namespace practices.</p>
+<p>Good post, but I&#8217;m not sure how MVP has anything to do with more or less assemblies created in a project?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4618">
+					<div id="dsq-comment-header-4618" class="dsq-comment-header">
+						<cite id="dsq-cite-4618">
+								<span id="dsq-author-user-4618">addy santo</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4618" class="dsq-comment-body">
+						<div id="dsq-comment-message-4618" class="dsq-comment-message"><p>Dude!  There is more than one kind of coupling.  Assemblies are your unit of deployment. Which automatically also makes them your unit of versioning.  Coupling in this context means &#8220;Can I DEPLOY component X without recompiling/retesting/redeploying component Y&#8221;. That concern is totally orthogonal to the ones listed in your post, yet no less important from an operational perspective.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4619">
+					<div id="dsq-comment-header-4619" class="dsq-comment-header">
+						<cite id="dsq-cite-4619">
+								<span id="dsq-author-user-4619">Padgett Rowell</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4619" class="dsq-comment-body">
+						<div id="dsq-comment-message-4619" class="dsq-comment-message"><p>I like separate assemblies.  For me it’s easier to partition code both logically as well as physically in separate project.  This is usually along the lines of individual projects for ‘shared core common functionality’, ‘web ui’, ‘windows ui’, ‘data access layer’, ‘entity models &#038; business logic’ – of course it depends on the size and nature of the project.   If nothing else it forces me to think ‘where do I put this bit of code?, where should it be visible?, who relies on it?, what dependencies am I introducing?’.  I’m not smart enough – nor disciplined enough to have all my layers in the one project without a little tight coupling / boundry crossing creeping in.  So I separate, and it works for me.  At least until I learn a better way <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4620">
+					<div id="dsq-comment-header-4620" class="dsq-comment-header">
+						<cite id="dsq-cite-4620">
+	http://blog.componentoriented.com							<span id="dsq-author-user-4620">D. Lambert</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4620" class="dsq-comment-body">
+						<div id="dsq-comment-message-4620" class="dsq-comment-message"><p>Absolutely spot-on.  You know where a lot of this crap starts, though?  Have you ever looked at some of the Enterprise architecture samples coming out of Microsoft?  I&#8217;m not sure if they got jar-envy looking at J2EE projects, or got hit with a GOF book at a particularly impressionable moment, but lots of those solutions are choked with projects that serve only to obfuscate any semblance of readability.</p>
+<p>They&#8217;re guilty of the &#8220;requires fourteen other assemblies to run&#8221; problem, too:<br />
+<a href="http://blog.componentoriented.com/?p=131" rel="nofollow">http://blog.componentoriented.com/?p=131</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4621">
+					<div id="dsq-comment-header-4621" class="dsq-comment-header">
+						<cite id="dsq-cite-4621">
+								<span id="dsq-author-user-4621">Justice</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4621" class="dsq-comment-body">
+						<div id="dsq-comment-message-4621" class="dsq-comment-message"><p>Separating code into physical assemblies based on their logical relationships is a neat trick to help programmers decouple code. You can of course stick all the code into one assembly and everything will work the same. But separation of assemblies adds some additional constraints which are harder to violate accidentally (circular references between logical layers, inability directly to use code in assemblies which are not referenced). It&#8217;s a handy trick.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4622">
+					<div id="dsq-comment-header-4622" class="dsq-comment-header">
+						<cite id="dsq-cite-4622">
+	http://chadmyers.lostechies.com							<span id="dsq-author-user-4622">Chad Myers</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4622" class="dsq-comment-body">
+						<div id="dsq-comment-message-4622" class="dsq-comment-message"><p>@Rob:</p>
+<p>I&#8217;m not sure why you felt it necessary to defend yourself or turn this into an &#8220;us vs. them&#8221; argument, or what ALT.NET has to do with any of this.</p>
+<p>In this particular instance, someone asked Jeremy a StructureMap question and had a particularly misguided view about assemblies and coupling and such.  This view was obtained from some public work a particular MVP had done (not you, don&#8217;t worry) and this person had mistakenly assumed that this was &#8220;Best Practice&#8221; because the work was done by an MVP.</p>
+<p>Jeremy&#8217;s point was that having an MVP doesn&#8217;t necessarily mean you know anything. MVP&#8217;s are not chosen strictly on technical merit.  That&#8217;s not a slam on the MVP program nor on MVP individuals, just the perception by the public that MVP == technical expert.</p>
+<p>And Rob, by the very fact that you are contributing the MVC Storefront stuff, by my definition at least, makes you *NOT* a Gloryhound. Same goes for Sam Gentile and most of the MVP&#8217;s I know. But that&#8217;s just my opinion.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4623">
+					<div id="dsq-comment-header-4623" class="dsq-comment-header">
+						<cite id="dsq-cite-4623">
+	http://chadmyers.lostechies.com							<span id="dsq-author-user-4623">Chad Myers</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4623" class="dsq-comment-body">
+						<div id="dsq-comment-message-4623" class="dsq-comment-message"><p>@Rob:</p>
+<p>Oh yeah, not to mention SubSonic and the various other things you contribute (gosh, sorry I missed the most obvious one, duh! my bad)</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4624">
+					<div id="dsq-comment-header-4624" class="dsq-comment-header">
+						<cite id="dsq-cite-4624">
+	http://www.elegantcode.com							<span id="dsq-author-user-4624">Jarod</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4624" class="dsq-comment-body">
+						<div id="dsq-comment-message-4624" class="dsq-comment-message"><p>Overall I think you raise some good points in your rant, assuming the project is small and the team is co-located.</p>
+<p>Once a project hits a certain size you have to think about the vertical partitions as well as the horizontal layers. IMO, placing your module interfaces in a seperate assemblies is critical for larger applications. This allows you to share services accross modules through your container/kernel, without circular references. What if X needs services from Y, and Y needs services from X?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4625">
+					<div id="dsq-comment-header-4625" class="dsq-comment-header">
+						<cite id="dsq-cite-4625">
+	http://blog.wekeroad.com							<span id="dsq-author-user-4625">Rob Conery</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4625" class="dsq-comment-body">
+						<div id="dsq-comment-message-4625" class="dsq-comment-message"><p>@Chad &#8211; eek, my bad <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  I didn&#8217;t mean to come off defensively <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> . Tried to throw some dern smilies in there!</p>
+<p>My point was less about me &#8211; much more about the MVPs out there <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> . The &#8220;Us vs. Them&#8221; thing &#8211; well I dunno, you and Jeremy are pretty visible &#8220;Alties&#8221; and I have to say your comments on posts that I have seen in the last few weeks have been very gracious and are doing a lot in terms of keeping the discussion professional.</p>
+<p>This post was really well-written &#8211; I just wish Jeremy could have explained just a bit more what was meant by the comment is all. It was &#8220;over-stated&#8221; a bit <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> .</p>
+<p>I&#8217;m just doing what I can to try and keep people positive &#8211; more work gets done that way <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> .</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4626">
+					<div id="dsq-comment-header-4626" class="dsq-comment-header">
+						<cite id="dsq-cite-4626">
+								<span id="dsq-author-user-4626">The Other Steve</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4626" class="dsq-comment-body">
+						<div id="dsq-comment-message-4626" class="dsq-comment-message"><p>I&#8217;m going to have to agree with my colleagues here, and respectfully disagree with you Jeremy.</p>
+<p>I do understand what you are saying, and it is true that separate assemblies are not necessary and they don&#8217;t protect you from crappy code&#8230; however as others have mentioned, they do kind of throw up a barrier that makes you think.</p>
+<p>&#8220;Do I really want/need to include a reference?&#8221;</p>
+<p>This is especially important when you are working in a corporate environment with multiple developers some of whom are fairly junior.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4627">
+					<div id="dsq-comment-header-4627" class="dsq-comment-header">
+						<cite id="dsq-cite-4627">
+								<span id="dsq-author-user-4627">The Other Steve</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4627" class="dsq-comment-body">
+						<div id="dsq-comment-message-4627" class="dsq-comment-message"><p>And I want to comment on your feud. <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>There are people in this world who really understand technology.</p>
+<p>Then there are people in this world who are able to take ideas and explain them to others.</p>
+<p>Yes, most of those MVPs or awards winners and such are of the latter sort, but that doesn&#8217;t make them less useful and worthwhile to the community.</p>
+<p>There are people though who just pass things on without really explaining them just to boost their own credentials.  I don&#8217;t typically see these people getting awards though.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4628">
+					<div id="dsq-comment-header-4628" class="dsq-comment-header">
+						<cite id="dsq-cite-4628">
+								<span id="dsq-author-user-4628">Jason P</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4628" class="dsq-comment-body">
+						<div id="dsq-comment-message-4628" class="dsq-comment-message"><p>We&#8217;re in a similar situation that The Other Steve described.  It&#8217;s a large project, and we have some vertical slices separated by assembly boundaries.  I agree with Jeremy that this /shouldn&#8217;t/ be necessary, but in a world of developers over whom you have little influence and who don&#8217;t understand separation of concerns, the firmer boundaries that separate assemblies provide help.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4629">
+					<div id="dsq-comment-header-4629" class="dsq-comment-header">
+						<cite id="dsq-cite-4629">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-4629">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4629" class="dsq-comment-body">
+						<div id="dsq-comment-message-4629" class="dsq-comment-message"><p>I agree in general, we have always pushed the interface separation as an option in composite apps. Depending on the scope of the project, it may make sense. Having the separation does prevent inadvertantly referencing concrete implementations thus limiting testability. I would say take it with a case by case basic and I agree there should be no magic interface library per concrete assembly requirement.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4630">
+					<div id="dsq-comment-header-4630" class="dsq-comment-header">
+						<cite id="dsq-cite-4630">
+								<span id="dsq-author-user-4630">El Architect</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4630" class="dsq-comment-body">
+						<div id="dsq-comment-message-4630" class="dsq-comment-message"><p>The general trend in software development is to generate more complexity and not less. Trying to fight this is like trying to fight the tide coming in.</p>
+<p>Jeremy, your argument may have some merit but you are alone on this one.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4631">
+					<div id="dsq-comment-header-4631" class="dsq-comment-header">
+						<cite id="dsq-cite-4631">
+								<span id="dsq-author-user-4631">Larry Lard</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4631" class="dsq-comment-body">
+						<div id="dsq-comment-message-4631" class="dsq-comment-message"><p>> one assembly named &#8220;DovetailCRM.Core,&#8221;</p>
+<p>Framework Design Guidelines, section 3.1.2 &#8216;Capitalizing Acronyms&#8217;:</p>
+<p>DO capitalize only the first character of acronyms with three or more characters except the first word of a camel-cased identifier.</p>
+<p>    System.Xml<br />
+    public void ProcessHtmlTag(string htmlTag)</p>
+<p>Just sayin&#8217; <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4632">
+					<div id="dsq-comment-header-4632" class="dsq-comment-header">
+						<cite id="dsq-cite-4632">
+								<span id="dsq-author-user-4632">Dirk</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4632" class="dsq-comment-body">
+						<div id="dsq-comment-message-4632" class="dsq-comment-message"><p>I might be missing the point but&#8230;.</p>
+<p>Isn&#8217;t referncing your business entites in your UI a form of coupling that you can&#8217;t avoid?</p>
+<p>Lets say I had a Customer entity that I wanted to display the Customer first name in my UI.</p>
+<p>Ok I could dynamically load the class using some form of IOC and I could adhere to Seperation of Concerns by implementing some sort of MVC pattern.</p>
+<p>But I would still need to do something similar to:</p>
+<p>Label.caption == customer.firstName</p>
+<p>Maybe the answer is something like the Abstract Factory method?</p>
+<p>Any thoughts?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4633">
+					<div id="dsq-comment-header-4633" class="dsq-comment-header">
+						<cite id="dsq-cite-4633">
+								<span id="dsq-author-user-4633">Stu</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4633" class="dsq-comment-body">
+						<div id="dsq-comment-message-4633" class="dsq-comment-message"><p>I&#8217;m with Jeremy on both points.</p>
+<p>Up till recently I&#8217;ve always seperated my projects to ensure minimal dependencies but I agree that utilising some static analysis tool within your continuous build would do the trick &#8211; I&#8217;ll be sure to give this a shot on my next green fields project.</p>
+<p>Of course there other reasons to want to partition your assemblies, versioning, team/sub system boundaries.<br />
+I  don&#8217;t think you&#8217;ll find anyone arguing that having one project shared between 5 teams is a good idea. <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /><br />
+But partitioning just to manage dependencies is unnecessary. </p>
+<p>As for the MVP comment &#8211; reread it. It made perfect sense to me.  Any negative inference people got out it  is more a reflection of possible insecurities?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4634">
+					<div id="dsq-comment-header-4634" class="dsq-comment-header">
+						<cite id="dsq-cite-4634">
+								<span id="dsq-author-user-4634">Marco Paul</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4634" class="dsq-comment-body">
+						<div id="dsq-comment-message-4634" class="dsq-comment-message"><p>When referring to X and Y, if Y provides a service and X depends on Y is an abstraction, is this considered &#8220;loose&#8221; coupling?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4635">
+					<div id="dsq-comment-header-4635" class="dsq-comment-header">
+						<cite id="dsq-cite-4635">
+	http://akutz.wordpress.com/							<span id="dsq-author-user-4635">Schley Andrew Kutz</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4635" class="dsq-comment-body">
+						<div id="dsq-comment-message-4635" class="dsq-comment-message"><p>I would like to comment on a few points, and solicit your feedback as well.</p>
+<p>It was mentioned that interfaces do not need to be in separate assemblies. However, in my own experience they sometimes do &#8212; or at least it helps if they are. For example, I am the author of Sudowin, a port of sudo from Unix to Windows. It was written in .NET 1.1 and uses .NET Remoting. Because the client must converse with the server, or remote object, the client needed to know what the server&#8217;s interface contract was. Instead of requiring clients to host the server assembly, I created a Core assembly that contained the common interfaces and other code between client and server. This just seemed like the most elegant solutions.</p>
+<p>Now, your advice. I am currently working on re-architecting an application portal. It is my initial thought to place all of the ASP.NET provider implementations and HTTP modules into separate assemblies:</p>
+<p>edu.utexas.mccombs.portal.providers.role<br />
+edu.utexas.mccombs.portal.providers.authn<br />
+edu.utexas.mccombs.portal.providers.profile</p>
+<p>edu.utexas.mccombs.portal.httpmods.errors<br />
+edu.utexas.mccombs.portal.httpmods.sqlfiles</p>
+<p>Of course this will cause all sorts of fun when creating 5 Nant scripts (or using TeamCity&#8217;s capacity to work with MSBuild). Regardless, I could certainly simplify things if I created just two assemblies:</p>
+<p>edu.utexas.mccombs.portal.providers<br />
+edu.utexas.mccombs.portal.httpmods</p>
+<p>I just do not like the idea of needing to update the authentication provider and having that affect the role provider. I suppose though that is my own bias speaking as with version control you absolutely know if other files have been altered. Of course, version control is one of the big reasons to keep these modules as separate assemblies.</p>
+<p>What do you guys and gals think? I appreciate your responses. You can always feel free to e-mail me at sakutz at gmail dot com.</p>
+<p>Thanks!</p>
+<p>- If you are developing ASP.NET providers or HTTP modules and you wish to redistribute them or wish to manage their versions independently from one another separate assemblies are really the only way to go.</p>
+<p>That said, I would love to throw everything into a single assembly. With version control it is certainly possible for people to work on individual files or components of the assembly. But since ASP.NET is largely based on modular components, it makes sense to me to follow that model with your assembly design.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4636">
+					<div id="dsq-comment-header-4636" class="dsq-comment-header">
+						<cite id="dsq-cite-4636">
+	http://akutz.wordpress.com/							<span id="dsq-author-user-4636">Schley Andrew Kutz</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4636" class="dsq-comment-body">
+						<div id="dsq-comment-message-4636" class="dsq-comment-message"><p>Please ignore the bits I related in my last post under the &#8220;Thanks!&#8221;. I forgot to erase my first draft.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4637">
+					<div id="dsq-comment-header-4637" class="dsq-comment-header">
+						<cite id="dsq-cite-4637">
+	http://www.lucasgoodwin.com							<span id="dsq-author-user-4637">Lucas Goodwin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4637" class="dsq-comment-body">
+						<div id="dsq-comment-message-4637" class="dsq-comment-message"><p>Heh, it&#8217;s nice to be vindicated by someone else on this issue.   Most of what you read lies in the camp of lots of sub-assemblies is good.</p>
+<p>We usually have 5 assemblies per project.<br />
+- A core assembly (This is all the shared code we take from project to project)<br />
+- Project assembly (this is the DataAccess, Domain, and Business logic for the particular application)<br />
+- A Unit Test assembly (Really just the &#8220;Fast Tests&#8221; assembly<br />
+- An Integration Test assembly (Really just the &#8220;Slow Tests&#8221; assembly)<br />
+- The application controller assembly (UI helpers/controllers/etc)</p>
+<p>That&#8217;s it.  I&#8217;ve found the key is to split your assemblies where re-use can occur, which is usually not at the logical seperations.  Realistically are you ever going to reuse the data-access layer without the domain layer or vice-versa?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4638">
+					<div id="dsq-comment-header-4638" class="dsq-comment-header">
+						<cite id="dsq-cite-4638">
+	http://blog.deploymentengineering.com							<span id="dsq-author-user-4638">Christopher Painter</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4638" class="dsq-comment-body">
+						<div id="dsq-comment-message-4638" class="dsq-comment-message"><p>As a deployment engineer ( fancy way for saying Build/Install guy )  I typically don&#8217;t care about many of the underlying details of .NET code.   After all,  unless the build breaks it&#8217;s not really a deployment concern whether you properly implemented an interface or something.</p>
+<p>What does catch my attention is this type of issue because creating additional projects/assemblies results in a changing footprint for the deployed application to be consumed by an installer.</p>
+<p>From that perspective, it&#8217;s important to keep in mind how you intend to service your project once it&#8217;s been deployed.   Do you have any intention patching your product vs doing full release upgrades only?   Do you have any intention of doing product line development methodologies where you might want to reuse certain components across multiple installs?</p>
+<p>If so, carefully considering your class relationships and where they should physically belong becomes an important question.   Also having the ability to do things like the following allow for creating very clean windows installer patches:  (TFS scenario):</p>
+<p>1) Find the build you want to patch and get it&#8217;s change set #.<br />
+2) Create a new branch based on that changeset.<br />
+3) Build that branch to reproduce the deployed installer.<br />
+4) Merge your patch changesets to the new branch.<br />
+5) Perform an incremental build to generate the new the installer.<br />
+6) Run the deployed installer and new installer through a patch generation build.</p>
+<p>You know end up with foo.msp  which is capable of patching foo.msi v1.0.0.0 to v1.0.0.10.</p>
+<p>How small that patch is will depend alot on how your classes are layed out in your assemblies, what changed and what needed to be rebuilt.</p>
+<p>Just a thought&#8230;.<br />
+  create a branch off of a changeset,  reproduce the deployed build,  merge changesets to that branch a</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4639">
+					<div id="dsq-comment-header-4639" class="dsq-comment-header">
+						<cite id="dsq-cite-4639">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-4639">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4639" class="dsq-comment-body">
+						<div id="dsq-comment-message-4639" class="dsq-comment-message"><p>@Dirk,</p>
+<p>Not every form of coupling is harmful.  In many cases I&#8217;d say that it is perfectly fine to bind UI elements directly to the Domain Model objects.  If you really need the UI and the Domain Model to be separated I think you need to pay the &#8220;DTO Tax.&#8221;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4640">
+					<div id="dsq-comment-header-4640" class="dsq-comment-header">
+						<cite id="dsq-cite-4640">
+	http://blog.deploymentengineering.com							<span id="dsq-author-user-4640">Christopher Painter</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4640" class="dsq-comment-body">
+						<div id="dsq-comment-message-4640" class="dsq-comment-message"><p>BTW, I&#8217;d like to add&#8230;.</p>
+<p> Just because someone works for Microsoft don&#8217;t assume they know WTF they are talking about.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4641">
+					<div id="dsq-comment-header-4641" class="dsq-comment-header">
+						<cite id="dsq-cite-4641">
+								<span id="dsq-author-user-4641">Dirk</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4641" class="dsq-comment-body">
+						<div id="dsq-comment-message-4641" class="dsq-comment-message"><p>Hahaha &#8220;DTO Tax&#8221; very good!</p>
+<p>Thanks for responding.</p>
+<p>I think I will be going down the presentation entity route that way I will be able to sleep at night without worrying that I have broken some pattern!</p>
+<p>I guess at some stage something has to be coupled somewhere otherwise you would just end up with a generic framework not capable of much.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4642">
+					<div id="dsq-comment-header-4642" class="dsq-comment-header">
+						<cite id="dsq-cite-4642">
+								<span id="dsq-author-user-4642">mwatts</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4642" class="dsq-comment-body">
+						<div id="dsq-comment-message-4642" class="dsq-comment-message"><p>Splitting your app up into multiple assemblies has some advantages, I think. Like some people here have already said: having to add a reference to another assembly can be a tell-tale that someting fishy is going on. <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+<p>However, in some architectures, the odds for single v.s. muliple assembly solutions are reversed. </p>
+<p>For instance, when building a system, based on MVP, combined with a plugin architecture (hey, that&#8217;s what we are doing! <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_razz.gif' alt=':P' class='wp-smiley' /> ).</p>
+<p>If you create one assembly per module, you can keep everything internal, apart from the plugin class, which needs to be accessible from the outside. </p>
+<p>On the other hand, if in this case you had a multiple assembly design, a lot of classes across your assemblies would have to be public. </p>
+<p>For example, if you create one assembly for your Views, and one for your Presenters, you probably would have to create a separate Plugin assembly with references to both. And all Views and Presenters that need to be instantiated by the plugin would have to be public, thereby making them vulnerable to misuse by other modules.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4643">
+					<div id="dsq-comment-header-4643" class="dsq-comment-header">
+						<cite id="dsq-cite-4643">
+								<span id="dsq-author-user-4643">Brian Johnston</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4643" class="dsq-comment-body">
+						<div id="dsq-comment-message-4643" class="dsq-comment-message"><p>Well said Jeremy.</p>
+<p>The same argument can be made about namespaces in two ways that I&#8217;ve seen time and time again:</p>
+<p>1 namespace per assmebly == bad idea.</p>
+<p>20 million namespaces with 10 classes each is just as bad as 10 namespaces with 20 million classes each.</p>
+<p>Everything in programming is about the bell curve.  Everything.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4644">
+					<div id="dsq-comment-header-4644" class="dsq-comment-header">
+						<cite id="dsq-cite-4644">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-4644">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4644" class="dsq-comment-body">
+						<div id="dsq-comment-message-4644" class="dsq-comment-message"><p>Whilst I don&#8217;t always believe in seperating interfaces from implementation I do think more projects can in many cases be useful. Sure it makes builds slower (unless you have sub-solutions) but for larger projects and where reuse is key it can certainly help, I still think Robert Martin has a point:</p>
+<p>&#8220;the design of large systems depends critically on good component design, so that individual teams can focus on isolated components instead of worrying about the whole system&#8221;.</p>
+<p>Not that I follow this advice too directly though and the whole namespaces idea seems sensible, however having tried it I&#8217;m not so sure its always the answer. Mind you NDepend seems to be getting gradually better and we&#8217;re going to try it on our current project. However the truth is dependencies are currently managed at the project level and the barrier that others describe earlier can be useful.</p>
+<p>Also working with fewer but larget projects makes for faster builds but it doesn&#8217;t necessarily aid code navigation, having worked with all sorts of solution structures I find them all deeply dis-satisfying.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4645">
+					<div id="dsq-comment-header-4645" class="dsq-comment-header">
+						<cite id="dsq-cite-4645">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-4645">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4645" class="dsq-comment-body">
+						<div id="dsq-comment-message-4645" class="dsq-comment-message"><p>&#8220;Also working with fewer but larget projects makes for faster builds but it doesn&#8217;t necessarily aid code navigation, having worked with all sorts of solution structures I find them all deeply dis-satisfying.&#8221;</p>
+<p>Jeremy says:  &#8220;CTRL-N&#8221; and &#8220;SHIFT-ALT-L&#8221;<br />
+This is one of those times and places where ReSharper simply changes the rules</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4646">
+					<div id="dsq-comment-header-4646" class="dsq-comment-header">
+						<cite id="dsq-cite-4646">
+	http://colinjack.blogspot.com							<span id="dsq-author-user-4646">Colin Jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4646" class="dsq-comment-body">
+						<div id="dsq-comment-message-4646" class="dsq-comment-message"><p>@Jeremy<br />
+Oh yeah definitely, I just meant that a big argument for bigger projects is normally that its easier to navigate but having used both approaches I&#8217;m not sure thats true. </p>
+<p>R# works well in either case and I couldn&#8217;t live without CTRL+SHIFT+T (diff key bindings it seems).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4647">
+					<div id="dsq-comment-header-4647" class="dsq-comment-header">
+						<cite id="dsq-cite-4647">
+	http://meisinger2.wordpress.com/							<span id="dsq-author-user-4647">meisinger</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4647" class="dsq-comment-body">
+						<div id="dsq-comment-message-4647" class="dsq-comment-message"><p>jeremy my man&#8230; it seems you have touched on a bad chord with both rants</p>
+<p>i have read a lot of excuses in defense of multi-project solution but nothing to dispute your findings and your thoughts on the matter<br />
+people have a tendency to be &#8220;quick on the draw&#8221; when they think that what is right is at odds with you and your beliefs</p>
+<p>which is funny because it leads straight into your second rant (perhaps people only read what they want to read)</p>
+<p>i don&#8217;t care if your an Alt.Net&#8217;er, a Microsoft employee, an MVP, or a PHD<br />
+your points are clear and your thoughts have been expressed<br />
+to me they make a lot of sense<br />
+but who am i anyway?</p>
+<p>but as always&#8230; keep up with the good bloggin</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4648">
+					<div id="dsq-comment-header-4648" class="dsq-comment-header">
+						<cite id="dsq-cite-4648">
+								<span id="dsq-author-user-4648">Martijn Boeker</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4648" class="dsq-comment-body">
+						<div id="dsq-comment-message-4648" class="dsq-comment-message"><p>To mwatts. If you have dependencies between assemblies, but you want to keep the classes internal, you can make them visible to the other assembly by making that assembly a &#8220;friend&#8221; in AssemblyInfo.cs:</p>
+<p>[assembly: InternalsVisibleTo( "MyFriendAssembly" )]</p>
+<p>As in C++, friends can see your private parts <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4649">
+					<div id="dsq-comment-header-4649" class="dsq-comment-header">
+						<cite id="dsq-cite-4649">
+	http://marcgravell.blogspot.com/							<span id="dsq-author-user-4649">Marc Gravell</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4649" class="dsq-comment-body">
+						<div id="dsq-comment-message-4649" class="dsq-comment-message"><p>Good post; agrees with my thinking.</p>
+<p>Along those lines; last week, I was asked to justify why I was pushing StructureMap (in particular). My simple answer: &#8220;it does what we need, and ships in 1 dll; contrast to [list of other DI cores...]&#8220;. Nuff said.</p>
+<p>Of course, as an MVP (like yourself?) I probably don&#8217;t know WTF I&#8217;m talking about ;-p</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4650">
+					<div id="dsq-comment-header-4650" class="dsq-comment-header">
+						<cite id="dsq-cite-4650">
+								<span id="dsq-author-user-4650">Mark</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4650" class="dsq-comment-body">
+						<div id="dsq-comment-message-4650" class="dsq-comment-message"><p>I Disagree.</p>
+<p>Interfaces are contracts.  WCF relies on contracts.  It is thus necessary to create separate Contract (Interface) and implementation assemblies.  Only the Contracts assembly is shared by both the Client and the Server.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-4651">
+					<div id="dsq-comment-header-4651" class="dsq-comment-header">
+						<cite id="dsq-cite-4651">
+	http://codebetter.com/members/jmiller/default.aspx							<span id="dsq-author-user-4651">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-4651" class="dsq-comment-body">
+						<div id="dsq-comment-message-4651" class="dsq-comment-message"><p>@Mark,</p>
+<p>You didn&#8217;t read this post very carefully before you commented.  I very clearly stated that I generally only espouse splitting assemblies on deployment lines &#8212; which is exactly the scenario you&#8217;re describing.  Think *logical* coupling.</p>
+<p>Jeremy</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2008/09/30/separate-assemblies-loose-coupling/ ';
+	var disqus_identifier = '591 /blogs/jeremy.miller/archive/2008/09/30/separate-assemblies-loose-coupling.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Separate Assemblies != Loose Coupling";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=591');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2008\/09\/30\/separate-assemblies-loose-coupling\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.317 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 06:21:22 -->
+<!-- super cache -->

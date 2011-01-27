@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Async Sockets and Buffer Management | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/gregyoung/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/gregyoung/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Greg Young' href='http://codebetter.com/gregyoung/' />
+<link rel='start' title='Howdy and Viewing Unmanaged Code in VS.NET' href='http://codebetter.com/gregyoung/2006/06/09/howdy-and-viewing-unmanaged-code-in-vs-net/' />
+<link rel='prev' title='More on modopt' href='http://codebetter.com/gregyoung/2007/06/11/more-on-mopopt/' />
+<link rel='next' title='Async Sockets and Buffer Management [CTD]' href='http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/' />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=39' />
+<link rel="stylesheet" href="http://codebetter.com/gregyoung/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/gregyoung/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-39" class="post-39 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Async Sockets and Buffer Management</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/" title="9:20 pm" rel="bookmark"><span class="entry-date">June 18, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/gregyoung/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><a href="http://www.coversant.net/Coversant/Blogs/tabid/88/EntryID/9/Default.aspx">A<br />
+long time ago</a>&nbsp;I promised to release my buffer manager class that I use with<br />
+my Async socket server with some explanations on my blog as to why I use it. <a href="http://www.coversant.net/Coversant/Blogs/tabid/88/BlogID/3/Default.aspx">Chris<br />
+Mullins</a>&nbsp;and <a href="http://www.coversant.net/Coversant/Blogs/tabid/88/BlogID/4/Default.aspx">JD<br />
+Conley</a>&nbsp;were a lot of help to me in coming up with this strategy some time<br />
+ago (August? of last year I think) and they are continued resources on advanced socket programming who are great to bounce ideas off of. Unfortunately due to being so gosh darn&nbsp;busy<br />
+I never had the time to share it with everyone. I should also add that&nbsp;<a href="http://sebastienlorion.blogspot.com/">Sebastien Lorion</a>&nbsp;also made a<br />
+really valuable suggestion in&nbsp;the move from a queue to a stack as the operation<br />
+is much faster and can provide better localization and that <a href="http://www.wintellect.com/cs/blogs/jeffreyr/default.aspx">Jeffrey<br />
+Richter</a>&nbsp;also provided some information on the non-assurance of LOH in the<br />
+future.</p>
+<p><a href="https://blogs.msdn.com/yunjin/default.aspx">Yun Jin</a> gives a very<br />
+good description of the issue <a href="https://blogs.msdn.com/yunjin/archive/2004/01/27/63642.aspx">in this<br />
+post</a>&nbsp;but I will briefly summarize the issue. When you call<br />
+BeginReceive/BeginSend on a socket the memory that you pass to the method will<br />
+be pinned for the duration of the call. This will lead to heap fragmentation and<br />
+to make matters worse it will often be in your gen0 heap if you aren&#8217;t careful.<br />
+This becomes especially true in&nbsp;the most common&nbsp;socket applications<br />
+(request/response)&nbsp;as BeginReceive is often called and waits for a long time to<br />
+receive data (by long time I mean a few seconds or more).</p>
+<p>Unfortunately the solution presented by Yun Jin is far from optimal in 2.0.<br />
+This is of course of no fault of his own as it was written for 1.1 although some<br />
+optimizations could apply there as well. Even as presented it will run into a<br />
+few issues. The first issue and I consider this the biggest is based on one of<br />
+his statements.</p>
+<p><i>If the pinned objects are allocated around same time, the free slots<br />
+between each two objects would be smaller, and the situation is better.</i></p>
+<p>The code presented there does a good job of creating objects at the same<br />
+time. The problem is that you don&#8217;t generally pin them for the same amount of<br />
+time (and they are often pinned for very long periods of time)&nbsp;so as collections<br />
+run the GC will move the unpinned ones thus creating holes around the pinned<br />
+ones (heap fragmentation) which is what we were trying to avoid. Given he does<br />
+qualify his buffer manager with another rule of</p>
+<p><i>The shorter the objects are pinned, the easier GC could compact the<br />
+heap</i></p>
+<p>Unfortunately in the case of most TCP servers this is not something that can<br />
+always be realized.</p>
+<p>The main area that we can improve in by moving to .NET 2.0 is by using Arr<a href="http://msdn2.microsoft.com/en-us/library/1hsbd92d.aspx">aySegments&lt;byte&gt;</a><br />
+structures instead of using byte[]. This may seem like a very simple change but<br />
+it in fact makes a huge difference in two areas.</p>
+<p>The first thing it will allow us to do which was a limitation of the previous<br />
+buffer manager is to vary our buffer size per client. If you have a client who<br />
+is receiving a large file for instance you probably want to use larger send<br />
+buffers than a client who is not really doing much. The reason you want to do<br />
+this is to limit the number of thread context switches associated with that<br />
+socket (less context switches = better and more scalable). The buffer manager as<br />
+presented used single sized byte arrays and as such all buffers were to be<br />
+considered of equal size. .NET 2.0 added a few new overloads in dealing with <a href="http://msdn2.microsoft.com/en-us/library/3sah14d0.aspx">BeginReceive</a>&nbsp;and<br />
+<a href="http://msdn2.microsoft.com/en-us/library/38dxf7kt.aspx">BeginSend</a>&nbsp;that<br />
+allow me to pass a List&lt;ArraySegment&lt;byte&gt;&gt; by making my<br />
+BufferManager now manage ArraySegment&lt;byte&gt; objects a connection can at<br />
+its whim increase and decrease its buffer size by checking out more buffers or<br />
+returning some buffer back to the cache respectively.</p>
+<p>The next change that was allowed because of the use of ArraySegments was the<br />
+further isolation of the memory. Instead of creating numerous small arrays which<br />
+then move slowly from Gen0-&gt;Gen1 etc I can create really big arrays which<br />
+will be put right into the <a href="http://blogs.msdn.com/maoni/archive/2006/04/18/large-object-heap.aspx">LOH</a><br />
+(Large Object Heap). At present objects over 80k or so are put in the <a href="http://blogs.msdn.com/maoni/archive/2006/04/18/large-object-heap.aspx">LOH</a><br />
+but this is subject to change in the future *keep this in mind as it may affect<br />
+your performance slightly later as you could end up with a really big array in<br />
+gen0 which is pinned at almost all times*. One of the nice things about the <a href="http://blogs.msdn.com/maoni/archive/2006/04/18/large-object-heap.aspx">LOH</a><br />
+is that there is no compaction in other words we don&#8217;t have to worry about the<br />
+object being pinned or about fragmentation. As you can see the ability to create<br />
+this one BIG array will be quite a bit better for us as opposed to dealing with<br />
+lots of little arrays.</p>
+<p>The biggest issue I had with the code as it stood was the handling when we<br />
+ran out of buffers, it would create them one by one leading to all the same<br />
+issues we would have without a buffer manager (objects not living near each<br />
+other and being pinned thus fragmenting the heap). This issue is removed<br />
+automatically when dealing with chunks because we always N chunks at a time<br />
+(i.e. if we run out of buffers and we are told to deal with 8k chunks in 1000<br />
+buffer segments we won&#8217;t create 1 new buffer but a whole new 8mb segment<br />
+consisting of 1000 buffers). Although this could be wasteful for memory one is<br />
+generally better off in a server application to grow items like this once as<br />
+opposed to often. In fact the reason why this is not such a big issue overall is<br />
+that with the previous incarnate it <b>should</b> always be the case<br />
+that BUFFER_SIZE is larger than the maximum number of buffers you think you<br />
+would need and thus you never need to resize (an extra few mb in buffer space is<br />
+no big deal in the context of such an application and this is a common<br />
+pattern)</p>
+<p>The other changes which were made were making the buffer cache thread safe. I<br />
+used LockFreeStacks to do this. There are many implementations of lock free<br />
+stacks that you can use available on the net <a href="http://www.boyet.com/">Julian Bucknall</a> has a <a href="http://www.boyet.com/Articles/LockfreeStack.html">great series of<br />
+articles</a> on this as well. I used this particularly because I run on a<br />
+machine with lots of processors, you will likely be better off running with<br />
+simple monitor based locking around a normal Stack&lt;T&gt;&nbsp;if running on less<br />
+than 8 processors and this should<br />be a fairly easy change to the code. If people<br />
+are fairly interested I will spend the 15 minutes to make this change.</p>
+<p>UPDATE: I put the lock version in a seperate listing (you could make the locks finer grained than my quick update though)</p>
+<p>As a quick sidebar: the checkout method may look odd to you in the LockFreeStack version. The TryPop method will try to pop a value of the stack for me (in the tryxxx pattern format). The reason this pattern is needed is because I don&#8217;t lock my count test would be innacurate, I need to do the operation attomically If a buffer is not found then I need to create more a new segment of buffers &#8230; but another thread may have already done this for me (so I check the count in my lock before creating again). There is also an interesting case where although a new segment was created I am unlucky enough that all of it has been used up when I get to it so I have to loop. This has all of the problems of lock free algorithms especially starvation but is so unlikely to happen that I am not considerring to be a major concern.</p>
+<p>All of that said here is the code. Note that even with all of this long<br />
+explanation the code is very short (as is the original) but its a perfect<br />
+example of how subtle asynchronous socket programming with .NET can be!</p>
+<p>&nbsp;</p>
+<table border="1" cellpadding="2" cellspacing="0" width="600">
+<tbody>
+<tr>
+<td valign="top" width="598">
+<p>&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp; /// A manager to handle buffers for the socket<br />
+connections<br />&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp; /// &lt;remarks&gt;<br />&nbsp;&nbsp; /// When<br />
+used in an async call a buffer is pinned. Large numbers of pinned buffers<br />&nbsp;&nbsp;<br />
+/// cause problem with the GC (in particular it causes heap<br />
+fragmentation).<br />&nbsp;&nbsp; ///<br />&nbsp;&nbsp; /// This class maintains a set of large segments<br />
+and gives clients pieces of these<br />&nbsp;&nbsp; /// segments that they can use for their<br />
+buffers. The alternative to this would be to<br />&nbsp;&nbsp; /// create many small arrays<br />
+which it then maintained. This methodology should be slightly<br />&nbsp;&nbsp; /// better<br />
+than the many small array methodology because in creating only a few very<br />&nbsp;&nbsp;<br />
+/// large objects it will force these objects to be placed on the LOH. Since<br />
+the<br />&nbsp;&nbsp; /// objects are on the LOH they are at this time not subject to<br />
+compacting which would<br />&nbsp;&nbsp; /// require an update of all GC roots as would be<br />
+the case with lots of smaller arrays<br />&nbsp;&nbsp; /// that were in the normal<br />
+heap.<br />&nbsp;&nbsp; /// &lt;/remarks&gt;<br />&nbsp;&nbsp; public class BufferManager {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+private readonly int m_SegmentChunks;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly int<br />
+m_ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly int m_SegmentSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private<br />
+readonly LockFreeStack&lt;ArraySegment&lt;byte&gt;&gt; m_Buffers;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private<br />
+readonly object m_LockObject = new Object();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly<br />
+List&lt;byte[]&gt; m_Segments;
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// The current number of buffers<br />
+available<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public int AvailableBuffers<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; get { return m_Buffers.Count; } //do we really care about<br />
+volatility here?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// The total size of all<br />
+buffers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public int TotalBufferSize<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; get { return m_Segments.Count * m_SegmentSize; } //do we really<br />
+care about volatility here?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Creates a new segment, makes buffers<br />
+available<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private void<br />
+CreateNewSegment() {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; byte[] bytes = new byte[m_SegmentChunks *<br />
+m_ChunkSize];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Segments.Add(bytes);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0;<br />
+i &lt; m_SegmentChunks; i++) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArraySegment&lt;byte&gt; chunk<br />
+= new<br />ArraySegment&lt;byte&gt;(bytes, i * m_ChunkSize,<br />
+m_ChunkSize);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Buffers.Push(chunk);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+}
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Checks out a buffer from the<br />
+manager<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+/// It is the client&#8217;s responsibility to return the buffer to the manger<br />
+by<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// calling &lt;see cref=&#8221;Checkin&#8221;&gt;&lt;/see&gt; on the<br />
+buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;returns&gt;A &lt;see<br />
+cref=&#8221;ArraySegment&#8221;&gt;&lt;/see&gt; that can be used as a<br />
+buffer&lt;/returns&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public ArraySegment&lt;byte&gt; CheckOut()<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArraySegment&lt;byte&gt; b;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while<br />
+(true)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while (true)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bool found = !m_Buffers.TryPop(out b);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!found)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lock (m_LockObject)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (m_Buffers.Count == 0)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateNewSegment();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return b;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Returns a buffer to the control of<br />
+the manager<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// It is the client&#8217;s responsibility to return the<br />
+buffer to the manger by<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// calling &lt;see<br />
+cref=&#8221;Checkin&#8221;&gt;&lt;/see&gt; on the buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_Buffer&#8221;&gt;The &lt;see<br />
+cref=&#8221;ArraySegment&#8221;&gt;&lt;/see&gt; to return to the<br />
+cache&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void CheckIn(ArraySegment&lt;byte&gt;<br />
+_Buffer) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Buffers.Push(_Buffer);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #region constructors
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Constructs a new &lt;see<br />
+cref=&#8221;BufferManager&#8221;&gt;&lt;/see&gt; object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_SegmentChunks&#8221;&gt;The number of<br />
+chunks tocreate per segment&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param<br />
+name=&#8221;_ChunkSize&#8221;&gt;The size of a chunk in bytes&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public<br />
+BufferManager(int _SegmentChunks, int _ChunkSize) :<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+this(_SegmentChunks, _ChunkSize, 1) { }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Constructs a new &lt;see<br />
+cref=&#8221;BufferManager&#8221;&gt;&lt;/see&gt; object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_SegmentChunks&#8221;&gt;The number of<br />
+chunks tocreate per segment&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param<br />
+name=&#8221;_ChunkSize&#8221;&gt;The size of a chunk in bytes&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;param name=&#8221;_InitialSegments&#8221;&gt;The initial number of segments to<br />
+create&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public BufferManager(int _SegmentChunks, int<br />
+_ChunkSize, int _InitialSegments) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_SegmentChunks =<br />
+_SegmentChunks;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_ChunkSize = _ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+m_SegmentSize = m_SegmentChunks * m_ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Buffers = new<br />
+LockFreeStack&lt;ArraySegment&lt;byte&gt;&gt;(_SegmentChunks *<br />
+_InitialSegments);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Segments = new<br />
+List&lt;byte[]&gt;();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; _InitialSegments;<br />
+i++) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateNewSegment();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;<br />
+}</p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="598">Listing 1: Code with<br />
+LockFreeStack</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<table border="1" cellpadding="2" cellspacing="0" width="600">
+<tbody>
+<tr>
+<td valign="top" width="598">
+<p>using System;<br />using System.Collections.Generic;<br />using System.Text;
+</p>
+<p>namespace TickerPlant<br />{<br />&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp; /// A manager to<br />
+handle buffers for the socket connections<br />&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp; ///<br />
+&lt;remarks&gt;<br />&nbsp;&nbsp; /// When used in an async call a buffer is pinned. Large<br />
+numbers of pinned buffers<br />&nbsp;&nbsp; /// cause problem with the GC (in particular it<br />
+causes heap fragmentation).<br />&nbsp;&nbsp; ///<br />&nbsp;&nbsp; /// This class maintains a set of<br />
+large segments and gives clients pieces of these<br />&nbsp;&nbsp; /// segments that they<br />
+can use for their buffers. The alternative to this would be to<br />&nbsp;&nbsp; /// create<br />
+many small arrays which it then maintained. This methodology should be<br />
+slightly<br />&nbsp;&nbsp; /// better than the many small array methodology because in<br />
+creating only a few very<br />&nbsp;&nbsp; /// large objects it will force these objects to<br />
+be placed on the LOH. Since the<br />&nbsp;&nbsp; /// objects are on the LOH they are at<br />
+this time not subject to compacting which would<br />&nbsp;&nbsp; /// require an update of<br />
+all GC roots as would be the case with lots of smaller arrays<br />&nbsp;&nbsp; /// that<br />
+were in the normal heap.<br />&nbsp;&nbsp; /// &lt;/remarks&gt;<br />&nbsp;&nbsp; public class<br />
+BufferManager {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly int m_SegmentChunks;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+private readonly int m_ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly int<br />
+m_SegmentSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly Stack&lt;ArraySegment&lt;byte&gt;&gt;<br />
+m_Buffers;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly object m_LockObject = new<br />
+Object();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private readonly List&lt;byte[]&gt; m_Segments;
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// The current number of buffers<br />
+available<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public int AvailableBuffers<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; get { return m_Buffers.Count; } //do we really care about<br />
+volatility here?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// The total size of all<br />
+buffers<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public int TotalBufferSize<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; get { return m_Segments.Count * m_SegmentSize; } //do we really<br />
+care about volatility here?<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Creates a new segment, makes buffers<br />
+available<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; private void<br />
+CreateNewSegment() {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; byte[] bytes = new byte[m_SegmentChunks *<br />
+m_ChunkSize];<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Segments.Add(bytes);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0;<br />
+i &lt; m_SegmentChunks; i++) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ArraySegment&lt;byte&gt; chunk<br />
+= new<br />ArraySegment&lt;byte&gt;(bytes, i * m_ChunkSize,<br />
+m_ChunkSize);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Buffers.Push(chunk);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+}
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Checks out a buffer from the<br />
+manager<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+/// It is the client&#8217;s responsibility to return the buffer to the manger<br />
+by<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// calling &lt;see cref=&#8221;Checkin&#8221;&gt;&lt;/see&gt; on the<br />
+buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;returns&gt;A &lt;see<br />
+cref=&#8221;ArraySegment&#8221;&gt;&lt;/see&gt; that can be used as a<br />
+buffer&lt;/returns&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public ArraySegment&lt;byte&gt; CheckOut()<br />
+{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lock (m_LockObject) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (m_Buffers.Count ==<br />
+0) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateNewSegment();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+}<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return m_Buffers.Pop();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Returns a buffer to the control of<br />
+the manager<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// It is the client&#8217;s responsibility to return the<br />
+buffer to the manger by<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// calling &lt;see<br />
+cref=&#8221;Checkin&#8221;&gt;&lt;/see&gt; on the buffer<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/remarks&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_Buffer&#8221;&gt;The &lt;see<br />
+cref=&#8221;ArraySegment&#8221;&gt;&lt;/see&gt; to return to the<br />
+cache&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public void CheckIn(ArraySegment&lt;byte&gt;<br />
+_Buffer) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; lock (m_LockObject) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+m_Buffers.Push(_Buffer);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #region constructors
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Constructs a new &lt;see<br />
+cref=&#8221;BufferManager&#8221;&gt;&lt;/see&gt; object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_SegmentChunks&#8221;&gt;The number of<br />
+chunks tocreate per segment&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param<br />
+name=&#8221;_ChunkSize&#8221;&gt;The size of a chunk in bytes&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public<br />
+BufferManager(int _SegmentChunks, int _ChunkSize) :<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+this(_SegmentChunks, _ChunkSize, 1) { }
+</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// Constructs a new &lt;see<br />
+cref=&#8221;BufferManager&#8221;&gt;&lt;/see&gt; object<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;/summary&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param name=&#8221;_SegmentChunks&#8221;&gt;The number of<br />
+chunks tocreate per segment&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /// &lt;param<br />
+name=&#8221;_ChunkSize&#8221;&gt;The size of a chunk in bytes&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ///<br />
+&lt;param name=&#8221;_InitialSegments&#8221;&gt;The initial number of segments to<br />
+create&lt;/param&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public BufferManager(int _SegmentChunks, int<br />
+_ChunkSize, int _InitialSegments) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_SegmentChunks =<br />
+_SegmentChunks;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_ChunkSize = _ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+m_SegmentSize = m_SegmentChunks * m_ChunkSize;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Buffers = new<br />
+LockFreeStack&lt;ArraySegment&lt;byte&gt;&gt;(_SegmentChunks *<br />
+_InitialSegments);<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; m_Segments = new<br />
+List&lt;byte[]&gt;();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; _InitialSegments;<br />
+i++) {<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CreateNewSegment();<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />&nbsp;&nbsp;<br />
+}<br />}</p>
+</td>
+</tr>
+<tr>
+<td valign="top" width="598">Listing 2: Code for BufferManager with Stack&lt;T&gt; +<br />
+monitor locking</td>
+</tr>
+</tbody>
+</table>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/" title="Permalink to Async Sockets and Buffer Management" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/feed/" title="Comments RSS to Async Sockets and Buffer Management" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-39 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2007/06/11/more-on-mopopt/" rel="prev"><span class="meta-nav">&larr;</span> More on modopt</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2007/07/20/async-sockets-and-buffer-management-ctd/" rel="next">Async Sockets and Buffer Management [CTD] <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">36 Responses to <em>Async Sockets and Buffer Management</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-1794">
+		<div id="comment-1794">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.pullukcu.com' rel='external nofollow' class='url'>Pulluk&#231;u K&#246;m&#252;r</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1794">August 8, 2009 at 6:43 am</a></div>
+
+		<div class="comment-body"><p>thankss</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1793">
+		<div id="comment-1793">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.pullukcu.com' rel='external nofollow' class='url'>Pulluk&#231;u K&#246;m&#252;r</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1793">August 8, 2009 at 6:43 am</a></div>
+
+		<div class="comment-body"><p>Pingback from  TCP: Buffer Management &#8211; taccato! trend tracker, cool hunting, new business ideas</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1792">
+		<div id="comment-1792">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.pullukcu.com' rel='external nofollow' class='url'>Pulluk&#231;u K&#246;m&#252;r</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1792">August 8, 2009 at 6:41 am</a></div>
+
+		<div class="comment-body"><p>Where are files?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1791">
+		<div id="comment-1791">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.pullukcu.com' rel='external nofollow' class='url'>Pulluk&#231;u K&#246;m&#252;r</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1791">August 8, 2009 at 6:40 am</a></div>
+
+		<div class="comment-body"><p>excellent</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1790">
+		<div id="comment-1790">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.pullukcu.com' rel='external nofollow' class='url'>Pulluk&#231;u K&#246;m&#252;r</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1790">August 8, 2009 at 6:39 am</a></div>
+
+		<div class="comment-body"><p>very very thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1789">
+		<div id="comment-1789">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Confucius</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1789">June 4, 2009 at 9:57 am</a></div>
+
+		<div class="comment-body"><p>Where are the files? Download link returns error!!!!???  HELP!!!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1788">
+		<div id="comment-1788">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.deai-sugi.net/' rel='external nofollow' class='url'>出会い</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1788">February 27, 2009 at 4:38 am</a></div>
+
+		<div class="comment-body"><p>癒される不思議な場所</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1787">
+		<div id="comment-1787">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.taheta.org' rel='external nofollow' class='url'>overred</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1787">December 19, 2008 at 4:29 am</a></div>
+
+		<div class="comment-body"><p>很好，Overlapped 这玩意很占地方</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1786">
+		<div id="comment-1786">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.aypearl.net' rel='external nofollow' class='url'>wholesale jewelry</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1786">November 12, 2008 at 4:46 am</a></div>
+
+		<div class="comment-body"><p>Thanks</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1785">
+		<div id="comment-1785">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">jay</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1785">August 28, 2008 at 7:28 am</a></div>
+
+		<div class="comment-body"><p>hi,Greg:</p>
+<p>a simple question, can i keep a socket connection alive when we finished trade?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1784">
+		<div id="comment-1784">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Garey</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1784">August 10, 2008 at 8:05 pm</a></div>
+
+		<div class="comment-body"><p>Thank you for the article &#8230; it is enlighting and I am still study it for my current purpose and possilbe future ones too.</p>
+<p>I saw other people&#8217;s posts requesting a fuller example.  Would you have one available?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1783">
+		<div id="comment-1783">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1783">July 25, 2008 at 3:04 am</a></div>
+
+		<div class="comment-body"><p>Aaron there are a couple around on the net, I think I mentioned one in th previous post on julians blog in this series <a href="http://www.boyet.com/Articles/LockFreeLimitedPriorityQ.html" rel="nofollow">http://www.boyet.com/Articles/LockFreeLimitedPriorityQ.html</a> (the stack is before this one I think but the whole series is worth a read!)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1782">
+		<div id="comment-1782">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Aaron</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1782">July 23, 2008 at 10:06 am</a></div>
+
+		<div class="comment-body"><p>Where can i find the LockFreeStack sourcecode?thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1781">
+		<div id="comment-1781">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.sohbetim.gen.tr' rel='external nofollow' class='url'>sohpet</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1781">May 9, 2008 at 2:57 pm</a></div>
+
+		<div class="comment-body"><p>thankss</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1780">
+		<div id="comment-1780">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Philipp</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1780">November 2, 2007 at 1:22 am</a></div>
+
+		<div class="comment-body"><p>Thanks for your response. Okay, I can see that the GC issues can really hamper the system&#8217;s performance. So this solution is not really used to increase the number of sockets which can connect, rather it is used to boost each Socket&#8217;s performance by ensuring nice properties like buffers being near one another on the heap.</p>
+<p>Have you ever considered how many connections a .Net TCP/IP server can support? Have you ever done any tests to determine how many simultaneous connections your solution can support on a typical PC? Have you ever seen anything written on this subject.</p>
+<p>I would really like to support between 20000 and 40000 simultaneous connections on my server (a normal dual core PC with 4Gb of RAM) and am worried that this may not be attainable with .Net. I am starting to wonder if I should use a Linux/C++ implementation where I would have greater control of the kernel etc. The .Net Library is just so tempting because it makes development so fast and easy. So I am very eager to find out whether I can reach my connection targets using it.</p>
+<p>Thanks!<br />
+Philipp</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1779">
+		<div id="comment-1779">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1779">November 1, 2007 at 5:06 pm</a></div>
+
+		<div class="comment-body"><p>Phillip:</p>
+<p>The main thing is more so that without the buffer pool you will wreak havoc on the GC <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />  Every one of your buffers that is being held has to be pinned (which causes fragmentation of your heap). With even 500 this is not so big of a deal but with say 10000 it becomes a pretty serious problem. There is also the problem of creating/destroying alot of object which will be done (especially if you are using byte arrays to send your data and creating/destroying one each time).</p>
+<p>Cheers,</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1778">
+		<div id="comment-1778">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Philipp</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1778">November 1, 2007 at 2:38 pm</a></div>
+
+		<div class="comment-body"><p>Hi Greg, great article! I have been looking for this sort of stuff for a while now. I am just about to embark on an implementation of a high-performance TCP/IP server. My server should be able to host a very large number of clients, each of whose connections will be active for days but each will be idle most of the time. May I ask you some high-level questions about this?</p>
+<p>As I understand it, the buffers which receive information at each socket are drawn from nonpaged memory and are therefore a real limiting factor to the number of simultaneous connections which a server can maintain. So the idea behind building a buffer pool is to have n sockets share a pool of m buffers (n > m), relying on the fact that since all the sockets are not expected to be actively transmitting/receiving at the same time, we can squeeze more performance out of the same amount of memory. Is this correct?</p>
+<p>I have more questions, but I think I should understand the answer to one before I start on the next.</p>
+<p>Thanks!<br />
+Philipp</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1777">
+		<div id="comment-1777">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1777">July 23, 2007 at 7:02 pm</a></div>
+
+		<div class="comment-body"><p>Jared. </p>
+<p>#1, is your example on the send or on the receive side? I agree that dealing with differring sized buffers can be good (in particular for very large buffers which occasionally need to be used). For this I generally just create a second buffer manager (I only really do it on my send side). As for the &#8220;CheckIn&#8221; &#8220;CheckOut&#8221; being too slow to say check out 10 buffers I generally hold my buffers while my connection is open and reuse them on the connection. I have an unusual case though in that I am sending hundreds to thousands of messages a second and it is rare that I don&#8217;t have an operation executing in my server.</p>
+<p>2. I admit in hindsight that the LockFreeStack was a bit of a premature optimization on my part. This is why I provided the version with just a normal stack and monitor as well. Since I maintain my buffers with connections and don&#8217;t checkin/out on every call I really don&#8217;t call into this as much as I originally thought that I would. In practice I really don&#8217;t call checkout very much.</p>
+<p>3. sounds more like a design decision but would be nice as something to support perhaps another method TryCheckOutWithoutResize(int Timeout)</p>
+<p>4. Yes I used raw ArraySegment&lt;byte&gt; but not in my system actually running this. I use a class to encapsulate it there, for the example I tried to limit coupling to other objects as much as possible.</p>
+<p>5. per server gc, I have always used it for my server, I have never even thought to try the workstation GC. Rico has a great article set on server GC </p>
+<p><a href="http://blogs.msdn.com/maoni/archive/2004/06/15/156626.aspx" rel="nofollow" target="_new" mce_href="http://blogs.msdn.com/maoni/archive/2004/06/15/156626.aspx">blogs.msdn.com/&#8230;/156626.aspx</a></p>
+<p><a href="http://blogs.msdn.com/maoni/archive/2004/09/25/234273.aspx" rel="nofollow" target="_new" mce_href="http://blogs.msdn.com/maoni/archive/2004/09/25/234273.aspx">blogs.msdn.com/&#8230;/234273.aspx</a></p>
+<p>and most interesting of all for you &nbsp;&#8230;</p>
+<p><a href="http://blogs.msdn.com/maoni/archive/2006/02/28/workstation-gc-for-server-applications.aspx" rel="nofollow" target="_new" mce_href="http://blogs.msdn.com/maoni/archive/2006/02/28/workstation-gc-for-server-applications.aspx">blogs.msdn.com/&#8230;/workstation-gc-for-server-applications.aspx</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1776">
+		<div id="comment-1776">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.chironexsoftware.com' rel='external nofollow' class='url'>Jared Allen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1776">July 21, 2007 at 9:43 pm</a></div>
+
+		<div class="comment-body"><p>Nice work, i&#8217;m also working on high performance servers in .NET and i&#8217;ve found the info that you and JD Conley extremely interesting.</p>
+<p>I am currently implementing my own buffer pooling similar to your here. I&#8217;ve added a number of extra features to my pool that i think should help performance. </p>
+<p>1. using different sized fixed buffers. when a request is made a buffer with &#8220;Best fit&#8221; is selected for use. This is useful for me as 80% time the buffers required are small < 1024bytes, but sometimes a much large buffer is required 32kb, so to avoid having to do multiple requests to the buffer and chaining them all together i can return a larger buffer. I also preallocate different numbers of each buffer size based on expected usage. e.g 1000x1024 + 128*32kb etc</p>
+<p>2. I'm not 100% confident in lockfree data structures. so i still need to lock the buffer lists\stacks etc. But this can cause lock contention and really slow down memory requests if there are alot of threads being used. So i separate my buffer pool into "apartments" each apartment effectively has it's own buffers that it owns. Then when a memory request is made i can select an apartment to use - either based on thread id of best fit\most free buffers. I only need to lock the single apartment for the request... though i'm thinking i can go one level further and only lock a single buffer list inside the apartment - (apartment contains multiple buffer lists of different sized buffers)</p>
+<p>3. I also don't want to just blindly allocate additional buffers if there were none free. This is a case i really wanted to avoid so that memory usage can be completely controlled and even denied if it will make a negative impact on the quality of service of the other clients. So i am prepared to wait for a buffer to free up if required ( &lt;100ms ) so when ever buffers are returned to the pool i trigger a AutoResetEvent to notify any waiting threads. - if you choose the size of your buffer pool correctly based on performance and usage statistics this should be a rare case - burst\high demand patterns. And in these cases this helps because it means your server wont crash with out of memory errors or be over run by requests.</p>
+<p>4. you are using raw ArraySegment<byte> as the items in the pool. I suggest wrapping the buffer in a class that implements IDisposable. So that you can make sure the buffer always gets returned to the pool. I had a problem where my BeginSend was failing so the EndSend callback never got called &#8211; which is where i would normally return the buffer to the pool.</p>
+<p>I&#8217;m interested to know if you or anyone has used the &#8220;Server GC&#8221; instead of the normal workstation version and have any performance stats? &#8211; mscorsvr.dll</p>
+<p>Jared.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1775">
+		<div id="comment-1775">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://petesbloggerama.blogspot.com' rel='external nofollow' class='url'>Peter Bromberg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1775">July 20, 2007 at 10:56 am</a></div>
+
+		<div class="comment-body"><p>Greg, excellent example. I can use this in a &#8220;memcached&#8221; &#8211; like set of services on a webfarm where eech service truly syncs all the others when it receives a cache operation.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1774">
+		<div id="comment-1774">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1774">July 18, 2007 at 9:51 pm</a></div>
+
+		<div class="comment-body"><p>its coming &#8230; I just have to do the test runs with SOS to show the difference it provides in heap fragmentation I hope to have a few minutes tonight to run that.</p>
+<p>Cheers,</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1773">
+		<div id="comment-1773">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Robert</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1773">July 18, 2007 at 9:45 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;d still like to see this when you get a chance.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1772">
+		<div id="comment-1772">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>Jon T</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1772">July 15, 2007 at 7:37 pm</a></div>
+
+		<div class="comment-body"><p>Any news on the example? *Been waiting everyday ;o)*</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1771">
+		<div id="comment-1771">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Alex</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1771">July 5, 2007 at 9:19 pm</a></div>
+
+		<div class="comment-body"><p>I second Robert&#8217;s request</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1770">
+		<div id="comment-1770">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Alex</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1770">July 5, 2007 at 9:18 pm</a></div>
+
+		<div class="comment-body"><p>I second Robert&#8217;s request</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1769">
+		<div id="comment-1769">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/gregyung' rel='external nofollow' class='url'>Greg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1769">July 4, 2007 at 6:57 am</a></div>
+
+		<div class="comment-body"><p>Will do might take me a day or two.</p>
+<p>Ceers,</p>
+<p>Greg</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1768">
+		<div id="comment-1768">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Robert</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1768">July 3, 2007 at 6:42 pm</a></div>
+
+		<div class="comment-body"><p>I would like to see an example of an Async Socket server using this as well.  This is good stuff, thanks.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1767">
+		<div id="comment-1767">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ryan E</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1767">July 3, 2007 at 12:00 am</a></div>
+
+		<div class="comment-body"><p>I could really use some example code on how to use this. I have implemented it to the best of my ability, but the program I am writing still suffers from quickly growing memory space when using BeginSend.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1766">
+		<div id="comment-1766">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ryan</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1766">July 2, 2007 at 5:09 pm</a></div>
+
+		<div class="comment-body"><p>It would be great to get an example of this manager in use on something like an Asyc Socket server.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1765">
+		<div id="comment-1765">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://icy.ice.is/icewolf' rel='external nofollow' class='url'>Jon T</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1765">June 27, 2007 at 1:42 pm</a></div>
+
+		<div class="comment-body"><p>Hi Greg. Thanks for sharing your buffer pool!</p>
+<p>I have a few questions regarding your buffer management. I&#8217;m creating a game server where each user connected has an instance of a class. Should I make a Buffer Pool for each user? Or should I have a large one that every user uses?</p>
+<p>Secondly, would you be so kind to give us an short example of usage? How I would send and receive packet using the buffer pool?</p>
+<p>Thank you very much!<br />
+-Jon</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1764">
+		<div id="comment-1764">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1764">June 22, 2007 at 7:53 pm</a></div>
+
+		<div class="comment-body"><p>I have a class that encapulates my connection &#8230; in this class I have send/receive buffers</p>
+<p>List<arraysegment <byte> m_SendBuffers<br />
+List</arraysegment><arraysegment <byte> m_ReceiveBuffers</p>
+<p>when my connection is started I request buffers from the manager</p>
+<p>for(int i=0;i<numberofsendbuffers ) {<br />
+    m_SendBuffers.Add(BufferManager.CheckOut());<br />
+}</p>
+<p>for(int i=0;i<numberofreceivebuffers) {<br />
+    m_ReceiveBuffers.Add(BufferManager.CheckOut());<br />
+}</p>
+<p>then I just use my BeginReceive etc calls passing the IList<ArraySegmentByte> (link in post above to overload)</p>
+<p>There are times where I adjust my buffer sizes by adding or removing. When the connection is closed just remember to call CheckIn() for all checked out buffers</numberofsendbuffers></arraysegment></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1763">
+		<div id="comment-1763">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Shweta</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1763">June 22, 2007 at 4:02 pm</a></div>
+
+		<div class="comment-body"><p>Hi Greg , First of all thanks for such a informative post. I am running into similar problem which i attribute to the pinning behaviour of buffers in the socket library.My server crashes after few hours of load (which includes lots of incoming and outgoing messages) and at the time of crash i see in perfmon that the # of pinned objects is pretty high (around 4000 obj)and it remains in that for a while and boom the server crashes. I was thinking of implementing something which you have shown , it would be great if you could show me snippets of the client code (the begin recieve part may be ? &#8211; if you have time. Your post is very helpful</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1762">
+		<div id="comment-1762">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.coversant.com/blogs/jdconley.aspx' rel='external nofollow' class='url'>JD Conley</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1762">June 19, 2007 at 1:02 am</a></div>
+
+		<div class="comment-body"><p>Yeah, there are certainly some CPU/Memory bound trade-offs with the stream wrapper. <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1761">
+		<div id="comment-1761">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1761">June 18, 2007 at 10:39 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;ll discuss the performance implications of that more in another post <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1760">
+		<div id="comment-1760">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.coversant.com/blogs/jdconley.aspx' rel='external nofollow' class='url'>JD Conley</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1760">June 18, 2007 at 9:59 pm</a></div>
+
+		<div class="comment-body"><p>Finally! <img src='http://codebetter.com/gregyoung/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  We&#8217;ve been talking about this thing for ages. It should be noted that the best place to put this for extensibility is in a stream inheriting from NetworkStream. That way you can use the early-allocated buffers on your socket through SslStream, NegotateStream, and the like.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1759">
+		<div id="comment-1759">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2007/06/18/async-sockets-and-buffer-management/#comment-1759">June 18, 2007 at 9:38 pm</a></div>
+
+		<div class="comment-body"><p>Fixed code which wasn&#8217;t posted right for first 5-10 minutes and added second code listing.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2007/06/18/async-sockets-and-buffer-management/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/gregyoung/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fgregyoung%2F2007%2F06%2F18%2Fasync-sockets-and-buffer-management%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.320 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 08:58:51 -->
+<!-- super cache -->

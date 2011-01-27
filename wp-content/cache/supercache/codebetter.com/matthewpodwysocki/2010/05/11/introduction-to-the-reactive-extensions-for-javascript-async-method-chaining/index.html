@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Introduction to the Reactive Extensions for JavaScript – Async Method Chaining | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Introduction to the Reactive Extensions for JavaScript – Refactoring a Game' href='http://codebetter.com/matthewpodwysocki/2010/05/04/introduction-to-the-reactive-extensions-for-javascript-refactoring-a-game/' />
+<link rel='next' title='Introduction to the Reactive Extensions for JavaScript – Custom Schedulers' href='http://codebetter.com/matthewpodwysocki/2010/05/12/introduction-to-the-reactive-extensions-for-javascript-custom-schedulers/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/05/11/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=224' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-224" class="post-224 post type-post status-publish format-standard hentry category-event-based-porgramming category-javascript category-jsconf category-reactive-framework">
+					<h1 class="entry-title">Introduction to the Reactive Extensions for JavaScript – Async Method Chaining</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/05/11/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining/" title="3:22 am" rel="bookmark"><span class="entry-date">May 11, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Recently, there was a blog post by <a href="http://www.dustindiaz.com/">Dustin Diaz</a> about <a href="http://www.dustindiaz.com/async-method-queues/">method chaining over asynchronous operations</a>.&#160; This topic, of course is near and dear to my heart as it strikes the exact chord of what the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for JavaScript (RxJS)</a> is trying to solve.&#160; The ability for us to take asynchronous operations and events and treat them as push collections, we are able to then compose functions together as if they were normal pull collections like arrays.&#160; In this post, I’ll walk through the example that was posted on Dustin’s site and show how it can be done using RxJS.</p>
+<p>Before we get started, let’s get caught up to where we are today:</p>
+<ul>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/16/introduction-to-the-reactive-extensions-to-javascript.aspx">Introduction</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/23/introduction-to-the-reactive-extensions-for-javascript-creating-observables.aspx">Creating Observables</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/27/introduction-to-the-reactive-extensions-for-javascript-creating-observers.aspx">Creating Observers</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/05/introduction-to-the-reactive-extensions-for-javascript-jquery-integration.aspx">jQuery Integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks.aspx">Composing Callbacks</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/12/introduction-to-the-reactive-extensions-for-javascript-from-blocking-to-async.aspx">From Blocking to Async</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/15/introduction-to-the-reactive-extensions-for-javascript-wikipedia-lookup.aspx">Wikipedia Lookup</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/16/introduction-to-the-reactive-extensions-for-javascript-composing-deeper.aspx">Composing Deeper</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/17/the-reactive-extensions-for-javascript-released.aspx">Bing Maps and Twitter Mashup</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/19/introduction-to-the-reactive-extensions-for-javascript-drag-and-drop.aspx">Drag and Drop</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/21/introduction-to-the-reactive-extensions-for-javascript-jquery-live-event-integration.aspx">jQuery Live Event integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/02/introduction-to-the-reactive-extensions-for-javascript-extending-jquery-ajax.aspx">jQuery AJAX integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/09/introduction-to-the-reactive-extensions-for-javascript-a-separation-of-concerns.aspx">A Separation of Concerns</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/14/introduction-to-the-reactive-extensions-for-javascript-aggregation-part-1.aspx">Aggregates – Part 1</a> and <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/14/introduction-to-the-reactive-extensions-for-javascript-aggregation-part-2.aspx">Part 2</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/19/introduction-to-the-reactive-extensions-for-javascript-new-release-and-joins.aspx">Join Operators</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/23/introduction-to-the-reactive-extensions-for-javascript-going-parallel-with-forkjoin.aspx">Going “Parallel” with ForkJoin</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/04/introduction-to-the-reactive-extensions-for-javascript-refactoring-a-game.aspx">Refactoring a Game</a> </li>
+</ul>
+<h2>Asynchronous Method Chaining</h2>
+<p>To show off some of the power of the Reactive Extensions for JavaScript, let’s take the example of creating a paragraph, populating it from a single tweet from Twitter, adding a class and finally appending it to a div element.&#160; Just as well, we want to optionally give you a way to gracefully handle errors should the data source not be available.&#160; And when has that ever happened to Twitter, I mean really??!!</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: #ffffff;overflow: auto"><span style="color: #000000">$(</span><span style="color: #000000">&quot;</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .fetch(</span><span style="color: #000000">&quot;</span><span style="color: #000000">http://search.twitter.com/search.json?q=4sq.com&amp;rpp=1</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .addClass(</span><span style="color: #000000">&quot;</span><span style="color: #000000">loading</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .appendTo(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+</span><span style="color: #008000">//</span><span style="color: #008000"> Or</span><span style="color: #008000">
+</span><span style="color: #0000ff">var</span><span style="color: #000000"> errHandler </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000">(exn) {
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Do something with the exception</span><span style="color: #008000">
+</span><span style="color: #000000">}
+
+$(</span><span style="color: #000000">&quot;</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .fetch(</span><span style="color: #000000">&quot;</span><span style="color: #000000">http://search.twitter.com/search.json?q=4sq.com&amp;rpp=1</span><span style="color: #000000">&quot;</span><span style="color: #000000">, errHandler)
+    .addClass(</span><span style="color: #000000">&quot;</span><span style="color: #000000">loading</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .appendTo(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>This is fairly simple to do through the use of a little <a href="http://jquery.com">jQuery</a> and RxJS knowledge.&#160; First, we’ll extend the jQuery fn with a function called fetch which takes a URL and an optional onError handler which is a function that takes an exception and returns no value.&#160; Depending on whether the error handler was supplied or not, we’ll create an observer from the onNext which sets the tweet into the innerHTML of the jQuery selector.&#160; We’ll then call the ajaxAsObservable extension which comes with RxJS to turn the ajax function into an observable, and subscribe with our observer.&#160; Finally, we return the context of the selector as the result of the function which allows us to continue chaining calls.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: #ffffff;overflow: auto"><span style="color: #000000">(</span><span style="color: #0000ff">function</span><span style="color: #000000">($) {
+
+    $.fn.fetch </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000">(url, onError) {
+        </span><span style="color: #0000ff">var</span><span style="color: #000000"> collection </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">this</span><span style="color: #000000">;
+
+        </span><span style="color: #0000ff">var</span><span style="color: #000000"> onNext </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000">(d) {
+            $(collection).html(d.data.results[</span><span style="color: #000000">0</span><span style="color: #000000">].text);
+        }
+
+        </span><span style="color: #0000ff">var</span><span style="color: #000000"> observer </span><span style="color: #000000">=</span><span style="color: #000000"> onError </span><span style="color: #000000">?</span><span style="color: #000000"> Rx.Observer.Create(onNext, onError) : onNext;
+
+        $.ajaxAsObservable({
+            url: url,
+            type: </span><span style="color: #000000">'</span><span style="color: #000000">get</span><span style="color: #000000">'</span><span style="color: #000000">,
+            dataType: </span><span style="color: #000000">'</span><span style="color: #000000">jsonp</span><span style="color: #000000">'</span><span style="color: #000000">,
+        })
+            .Subscribe(observer);
+
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">this</span><span style="color: #000000">;
+    };
+
+})(jQuery);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>That’s a fairly simple scenario for using this, so, how about something a bit more complex like fetching the results at a given interval?&#160; We could then create a function called fetchEvery which takes a specified interval to call the AJAX service and populate the selector by using the Interval method with our desired interval.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: #ffffff;overflow: auto"><span style="color: #000000">$.fn.fetchEvery </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000">(url, interval, onError) {
+    </span><span style="color: #0000ff">var</span><span style="color: #000000"> collection </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">this</span><span style="color: #000000">;
+
+    </span><span style="color: #0000ff">var</span><span style="color: #000000"> onNext </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000">(d) { $(collection).html(d.data.results[</span><span style="color: #000000">0</span><span style="color: #000000">].text); }
+    </span><span style="color: #0000ff">var</span><span style="color: #000000"> observer </span><span style="color: #000000">=</span><span style="color: #000000"> onError </span><span style="color: #000000">?</span><span style="color: #000000"> Rx.Observer.Create(onNext, onError) : onNext;
+
+    Rx.Observable.Interval(interval)
+        .Select(</span><span style="color: #0000ff">function</span><span style="color: #000000">() {
+            </span><span style="color: #0000ff">return</span><span style="color: #000000"> $.ajaxAsObservable({
+                url: url,
+                type: </span><span style="color: #000000">'</span><span style="color: #000000">get</span><span style="color: #000000">'</span><span style="color: #000000">,
+                dataType: </span><span style="color: #000000">'</span><span style="color: #000000">jsonp</span><span style="color: #000000">'</span><span style="color: #000000">,
+            }); })
+        .Switch()
+        .Subscribe(observer);
+
+    </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">this</span><span style="color: #000000">;
+};</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>And then we could use it much like the following where we fetch the results every 5 seconds.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: #ffffff;overflow: auto"><span style="color: #000000">$(</span><span style="color: #000000">&quot;</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .fetchEvery(</span><span style="color: #000000">&quot;</span><span style="color: #000000">http://search.twitter.com/search.json?q=4sq.com&amp;rpp=1</span><span style="color: #000000">&quot;</span><span style="color: #000000">, </span><span style="color: #000000">5000</span><span style="color: #000000">)
+    .addClass(</span><span style="color: #000000">&quot;</span><span style="color: #000000">loading</span><span style="color: #000000">&quot;</span><span style="color: #000000">)
+    .appendTo(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>But what about further transforming the data as it comes back, such as the example of censoring the swear words and create links from the text?&#160; Well, instead of living inside jQuery and sprinkling in RxJS like we have been doing for the past couple of examples, we can then decide that instead we’ll live inside RxJS and sprinkle in jQuery.&#160; We’ll create functions to censor the text, linkify it, handle any exceptions and finally handle the text as it comes in so that we can add it to the content.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:White;overflow: auto"><span style="color: #0000FF">function</span><span style="color: #000000"> handleText(text) {
+    $(</span><span style="color: #000000">"</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">"</span><span style="color: #000000">).html(text).addClass(</span><span style="color: #000000">"</span><span style="color: #000000">loading</span><span style="color: #000000">"</span><span style="color: #000000">).appendTo(</span><span style="color: #000000">"</span><span style="color: #000000">#content</span><span style="color: #000000">"</span><span style="color: #000000">);
+}
+
+</span><span style="color: #0000FF">function</span><span style="color: #000000"> errHandler(exn) {
+    </span><span style="color: #008000">//</span><span style="color: #008000"> handle exception</span><span style="color: #008000">
+</span><span style="color: #000000">}
+
+</span><span style="color: #0000FF">function</span><span style="color: #000000"> censorTweet(uncensored) {
+    </span><span style="color: #008000">//</span><span style="color: #008000"> handle censoring</span><span style="color: #008000">
+</span><span style="color: #000000">}
+
+</span><span style="color: #0000FF">function</span><span style="color: #000000"> linkify(tweet) {
+    </span><span style="color: #008000">//</span><span style="color: #008000"> linkify tweet</span><span style="color: #008000">
+</span><span style="color: #000000">}
+
+$(document).ready(</span><span style="color: #0000FF">function</span><span style="color: #000000">() {
+
+    $.ajaxAsObservable({
+        url: </span><span style="color: #000000">"</span><span style="color: #000000">http://search.twitter.com/search.json?q=4sq.com&amp;rpp=100</span><span style="color: #000000">"</span><span style="color: #000000">,
+        type: </span><span style="color: #000000">"</span><span style="color: #000000">get</span><span style="color: #000000">"</span><span style="color: #000000">,
+        dataType: </span><span style="color: #000000">"</span><span style="color: #000000">jsonp</span><span style="color: #000000">"</span><span style="color: #000000">,
+    })
+        .Select(</span><span style="color: #0000FF">function</span><span style="color: #000000">(d) { </span><span style="color: #0000FF">return</span><span style="color: #000000"> d.data.results[</span><span style="color: #000000">0</span><span style="color: #000000">].text; })
+        .Select(censorTweet)
+        .Select(linkify)
+        .Subscribe(handleText, errHandler);
+});</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>This gives us the ability now to get the data from Twitter, censor it if necessary, create real links from the text, and finally put the results into our content in a fluent style while mixing in jQuery where we need to.&#160; Just as well, I could have used any other library including Dojo, ExtJS, YUI, Prototype, Moo Tools or whatever I felt like, so I’m not particularly tied here to a certain library and I get the same win from each.</p>
+<h2>Conclusion</h2>
+</p>
+<p>Dealing with asynchronous programming has been in the forefront of many minds in the JavaScript community.&#160; At <a href="http://jsconf.us/2010">JSConf</a>, there were several examples of frameworks trying to get around the idea of callbacks and instead lean more towards composition.&#160; By utilizing the Reactive Extensions for JavaScript, we’re able to compose together asynchronous and event-based operations together and transform the results in interesting ways.&#160; We can also live well inside the given frameworks such as jQuery and sprinkle in RxJS, or we can live in RxJS and sprinkle in the calls to the various libraries such as jQuery, Moo Tools, Prototype, and so forth.</p>
+<p>So with that, <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">download it</a>, and <a href="http://social.msdn.microsoft.com/Forums/en-US/rx/threads">give the team feedback!</a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/event-based-porgramming/" title="View all posts in Event-based Porgramming" rel="category tag">Event-based Porgramming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/javascript/" title="View all posts in JavaScript" rel="category tag">JavaScript</a>, <a href="http://codebetter.com/matthewpodwysocki/category/jsconf/" title="View all posts in JSConf" rel="category tag">JSConf</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/05/11/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining/" title="Permalink to Introduction to the Reactive Extensions for JavaScript – Async Method Chaining" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/05/11/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining/feed/" title="Comments RSS to Introduction to the Reactive Extensions for JavaScript – Async Method Chaining" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-224 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/05/04/introduction-to-the-reactive-extensions-for-javascript-refactoring-a-game/" rel="prev"><span class="meta-nav">&larr;</span> Introduction to the Reactive Extensions for JavaScript – Refactoring a Game</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/05/12/introduction-to-the-reactive-extensions-for-javascript-custom-schedulers/" rel="next">Introduction to the Reactive Extensions for JavaScript – Custom Schedulers <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/05/11/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining/ ';
+	var disqus_identifier = '224 /blogs/matthew.podwysocki/archive/2010/05/10/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Introduction to the Reactive Extensions for JavaScript – Async Method Chaining";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=224');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/05\/11\/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.740 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 11:12:15 -->
+<!-- super cache -->

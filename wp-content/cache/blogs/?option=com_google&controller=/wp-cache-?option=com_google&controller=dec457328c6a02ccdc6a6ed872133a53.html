@@ -35,7 +35,7 @@
 		<input type="hidden" name="cof" value="FORID:9" />
 		<input type="hidden" name="ie" value="UTF-8" />
 		<input type="text"  class="text-input" id="s" name="q" size="31" />
-		<input type="image" src="/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
 	</fieldset>
   </div>
 </form>
@@ -46,7 +46,7 @@
 			
 		<div id="main" class="container_12">
 		
-			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
 			<div id="ad_leaderboard" class="grid_9">			</div>
 			
 			<div id="globalNav" class="grid_12">
@@ -71,6 +71,208 @@
 
 
 				
+			<div id="post-92" class="post-92 post type-post status-publish format-standard hentry category-net category-nhibernate">
+			<h2 class="entry-title"><a href="http://codebetter.com/jameskovacs/2011/01/26/datetime-support-in-nhibernate/" title="Permalink to Date/Time Support in NHibernate" rel="bookmark">Date/Time Support in NHibernate</a></h2>
+
+			<div class="entry-meta">
+				<span class="meta-prep meta-prep-author">Posted on </span><a href="http://codebetter.com/jameskovacs/2011/01/26/datetime-support-in-nhibernate/" title="9:00 am" rel="bookmark"><span class="entry-date">2011/01/26</span></a> <span class="meta-sep"> by </span> <span class="author vcard"><a class="url fn n" href="http://codebetter.com/jameskovacs" title="View all posts by James Kovacs">James Kovacs</a></span>			</div><!-- .entry-meta -->
+
+				<div class="entry-content">
+				<p>[Code for this article is available on GitHub <a href="https://github.com/JamesKovacs/NH3Features/tree/02-DateTimeSupport">here</a>.]</p>
+<p>In this post, we’ll examine the ways that NHibernate supports the DateTime-related data types, including some new features introduced in NHibernate 2 and 3. Here is a quick summary for the impatient.</p>
+<table border="1" cellspacing="0" cellpadding="2">
+<tbody>
+<tr>
+<td><strong>DbType</strong></td>
+<td><strong>.NET</strong></td>
+<td><strong>SQL Type</strong></td>
+</tr>
+<tr>
+<td>DateTime</td>
+<td>System.DateTime</td>
+<td>datetime</td>
+</tr>
+<tr>
+<td>LocalDateTime</td>
+<td>System.DateTime</td>
+<td>datetime</td>
+</tr>
+<tr>
+<td>UtcDateTime</td>
+<td>System.DateTime</td>
+<td>datetime</td>
+</tr>
+<tr>
+<td>DateTimeOffset</td>
+<td>System.DateTimeOffset</td>
+<td>datetimeoffset</td>
+</tr>
+<tr>
+<td>DateTime2</td>
+<td>System.DateTime</td>
+<td>datetime2</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>System.DateTime</td>
+<td>date</td>
+</tr>
+<tr>
+<td>Time</td>
+<td>System.DateTime</td>
+<td>time</td>
+</tr>
+<tr>
+<td>TimeAsTimeSpan</td>
+<td>System.TimeSpan</td>
+<td>time</td>
+</tr>
+<tr>
+<td>TimeSpan</td>
+<td>System.TimeSpan</td>
+<td>bigint (int64)</td>
+</tr>
+</tbody>
+</table>
+<h3>Local/UTC</h3>
+<p>Let’s take a look at a few DateTime-related problems that developers have run into in the past…</p>
+<pre class="brush: csharp;">public class DateTimeEntity {
+    public DateTimeEntity() {
+        CreationTime = DateTime.Now;
+    }
+
+    public virtual Guid Id { get; private set; }
+    public virtual DateTime CreationTime { get; set; }
+}</pre>
+<p>Note that CreationTime is initialized using DateTime.Now. The corresponding mapping file would be:</p>
+<pre class="brush: xml;">
+
+&lt;hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+
+                   namespace="Nh3Hacking"
+
+                   assembly="Nh3Hacking"&gt;
+  &lt;class name="DateTimeEntity"&gt;
+    &lt;id name="Id"&gt;
+      &lt;generator class="guid.comb" /&gt;
+    &lt;/id&gt;
+    &lt;property name="CreationTime"/&gt;
+  &lt;/class&gt;
+&lt;/hibernate-mapping&gt;
+</pre>
+<p>If we create an instance of our DateTimeEntity and reload it, we get:</p>
+<pre>Original entity:
+Id: 09bead07-5a05-4459-a108-9e7501204918
+        CreationTime: 2011-01-24 5:29:36 PM (Local)
+Reloaded entity:
+Id: 09bead07-5a05-4459-a108-9e7501204918
+        CreationTime: 2011-01-24 5:29:36 PM (Unspecified)</pre>
+<p>Note that I am outputting both CreationTime.ToString() and CreationTime.Kind. DateTime.Kind returns a DateTimeKind (surprising, huh?), which indicates whether this DateTime represents Local time or UTC time. We initialized the value with DateTime.Now, which is the local time. (If we wanted UTC time, we would use DateTime.UtcNow.) When the object is reloaded, the DateTimeKind is Unspecified. This is because the database does not store whether the DateTime value is Local or UTC. NHibernate has no way of knowing which one it is, hence Unspecified.</p>
+<p>NHibernate 3 includes two new DbTypes that allow us to resolve this ambiguity. In our mapping file, we can write:</p>
+<pre class="brush: xml;">&lt;property name="CreationTimeAsLocalDateTime" type="LocalDateTime"/&gt;
+&lt;property name="CreationTimeAsUtcDateTime" type="UtcDateTime"/&gt;</pre>
+<p>We are explicitly telling NHibernate whether the database stores Local or UTC times.</p>
+<pre>Original entity:
+Id: 09bead07-5a05-4459-a108-9e7501204918
+        CreationTimeAsDateTime: 2011-01-24 5:29:36 PM (Local)
+        CreationTimeAsLocalDateTime: 2011-01-24 5:29:36 PM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 12:29:36 AM (Utc)
+Reloaded entity:
+Id: 09bead07-5a05-4459-a108-9e7501204918
+        CreationTimeAsDateTime: 2011-01-24 5:29:36 PM (Unspecified)
+        CreationTimeAsLocalDateTime: 2011-01-24 5:29:36 PM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 12:29:36 AM (Utc)</pre>
+<p>This is strictly metadata and it is up to the developer to ensure that the proper DateTime is present in the property/field. For instance, if I initialize the entity as follows:</p>
+<pre class="brush: csharp;">public DateTimeEntity() {
+    CreationTimeAsDateTime = DateTime.Now;
+    CreationTimeAsLocalDateTime = DateTime.UtcNow;
+    CreationTimeAsUtcDateTime = DateTime.Now;
+}</pre>
+<p>Note that the LocalDateTime property contains a UTC DateTime and the UTC property contains a Local DateTime. The results are:</p>
+<pre>Original entity:
+Id: 4579d245-46f3-4c3f-893b-9e750124a90b
+        CreationTimeAsDateTime: 2011-01-24 5:45:32 PM (Local)
+        CreationTimeAsLocalDateTime: 2011-01-25 12:45:32 AM (Utc)
+        CreationTimeAsUtcDateTime: 2011-01-24 5:45:32 PM (Local)
+Reloaded entity:
+Id: 4579d245-46f3-4c3f-893b-9e750124a90b
+        CreationTimeAsDateTime: 2011-01-24 5:45:32 PM (Unspecified)
+        CreationTimeAsLocalDateTime: 2011-01-25 12:45:32 AM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-24 5:45:32 PM (Utc)</pre>
+<p>Notice that NHibernate did not perform any conversions or throw an exception when saving/loading a DateTime value with the wrong DateTimeKind. (It could be argued that NHibernate should throw an exception when asked to save a Local DateTime and the property is mapped as a UtcDateTime.) It is up to the developer to ensure that the proper kind of DateTime is in the appropriate field/property.</p>
+<h3>System.DateTimeOffset</h3>
+<p>One problem that LocalDateTime and UtcDateTime does not solve is the offset problem. If you have a DateTime and its Kind is Local, all you know is that it is a Local DateTime. You do not know if that Local DateTime is Mountain (MST), Eastern (EST), Pacific (PST), etc. You do not know whether it has been corrected for daylight savings time. All you know is that it is a Local DateTime. You have to assume that the local time is based on the time zone of the current computer. Although this is often a reasonable assumption, it’s not always. (Consider for example that you’re collecting log files from a distributed system and servers reside in multiple time zones.) The problem is that System.DateTime class does not contain a place to record the timezone offset. Microsoft solved this problem starting in .NET 3.5 by introducing the System.DateTimeOffset class. It looks a lot like System.DateTime, but does include the timezone offset rather than the DateTimeKind. So we can just use System.DateTimeOffset in our applications rather than System.DateTime.</p>
+<p>Except… Date/time types in SQL databases do not have anywhere to store the timezone offset. The notable exception is SQL Server 2008, which introduced the datetimeoffset type. NHibernate 2 introduced support for System.DateTimeOffset, but only for SQL Server 2008 onwards. (If you’re using SQL Server 2005 or earlier or another database server, you’ll have to implement your own IUserType to store System.DateTimeOffset in two separate columns – one for the DateTime and the other for the timezone offset.) The additional code in DateTimeEntity.cs looks like this:</p>
+<pre class="brush: csharp;">public virtual DateTimeOffset CreationTimeAsDateTimeOffset { get; set; }</pre>
+<p>The mapping file just needs the new property added:</p>
+<pre class="brush: xml;">&lt;property name="CreationTimeAsDateTimeOffset"/&gt;</pre>
+<p>Note that I don’t need to specify the type in the mapping as NHibernate can infer it from the property type in DateTimeEntity. The resulting output is:</p>
+<pre>Original entity:
+Id: 95aa6c15-86f5-4398-aa9e-9e7600ae4580
+        CreationTimeAsDateTime: 2011-01-25 10:34:30 AM (Local)
+        CreationTimeAsLocalDateTime: 2011-01-25 10:34:30 AM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 5:34:30 PM (Utc)
+        CreationTimeAsDateTimeOffset: 2011-01-25 10:34:30 AM -07:00
+Reloaded entity:
+Id: 95aa6c15-86f5-4398-aa9e-9e7600ae4580
+        CreationTimeAsDateTime: 2011-01-25 10:34:30 AM (Unspecified)
+        CreationTimeAsLocalDateTime: 2011-01-25 10:34:30 AM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 5:34:30 PM (Utc)
+        CreationTimeAsDateTimeOffset: 2011-01-25 10:34:30 AM -07:00</pre>
+<h3>Support for DateTime2, Date, and Time</h3>
+<p>Let’s look at some C# and the corresponding mapping file for these types:</p>
+<pre class="brush: csharp;">public virtual DateTime CreationTimeAsDateTime2 { get; set; }
+public virtual DateTime CreationTimeAsDate { get; set; }
+public virtual DateTime CreationTimeAsTime { get; set; }
+public virtual TimeSpan CreationTimeAsTimeAsTimeSpan { get; set; }
+public virtual TimeSpan CreationTimeAsTimeSpan { get; set; }</pre>
+<p>Modifications to the hbm.xml:</p>
+<pre class="brush: xml;">&lt;property name="CreationTimeAsDateTime2" type="DateTime2"/&gt;
+&lt;property name="CreationTimeAsDate" type="Date"/&gt;
+&lt;property name="CreationTimeAsTime" type="Time"/&gt;
+&lt;property name="CreationTimeAsTimeAsTimeSpan" type="TimeAsTimeSpan"/&gt;
+&lt;property name="CreationTimeAsTimeSpan"/&gt;</pre>
+<p>We’ll examine each of these in turn…</p>
+<p>DbType.DateTime2 is a higher precision, wider range version of DbType.DateTime. DbType.DateTime maps to the datetime (or smalldatetime) SQL type, which has a range of 1753-01-01 to 9999-12-31. DbType.DateTime2 maps to the datetime2 SQL type, which has a range of 0001-01-01 to 9999-12-31. (Precision can be as high as 1/10 of a microsecond with a datetime2(7).) One of the niceties of DateTime2 is that an uninitialized DateTime struct (which has a value of 0001-01-01 12:00:00 AM (Unspecified)) does not cause a SqlTypeException with a SqlDateTime underflow.</p>
+<p>DbType.Date does just what it advertises. It represents a Date without a Time component. It is stored in the database as only a date. .NET does not have a Date type and NHibernate represents it via a DateTime with the time portion set to 12:00:00 AM. I personally prefer to define my own Date class, which has no time component, and create an IUserType to handle the mapping. My custom Date class can handle the time truncation and provide a more natural programing model for my domain, but that’s a post for another day.</p>
+<p>Time-related DbTypes stores just the time, but no date. In .NET, there is no Time class and so NHibernate uses a DateTime with the date component set to 1753-01-01, the minimum value for a SQL datetime or a System.TimeSpan – depending on the DbType that we choose. DbType.Time stores a System.DateTime in a time SQL type. DbType.TimeAsTimeSpan stores a System.TimeSpan as a time SQL type. DbType.TimeSpan stores a Syste.TimeSpan as a 64-bit integer (bigint) SQL type. As I mentioned for DbType.Date, I am more inclined to write my own Time class and custom IUserType to achieve a better programming model than relying on the .NET constructs of System.DateTime and System.TimeSpan. (I typically use System.DateTime or System.TimeSpan as a field in my custom Date or Time class for storing the data, but provide my own API for consistently working with the data.)</p>
+<p><strong>WARNING</strong>: Not all databases support all date/time SQL types. So before choosing .NET and SQL types for your entities, make sure that they’re available in all databases that you plan to support.</p>
+<p>Now we’ll take a look at these date/time types in action:</p>
+<pre>Original entity:
+Id: 6b2fb9ff-8036-4c17-b9ef-9e7600bf37e3
+        CreationTimeAsDateTime: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsLocalDateTime: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 6:36:12 PM (Utc)
+        CreationTimeAsDateTimeOffset: 2011-01-25 11:36:12 AM -07:00
+        CreationTimeAsDateTime2: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsDate: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsTime: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsTimeAsTimeSpan: 11:36:12.2688265
+        CreationTimeAsTimeSpan: 11:36:12.2688265
+Reloaded entity:
+Id: 6b2fb9ff-8036-4c17-b9ef-9e7600bf37e3
+        CreationTimeAsDateTime: 2011-01-25 11:36:12 AM (Unspecified)
+        CreationTimeAsLocalDateTime: 2011-01-25 11:36:12 AM (Local)
+        CreationTimeAsUtcDateTime: 2011-01-25 6:36:12 PM (Utc)
+        CreationTimeAsDateTimeOffset: 2011-01-25 11:36:12 AM -07:00
+        CreationTimeAsDateTime2: 2011-01-25 11:36:12 AM (Unspecified)
+        CreationTimeAsDate: 2011-01-25 12:00:00 AM (Unspecified)
+        CreationTimeAsTime: 1753-01-01 11:36:12 AM (Unspecified)
+        CreationTimeAsTimeAsTimeSpan: 11:36:12.2700000
+        CreationTimeAsTimeSpan: 11:36:12.2688265</pre>
+<h3>Summary</h3>
+<p>As you have seen, NHibernate has a wide variety of options for mapping date/time-related types to and from the database. The right choice is highly dependent on your application and database server. I hope that this post has given you a few more tricks up your sleeve for effectively mapping date/time-related types using NHibernate.</p>
+							</div><!-- .entry-content -->
+	
+			<div class="entry-utility">
+				<span class="cat-links"><span class="entry-utility-prep entry-utility-prep-cat-links">Posted in <a href="http://codebetter.com/jameskovacs/category/net/" title="View all posts in .NET" rel="category">.NET</a>, <a href="http://codebetter.com/jameskovacs/category/nhibernate/" title="View all posts in NHibernate" rel="category">NHibernate</a></span></span>
+				<span class="meta-sep"> | </span>
+												<span class="comments-link"><a href="http://codebetter.com/jameskovacs/2011/01/26/datetime-support-in-nhibernate/#respond" title="Comment on Date/Time Support in NHibernate"><span class="dsq-postid" rel="92 http://codebetter.com/jameskovacs/2011/01/26/datetime-support-in-nhibernate/">View Comments</span></a></span>
+							</div><!-- #entry-utility -->
+		</div><!-- #post-92 -->
+
+		
+						
 			<div id="post-827" class="post-827 post type-post status-publish format-standard hentry category-structuremap tag-structuremap">
 			<h2 class="entry-title"><a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/" title="Permalink to If you are using StructureMap with MVC3, please read this:" rel="bookmark">If you are using StructureMap with MVC3, please read this:</a></h2>
 
@@ -182,62 +384,6 @@ namespace fluent.Web.Converters
 		</div><!-- #post-86 -->
 
 		
-						
-			<div id="post-91" class="post-91 post type-post status-publish format-standard hentry category-net category-nhibernate">
-			<h2 class="entry-title"><a href="http://codebetter.com/jameskovacs/2011/01/21/loquacious-configuration-in-nhibernate-3/" title="Permalink to Loquacious Configuration in NHibernate 3" rel="bookmark">Loquacious Configuration in NHibernate 3</a></h2>
-
-			<div class="entry-meta">
-				<span class="meta-prep meta-prep-author">Posted on </span><a href="http://codebetter.com/jameskovacs/2011/01/21/loquacious-configuration-in-nhibernate-3/" title="2:50 pm" rel="bookmark"><span class="entry-date">2011/01/21</span></a> <span class="meta-sep"> by </span> <span class="author vcard"><a class="url fn n" href="http://codebetter.com/jameskovacs" title="View all posts by James Kovacs">James Kovacs</a></span>			</div><!-- .entry-meta -->
-
-				<div class="entry-content">
-				<p>[Code for this article is available on GitHub <a href="https://github.com/JamesKovacs/NH3Features/tree/01-Loquacious">here</a>.]</p>
-<p>One of the new features in NHibernate 3 is the addition of a fluent API for configuring NHibernate through code. Fluent NHibernate has provided a fluent configuration API for awhile, but now we have an option built into NHibernate itself. (Personally I prefer the new Loquacious API to Fluent NHibernate’s configuration API as I find Loquacious more discoverable. Given that Fluent NHibernate is built on top of NHibernate, you can always use Loquacious with Fluent NHibernate too. N.B. I still really like Fluent NHibernate’s ClassMap&lt;T&gt;, automapping capabilities, and PersistenceSpecification&lt;T&gt;. So don’t take my preference regarding fluent configuration as a denouncement of Fluent NHibernate.)</p>
-<p>The fluent configuration API built into NHibernate is called Loquacious configuration and exists as a set of extensions methods on NHibernate.Cfg.Configuration. You can access these extension methods by importing in the NHibernate.Cfg.Loquacious namespace.</p>
-<pre class="brush: csharp;">var cfg = new Configuration();
-cfg.Proxy(p =&gt; p.ProxyFactoryFactory&lt;ProxyFactoryFactory&gt;())
-   .DataBaseIntegration(db =&gt; {
-                            db.ConnectionStringName = "scratch";
-                            db.Dialect&lt;MsSql2008Dialect&gt;();
-                            db.BatchSize = 500;
-                        })
-   .AddAssembly(typeof(Blog).Assembly)
-   .SessionFactory().GenerateStatistics();</pre>
-<p>On the second line, we configure the ProxyFactoryFactory, which is responsible for generating the proxies needed for lazy loading. The ProxyFactoryFactory type parameter (stuff between the &lt;&gt;) is in the NHibernate.ByteCode.Castle namespace. (I have a reference to the NHibernate.ByteCode.Castle assembly too.) So we’re using Castle to generate our proxies. We could also use LinFu or Spring.</p>
-<p>Setting db.ConnectionStringName causes NHibernate to read the connection string from the &lt;connectionStrings/&gt; config section of the [App|Web].config. This keeps your connection strings in an easily managed location without being baked into your code. You can perform the same trick in XML-based configuration by using the <em>connection.connection_string_name</em> property instead of the more commonly used <em>connection.connection_string</em>.</p>
-<p>Configuring BatchSize turns on update batching in databases, which support it. (Support is limited to SqlClient and OracleDataClient currently and relies on features of these drivers.) Updating batching allows NHibernate to group together multiple, related INSERT, UPDATE, or DELETE statements in a single round-trip to the database. This setting isn’t strictly necessary, but can give you a nice performance boost with DML statements. The value of 500 represents the maximum number of DML statements in one batch. The choice of 500 is arbitrary and should be tuned for your application.</p>
-<p>The assembly that we are adding is the one that contains our hbm.xml files as embedded resources. This allows NHibernate to find and parse our mapping metadata. If you have your metadata located in multiple files, you can call cfg.AddAssembly() multiple times.</p>
-<p>The last call, cfg.SessionFactory().GenerateStatistics(), causes NHibernate to output additional information about entities, collections, connections, transactions, sessions, second-level cache, and more. Although not required, it does provide additional useful information about NHibernate’s performance.</p>
-<p>Notice that there is no need to call <em>cfg.Configure()</em>. cfg.Configure() is used to read in configuration values from [App|Web].config (from the hibernate-configuration config section) or from hibernate.cfg.xml. If we’ve not using XML configuration, cfg.Configure() is not required.</p>
-<p>Loquacious and XML-based configuration are not mutually exclusive. We can combine the two techniques to allow overrides or provide default values – it all comes down to the order of the Loquacious configuration code and the call to cfg.Configure().</p>
-<pre class="brush: csharp; highlight: [2];">var cfg = new Configuration();
-cfg.Configure();
-cfg.Proxy(p =&gt; p.ProxyFactoryFactory&lt;ProxyFactoryFactory&gt;())
-   .SessionFactory().GenerateStatistics();</pre>
-<p>Note the cfg.Configure() on the second line. We read in the standard XML-based configuration and then force the use of a particular ProxyFactoryFactory and generation of statistics via Loquacious configuration.</p>
-<p>If instead we make the call to cfg.Configure() after the Loquacious configuration, the Loquacious configuration provides default values, but we can override any and all values using XML-based configuration.</p>
-<pre class="brush: csharp; highlight: [10];">var cfg = new Configuration();
-cfg.Proxy(p =&gt; p.ProxyFactoryFactory&lt;ProxyFactoryFactory&gt;())
-   .DataBaseIntegration(db =&gt; {
-                            db.ConnectionStringName = "scratch";
-                            db.Dialect&lt;MsSql2008Dialect&gt;();
-                            db.BatchSize = 500;
-                        })
-   .AddAssembly(typeof(Blog).Assembly)
-   .SessionFactory().GenerateStatistics();
-cfg.Configure();</pre>
-<p>You can always mix and match the techniques by doing some Loquacious configuration before and som after the call to cfg.Configure().</p>
-<p><strong>WARNING</strong>: If you call cfg.Configure(), you need to have &lt;hibernate-configuration/&gt; in your [App|Web].config or a hibernate.cfg.xml file. If you don’t, you’ll throw a HibernateConfigException. They can contain an empty root element, but it needs to be there. Another option would be to check whether File.Exists(‘hibernate.cfg.xml’) before calling cfg.Configure().</p>
-<p>So there you have it. The new Loquacious configuration API in NHibernate 3. This introduction was not meant as a definitive reference, but as a jumping off point. I would recommend that you explore other extension methods in the NHibernate.Cfg.Loquacious namespace as they provide the means to configure the 2nd-leve cache, current session context, custom LINQ functions, and more. Anything you can do in XML-based configuration can now be accomplished with Loquacious or the existing methods on NHibernate.Cfg.Configuration. So get out there and start coding – XML is now optional…</p>
-							</div><!-- .entry-content -->
-	
-			<div class="entry-utility">
-				<span class="cat-links"><span class="entry-utility-prep entry-utility-prep-cat-links">Posted in <a href="http://codebetter.com/jameskovacs/category/net/" title="View all posts in .NET" rel="category">.NET</a>, <a href="http://codebetter.com/jameskovacs/category/nhibernate/" title="View all posts in NHibernate" rel="category">NHibernate</a></span></span>
-				<span class="meta-sep"> | </span>
-												<span class="comments-link"><a href="http://codebetter.com/jameskovacs/2011/01/21/loquacious-configuration-in-nhibernate-3/#respond" title="Comment on Loquacious Configuration in NHibernate 3"><span class="dsq-postid" rel="91 http://codebetter.com/jameskovacs/2011/01/21/loquacious-configuration-in-nhibernate-3/">View Comments</span></a></span>
-							</div><!-- #entry-utility -->
-		</div><!-- #post-91 -->
-
-		
 			
 	<div id="nav-below" class="navigation">
 		<div class="nav-next"><a href="?page=1" > Next Page &raquo;</a></div>
@@ -255,7 +401,7 @@ cfg.Configure();</pre>
 				<li id="authors" class="widget-container widget_authors"><h3 class="widget-title">CodeBetter.Com Editors</h3>
 <!-- Authors -->
 <ul>
-<li><a href="http://codebetter.com/jeremymiller/">Jeremy D. Miller</a></li><li><a href="http://codebetter.com/drusellers/">Dru Sellers</a></li><li><a href="http://codebetter.com/jameskovacs/">James Kovacs</a></li><li><a href="http://codebetter.com/howarddierking/">Howard Dierking</a></li><li><a href="http://codebetter.com/benhall/">Ben Hall</a></li><li><a href="http://codebetter.com/iancooper/">Ian Cooper</a></li><li><a href=""></a></li><li><a href="http://codebetter.com/davidhayden/">David Hayden</a></li><li><a href="http://codebetter.com/sebastienlambla/">Sebastien Lambla</a></li><li><a href="http://codebetter.com/glennblock/">Glenn Block</a></li><li><a href="http://codebetter.com/patricksmacchia/">Patrick Smacchia</a></li><li><a href="http://codebetter.com/matthewpodwysocki/">Matthew Podwysocki</a></li><li><a href="http://codebetter.com/kylebaley/">Kyle Baley</a></li><li><a href="http://codebetter.com/gregyoung/">Greg Young</a></li></ul>
+<li><a href="http://codebetter.com/jameskovacs/">James Kovacs</a></li><li><a href="http://codebetter.com/jeremymiller/">Jeremy D. Miller</a></li><li><a href="http://codebetter.com/drusellers/">Dru Sellers</a></li><li><a href="http://codebetter.com/howarddierking/">Howard Dierking</a></li><li><a href="http://codebetter.com/benhall/">Ben Hall</a></li><li><a href="http://codebetter.com/iancooper/">Ian Cooper</a></li><li><a href=""></a></li><li><a href="http://codebetter.com/davidhayden/">David Hayden</a></li><li><a href="http://codebetter.com/sebastienlambla/">Sebastien Lambla</a></li><li><a href="http://codebetter.com/glennblock/">Glenn Block</a></li><li><a href="http://codebetter.com/patricksmacchia/">Patrick Smacchia</a></li><li><a href="http://codebetter.com/matthewpodwysocki/">Matthew Podwysocki</a></li><li><a href="http://codebetter.com/kylebaley/">Kyle Baley</a></li><li><a href="http://codebetter.com/gregyoung/">Greg Young</a></li></ul>
 <!-- /Authors -->
 
 </li>		
@@ -272,7 +418,7 @@ cfg.Configure();</pre>
 					<li id="blogs" class="widget-container widget_blogs"><h3 class="widget-title">Latest Posts</h3>
 <!-- blogs -->
 <ul>
-<li><a href="http://codebetter.com/jeremymiller/2011/01/23/yet-another-podcast-with-jesse-liberty/">Yet Another Podcast with Jesse Liberty</a> <br/> by <a href="http://codebetter.com/jeremymiller/">Jeremy D. Miller</a></li><li><a href="http://codebetter.com/drusellers/2011/01/22/rss-feed/">RSS Feed</a> <br/> by <a href="http://codebetter.com/drusellers/">Dru Sellers</a></li><li><a href="http://codebetter.com/jameskovacs/2011/01/21/loquacious-configuration-in-nhibernate-3/">Loquacious Configuration in NHibernate 3</a> <br/> by <a href="http://codebetter.com/jameskovacs/">James Kovacs</a></li><li><a href="http://codebetter.com/howarddierking/2011/01/03/automating-pivot-trade-card-creation/">Automating Pivot Trade Card Creation</a> <br/> by <a href="http://codebetter.com/howarddierking/">Howard Dierking</a></li><li><a href="http://codebetter.com/iancooper/2011/01/16/alt-next/">Alt.Next</a> <br/> by <a href="http://codebetter.com/iancooper/">Ian Cooper</a></li><li><a href="/?p=614">Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl</a> <br/> by <a href=""></a></li><li><a href="http://codebetter.com/sebastienlambla/2011/01/06/coming-up-next-in-openwrap/">Coming up next in OpenWrap&hellip;</a> <br/> by <a href="http://codebetter.com/sebastienlambla/">Sebastien Lambla</a></li><li><a href="http://codebetter.com/glennblock/2010/12/13/wcf-web-apis-roundup-volume-1/">WCF Web APIs Roundup - Volume 1</a> <br/> by <a href="http://codebetter.com/glennblock/">Glenn Block</a></li><li><a href="http://codebetter.com/patricksmacchia/2010/12/14/google-continuous-integration/">Google Continuous Integration Process</a> <br/> by <a href="http://codebetter.com/patricksmacchia/">Patrick Smacchia</a></li></ul>
+<li><a href="http://codebetter.com/jameskovacs/2011/01/26/datetime-support-in-nhibernate/">Date/Time Support in NHibernate</a> <br/> by <a href="http://codebetter.com/jameskovacs/">James Kovacs</a></li><li><a href="http://codebetter.com/jeremymiller/2011/01/23/yet-another-podcast-with-jesse-liberty/">Yet Another Podcast with Jesse Liberty</a> <br/> by <a href="http://codebetter.com/jeremymiller/">Jeremy D. Miller</a></li><li><a href="http://codebetter.com/drusellers/2011/01/22/rss-feed/">RSS Feed</a> <br/> by <a href="http://codebetter.com/drusellers/">Dru Sellers</a></li><li><a href="http://codebetter.com/howarddierking/2011/01/03/automating-pivot-trade-card-creation/">Automating Pivot Trade Card Creation</a> <br/> by <a href="http://codebetter.com/howarddierking/">Howard Dierking</a></li><li><a href="http://codebetter.com/iancooper/2011/01/16/alt-next/">Alt.Next</a> <br/> by <a href="http://codebetter.com/iancooper/">Ian Cooper</a></li><li><a href="/?p=614">Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl</a> <br/> by <a href=""></a></li><li><a href="http://codebetter.com/sebastienlambla/2011/01/06/coming-up-next-in-openwrap/">Coming up next in OpenWrap&hellip;</a> <br/> by <a href="http://codebetter.com/sebastienlambla/">Sebastien Lambla</a></li><li><a href="http://codebetter.com/glennblock/2010/12/13/wcf-web-apis-roundup-volume-1/">WCF Web APIs Roundup - Volume 1</a> <br/> by <a href="http://codebetter.com/glennblock/">Glenn Block</a></li><li><a href="http://codebetter.com/patricksmacchia/2010/12/14/google-continuous-integration/">Google Continuous Integration Process</a> <br/> by <a href="http://codebetter.com/patricksmacchia/">Patrick Smacchia</a></li></ul>
 <!-- /blogs -->
 
 </li>				</ul>	
@@ -345,17 +491,17 @@ cfg.Configure();</pre>
   })();
 
 </script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
-<script type='text/javascript' src='/wp-content/plugins/syntaxhighlighter//third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
 <script type='text/javascript'>
 	(function(){
 		var corecss = document.createElement('link');
 		var themecss = document.createElement('link');
-		var corecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
 		if ( corecss.setAttribute ) {
 				corecss.setAttribute( "rel", "stylesheet" );
 				corecss.setAttribute( "type", "text/css" );
@@ -365,7 +511,7 @@ cfg.Configure();</pre>
 				corecss.href = corecssurl;
 		}
 		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
-		var themecssurl = "/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
 		if ( themecss.setAttribute ) {
 				themecss.setAttribute( "rel", "stylesheet" );
 				themecss.setAttribute( "type", "text/css" );
@@ -392,5 +538,5 @@ cfg.Configure();</pre>
  
 </body>
 </html>
-<!-- Dynamic page generated in 0.340 seconds. -->
-<!-- Cached page generated by WP-Super-Cache on 2011-01-24 19:17:07 -->
+<!-- Dynamic page generated in 0.349 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-26 23:38:13 -->

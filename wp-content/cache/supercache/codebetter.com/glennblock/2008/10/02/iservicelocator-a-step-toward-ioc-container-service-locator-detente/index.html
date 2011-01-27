@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>IServiceLocator a step toward IoC container / Service locator detente | Glenn Block</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/glennblock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/glennblock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/glennblock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/glennblock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Glenn Block' href='http://codebetter.com/glennblock/' />
+<link rel='start' title='IoC.AddComponent&lt;IBloggingStrategy, CodeBetterBloggingStrategy&gt;();' href='http://codebetter.com/glennblock/2008/01/03/ioc-addcomponent-lt-ibloggingstrategy-codebetterbloggingstrategy-gt/' />
+<link rel='prev' title='MEF going MS-PL, the little engine that could.' href='http://codebetter.com/glennblock/2008/10/02/mef-going-ms-pl-the-little-engine-that-could/' />
+<link rel='next' title='Speaking at PDC and patterns And practices summit.' href='http://codebetter.com/glennblock/2008/10/16/speaking-at-pdc-and-patterns-and-practices-summit/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/glennblock/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente/' />
+<link rel='shortlink' href='http://codebetter.com/glennblock/?p=63' />
+<link rel="stylesheet" href="http://codebetter.com/glennblock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/mytechnobabble/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/glennblock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-63" class="post-63 post type-post status-publish format-standard hentry category-common-service-locator category-ioc">
+					<h1 class="entry-title">IServiceLocator a step toward IoC container / Service locator detente</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/glennblock/author/glennblock/" title="View all posts by Glenn Block">Glenn Block</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/glennblock/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente/" title="8:17 am" rel="bookmark"><span class="entry-date">October 2, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/glennblock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/glennblock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/glennblock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Today we launched an exciting project on CodePlex, namely the <A href="http://www.codeplex.com/CommonServiceLocator">Common Service Locator library</A>. What is it? It&#8217;s a shared interface&nbsp;that applications and frameworks can reference in order to leverage IoC containers / service location mechanisms without taking hard dependencies.</P><br />
+<P>The dominoes all fell like this. It all started with Jeremy Miller&#8217;s <A href="http://codebetter.com/blogs/jeremy.miller/archive/2008/08/16/it-s-time-for-ioc-container-detente.aspx">post</A>. This then spurred on <A href="http://www.ayende.com/blog">Ayende</A> to send an email to a bunch of folks including many of the leading IoC container authors including <A href="http://www.tavaresstudios.com/Blog">Chris Tavares</A> who wrote Unity, and myself (no I haven&#8217;t written an IoC container yet <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> ) Next thing you know we&#8217;re all designing the new library over email over a period of several weeks.</P><br />
+<P>You can read more on this at Chris&#8217;s post <A href="http://www.tavaresstudios.com/Blog/post/Announcing-The-IServiceLocator-interface.aspx">here</A>. </P><br />
+<P>If you download the library you&#8217;ll find the following interface.</P><br />
+<DIV><br />
+<DIV><PRE><SPAN>namespace</SPAN> Microsoft.Practices.ServiceLocation</PRE><PRE>{</PRE><PRE>    <SPAN>public</SPAN> <SPAN>interface</SPAN> IServiceLocator : IServiceProvider</PRE><PRE>    {</PRE><PRE>        <SPAN>object</SPAN> GetInstance(Type serviceType);</PRE><PRE>        <SPAN>object</SPAN> GetInstance(Type serviceType, <SPAN>string</SPAN> key);</PRE><PRE>        IEnumerable&lt;<SPAN>object</SPAN>&gt; GetAllInstances(Type serviceType);</PRE><PRE>&nbsp;</PRE><PRE>        TService GetInstance&lt;TService&gt;();</PRE><PRE>        TService GetInstance&lt;TService&gt;(<SPAN>string</SPAN> key);</PRE><PRE>        IEnumerable&lt;TService&gt; GetAllInstances&lt;TService&gt;();</PRE><PRE>    }</PRE><PRE>}</PRE></DIV></DIV><br />
+<P>You&#8217;ll also find a static ServiceLocator class that exposes an ambient (current) container. This provides a convenient way for frameworks to grab access to the current locator. It allows you to provide a delegate which will get invoked to retrieve the current locator. </P><br />
+<DIV><br />
+<DIV><PRE><SPAN>namespace</SPAN> Microsoft.Practices.ServiceLocation</PRE><PRE>{</PRE><PRE>    <SPAN>public</SPAN> <SPAN>static</SPAN> <SPAN>class</SPAN> ServiceLocator</PRE><PRE>    {</PRE><PRE>        <SPAN>private</SPAN> <SPAN>static</SPAN> ServiceLocatorProvider currentProvider;</PRE><PRE>&nbsp;</PRE><PRE>        <SPAN>public</SPAN> <SPAN>static</SPAN> IServiceLocator Current</PRE><PRE>        {</PRE><PRE>            get { <SPAN>return</SPAN> currentProvider(); }</PRE><PRE>        }</PRE><PRE>&nbsp;</PRE><PRE>        <SPAN>public</SPAN> <SPAN>static</SPAN> <SPAN>void</SPAN> SetLocatorProvider(ServiceLocatorProvider newProvider)</PRE><PRE>        {</PRE><PRE>            currentProvider = newProvider;</PRE><PRE>        }</PRE><PRE>    }</PRE><PRE>}</PRE></DIV></DIV><br />
+<P>So how many people did it take to design such an API? Well let&#8217;s see&nbsp;eight (no this is not a bad joke). The beauty is that those people represent a collaborative design effort both within and external to Microsoft. Yes, we all reached an agreement!</P><br />
+<P>In addition to the this interface, you&#8217;ll find several adapters for IoC containers available with more on the way. I&#8217;ll be adding one for MEF (which is a locator) to that list shortly. </P><br />
+<P>Also you&#8217;ll find a suite of unit tests you can use to validate that an adapter meets the functional requirements of the locator interface. We can thank Oren for that contribution <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </P><br />
+<P>Our hope is that this interface will encourage products and frameworks to start leveraging IoC / Service location now that we&#8217;re removing the need to depend hardly on a specific one. The community can make this hope a reality <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/glennblock/category/common-service-locator/" title="View all posts in Common Service Locator" rel="category tag">Common Service Locator</a>, <a href="http://codebetter.com/glennblock/category/ioc/" title="View all posts in IOC" rel="category tag">IOC</a>. Bookmark the <a href="http://codebetter.com/glennblock/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente/" title="Permalink to IServiceLocator a step toward IoC container / Service locator detente" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/glennblock/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente/feed/" title="Comments RSS to IServiceLocator a step toward IoC container / Service locator detente" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-63 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/glennblock/2008/10/02/mef-going-ms-pl-the-little-engine-that-could/" rel="prev"><span class="meta-nav">&larr;</span> MEF going MS-PL, the little engine that could.</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/glennblock/2008/10/16/speaking-at-pdc-and-patterns-and-practices-summit/" rel="next">Speaking at PDC and patterns And practices summit. <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-222">
+					<div id="dsq-comment-header-222" class="dsq-comment-header">
+						<cite id="dsq-cite-222">
+	http://twitter.org/VirtueMe							<span id="dsq-author-user-222">Benny Thomas</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-222" class="dsq-comment-body">
+						<div id="dsq-comment-message-222" class="dsq-comment-message"><p>public static IServiceLocator Current        {            get { return currentProvider(); }        }</p>
+<p>Seems a bit faulty <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-223">
+					<div id="dsq-comment-header-223" class="dsq-comment-header">
+						<cite id="dsq-cite-223">
+	http://devlicio.us/blogs/casey							<span id="dsq-author-user-223">Casey</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-223" class="dsq-comment-body">
+						<div id="dsq-comment-message-223" class="dsq-comment-message"><p>A very interesting idea &#8230; I wonder how it will play out &#8230;  how many apps using IoC have more than a single location with a concrete dependency on the container anyway?</p>
+<p>Some real world usage example of why this helps would be nice</p>
+<p>On the collaboration front &#8211; good going!!!!!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-224">
+					<div id="dsq-comment-header-224" class="dsq-comment-header">
+						<cite id="dsq-cite-224">
+	http://siliconbea.ch							<span id="dsq-author-user-224">Bruce Boughton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-224" class="dsq-comment-body">
+						<div id="dsq-comment-message-224" class="dsq-comment-message"><p>Excellent! I have recently been working on an OAuth library which uses IoC to locate components (<a href="http://lab.madgex.com/oauth-net/" rel="nofollow">http://lab.madgex.com/oauth-net/</a>). At the moment it is bound to Castle Windsor but I&#8217;m sure people will want to use their IoC of choice. Hopefully, this initiative will allow this.</p>
+<p>What is the thought behind registering service locators using delegates? That seems like a clunky syntax to have to expose to my library users.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-225">
+					<div id="dsq-comment-header-225" class="dsq-comment-header">
+						<cite id="dsq-cite-225">
+	http://www.bluespire.com							<span id="dsq-author-user-225">Rob</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-225" class="dsq-comment-body">
+						<div id="dsq-comment-message-225" class="dsq-comment-message"><p>I&#8217;d like to make one suggestion.  The following methods can all be made into extension methods:</p>
+<p>        TService GetInstance<tservice>();<br />
+        TService GetInstance</tservice><tservice>(string key);<br />
+        IEnumerable</tservice><tservice> GetAllInstances</tservice><tservice>();</p>
+<p>Thus, the core interface will be smaller, but you will still be able to access the functionality just as easily as before.</tservice></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-226">
+					<div id="dsq-comment-header-226" class="dsq-comment-header">
+						<cite id="dsq-cite-226">
+								<span id="dsq-author-user-226">Ed McPadden</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-226" class="dsq-comment-body">
+						<div id="dsq-comment-message-226" class="dsq-comment-message"><p>This looks very close to the way services are located in CAB/SCSF through the workitem.  I think this interface makes a lot of sense without excess complexity.  </p>
+<p>Has any thought been given to chaining service locators together in a parent/child relationship (similar to what  CAB does inside workitems).  That way services could be specified at different levels and would allow services to be overridden at various points in the chain.  In CAB/SCSF this allows default service implementations to be specified and then overridden in higher level modules and workitems.</p>
+<p>In any case, its great to see this kind of collaboration amongst the thought leaders in this area&#8230;THANKS!  </p>
+<p>&#8230;Ed (@emcpadden)</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-227">
+					<div id="dsq-comment-header-227" class="dsq-comment-header">
+						<cite id="dsq-cite-227">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-227">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-227" class="dsq-comment-body">
+						<div id="dsq-comment-message-227" class="dsq-comment-message"><p>Bruce, the idea of the delegate was a simple way to plug in code which returns the ambient / current locator. The other way we could have done it was to have a specialized class with a single method that returns the locator.</p>
+<p>Is that what you would have preferred?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-228">
+					<div id="dsq-comment-header-228" class="dsq-comment-header">
+						<cite id="dsq-cite-228">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-228">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-228" class="dsq-comment-body">
+						<div id="dsq-comment-message-228" class="dsq-comment-message"><p>Casey, this library is intended for people who use IoC today, and people that don&#8217;t today, but will use it in the future.</p>
+<p>As far as using the container in more than one place, it depends on the complexity of the app. For example imagine I am using an IoC container in an order entry app. I might use the container at the top level to get me bunch of services, but then within the guts, I might need to instantiate an order screen that has it&#8217;s transient dependencies injected.</p>
+<p>Regardless even if it is in a single place, that single place would depend on a specific implementation, and with this library it doesn&#8217;t have to.</p>
+<p>Where it gets interesting is if I have a framework that uses a container, and my app uses a container. Instead of having 2 containers, I could now potentially have one that the app and framework can both talk to.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-229">
+					<div id="dsq-comment-header-229" class="dsq-comment-header">
+						<cite id="dsq-cite-229">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-229">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-229" class="dsq-comment-body">
+						<div id="dsq-comment-message-229" class="dsq-comment-message"><p>Rob, good idea, go post it to the workitems. In this case we provide a base impl that calls all the overloads for you. It essentially accomplishes the same thing as when you implement your adapter, you have very few methods to override.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-230">
+					<div id="dsq-comment-header-230" class="dsq-comment-header">
+						<cite id="dsq-cite-230">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-230">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-230" class="dsq-comment-body">
+						<div id="dsq-comment-message-230" class="dsq-comment-message"><p>Benny, what specifically is the faultiness? The fact that it is a static dependency?</p>
+<p>We debated over whether or not to support the  &#8220;Current&#8221; container idea. In the end if was decided we need it, beause ultmately apps that depend on this library, need a clear-cut thing they can depend on to give them the container.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-231">
+					<div id="dsq-comment-header-231" class="dsq-comment-header">
+						<cite id="dsq-cite-231">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-231">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-231" class="dsq-comment-body">
+						<div id="dsq-comment-message-231" class="dsq-comment-message"><p>On the clunkiness&#8230;..we are open to suggestions. Just go vote&#8230;..</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-232">
+					<div id="dsq-comment-header-232" class="dsq-comment-header">
+						<cite id="dsq-cite-232">
+	http://wekempf.spaces.live.com							<span id="dsq-author-user-232">wekempf</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-232" class="dsq-comment-body">
+						<div id="dsq-comment-message-232" class="dsq-comment-message"><p>The third option would have been to just make the Current settable.  Simpler design, with some interesting trade-offs.</p>
+<p>I&#8217;m also curious why the interface must have generic variants?  Why not use extension methods?  That just seems cleaner to me.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-233">
+					<div id="dsq-comment-header-233" class="dsq-comment-header">
+						<cite id="dsq-cite-233">
+	http://www.tavaresstudios.com							<span id="dsq-author-user-233">Chris Tavares</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-233" class="dsq-comment-body">
+						<div id="dsq-comment-message-233" class="dsq-comment-message"><p>The interface uses overloads instead of extension methods because, believe it or not, there are people still using VS 2005 and .NET 2.0.</p>
+<p>As for the delegate to retrieve the current container, the idea is that the &#8220;current container&#8221; may vary depending on the environment. You may have one per thread, one per asp.net request, etc. With a single settable property, you&#8217;re stuck. With a delegate, the application author can define what &#8220;current container&#8221; means with a lot more flexibility.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-234">
+					<div id="dsq-comment-header-234" class="dsq-comment-header">
+						<cite id="dsq-cite-234">
+	http://adameb.blogspot.com/2008/10/decouple-your-service-locator-from-its.html							<span id="dsq-author-user-234">Adam B</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-234" class="dsq-comment-body">
+						<div id="dsq-comment-message-234" class="dsq-comment-message"><p>Decouple your Service Locator from its IoC Container with IServiceLocator</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-235">
+					<div id="dsq-comment-header-235" class="dsq-comment-header">
+						<cite id="dsq-cite-235">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-235">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-235" class="dsq-comment-body">
+						<div id="dsq-comment-message-235" class="dsq-comment-message"><p>@wekempf not sure that will meet the goals. Having a settable property means someone has to actively do it. The someone depends on different contexts like thread, etc. Having it be a delegate allows custom code to make the determination of what is needed at the time. It also removes threading contention that occurs if multiple try to update the prop at the same time.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-236">
+					<div id="dsq-comment-header-236" class="dsq-comment-header">
+						<cite id="dsq-cite-236">
+	http://siliconbea.ch							<span id="dsq-author-user-236">Bruce Boughton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-236" class="dsq-comment-body">
+						<div id="dsq-comment-message-236" class="dsq-comment-message"><p>Glenn, the more I think about it, the more I&#8217;m coming round to the delegate <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  Like Chris says it allows you to tell the ServiceLocator how to find the current container, rather than what the current container is. Useful.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-237">
+					<div id="dsq-comment-header-237" class="dsq-comment-header">
+						<cite id="dsq-cite-237">
+	http://www.codebetter.com/blogs/glenn.block/							<span id="dsq-author-user-237">Glenn Block</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-237" class="dsq-comment-body">
+						<div id="dsq-comment-message-237" class="dsq-comment-message"><p>@Bruce</p>
+<p>That was the reason we did it. Glad it is making more sense.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-238">
+					<div id="dsq-comment-header-238" class="dsq-comment-header">
+						<cite id="dsq-cite-238">
+	http://siliconbea.ch							<span id="dsq-author-user-238">Bruce Boughton</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-238" class="dsq-comment-body">
+						<div id="dsq-comment-message-238" class="dsq-comment-message"><p>At present ServiceLocator.Current throws a NullReferenceException if no service locator provider is set, which is a bit counter-intuitive. I couldn&#8217;t find any mention of this on the codeplex site.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-239">
+					<div id="dsq-comment-header-239" class="dsq-comment-header">
+						<cite id="dsq-cite-239">
+	http://twitter.org/VirtueMe							<span id="dsq-author-user-239">Benny Thomas</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-239" class="dsq-comment-body">
+						<div id="dsq-comment-message-239" class="dsq-comment-message"><p>It may be my lack of understandig. But isn&#8217;t currentProvider a static member and not a method?</p>
+<p>The () at the end of  return currentProvider(); seems faulty to me.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-240">
+					<div id="dsq-comment-header-240" class="dsq-comment-header">
+						<cite id="dsq-cite-240">
+	http://twitter.org/VirtueMe							<span id="dsq-author-user-240">Benny Thomas</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-240" class="dsq-comment-body">
+						<div id="dsq-comment-message-240" class="dsq-comment-message"><p>aaaah, delegate, I have to learn to read the text and not only the code before commenting. <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_biggrin.gif' alt=':D' class='wp-smiley' /> </p>
+<p>I suggest that the name of currentProvider should be currentProviderDelegate to provide som intent of the member role in the code.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-241">
+					<div id="dsq-comment-header-241" class="dsq-comment-header">
+						<cite id="dsq-cite-241">
+								<span id="dsq-author-user-241">Gavin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-241" class="dsq-comment-body">
+						<div id="dsq-comment-message-241" class="dsq-comment-message"><p>What design consideration led to the development of yet another IoC? I really like castle Windsor &#8230; If you had to argue the differences in an MTV Style &#8216;Death Match&#8217; what makes this one the best?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-242">
+					<div id="dsq-comment-header-242" class="dsq-comment-header">
+						<cite id="dsq-cite-242">
+								<span id="dsq-author-user-242">Steve</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-242" class="dsq-comment-body">
+						<div id="dsq-comment-message-242" class="dsq-comment-message"><p>Great news.  Can I make a request already?  <img src='http://codebetter.com/glennblock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>Please provide a good fluent API for programmatically adding objects/assemblies to the service locator.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/glennblock/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente/ ';
+	var disqus_identifier = '63 /blogs/glenn.block/archive/2008/10/02/iservicelocator-a-step-toward-ioc-container-service-locator-detente.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'mytechnobabble';
+	var disqus_title = "IServiceLocator a step toward IoC container \/ Service locator detente";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=63');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/glennblock/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/glennblock\/2008\/10\/02\/iservicelocator-a-step-toward-ioc-container-service-locator-detente\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.240 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 09:57:54 -->
+<!-- super cache -->

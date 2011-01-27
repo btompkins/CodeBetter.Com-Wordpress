@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>remote event log reading &#8211; code for a command line utility | Steve Hebert</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/stevehebert/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/stevehebert/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/stevehebert/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/stevehebert/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/stevehebert/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Steve Hebert' href='http://codebetter.com/stevehebert/' />
+<link rel='start' title='And here we go&#8230;' href='http://codebetter.com/stevehebert/2004/05/12/and-here-we-go/' />
+<link rel='prev' title='worst. program. ever.' href='http://codebetter.com/stevehebert/2005/11/08/worst-program-ever/' />
+<link rel='next' title='Aurora/Nail Virus &#8211; a simple virus that has stumped the anti-virus firms' href='http://codebetter.com/stevehebert/2005/11/23/auroranail-virus-a-simple-virus-that-has-stumped-the-anti-virus-firms/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/stevehebert/2005/11/08/remote-event-log-reading-code-for-a-command-line-utility/' />
+<link rel='shortlink' href='http://codebetter.com/stevehebert/?p=265' />
+<link rel="stylesheet" href="http://codebetter.com/stevehebert/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/stevehebert/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-265" class="post-265 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">remote event log reading &#8211; code for a command line utility</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/stevehebert/author/stevehebert/" title="View all posts by stevehebert">stevehebert</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/stevehebert/2005/11/08/remote-event-log-reading-code-for-a-command-line-utility/" title="10:18 pm" rel="bookmark"><span class="entry-date">November 8, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/stevehebert/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/stevehebert/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/stevehebert/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Here&#8217;s the code for a command-line&nbsp;utility I&#8217;ve written for<br />
+gathering EventLog information from remote testing/production machines<br />
+on our network.&nbsp; I&#8217;ve found the utility&nbsp;to be&nbsp;pretty<br />
+handy and can be xcopy&#8217;d without any&nbsp;other assemblies.&nbsp; While<br />
+the utility writes all information out to the Console, it is<br />
+&#8216;comma-delimeter safe&#8217; so you can redirect the output to a file and<br />
+open it in excel.</p>
+<p>I know I could install bits to read the logs over RSS, but in a<br />
+large company with oversight on the servers getting these types of<br />
+tools installed is a pain.&nbsp; This tool also allows me to<br />
+parameterize the time range &#8211; and since we&#8217;re reviewing these at<br />
+regular intervals it makes reading far easier.&nbsp;Every solution has<br />
+its place &#8211; this may work well for others.</p>
+<p>If you want to use the code below, just create a command line c#<br />
+application and paste the two classes into the project.&nbsp; The first<br />
+class &#8211; EventLogReader &#8211; implements main(args) and does some simple<br />
+house-cleaning.&nbsp; The second class &#8211; EventScanner &#8211; does the actual<br />
+work of deciding which messages to write.&nbsp; While I haven&#8217;t had a<br />
+need to parameterize the EventType, this would be a nice<br />
+addition.&nbsp; If you make any mods, I only ask that&nbsp;you let me<br />
+know so I can link to your work.
+</p>
+<p>The syntax for the program is:&nbsp; <span style="font-size: 10pt;font-family: 'Courier New'"><b>EventLogReader</b> <i>logName timeWindow</i> [machineName]<br />
+</span></p>
+<p><span style="font-size: 10pt;font-family: 'Courier New'">If you want to grab the last 24 hours of log errors from your application log, use&#8230;<br />
+&nbsp;&nbsp; <i>EventLogReader &#8220;Application Log&#8221; 24</i><br />
+</span></p>
+<p><span style="font-size: 10pt;font-family: 'Courier New'">If you want to grab the last 24 of application log entries from a remote machine, use&#8230;<br />
+&nbsp;&nbsp; <i>EventLogReader &#8220;Application Log&#8221; 24 Mongo</i><br />
+</span></p>
+<p><em>Disclaimer:&nbsp; The code listed below is offered without any<br />
+warranty expressed or implied.&nbsp; This is despite anything stated<br />
+before, after or during&nbsp;this posting.&nbsp; <strong></strong>If<br />
+you use the code and it&nbsp;causes you any problems, you assume full<br />
+responsibility for the problems and obsolve the author of any form of<br />
+responsibility.</em></p>
+<p>I should have been a lawyer&#8230;&nbsp; now, onto the code.</p>
+<p><span style="font-size: 10pt;color: blue;font-family: 'Courier New'">class</span><span style="font-size: 10pt;font-family: 'Courier New'"> EventLogReader</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;summary&gt;</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: gray">///</span><span style="color: green"> The main entry point for the application.</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: gray">///</span><span style="color: green"> </span><span style="color: gray">&lt;/summary&gt;</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>[STAThread]</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">static</span> <span style="color: blue">void</span> Main(<span style="color: blue">string</span>[] args)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span>( args != <span style="color: blue">null</span> )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span>( args.Length &lt; 2 || args.Length &gt;3 )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine( WriteParmUsageMessage( &#8220;Invalid parameter list&#8221; ));</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">string</span> machineName = <span style="color: blue">string</span>.Empty;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">string</span> logName = args[0];</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">string</span> stimeWindow = args[1];</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span>( args.Length &gt; 2 )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>machineName = args[2];</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: blue">double</span> timeWindow = 0;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">try</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>timeWindow = Convert.ToDouble(stimeWindow);</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span>( timeWindow &lt; 0 )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine( WriteParmUsageMessage( &#8220;Invalid time window parameter &#8211; must be a positive integer value&#8221;));</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">catch</span>( Exception<span>&nbsp; </span>)</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine( WriteParmUsageMessage( &#8220;Invalid time window parameter &#8211; must be a positive integer value&#8221;));</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>EventScanner es = <span style="color: blue">new</span> EventScanner();</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">try</span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>es.WriteEventLog( logName, machineName, timeWindow );</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp; </span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">catch</span>( Exception e )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>WriteParmUsageMessage(<span style="color: blue">string</span>.Format(&#8220;Unhandled exception while communicating with the event log:\n{0}&#8221;, e.Message ));</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span>;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span><span style="color: blue">static</span> <span style="color: blue">private</span> <span style="color: blue">string</span> WriteParmUsageMessage( <span style="color: blue">string</span> message )</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>{</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span> <span style="color: blue">string</span>.Format(&#8220;EventLogReader Error\n{0}:\n<span>&nbsp;&nbsp;&nbsp; </span>EventLogReader logName timeWindow [machineName]&#8220;, message );</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'">}</span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"></span>&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"></span>&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"></span>&nbsp;</p>
+<p><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><br />
+</font>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;color: blue;font-family: 'Courier New'"><font color="#0000ff" size="2">public</font></span><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"> </font><span style="color: blue">class</span><font color="#000000"> EventScanner</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">private</font></span><font color="#0000ff" size="2"><font color="#000000"> DateTime _cutoffDate = DateTime.MinValue;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// CreateCutoff( hours ) : this function substracts the number of hours from the current</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">//<span>&nbsp;&nbsp; </span>time to create a time window for reported log entries</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">private</font></span><font color="#0000ff" size="2"><font color="#000000"> </font><span style="color: blue">void</span><font color="#000000"> CreateCutoff( </font><span style="color: blue">double</span><font color="#000000"> hours )</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>_cutoffDate = DateTime.Now.AddHours( hours * -1);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine(<br />
+&#8220;Event Log Snapshot from {0} {1} through {2} {3}&#8221;,<br />
+_cutoffDate.ToShortDateString(), _cutoffDate.ToShortTimeString(),<br />
+DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString());</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// CreateEventLogReader( logName, machineName ) : This function creates an eventlog</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">//<span>&nbsp;&nbsp;&nbsp; </span>object for the associated log name and machine name (if passed).</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">public</font></span><font color="#0000ff" size="2"><font color="#000000"> EventLog CreateEventLogReader( </font><span style="color: blue">string</span><font color="#000000"> logName, </font><span style="color: blue">string</span><font color="#000000"> machineName )</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>EventLog log = </font><span style="color: blue">null</span><font color="#000000">;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">if</font></span><font color="#0000ff" size="2"><font color="#000000">( machineName.Length &gt; 0 )</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>log = </font><span style="color: blue">new</span><font color="#000000"> EventLog(logName, machineName );</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">else</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>log = </font><span style="color: blue">new</span><font color="#000000"> EventLog(logName);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">return</font></span><font color="#0000ff" size="2"><font color="#000000"> log;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// WriteEventLog() : This function takes the log name and attaches to it</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">public</font></span><font color="#0000ff" size="2"><font color="#000000"> </font><span style="color: blue">void</span><font color="#000000"> WriteEventLog(</font><span style="color: blue">string</span><font color="#000000"> logName, </font><span style="color: blue">string</span><font color="#000000"> machineName, </font><span style="color: blue">double</span><font color="#000000"> hours)</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// first, we&#8217;ll open the log</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">using</font></span><font color="#0000ff" size="2"><font color="#000000">( EventLog log = CreateEventLogReader( logName, machineName ))</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// next we&#8217;ll create our timespan of interest (hours subtracted from current time)</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>CreateCutoff(hours);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// finally, we&#8217;ll scan the log for entries we&#8217;re looking for.</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// NOTE: here is where you can change the entry type based on what you are seeking</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">foreach</font></span><font color="#0000ff" size="2"><font color="#000000">( EventLogEntry entry </font><span style="color: blue">in</span><font color="#000000"> log.Entries )</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">if</font></span><font color="#0000ff" size="2"><font color="#000000">(<span>&nbsp; </span>entry.TimeWritten &gt;= _cutoffDate &amp;&amp; entry.EntryType == EventLogEntryType.Error)</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine( </font><span style="color: blue">string</span><font color="#000000">.Format(&#8220;{0},{1}<br />
+{2},{3}&#8221;, entry.Source, entry.TimeWritten.ToShortDateString(),<br />
+entry.TimeWritten.ToShortTimeString(), FormatMessage(entry.Message)<span>&nbsp; </span>));</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>entry.Dispose();</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// the following string fragment appears on each log entry &#8211; apparently due to a </font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// translation dll not being loaded. </font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">private</font></span><font color="#0000ff" size="2"><font color="#000000"> </font><span style="color: blue">const</span><font color="#000000"> </font><span style="color: blue">string</span><font color="#000000"> _messageFormatIndicator = &#8220;following replacement strings:&#8221;;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">private</font></span><font color="#0000ff" size="2"><font color="#000000"> </font><span style="color: blue">string</span><font color="#000000"> FormatMessage(</font><span style="color: blue">string</span><font color="#000000"> entry)</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">string</font></span><font color="#0000ff" size="2"><font color="#000000"> newEntry = entry;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// make certain the generic handler error is ignored</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">int</font></span><font color="#0000ff" size="2"><font color="#000000"> truncPosition = entry.IndexOf( _messageFormatIndicator ) ;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">if</font></span><font color="#0000ff" size="2"><font color="#000000">( truncPosition &gt;= 0 )</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>truncPosition += _messageFormatIndicator.Length;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>newEntry = entry.Substring( truncPosition, entry.Length &#8211; truncPosition );</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// get rid of CR/LF combinations for easier reading</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>newEntry = newEntry.Replace(&#8220;\n&#8221;, &#8220;{LF}&#8221;);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>newEntry = newEntry.Replace(&#8220;\r&#8221;, &#8220;{CR}&#8221;);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: green"><font color="#0000ff" size="2">// get rid of embedded commas to prevent CSV parsing problems</font></span></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>newEntry = newEntry.Replace(&#8220;,&#8221;, &#8220;_&#8221;);</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">&nbsp;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><span><font color="#0000ff" size="2"><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></font></span><span style="color: blue"><font color="#0000ff" size="2">return</font></span><font color="#0000ff" size="2"><font color="#000000"> newEntry;</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000"><span>&nbsp;&nbsp; </span>}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 10pt;font-family: 'Courier New'"><font color="#0000ff" size="2"><font color="#000000">}</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><font color="#0000ff" size="2"><font color="#000000" face="Times New Roman" size="3">&nbsp;</font></font></p>
+<p>&nbsp;</p>
+<p></span></span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/stevehebert/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/stevehebert/2005/11/08/remote-event-log-reading-code-for-a-command-line-utility/" title="Permalink to remote event log reading &#8211; code for a command line utility" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/stevehebert/2005/11/08/remote-event-log-reading-code-for-a-command-line-utility/feed/" title="Comments RSS to remote event log reading &#8211; code for a command line utility" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-265 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/stevehebert/2005/11/08/worst-program-ever/" rel="prev"><span class="meta-nav">&larr;</span> worst. program. ever.</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/stevehebert/2005/11/23/auroranail-virus-a-simple-virus-that-has-stumped-the-anti-virus-firms/" rel="next">Aurora/Nail Virus &#8211; a simple virus that has stumped the anti-virus firms <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/stevehebert/2005/11/08/remote-event-log-reading-code-for-a-command-line-utility/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/stevehebert/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fstevehebert%2F2005%2F11%2F08%2Fremote-event-log-reading-code-for-a-command-line-utility%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.285 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 08:41:01 -->
+<!-- super cache -->

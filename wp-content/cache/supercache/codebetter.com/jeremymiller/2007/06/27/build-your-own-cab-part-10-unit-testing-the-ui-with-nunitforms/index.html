@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Build your own CAB Part #10 &#8211; Unit Testing the UI with NUnitForms | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='If you want your process to be followed consistently&#8230;' href='http://codebetter.com/jeremymiller/2007/06/26/if-you-want-your-process-to-be-followed-consistently/' />
+<link rel='next' title='Designing for Testability' href='http://codebetter.com/jeremymiller/2007/06/29/designing-for-testability/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/06/27/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=368' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-368" class="post-368 post type-post status-publish format-standard hentry category-build-your-own-cab category-featured category-test-driven-development">
+					<h1 class="entry-title">Build your own CAB Part #10 &#8211; Unit Testing the UI with NUnitForms</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/06/27/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms/" title="1:57 am" rel="bookmark"><span class="entry-date">June 27, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I&#8217;ve long, long since left the rails of &#8220;Build your own CAB&#8221; topics and wandered off into &#8220;just things you do&#8221; when you&#8217;re building a WinForms application.&nbsp; I&#8217;m doing this topic&nbsp;now because it felt easy to do in the midst of a hectic week before some time off.&nbsp; Other topics will follow shortly dependent upon my bouts with writer&#8217;s block.</p>
+<p>Previously on Soap,</p>
+<ol>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/21/build-your-own-cab-part-1-the-preamble.aspx">Preamble</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">The Humble Dialog Box</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/30/build-your-own-cab-part-4-the-passive-view.aspx">Passive View</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/03/build-your-own-cab-part-5-the-presentation-model.aspx">Presentation Model</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication.aspx">View to Presenter Communication</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-answering-some-questions.aspx">Answering some questions</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/05/build-your-own-cab-part-7-what-s-the-model.aspx">What&#8217;s the Model?</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/10/build-your-own-cab-part-8-model-view-presenter-wrapup.aspx">Assigning Responsibilities in a Model View Presenter Architecture</a>  </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/13/build-your-own-cab-part-9-domain-centric-validation-with-the-notification-pattern.aspx">Domain Centric Validation with the Notification Pattern</a></li>
+</ol>
+<p>Confused?&nbsp; Well, you won&#8217;t be after this week&#8217;s episode of Soap.</p>
+<p>I&#8217;ve frequently read critiques of Test Driven Development that question it&#8217;s effectiveness or practicality&nbsp;in regards to user interface code.&nbsp; It&#8217;s certainly more challenging to test drive&nbsp;user interface code, but it&#8217;s still&nbsp;very practical.&nbsp; There is some specific &#8220;lore&#8221; that TDD practitioners have created over the last couple years to address automated unit testing against user interface code.&nbsp; The best single answer in my book is to utilize <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">Humble View&#8217;s</a> of some sort or another to remove as much code as possible from the clutches of the WinForms presentation infrastructure.&nbsp; At some point though, you&#8217;re left with the actual View code and it&#8217;s a nice cozy home for bugs to breed in.&nbsp; You can take a rationalized approach and say that you&#8217;ve reduced the View to code that&#8217;s so simple that it&#8217;s not worth the time investment to unit test the View&#8217;s with automated tests.&nbsp; Another option that we&#8217;ll explore here&nbsp;is to unit test the WinForms View classes with the &nbsp;<a href="http://nunitforms.sourceforge.net/">NUnitForms</a>&nbsp;library.</p>
+<h4>NUnitForms</h4>
+<p>I&#8217;ve been meaning to write&nbsp;a post on using <a href="http://nunitforms.sourceforge.net/">NUnitForms</a> for a long time because it&#8217;s a great tool that&#8217;s never gotten the attention that I think it deserves.&nbsp; NUnitForms is a library that can be used from within&nbsp;any of the&nbsp;xUnit tools (NUnit/MbUnit/MSTest)&nbsp;to enable unit testing of View behavior.&nbsp; NUnitForms can drive a screen by finding and manipulating the controls on a screen, as well as check properties of controls at runtime.&nbsp; For the most part I only use NUnitForms to write very simple&nbsp;unit tests on&nbsp;the wiring from View to Presenter, but NUnitForms can go much farther than that.&nbsp; In an earlier post I decried the usage of the <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">Autonomous View</a> as a generally untestable and unmaintainable mess.&nbsp; While I think that&#8217;s definitely the case for a screen of any nontrivial complexity, we can happily unit happily forgo View/Presenter separation for smaller screens without sacrificing unit test coverage.&nbsp; Let&#8217;s take one last look at the sample&nbsp;Shipping screen from the&nbsp;<a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a> post and see how we could test that screen with NUnitForms if we had taken an autonomous view approach.</p>
+<p>Here&#8217;s part of the code for that screen:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">partial</span> <span style="color: blue">class</span> <span style="color: teal">ShippingScreen</span> : <span style="color: teal">Form</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IShippingService</span> _service;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">Shipment</span> _shipment;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> ShippingScreen()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; InitializeComponent();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Grab an instance of IShippingService from StructureMap</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _service = <span style="color: teal">ObjectFactory</span>.GetInstance&lt;<span style="color: teal">IShippingService</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// set the Shipment property and start up the data binding</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Shipment = <span style="color: blue">new</span> <span style="color: teal">Shipment</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingVendorField.SelectedIndexChanged += <span style="color: blue">new</span> System.<span style="color: teal">EventHandler</span>(shippingVendorField_SelectedIndexChanged);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionField.SelectedIndexChanged += <span style="color: blue">new</span> System.<span style="color: teal">EventHandler</span>(shippingOptionField_SelectedIndexChanged);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Reset the checkbox enabled states anytime a different Shipping Option is selected</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> shippingOptionField_SelectedIndexChanged(<span style="color: blue">object</span> sender, System.<span style="color: teal">EventArgs</span> e)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; resetDeliveryOptions();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// When a new vendor is selected, fill the Shipping Option ComboBox</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// and reset the Delivery Option checkbox&#8217;s</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> shippingVendorField_SelectedIndexChanged(<span style="color: blue">object</span> sender, System.<span style="color: teal">EventArgs</span> e)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// When the Vendor is selected, cascade the list for Shipping Options</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span>[] options = _service.GetShippingOptions(_shipment);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionField.Items.Clear();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionField.Items.AddRange(options);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionField.SelectedIndex = 0;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; resetDeliveryOptions();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">void</span> resetDeliveryOptions()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">DeliveryOptions</span> options = _service.GetDeliveryOptions(_shipment);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; purchaseInsuranceField.Enabled = options.PurchaseInsuranceEnabled;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; requireSignatureField.Enabled = options.RequireSignatureEnabled;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: teal">Shipment</span> Shipment</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">set</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// start up the data binding stuff</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _shipment = <span style="color: blue">value</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Easy enough.&nbsp; Let&#8217;s start the unit test harness.&nbsp; We&#8217;ll create our normal NUnit TestFixture class, but this time we&#8217;ll inherit from NUnitForm&#8217;s NUnitFormTest class to utilize some of it&#8217;s bookkeeping code.</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// You don&#8217;t have to inherit from NUnitFormTest, but it adds some</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: green">// bookkeeping functionality that you may want</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: teal">TestFixture</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">ShippingScreenTester</span> : <span style="color: teal">NUnitFormTest</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">ShippingScreen</span> _screen;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">ComboBoxTester</span> stateComboBox;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">ComboBoxTester</span> shippingVendorComboBox;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">CheckBoxTester</span> purchaseInsuranceCheckBox;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">CheckBoxTester</span> requireSignatureCheckBox;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">TextBoxTester</span> costTextBox;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">ComboBoxTester</span> shippingOptionComboBox;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">MockRepository</span> _mocks;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IShippingService</span> _service;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Override Setup()</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">override</span> <span style="color: blue">void</span> Setup()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// I&#8217;m using a mock object for the ShippingService here</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// I could just as easily have used a stub, but I can&#8217;t stand</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// having those cluttering up the code.</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// It&#8217;s somewhat personal preference</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks = <span style="color: blue">new</span> <span style="color: teal">MockRepository</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _service = _mocks.CreateMock&lt;<span style="color: teal">IShippingService</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">ObjectFactory</span>.InjectStub(_service);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen = <span style="color: blue">new</span> <span style="color: teal">ShippingScreen</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Show();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Create a ControlTester for each field on the screen for later</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; stateComboBox = <span style="color: blue">new</span> <span style="color: teal">ComboBoxTester</span>(<span style="color: maroon">&#8220;stateField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingVendorComboBox = <span style="color: blue">new</span> <span style="color: teal">ComboBoxTester</span>(<span style="color: maroon">&#8220;shippingVendorField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; purchaseInsuranceCheckBox = <span style="color: blue">new</span> <span style="color: teal">CheckBoxTester</span>(<span style="color: maroon">&#8220;purchaseInsuranceField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; requireSignatureCheckBox = <span style="color: blue">new</span> <span style="color: teal">CheckBoxTester</span>(<span style="color: maroon">&#8220;requireSignatureField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; costTextBox = <span style="color: blue">new</span> <span style="color: teal">TextBoxTester</span>(<span style="color: maroon">&#8220;costField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingVendorComboBox = <span style="color: blue">new</span> <span style="color: teal">ComboBoxTester</span>(<span style="color: maroon">&#8220;shippingOptionField&#8221;</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// VERY IMPORTANT!&nbsp; CLOSE THE SCREEN WHEN YOU&#8217;RE DONE!</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">override</span> <span style="color: blue">void</span> TearDown()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Dispose();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Take a long look at the Setup() method because there&#8217;s a lot going on.&nbsp; The first 3 lines are just setting up the RhinoMocks for IShippingService and directing StructureMap to return the mock object whenever an instance of IShippingService is requested (that&#8217;s what the ObjectFactory.InjectStub&lt;T&gt;(T value) method is doing).&nbsp; The next two lines just create a new instance of the&nbsp;ShippingScreen form and make it visible.&nbsp; That&#8217;s all you need to do.&nbsp; NUnitForms will happily latch onto the visible form later.</p>
+<p>The next thing is to set up &#8220;ControlTester&#8221; objects for each of the UI controls on the screen.&nbsp; Each ControlTester is responsible for finding the named control and provides convenience methods to both manipulate a control&nbsp;and check it&#8217;s properties.&nbsp; There are prebuilt ControlTester classes for all of the most common controls plus a generic ControlTester that can be used for everything else.&nbsp; You can also use a GenericTester like this one:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> EnableAndDisableCheckboxsWhenTheShippingOptionIsChanged()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// First, document some preconditions to prove that the code actually did something</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.IsFalse(requireSignatureCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.IsFalse(purchaseInsuranceCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span> theShippingOptionSelected = <span style="color: maroon">&#8220;Next Day&#8221;</span>;&nbsp; <span style="color: green">// I think I picked up the habit of naming test data</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// variables &#8220;theSomething&#8221; from Colin Kershaw, but </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// I don&#8217;t completely remember.</span></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">DeliveryOptions</span> theDeliveryOptionsReturnedFromTheService = <span style="color: blue">new</span> <span style="color: teal">DeliveryOptions</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.PurchaseInsuranceEnabled = <span style="color: blue">true</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.RequireSignatureEnabled = <span style="color: blue">true</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Look at the Constraint.&nbsp; Little RhinoMocks trick to verify that the &#8220;ShippingOption&#8221;</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// property on the internal Shipment object has been set prior to making the call to</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// IShippingService.GetDeliveryOptions(Shipment)</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Expect</span>.Call(_service.GetDeliveryOptions(<span style="color: blue">null</span>))</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Return(theDeliveryOptionsReturnedFromTheService)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Constraints(<span style="color: blue">new</span> <span style="color: teal">PropertyIs</span>(<span style="color: maroon">&#8220;ShippingOption&#8221;</span>, theShippingOptionSelected));</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.ReplayAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Select a Shipping Option</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionComboBox.Enter(theShippingOptionSelected);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.VerifyAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Check the enabled property on the two checkbox&#8217;s</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.AreEqual(</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.PurchaseInsuranceEnabled, </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; purchaseInsuranceCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.AreEqual(</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.RequireSignatureEnabled, </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; requireSignatureCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; } </p>
+</div>
+<p>Back to our shipping screen.&nbsp; Here&#8217;s the unit test for the cascading dropdown logic when a state or province is selected.&nbsp; The unit test below does the following:</p>
+<ol>
+<li>Set up an expectation on the mock object for IShippingService to return an array of shipping vendor names  </li>
+<li>Select an option on the dropdown box for &#8220;State or Province&#8221; (the call to stateComboBox.Enter())  </li>
+<li>Verify the mock object interaction with the IShippingService  </li>
+<li>Lastly, check the values on the dropdown box for the shipping vendor</li>
+</ol>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SelectingAStateOrProvinceCascadesTheSelectionListOfVendors()</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Setup the IShippingService to return a string array of vendors for a given State</span></p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span>[] theOptions = <span style="color: blue">new</span> <span style="color: blue">string</span>[]{<span style="color: maroon">&#8220;Vendor A&#8221;</span>, <span style="color: maroon">&#8220;Vendor B&#8221;</span>, <span style="color: maroon">&#8220;Vendor C&#8221;</span>};</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span> theStateOrProvince = <span style="color: maroon">&#8220;TX&#8221;</span>;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Expect</span>.Call(_service.GetShippingVendorsForLocation(theStateOrProvince))</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Return(theOptions)</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Constraints(<span style="color: blue">new</span> <span style="color: teal">Equal</span>(theStateOrProvince));</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.ReplayAll();</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; stateComboBox.Enter(theStateOrProvince);</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.VerifyAll();</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Lastly, let&#8217;s check the dropdown list on shippingVendor ComboBox</span></p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// The &#8220;Properties&#8221; property is a reference to the System.Windows.Forms.ComboBox</span></p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// object.&nbsp; You can write assertions against anything on its public API</span></p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.AreEqual(theOptions, shippingVendorComboBox.Properties.Items);</p>
+<p style="margin: 0px;background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p>Now, let&#8217;s look at a unit test for enabling/disabling the insurance and signature required checkbox&#8217;s when the Shipping&nbsp;Option is selected:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> EnableAndDisableCheckboxsWhenTheShippingOptionIsChanged()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// First, document some preconditions to prove that the code actually did something</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.IsFalse(requireSignatureCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.IsFalse(purchaseInsuranceCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span> theShippingOptionSelected = <span style="color: maroon">&#8220;Next Day&#8221;</span>;&nbsp; <span style="color: green">// I think I picked up the habit of naming test data</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// variables &#8220;theSomething&#8221; from Colin Kershaw, but </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// I don&#8217;t completely remember.</span></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">DeliveryOptions</span> theDeliveryOptionsReturnedFromTheService = <span style="color: blue">new</span> <span style="color: teal">DeliveryOptions</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.PurchaseInsuranceEnabled = <span style="color: blue">true</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.RequireSignatureEnabled = <span style="color: blue">true</span>;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Look at the Constraint.&nbsp; Little RhinoMocks trick to verify that the &#8220;ShippingOption&#8221;</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// property on the internal Shipment object has been set prior to making the call to</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// IShippingService.GetDeliveryOptions(Shipment)</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Expect</span>.Call(_service.GetDeliveryOptions(<span style="color: blue">null</span>))</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Return(theDeliveryOptionsReturnedFromTheService)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; .Constraints(<span style="color: blue">new</span> <span style="color: teal">PropertyIs</span>(<span style="color: maroon">&#8220;ShippingOption&#8221;</span>, theShippingOptionSelected));</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.ReplayAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Select a Shipping Option</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionComboBox.Enter(theShippingOptionSelected);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.VerifyAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Check the enabled property on the two checkbox&#8217;s</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.AreEqual(</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.PurchaseInsuranceEnabled, </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; purchaseInsuranceCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.AreEqual(</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; theDeliveryOptionsReturnedFromTheService.RequireSignatureEnabled, </p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; requireSignatureCheckBox.Properties.Enabled);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; } </p>
+</div>
+<p>&nbsp;  </p>
+<h4>Testing View to Controller Communication</h4>
+<p>&nbsp;</p>
+<p>Most of our NUnitForms unit tests are just verifying the wiring of a View to a Presenter.&nbsp; As expected, I&#8217;ve gotten a mostly negative reaction to my preference for making the View communicate directly with the Presenter.&nbsp; One of the commenters questioned whether or not my direct communication would lead to harder testing.&nbsp; Here&#8217;s a sample of testing both direct communication and communication through events.&nbsp; I don&#8217;t think you&#8217;re going to see much difference in effort either way.</p>
+<p>Here&#8217;s the scenario:&nbsp; when the &#8220;Save&#8221; button is clicked, call the Save() method on the Presenter.</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: teal">IPresenter</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> Save();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">SomeScreen</span> : <span style="color: teal">Form</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IPresenter</span> _presenter;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">Button</span> saveButton;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> AttachPresenter(<span style="color: teal">IPresenter</span> presenter)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _presenter = presenter;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: teal">TestFixture</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">DirectCommunicationTester</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">SomeScreen</span> _screen;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">MockRepository</span> _mocks;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IPresenter</span> _presenter;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">SetUp</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SetUp()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen = <span style="color: blue">new</span> <span style="color: teal">SomeScreen</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Setup RhinoMocks for the IPresenter and attach it</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks = <span style="color: blue">new</span> <span style="color: teal">MockRepository</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _presenter = _mocks.CreateMock&lt;<span style="color: teal">IPresenter</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.AttachPresenter(_presenter);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Show();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">TearDown</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> TearDown()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Dispose();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">delegate</span> <span style="color: blue">void</span> <span style="color: teal">VoidHandler</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// A helper function.&nbsp; This pays off over the application</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">void</span> assertClickingButtonCalls(<span style="color: blue">string</span> buttonName, <span style="color: teal">VoidHandler</span> handler)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Set up the expectation on the Presenter</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handler();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.ReplayAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Find the button on the screen</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">ButtonTester</span> button = <span style="color: blue">new</span> <span style="color: teal">ButtonTester</span>(buttonName);</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Click the button</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; button.Click();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// verify the interaction with the Presenter</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _mocks.VerifyAll();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ClickTheSaveButtonCallsSaveOnThePresenter()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; assertClickingButtonCalls(<span style="color: maroon">&#8220;saveButton&#8221;</span>, <span style="color: blue">delegate</span> {_presenter.Save();});</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>It&#8217;s important to note that you generally make all calls to the presenter take in zero arguments.&nbsp; We&#8217;ll see that same pattern repeat for event communication.&nbsp; You can go farther with the test helper methods to make testing even more declarative.&nbsp; </p>
+<p>Now, the same thing with&nbsp;event driven communication using an anonymous delegate as the event handler:</p>
+<p>&nbsp;</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">delegate</span> <span style="color: blue">void</span> <span style="color: teal">VoidHandler</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">EventScreen</span> : <span style="color: teal">Form</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IPresenter</span> _presenter;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">Button</span> saveButton;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">event</span> <span style="color: teal">VoidHandler</span> OnSave;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; [<span style="color: teal">TestFixture</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">EventCommunicationTester</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">EventScreen</span> _screen;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">SetUp</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> SetUp()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen = <span style="color: blue">new</span> <span style="color: teal">EventScreen</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Show();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">TearDown</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> TearDown()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.Dispose();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ClickTheSaveButton()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">bool</span> IWasCalled = <span style="color: blue">false</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.OnSave += <span style="color: blue">delegate</span> { IWasCalled = <span style="color: blue">true</span>; };</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">Assert</span>.IsTrue(IWasCalled);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<h4>So it&#8217;s okay to use Autonomous View after all?</h4>
+<p>Because of NUnitForms I&#8217;m perfectly happy to use the autonomous view style on simple dialog screens, but that&#8217;s just about it.&nbsp; There&#8217;s a certain fuzzy point where I&#8217;d definitely choose to go to a separated presentation as opposed to an autonomous view.&nbsp; Even though the shipping screen above is small, I think it already crosses that line.&nbsp; Many people will term any kind of Model View Presenter (MVP)&nbsp;architecture as more complicated than the autonomous view because of the additional pieces, but I see it differently.&nbsp; I reject the notion that more classes automatically equals more complexity.&nbsp; I&#8217;d much rather have more&nbsp;classes if that enables me to keep any one single class as simple as possible.&nbsp; Testability is&nbsp;a huge part of maintainability in my book, but separation of concerns by itself&nbsp;will make the code better organized and easier to understand.</p>
+<p>At least in the .Net world the MVP style of construction isn&#8217;t being received well by mainstream developers because it&#8217;s a foreign approach that isn&#8217;t encouraged by the .Net tooling.&nbsp; In a way MVP is more complex in .Net&nbsp;just because the tooling doesn&#8217;t lead you there.&nbsp; I wouldn&#8217;t say that you have to fight the .Net tooling to do separated presentation, but you&#8217;ve got to make all of the decisions yourself.I guess it&#8217;s easy to understand the negative reaction I see to MVP because it&#8217;s not part of the .Net canon yet.&nbsp; I haven&#8217;t taken a hard look at <a href="http://windowsclient.net/acropolis/">Acropolis</a> yet, but it apparently encourages some sort of View/Presenter separation.&nbsp; That&#8217;s a positive change in direction in .Net tooling that&#8217;ll do more good than a thousand blog posts on MVP.</p>
+<p>&nbsp;</p>
+<h4>Lessons Learned</h4>
+<p>NUnitForms is definitely meant for unit testing, and that&#8217;s where I&#8217;ve found it to be most applicable.&nbsp; On my last project we tried to drive the WinForms application in FitNesse acceptance tests with NUnitForms and struggled mightily.&nbsp; The complexity of the testing effort goes up dramatically when you move from testing one form or control to the full application at one time.&nbsp;&nbsp;I&#8217;m&nbsp;using <a href="http://storyteller.tigris.org">StoryTeller</a>/<a href="http://fitnessedotnet.sourceforge.net">FitnesseDotNet</a> for story testing of the user interface quite successfully on my current project, but that&#8217;s a later post.</p>
+<h4>&nbsp;</h4>
+<h4>The Future</h4>
+<p>NUnitForms was written by Luke Maxon with some contributions from Levi Haskell (probably the&nbsp;best developer I&#8217;ve ever worked with).&nbsp; Since Luke&#8217;s off living the <a href="http://www.fluensee.com/home.html">exciting start up life</a> and coding in Java, I&#8217;ve volunteered(?) to be one of the SourceForge administrators for the NUnitForms project now.&nbsp; I&#8217;m thinking of making some additions to NUnitForms for better support of acceptance testing and possibly some prebuilt Fit fixtures, but I&#8217;m not sure of either direction or timing.&nbsp; Since my company does so much WinForms work, I&#8217;m going to try to rook some of my colleagues into helping too.&nbsp; I&#8217;m also kicking around the idea of creating a sort of testing DSL with NUnitForms to support something reminiscent of&nbsp;<a href="http://www.testing.com/cgi-bin/blog/2006/12/19#wireframe1">Brian Marick&#8217;s wireframe test idea</a>, and possibly use that for acceptance testing as opposed to Fit tests.&nbsp; I definitely want to add some custom assertions and more options for&nbsp;locating controls.&nbsp; Got any ideas or requests?&nbsp; Here&#8217;s some loose conceptual code, feel free to let rip with what you think:</p>
+<p>&nbsp;</p>
+<pre>using (NUnitFormsSpecification specification = new NUnitFormsSpecification){	Click.Button.WithText("Do Something");	Click.Button.Named("saveButton");	CheckBox.WithText("Some flag").Should.Be.Enabled;	Control.Named("bodyPanel").Should.Be.Hidden;	ComboBox.Named("names").Should.Have.Items(new string[]{"Jeremy", "Scott", "Karl", "Jeffrey"});	Select("Jeremy").For.ComboBox.Named("names");
+
+}</pre>
+<pre>&nbsp;</pre>
+<pre></pre>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/build-your-own-cab/" title="View all posts in Build your own CAB" rel="category tag">Build your own CAB</a>, <a href="http://codebetter.com/jeremymiller/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>, <a href="http://codebetter.com/jeremymiller/category/test-driven-development/" title="View all posts in Test Driven Development" rel="category tag">Test Driven Development</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/06/27/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms/" title="Permalink to Build your own CAB Part #10 &#8211; Unit Testing the UI with NUnitForms" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/06/27/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms/feed/" title="Comments RSS to Build your own CAB Part #10 &#8211; Unit Testing the UI with NUnitForms" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-368 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/06/26/if-you-want-your-process-to-be-followed-consistently/" rel="prev"><span class="meta-nav">&larr;</span> If you want your process to be followed consistently&#8230;</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/06/29/designing-for-testability/" rel="next">Designing for Testability <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2252">
+					<div id="dsq-comment-header-2252" class="dsq-comment-header">
+						<cite id="dsq-cite-2252">
+								<span id="dsq-author-user-2252">Peter M&#252;ller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2252" class="dsq-comment-body">
+						<div id="dsq-comment-message-2252" class="dsq-comment-message"><p>Thanks for the great post. Our shop switched to using WPF exclusively and I&#8217;d like to ask, if anybody knows of an alternative to NUnitForms for WPF?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2253">
+					<div id="dsq-comment-header-2253" class="dsq-comment-header">
+						<cite id="dsq-cite-2253">
+	http://www.titaniumsoft.com/							<span id="dsq-author-user-2253">E. Faruk Pehlivanli</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2253" class="dsq-comment-body">
+						<div id="dsq-comment-message-2253" class="dsq-comment-message"><p>Use white for WPF<br />
+check this out <a href="http://www.codeplex.com/white" rel="nofollow">http://www.codeplex.com/white</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2254">
+					<div id="dsq-comment-header-2254" class="dsq-comment-header">
+						<cite id="dsq-cite-2254">
+	http://www.fluidscape.co.nz/							<span id="dsq-author-user-2254">Duncan Bayne</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2254" class="dsq-comment-body">
+						<div id="dsq-comment-message-2254" class="dsq-comment-message"><p>> Thanks for the great post. Our shop switched to using WPF<br />
+> exclusively and I&#8217;d like to ask, if anybody knows of an<br />
+> alternative to NUnitForms for WPF?</p>
+<p>It&#8217;s early days yet, but check out NPresent:</p>
+<p><a href="http://npresent.sourceforge.net/" rel="nofollow">http://npresent.sourceforge.net/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2255">
+					<div id="dsq-comment-header-2255" class="dsq-comment-header">
+						<cite id="dsq-cite-2255">
+								<span id="dsq-author-user-2255">Amal</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2255" class="dsq-comment-body">
+						<div id="dsq-comment-message-2255" class="dsq-comment-message"><p>I find it difficult to use NunitForm.<br />
+I have not done any unit Testing before.<br />
+I have a .net windows UI app that I would like to test.<br />
+Please help me through this.<br />
+my email is<br />
+<a href="mailto:amal_ibrahim_ai@hotmail.com">amal_ibrahim_ai@hotmail.com</a><br />
+Thanks</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/06/27/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms/ ';
+	var disqus_identifier = '368 /blogs/jeremy.miller/archive/2007/06/26/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Build your own CAB Part #10 &#8211; Unit Testing the UI with NUnitForms";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=368');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/06\/27\/build-your-own-cab-part-10-unit-testing-the-ui-with-nunitforms\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.339 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 08:40:26 -->
+<!-- super cache -->

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Foundations of Programming &#8211; Part 5 – Unit Testing | Karl Seguin</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/karlseguin/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/karlseguin/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/karlseguin/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/karlseguin/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Karl Seguin' href='http://codebetter.com/karlseguin/' />
+<link rel='start' title='Expecting More From Development Companies' href='http://codebetter.com/karlseguin/2006/03/24/expecting-more-from-development-companies/' />
+<link rel='prev' title='Foundations of Programming &#8211; pt 4 – Dependency Injection' href='http://codebetter.com/karlseguin/2007/12/11/foundations-of-programming-pt-4-dependency-injection/' />
+<link rel='next' title='Foundations of Programming &#8211; pt 7 (sorta) &#8211; ActiveRecord' href='http://codebetter.com/karlseguin/2007/12/28/foundations-of-programming-pt-7-sorta-activerecord/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/' />
+<link rel='shortlink' href='http://codebetter.com/karlseguin/?p=112' />
+<link rel="stylesheet" href="http://codebetter.com/karlseguin/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/karlseguin/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-112" class="post-112 post type-post status-publish format-standard hentry category-foundations">
+					<h1 class="entry-title">Foundations of Programming &#8211; Part 5 – Unit Testing</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/karlseguin/author/karlseguin/" title="View all posts by karlseguin">karlseguin</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/" title="1:22 pm" rel="bookmark"><span class="entry-date">December 20, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/karlseguin/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/karlseguin/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/karlseguin/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Throughout this series we&#8217;ve talked about the importance of testability and have looked at techniques to make it easier to test our system. It goes without saying that a major benefit of writing tests for our system is the ability to deliver a better product to our client. Although this is true for unit tests as well, the main reason I write unit tests is that nothing comes close to improving the maintainability of a system as much as a properly developed suite of unit tests. You&#8217;ll often hear unit test advocates speak of how much confidence unit tests give them – and that&#8217;s what it&#8217;s really all about. On a project I&#8217;m currently working on, we&#8217;re continuously making changes and tweaks to improve the system (functional improvements, performance, refactorings, you name it). Being that it&#8217;s a fairly large system, we&#8217;re sometimes asked to make a change that flat out scares us. Is it doable? Will it have some weird side effect? What bugs will be introduced? Without unit tests, we&#8217;d likely refuse to make the higher risk changes. But we know, and our client knows, that it&#8217;s the high risk changes that have the most potential for success. It turns out that having 700+ unit tests which run within a couple minutes lets us rip components apart, reorganize code, and build features we never thought about a year ago, without worrying too much about it. Because we are confident in the completeness of the unit tests, we know that we aren&#8217;t likely to introduce bugs into our production environment – our changes might still cause bugs but we&#8217;ll know about them right away.</p>
+<p>Unit tests aren&#8217;t only about mitigating high-risk changes. In my programming life, I&#8217;ve been responsible for major bugs caused from seemingly low-risk changes as well. The point is that I can make a fundamental or minor change to our system, right click the solution, select &#8220;Run Tests&#8221; and within 2 minutes know where we stand.</p>
+<p><strong>Why wasn&#8217;t I unit testing 3 years ago?</strong><br />
+For those of us who&#8217;ve discovered the joy of unit testing, it&#8217;s hard to understand why everyone isn&#8217;t doing it. For those who haven&#8217;t adopted it, you probably wish we&#8217;d shut up about it already. For many years I&#8217;d read blogs and speak to colleagues who were really into unit testing, but didn&#8217;t practice myself. Looking back, here&#8217;s why it took me a while to get on the bandwagon:
+</p>
+<ol>
+<li>I had misconception about the goals of unit testing. As I&#8217;ve already said, unit testing does improve the quality of a system, but it&#8217;s really all about making it easier to change / maintain the system later on. Furthermore, if you go to the next logical step and adopt Test Driven Development, unit testing really becomes about design. To paraphrase Scott Bellware, TDD isn&#8217;t about testing because you&#8217;re not thinking as a tester when doing TDD – you&#8217;re thinking as a designer.</li>
+<li>Like many, I used to think developers shouldn&#8217;t write tests! I don&#8217;t know the history behind this belief, but I now think this is just an excuse for lazy programmers. Testing is the process of both finding bugs in a system as well as validating that it works as expected. Maybe developers aren&#8217;t good at finding bugs in their own code, but they are the best suited to make sure it works the way they intended it to (and clients are best suited to test that it works like it should (if you&#8217;re interested to find out more about that, I suggest you research Acceptance Testing and FitNess (http://fitnesse.org/)). Even though unit testing isn&#8217;t all that much about testing, developers who don&#8217;t believe they should test their own code simply aren&#8217;t accountable.</li>
+<li>Testing isn&#8217;t fun. Sitting in front of a monitor, inputting data and making sure everything&#8217;s ok sucks. But unit testing is coding, which means there are a lot of challenges and metrics to gauge your success. Sometimes, like coding, it&#8217;s a little mundane, but all in all it&#8217;s no different than the other programming you do every day.</li>
+<li>It takes time. Advocates will tell you that unit testing doesn&#8217;t take time, it SAVES time. This is true in that the time you spend writing unit tests is likely to be small compared to the time you save on change requests and bug fixes. That&#8217;s a little too Ivory Tower for me. In all honesty, unit testing DOES take a lot of time (especially when you just start out). You may very well not have enough time to unit test or you client might not feel the upfront cost is justified. In these situations I suggest you identifier the most critical code and test it as thoroughly as possible – even a couple hours spent writing unit tests can have a big impact.</li>
+</ol>
+<p>Ultimately, unit testing seemed like a complicated and mysterious thing that was only used in edge cases. The benefits seemed unattainable and timelines didn&#8217;t seem to allow for it anyways. It turns out it took a lot of practice (I had a hard time learning what to unit test and how to go about it), but the benefits were almost immediately noticeable.</p>
+<p><strong>The Tools</strong></p>
+<p>With StructureMap already in place from the last part, we need only add 2 frameworks and 1 tool to our unit testing framework: nUnit, RhinoMocks and TestDriven.NET.</p>
+<p>TestDriven.NET is an addon for Visual Studio that basically adds a &#8220;Run Test&#8221; option to our context (right-click) menu. We won&#8217;t spend any time talking about it. The personal license of TestDriven.NET is only valid for open source and trial users. Don&#8217;t worry too much if the licensing doesn&#8217;t suite you, nUnit has its own test runner tool, just not integrated in VS.NET. (<a href="http://www.testdriven.net/">http://www.testdriven.net/</a>)  (Resharper users can also use its built-in functionality).</p>
+<p>nUnit is the testing framework we&#8217;ll actually use. There are alternatives, such as mbUnit, but I don&#8217;t know nearly as much about them as I ought to. (<a href="http://www.nunit.org/">http://www.nunit.org/</a>)</p>
+<p>RhinoMocks is the mocking framework we&#8217;ll use. In the last part we manually created our mock – which was both rather limited and time consuming. RhinoMocks will automatically generate a mock class from an interface and allow us to verify and control the interaction with it. (<a href="http://www.ayende.com/projects/rhino-mocks.aspx">http://www.ayende.com/projects/rhino-mocks.aspx</a>)</p>
+<p><strong>nUnit</strong><br />
+The first thing to do is to add a reference to the nunit.framework.dll and the Rhino.Mocks.dll. My own preference is to put my unit tests into their own assembly. For example, if my domain layer was located in <em>CodeBetter.Foundations</em>, I&#8217;d likely create a new assembly called <em>CodeBetter.Foundations.Tests</em>. This does mean that we won&#8217;t be able to test private methods (more on this shortly). In .NET 2.0+ we can use the <em>InternalsVisibleToAttribute</em> to allow the Test assembly access to our internal method (we&#8217;d open Properties/AssemblyInfo.cs and add <em>[assembly: InternalsVisibleTo("CodeBetter.Foundations.Tests")]</em> – which is something I typically do.</p>
+<p>There are two things you need to know about nUnit. First, you configure your tests via the use of attributes. The TestFixtureAttribute is applied to the class that contains your tests, setup and teardown methods. The SetupAttribute is applied to the method you want to have executed before each test – you won&#8217;t always need this. Similarly, the TearDownAttribute is applied to the method you want executed after each test. Finally, the TestAttribute is applied to your actual unit tests. (There are other attributes, but these 4 are the most important). This is what it might look like:</p>
+<pre>
+using NUnit.Framework;
+
+[TestFixture]
+public class CarTests
+{
+   [SetUp]
+   public void SetUp()
+   {
+      //todo
+   }
+   [TearDown]
+   public void TearDown()
+   {
+      //todo
+   }
+   [Test]
+   public void SaveThrowsExceptionWhenInvalid()
+   {
+      //todo
+   }
+   [Test]
+   public void SaveCallsDataAccessAndSetsId()
+   {
+      //todo
+   }
+   //more tests
+}
+</pre>
+<p>Notice that each unit test has a very explicit name – it&#8217;s important to state exactly what the test is going to do, and since your test should never do too much, you&#8217;ll rarely have obscenely long names.</p>
+<p>The second thing to know about nUnit is that you confirm that your test executed as expected via the use of the Assert class and its many methods. I know this is lame, but if we had a method that took a param int[] numbers and returned the sum, our unit test would look like:</p>
+<pre>[TestFixture]
+public class MathUtilityTester
+{
+  [Test]
+  public void MathUtilityReturnsZeroWhenNoParameters()
+  {
+     Assert.AreEqual(0, MathUtility.Add());
+  }
+  [Test]
+  public void MathUtilityReturnsValueWhenPassedOneValue()
+  {
+     Assert.AreEqual(10, MathUtility.Add(10));
+  }
+  [Test]
+  public void MathUtilityReturnsValueWhenPassedMultipleValues()
+  {
+     Assert.AreEqual(29, MathUtility.Add(10,2,17));
+  }
+  [Test]
+  public void MathUtilityWrapsOnOverflow()
+  {
+     Assert.AreEqual(-2, MathUtility.Add(int.MaxValue, int.MaxValue));
+  }
+}
+</pre>
+<p>You wouldn&#8217;t know it from the above example, but the Assert class has more than one function, such as Assert.IsFalse, Assert.IsTrue, Assert.IsNull, Assert.IsNotNull, Assert.AreSame, Assert.AreNotEqual, Assert.Greater, Assert.IsInstanceOfType and so on.</p>
+<p><strong>What is a Unit Test</strong><br />
+Unit tests are methods that test behavior at a very granular level. Developers new to unit testing often let the scope of their tests grow. Most unit tests follow the same pattern: execute some code from your system and assert that it worked as expected. The goal of a unit test is to validate a specific behavior. You might have noticed that the above two examples use multiple unit tests on the same function. We don&#8217;t want to write an all encompassing test for Save, but rather want to write a test for each of the behavior it contains – failing when the object is in an invalid state, calling our data access&#8217;s Save method and setting the id, and calling the data access&#8217;s Update method. It&#8217;s important that our unit test pinpoint a failure as best possible.</p>
+<p>I&#8217;m sure some of you will find the 4 tests used to cover the MathUtility.Add method a little excessive. You may think that all 4 tests could be grouped into the same one – and in this minor case I&#8217;d say whatever you prefer. However, when I started unit testing, I fell into the bad habit of letting the scope of my unit tests grow. I&#8217;d have my test which created an object, executed some of its members and asserted the functionality. But I&#8217;d always end up saying, <em>well as long as I&#8217;m here, I might as well throw in a couple extra asserts to make sure these fields are set the way they ought to be</em>. This is very dangerous because a change in your code could break numerous unrelated tests – definitely a sign that you&#8217;ve given your tests too little focus.</p>
+<p>This brings us back to the topic about testing private methods. If you google you&#8217;ll find a number of discussions on the topic, but the general consensus seems to be that you shouldn&#8217;t test private methods. I think the most compelling reason not to test private methods is that our goal is not to test methods or lines of code, but rather to test behavior. This is something you must always remember. If you thoroughly test your code&#8217;s public interface, then private methods should automatically get tested. Another argument against testing private methods is that it breaks encapsulation. We talked about the importance of information hiding already. Private methods contain implementation detail that we want to be able to change without breaking calling code. If we test private methods directly, implementation changes will likely break our tests, which doesn&#8217;t bode well for higher maintainability. Here&#8217;s a question for you: should we care that a change to a private method broke a test?</p>
+<p>&#8230;</p>
+<p>&#8230;</p>
+<p>Hopefully you&#8217;re starting to get my drift, the answer is NO. What we care about is whether the behavior/functionality is broken, which our tests against the public API will do.</p>
+<p><strong>Mocking</strong><br />
+To get started, it&#8217;s a good idea to test simple pieces of functionality. Before long though, you&#8217;ll want to test a method that has a dependency on an outside component – such as the database. For example, you might want to complete your test coverage of the Car class by testing the Save method. Since we want to keep our tests as granular as possible (and as light as possible – tests should be quick to run so we can execute them often and get instant feedback) we really don&#8217;t want to figure out how we&#8217;ll set up a test database with fake data and make sure it&#8217;s kept in a predictable state from test to test. In keeping with this spirit, all we want to do is make sure that Save interacts property with the DAL. Later on we can unit test the DAL on its own. If Save works as expected and the DAL works as expected and they interact properly with each other, we have a good base to move to more traditional testing.</p>
+<p>In the previous part we saw the beginnings of testing with mocks. We were using a manually created mock class which had some pretty major limitations. The most significant of which was our inability to confirm that calls to our mock objects were occurring as expected. That, along with ease of use, is exactly the problem RhinoMock is meant to solve. Using RhinoMock couldn&#8217;t be simpler, tell it what you want to mock (an interface or a class – preferably an interface), tell it what method(s) you expect to be called, along with the parameters, execute the call, and have it verify that your expectations were met. </p>
+<p>Before we can get started, we need to give RhinoMock access to our internal types. This is quickly achieved by adding [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")] to our Properties/AssemblyInfo.cs file.</p>
+<p>Now we can start coding by writing a test to cover the update path of our Save method:</p>
+<pre>using NUnit.Framework;
+
+[TestFixture]
+public class CarTest
+{
+  [Test]
+  public void SaveCarCallsUpdateWhenAlreadyExistingCar()
+  {
+     MockRepository mocks  = new MockRepository();
+     IDataAccess dataAccess = mocks.CreateMock&lt;IDataAccess&gt;();
+     ObjectFactory.InjectStub(typeof(IDataAccess), dataAccess);
+
+     Car car = new Car();
+     dataAccess.Update(car);
+     mocks.ReplayAll();
+
+     car.Id = 32;
+     car.Save();
+
+     mocks.VerifyAll();
+     ObjectFactory.ResetDefaults();
+  }
+}
+</pre>
+<p>Once a mock object is created, which took 1 line of code to do, we inject it into our dependency injection framework (StructureMap in this case). When a mock is created, it enters record-mode, which means any subsequent operations against it, such as the call to dataAccess.UpdateCar(car), is recorded by RhinoMock. We exit record-mode by calling ReplayAll, which means we are now ready to execute our real code and have it verified against the recorded sequence. When we then call VerifyAll after having called Save on our Car object, RhinoMock will make sure that our actual call behaved the same as what we expected. In other words, you can think of everything before ReplayAll as stating our expectations, everything after it as our actual test code with VerifyAll doing the final check.</p>
+<p>If we were to change the test to something along the lines of (notice the extra dataAccess.Update call):</p>
+<pre>using NUnit.Framework;
+
+[TestFixture]
+public class CarTest
+{
+  [Test]
+  public void SaveCarCallsUpdateWhenAlreadyExistingCar()
+  {
+     MockRepository mocks  = new MockRepository();
+     IDataAccess dataAccess = mocks.CreateMock&lt;IDataAccess&gt;();
+     ObjectFactory.InjectStub(typeof(IDataAccess), dataAccess);
+
+     Car car = new Car();
+     dataAccess.Update(car);
+     dataAccess.Update(car);
+     mocks.ReplayAll();
+
+     car.Id = 32;
+     car.Save();
+
+     mocks.VerifyAll();
+     ObjectFactory.ResetDefaults();
+  }
+}
+</pre>
+<p>RhinoMock would cause our test to fail and tell us that it didn&#8217;t expect two calls to update.</p>
+<p>For the save behavior, the interaction is slightly more complex – we have to make sure the return value is properly handled by the Save method. Here&#8217;s the test:</p>
+<pre>using NUnit.Framework;
+
+[TestFixture]
+public class CarTest
+{
+  [Test]
+  public void SaveCarCallsSaveWhenNew()
+  {
+     MockRepository mocks  = new MockRepository();
+     IDataAccess dataAccess = mocks.CreateMock&lt;IDataAccess&gt;();
+     ObjectFactory.InjectStub(typeof(IDataAccess), dataAccess);
+
+     Car car = new Car();
+     Expect.Call(dataAccess.Save(car)).Return(389);
+     mocks.ReplayAll();
+
+     car.Save();
+
+     mocks.VerifyAll();
+     Assert.AreEqual(389, car.Id);
+     ObjectFactory.ResetDefaults();
+  }
+}
+</pre>
+<p>Using the Expect.Call method allows us to specify the return value we want. Also notice the Assert.Equals we&#8217;ve added – which is the last step in validating the interaction. Hopefully the possibilities of having control over return values (as well as output/ref values) lets you see how easy it is to test for edge cases. Imagine that we changed our Save function to throw an exception if the returned id was invalid, our test would look like:</p>
+<pre>using NUnit.Framework;
+
+[TestFixture]
+public class CarTest
+{
+  private MockRepository _mocks;
+  private IDataAccess _dataAccess;
+
+  [SetUp]
+  public void SetUp()
+  {
+     _mocks = new MockRepository();
+     _dataAccess = _mocks.CreateMock&lt;IDataAccess&gt;();
+     ObjectFactory.InjectStub(typeof(IDataAccess), _dataAccess);
+  }
+  [TearDown]
+  public void TearDown()
+  {
+     _mocks.VerifyAll();
+  }
+
+  [Test, ExpectedException("CodeBetter.Foundations.PersistenceException")]
+  public void SaveCarCallsSaveWhenNew()
+  {
+     Car car = new Car();
+     using (_mocks.Record())
+     {
+        Expect.Call(_dataAccess.Save(car)).Return(0);
+     }
+     using (_mocks.Playback())
+     {
+        car.Save();
+     }
+  }
+}
+</pre>
+<p>We&#8217;ve actually changed a lot. First, we&#8217;ve shown how nUnit ExpectedException attribute can be used to test for an exception. Secondly, we&#8217;ve  extracted the repetitive code that creates, sets up and verifies the mock object into the SetUp and TearDown methods. Finally, we used a different, more explicit, RhinoMocks syntax for setting up our record and playback states &#8211; I generally prefer this syntax.</p>
+<p><strong>More on nUnit and RhinoMocks</strong><br />
+So far we&#8217;ve only looked at the basic features offered by nUnit and RhinoMocks, but there&#8217;s a lot more than can actually be done with them. For example, RhinoMocks can be setup to ignore the order of method calls, instantiate multiple mocks but only replay/verify specific ones, or mock some but not other methods of a class (a partial mock), or simply create a stub.</p>
+<p>Combined with a utility like NCover (<a href="http://www.ncover.com/">http://www.ncover.com/</a>), you can also get reports on your tests coverage. Coverage basically tells you what percentage of an assembly/namespace/class/method was executed by your tests. NCover has a visual code browser that&#8217;ll highlight any un-executed lines of code in red. Generally speaking, I dislike coverage as a means of measuring the completeness of unit tests. After all, just because you&#8217;ve executed a line of code does not mean you&#8217;ve actually tested it. What I do like NCover for is to highlight any code that has no coverage. In other words, just because of line of code or method has been executed by a test, doesn&#8217;t mean you&#8217;re test is good. But if a line of code or method hasn&#8217;t been executed, then you need to look at adding some tests.</p>
+<p>We&#8217;ve mentioned Test Driven Development briefly throughout this series. As has already been mentioned, Test Driven Development, or TDD, is about design, not testing. TDD means that you write your test first and then write corresponding code to make your test pass. In TDD we&#8217;d write our Save test before having any functionality in the Save method. Of course, our test would fail. We&#8217;d then write the specific behavior and test again. The general mantra for developers is red ? green ? refactor. Meaning the first step is to get a failing unit testing, then to make it pass, then to refactor the code as required.</p>
+<p>In my experience, TDD goes very well with Domain Driven Design, because it really lets us focus on the business rules of the system. If our client says tracking dependencies between upgrades has been a major pain-point for them, then we set off right away with writing tests that&#8217;ll define the behavior and API of that specific feature. I recommend that you familiarize yourself with unit testing in general before adopting TDD.</p>
+<p>&nbsp;</p>
+<p><strong>UI and Database Testing</strong><br />
+Unit testing your ASP.NET pages probably isn&#8217;t worth the effort. The ASP.NET framework is complicated and suffers from very tight coupling. More often than not you&#8217;ll require an actual HTTPContext, which requires quite a bit of work to setup. If you&#8217;re making heavy use of custom HttpHandlers, you should be able to test those with quite a bit of ease.</p>
+<p>&nbsp;</p>
+<p>On the other hand, testing your Data Access Layer is possible and I would recommend it. There may be better methods, but my approach has been to maintain all my CREATE Tables / CREATE Sprocs in text files along with my project, create a test database on the fly, and to use the Setup and Teardown methods to keep the database in a known state. The topic might be worth of a future blog post, but for now, I&#8217;ll leave it up to your creativity.</p>
+<p><strong>Conclusion</strong><br />
+Unit testing wasn&#8217;t nearly as difficult as I first thought it was going to be. Sure my initial tests weren&#8217;t the best – sometimes I would write near-meaningless test (like testing that a plain-old property was working as it should) and sometimes they were far too complex and well outside of a well-defined scope. But after my first project, I learnt a lot about what did and didn&#8217;t work. One thing that immediately became clear was how much cleaner my code became. I quickly came to realize that if something was hard to test and I rewrote it to make it more testable, the entire code became more readable, better decoupled and overall easier to work with. The best advice I can give is to start small, experiment with a variety of techniques, don&#8217;t be afraid to fail and learn from your mistakes. And of course, don&#8217;t wait until your project is complete to unit test – write them as you go!</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/karlseguin/category/foundations/" title="View all posts in Foundations" rel="category tag">Foundations</a>. Bookmark the <a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/" title="Permalink to Foundations of Programming &#8211; Part 5 – Unit Testing" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/feed/" title="Comments RSS to Foundations of Programming &#8211; Part 5 – Unit Testing" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-112 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/karlseguin/2007/12/11/foundations-of-programming-pt-4-dependency-injection/" rel="prev"><span class="meta-nav">&larr;</span> Foundations of Programming &#8211; pt 4 – Dependency Injection</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/karlseguin/2007/12/28/foundations-of-programming-pt-7-sorta-activerecord/" rel="next">Foundations of Programming &#8211; pt 7 (sorta) &#8211; ActiveRecord <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">9 Responses to <em>Foundations of Programming &#8211; Part 5 – Unit Testing</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-1006">
+		<div id="comment-1006">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://bryan.reynoldslive.com/' rel='external nofollow' class='url'>Bryan Reynolds</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1006">December 26, 2007 at 6:31 pm</a></div>
+
+		<div class="comment-body"><p>Yet another great article!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1005">
+		<div id="comment-1005">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Bill Campbell</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1005">December 22, 2007 at 4:25 pm</a></div>
+
+		<div class="comment-body"><p>Another great article!</p>
+<p>So &#8211; as far as testing goes, I was a fan of NUnit and then mbUnit. The current project that I am working on wants to use MSTest (the NUnit equivelence) built into VS2005/2008. We are using TFS2005 right now and are considering moving to TFS2008. Anyone have any experiences that they can share on these and strengths/weakness in the tools? I&#8217;m rather fond of the open souce solution for my CI.</p>
+<p>regards!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1004">
+		<div id="comment-1004">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1004">December 22, 2007 at 1:17 pm</a></div>
+
+		<div class="comment-body"><p>Bill, non-transparent persistence frameworks make testing harder. I&#8217;m sure some allow for it better than others, but if you _have_ to inherit from BaseEntity or something, then you&#8217;re going to run into problems.</p>
+<p>Even in Ruby on Rails, where testing/unit testing was an upfront consideration, it can be a pain because their ActiveRecord implementation isn&#8217;t transparent &#8211; in my [limited] experience, their fixtures are useless under even basic scenarios.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1003">
+		<div id="comment-1003">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.truewill.net/myblog/index.php' rel='external nofollow' class='url'>Bill Sorensen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1003">December 22, 2007 at 2:55 am</a></div>
+
+		<div class="comment-body"><p>Avoiding the database while testing the DAL has been the greatest challenge for me. We use object persistence frameworks at my work, and I find persistent business objects difficult to mock (even with the excellent Rhino Mocks). We&#8217;ve successfully set up &#8220;test deck&#8221; file-based databases using SQL Server Express for tests that require significant initial data in the tables. These allow for easy restoration of initial state, but require a fair amount of maintenance. I&#8217;m still looking for other alternatives.</p>
+<p>P.S. Thanks for an excellent series!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1002">
+		<div id="comment-1002">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.truewill.net/myblog/index.php/2007/12/21/great_article_on_unit_testing' rel='external nofollow' class='url'>Development Central (2007-12-21)</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1002">December 22, 2007 at 2:36 am</a></div>
+
+		<div class="comment-body"><p>Pingback from Development Central (2007-12-21)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1001">
+		<div id="comment-1001">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1001">December 21, 2007 at 10:07 pm</a></div>
+
+		<div class="comment-body"><p>nHibernate is for part 6, which probably won&#8217;t be ready until the first week of January <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-1000">
+		<div id="comment-1000">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karsten</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-1000">December 21, 2007 at 9:14 pm</a></div>
+
+		<div class="comment-body"><p>I just wanted to let you know, that I really enjoy this series <img src='http://codebetter.com/karlseguin/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /><br />
+I&#8217;m waiting for more posts on TDD and ORM, did you mention nHibernate?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-999">
+		<div id="comment-999">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">karl</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-999">December 21, 2007 at 6:14 pm</a></div>
+
+		<div class="comment-body"><p>Good point John.  It looks like we are starting to see the first signs of Microsoft changing it&#8217;s recommendations and tools specifically to address the issue of testability. This is both encouraging and disappointing (that it took so damn long), and we still have a long way to go. If anything, your comments highlight the need for developers to expand their knowledge (think outside the box), look at alternatives, and come up with the best solution that fits their needs.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-998">
+		<div id="comment-998">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jaychapman.blogspot.com' rel='external nofollow' class='url'>John Chapman</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/karlseguin/2007/12/20/foundations-of-programming-part-5-unit-testing/#comment-998">December 21, 2007 at 12:40 pm</a></div>
+
+		<div class="comment-body"><p>Karl,</p>
+<p>Great article.  But I wanted to address the reasons you gave for not using Unit Testing 3 years ago.  I&#8217;m not sure if this applies to you, but it certainly applied to me.  </p>
+<p>My application architecture didn&#8217;t support it very well.  This was largely due to the fact that 1) The tools didn&#8217;t exist to help me build a testable solution, and 2) the Microsoft recommendations of the time were not very testable.  </p>
+<p>With the advancement in the tools that have become available it has become far easier to write and maintain unit tests.  I actually think that&#8217;s why you focused on the tools so much throughout your article.  </p>
+<p>Unit Tests used to be something which I thought of being a &#8220;good idea&#8221; but doesn&#8217;t work in practice (At least in the .NET world).  Now they are a part of every day life.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.269 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 12:17:06 -->
+<!-- super cache -->

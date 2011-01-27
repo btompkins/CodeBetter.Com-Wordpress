@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>A Kick in the Monads – Creating Extended Builders Part III | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Much Ado About Monads – Creating Extended Builders Part II' href='http://codebetter.com/matthewpodwysocki/2010/01/21/much-ado-about-monads-creating-extended-builders-part-ii/' />
+<link rel='next' title='A Kick in the Monads – Writer Edition' href='http://codebetter.com/matthewpodwysocki/2010/02/02/a-kick-in-the-monads-writer-edition/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=195' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-195" class="post-195 post type-post status-publish format-standard hentry category-f category-functional-programming category-haskell category-reactive-framework">
+					<h1 class="entry-title">A Kick in the Monads – Creating Extended Builders Part III</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii/" title="6:05 am" rel="bookmark"><span class="entry-date">January 25, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/01/21/much-ado-about-monads-creating-extended-builders-part-ii.aspx">So far in this series</a>, we’ve covered some of the methods you can implement for custom computation expressions (aka Monads) in F# such as bind and return, as well as exception and resource management.&#160; For the last part in the series, we’ll take a look at looping constructs.&#160; As we know, F# is a pragmatic multi-paradigm language which supports not only functional features, but imperative ones as well, which include mutability, looping constructs and so on.&#160; Just as regular F# supports for and while loops, we have the ability to take advantage of them as well inside of our computation expressions by implementing two methods.&#160; Let’s start with the while loop.</p>
+<h2>Implementing the While Method</h2>
+<p>In order to enable the while loop construct within F#, we need to implement the While method.&#160; This method should have the following signature which takes a guard function which takes no parameters and returns a bool, and a monadic type of unit, and the return is a monadic type of unit.&#160; The reason for the unit return is that in imperative programming we typically perform some side effect inside a looping construct such as a while and for loop.&#160; That’s not to say we can’t return a value, and we’ll talk about that later.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> While : guard : unit </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">bool</span><span style="color: #000000"> </span><span style="color: #000000">*</span><span style="color: #000000">
+                 computation : Monad</span><span style="color: #000000">&lt;</span><span style="color: #000000">unit</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                 Monad</span><span style="color: #000000">&lt;</span><span style="color: #000000">unit</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p> We can write a test to express how this should behave once it has been implemented.&#160; In this instance, we want to loop at least once to ensure the loop works and then check our value that has been incremented.&#160; Just as well, we should also write a test to express behavior where it should not increment if the guard is never satisfied.&#160; But in the mean time, let’s focus on the first scenario.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``</span><span style="color: #0000FF">while</span><span style="color: #000000"> should increment count``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> count </span><span style="color: #000000">=</span><span style="color: #000000"> ref </span><span style="color: #800080">0</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">while</span><span style="color: #000000"> </span><span style="color: #000000">!</span><span style="color: #000000">count </span><span style="color: #000000">&lt;</span><span style="color: #000000"> </span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #0000FF">do</span><span style="color: #000000">
+      incr count }
+
+  runReader r ()
+
+  areEqual </span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #000000">!</span><span style="color: #000000">count</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now the question is, how do we implement this?&#160; In the case where our guard function fails, we want to return a monadic type of unit which indicates nothing was done, whereas when it succeeds, we want to bind together our computation and a function which takes no parameters and returns a recursive call to our While loop.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000"> 
+
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.While(guard, computation) </span><span style="color: #000000">=</span><span style="color: #000000">
+    </span><span style="color: #0000FF">if</span><span style="color: #000000"> guard() </span><span style="color: #0000FF">then</span><span style="color: #000000">
+      this.Bind(computation, (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> () </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> this.While(guard,computation)))
+    </span><span style="color: #0000FF">else</span><span style="color: #000000">
+      this.Return ()</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now we have the ability to execute any while loop inside our computation expression.&#160; For the most part, this implementation is rather boilerplate and can apply to any number of monad implementations.&#160; Now, let’s move onto implementing for loops.</p>
+<h2>Implementing the For Method</h2>
+<p>Just as we needed to implement the While method to enable while loops in our custom computation expressions, we will need to implement the For method to enable for loops.&#160; In order to implement this method, it should conform to the following signature which takes a sequence of any type, and a body which takes an item from the sequence and returns a monadic type of unit.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> For : sequence : seq</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">T&gt; *</span><span style="color: #800000">
+</span><span style="color: #000000">               body : (</span><span style="color: #800000">'</span><span style="color: #800000">T -&gt; Monad&lt;unit&gt;) -&gt;</span><span style="color: #800000">
+</span><span style="color: #000000">               Monad</span><span style="color: #000000">&lt;</span><span style="color: #000000">unit</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Let’s take a look at how we might use it through the example of a test.&#160; In this instance, we will simply iterate over a for loop and increment a count and then check its result.&#160; In another test, we should also have an empty collection we try to iterate and check that it does not increment.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``</span><span style="color: #0000FF">for</span><span style="color: #000000"> should increment count``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> count </span><span style="color: #000000">=</span><span style="color: #000000"> ref </span><span style="color: #800080">0</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">for</span><span style="color: #000000"> i </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">0</span><span style="color: #000000"> to </span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #0000FF">do</span><span style="color: #000000">
+      incr count }
+
+  runReader r ()
+
+  areEqual </span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #000000">!</span><span style="color: #000000">count</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now, how might we pull this one off?&#160; In order to do this, we must introduce another method, called Delay.&#160; This method helps us delay any side effects from happening until they are absolutely needed.&#160; Unlike Haskell, F# is an eager functional programming language, so such constructs are necessary.&#160; Let’s look at the signature required for the Delay method below, which takes no parameters and returns a monadic type of T.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Delay : unit </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">T&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Knowing this, we can go ahead an implement both our Delay and For methods.&#160; In the Delay method, we simply bind a monadic wrapped unit with our function, when then in turn will return our Reader&lt;’R,’T&gt;.&#160; Next, we have a For method which takes a sequence and a body to run against each item.&#160; We can reuse the Using method to ensure proper disposal for our IEnumerator&lt;T&gt; and then call While with a function of whether we can move next, and then a delayed function which runs the body function against the current item.&#160; Below is how the implementation should look.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Delay(f) </span><span style="color: #000000">=</span><span style="color: #000000">
+    this.Bind(this.Return (), f)
+
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.For(sequence : seq</span><span style="color: #000000">&lt;</span><span style="color: #000000">_</span><span style="color: #000000">&gt;</span><span style="color: #000000">, body) </span><span style="color: #000000">=</span><span style="color: #000000">
+    this.Using(sequence.GetEnumerator(),
+      (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> enum </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+         this.While(
+           (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> () </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> enum.MoveNext()),
+           this.Delay(</span><span style="color: #0000FF">fun</span><span style="color: #000000"> () </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> body enum.Current))))</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now that we have the looping constructs defined, let’s look at another way of thinking about looping.</p>
+<h2>Looping and Yield Methods Together</h2>
+<p>In addition to the style we’ve shown in this series with our Bind/Return for our non-collection types, we also have the ability to define a a yield statement which looks and acts much like the C# equivalent.&#160; Commonly, this yield is used in conjunction with some sort of looping construct.&#160; For example, this construct is already available on sequence expressions inside F#.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">seq { </span><span style="color: #0000FF">for</span><span style="color: #000000"> i </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">1</span><span style="color: #000000"> to </span><span style="color: #800080">10</span><span style="color: #000000"> </span><span style="color: #0000FF">do</span><span style="color: #000000">
+        </span><span style="color: #0000FF">yield</span><span style="color: #000000"> i </span><span style="color: #000000">*</span><span style="color: #000000"> </span><span style="color: #800080">25</span><span style="color: #000000"> }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Such constructs make a lot of sense when we’re thinking about interactive and reactive collections, the latter of which we’ll get to later when we’re talking about the Reactive Extensions Observable monad.&#160; In order to enable the Yield behavior, we simply need to implement the Yield method which should look like the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Yield : value : </span><span style="color: #800000">'</span><span style="color: #800000">T -&gt; Monad&lt;</span><span style="color: #800000">'</span><span style="color: #000000">T</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The actual implementation of this for our Reader (should we decide to implement it) should look no different than our Return method.&#160; To either call return or yield is simply a matter of style when dealing with collection versus non-collection based computation expressions.&#160; Just as we defined the ReturnFrom method in a previous post to enable the return! keyword, we can also follow the same logic to implement the YieldFrom method which should have the following signature.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> YieldFrom : comp : Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">T&gt; -&gt; Monad&lt;</span><span style="color: #800000">'</span><span style="color: #000000">T</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Together, this enables such behavior as getting all the files from a directory like the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">open</span><span style="color: #000000"> System.IO
+
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #0000FF">rec</span><span style="color: #000000"> getFiles dir </span><span style="color: #000000">=</span><span style="color: #000000"> seq {
+  </span><span style="color: #0000FF">for</span><span style="color: #000000"> file </span><span style="color: #0000FF">in</span><span style="color: #000000"> Directory.GetFiles dir </span><span style="color: #0000FF">do</span><span style="color: #000000"> </span><span style="color: #0000FF">yield</span><span style="color: #000000"> file
+  </span><span style="color: #0000FF">for</span><span style="color: #000000"> subDir </span><span style="color: #0000FF">in</span><span style="color: #000000"> Directory.GetDirectories dir </span><span style="color: #0000FF">do</span><span style="color: #000000"> </span><span style="color: #0000FF">yield</span><span style="color: #000000">!</span><span style="color: #000000"> getFiles subDir }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Just as well, we could use the yield to show Observable collections such as events:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> getMouseMove() </span><span style="color: #000000">=</span><span style="color: #000000"> obs {
+  </span><span style="color: #0000FF">for</span><span style="color: #000000"> md </span><span style="color: #0000FF">in</span><span style="color: #000000"> form.MouseDown </span><span style="color: #0000FF">do</span><span style="color: #000000">
+    </span><span style="color: #0000FF">for</span><span style="color: #000000"> mm </span><span style="color: #0000FF">in</span><span style="color: #000000"> form.MouseMove </span><span style="color: #000000">|&gt;</span><span style="color: #000000"> Observable.until form.MouseUp </span><span style="color: #0000FF">do</span><span style="color: #000000">
+      </span><span style="color: #0000FF">yield</span><span style="color: #000000"> mm }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>It’s a matter of style which one we use, whether we are specifying collection like intent or not.&#160; With that, this should wrap up how to implement a custom computation expression.&#160; Much of this code, outside of Bind/Return TryCatch/TryFinally is boilerplate and can apply to any number of computation expression instances such as the State, Reader, Error, Maybe, and some yet to come such as the mother of all monads, the Continuation Monad, and of course the Observable Monad.</p>
+<h2>Conclusion</h2>
+<p>Besides the usual Bind and Return functions that we’ve talked about extensively here, there are quite a few other constructs which allow for rich programming models inside our computation expressions that we just explored.&#160; Whereas LINQ has a rather linear programming model based upon monads, the computation expression includes richer features which include exception handling, control statements, loops, and side effects.&#160; </p>
+<p>Still left in this series, we’ll dive into the root of both the F# Async Workflows and Reactive Extensions for .NET, the Continuation Monad as well as the Observable one as well.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii/" title="Permalink to A Kick in the Monads – Creating Extended Builders Part III" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii/feed/" title="Comments RSS to A Kick in the Monads – Creating Extended Builders Part III" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-195 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/01/21/much-ado-about-monads-creating-extended-builders-part-ii/" rel="prev"><span class="meta-nav">&larr;</span> Much Ado About Monads – Creating Extended Builders Part II</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/02/02/a-kick-in-the-monads-writer-edition/" rel="next">A Kick in the Monads – Writer Edition <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-460">
+					<div id="dsq-comment-header-460" class="dsq-comment-header">
+						<cite id="dsq-cite-460">
+	http://codebetter.com/members/Paks/default.aspx							<span id="dsq-author-user-460">Cesar Mendoza</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-460" class="dsq-comment-body">
+						<div id="dsq-comment-message-460" class="dsq-comment-message"><p>This has been a great series so far.  I wonder if the use of the word &#8220;Monad&#8221; has scared away people and that is why you don&#8217;t have as many comments as usual. <img src='http://codebetter.com/matthewpodwysocki/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-461">
+					<div id="dsq-comment-header-461" class="dsq-comment-header">
+						<cite id="dsq-cite-461">
+	http://codebetter.com/members/Matthew.Podwysocki/default.aspx							<span id="dsq-author-user-461">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-461" class="dsq-comment-body">
+						<div id="dsq-comment-message-461" class="dsq-comment-message"><p>@Cesar,</p>
+<p>You&#8217;re probably right, but it&#8217;s building up to something, so I hope some folks do stay tuned. </p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii/ ';
+	var disqus_identifier = '195 /blogs/matthew.podwysocki/archive/2010/01/25/a-kick-in-the-monads-creating-extended-builders-part-iii.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "A Kick in the Monads – Creating Extended Builders Part III";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=195');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/01\/25\/a-kick-in-the-monads-creating-extended-builders-part-iii\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.253 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 11:37:04 -->
+<!-- super cache -->

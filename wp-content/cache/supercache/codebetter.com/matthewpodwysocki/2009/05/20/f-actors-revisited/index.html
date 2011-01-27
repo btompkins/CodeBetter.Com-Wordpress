@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>F# Actors Revisited | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Axum – Ping Pong with Dataflow Networks' href='http://codebetter.com/matthewpodwysocki/2009/05/15/axum-ping-pong-with-dataflow-networks/' />
+<link rel='next' title='[ANN] DC ALT.NET – 5/27/2009 – Introduction to Pair Programming' href='http://codebetter.com/matthewpodwysocki/2009/05/20/ann-dc-alt-net-5-27-2009-introduction-to-pair-programming/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2009/05/20/f-actors-revisited/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=142' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-142" class="post-142 post type-post status-publish format-standard hentry category-axum category-concurrency category-erlang category-f category-functional-programming">
+					<h1 class="entry-title">F# Actors Revisited</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2009/05/20/f-actors-revisited/" title="5:23 am" rel="bookmark"><span class="entry-date">May 20, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><strong>UPDATE: Removed ref cells to use two recursive loops</strong></p>
+<p>In the <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2009/05/15/axum-ping-pong-with-dataflow-networks.aspx">previous post</a>, I covered briefly about the actor model in F#.&#160; This style of concurrency, using asynchronous message passing and a shared-nothing approach through the use of mailboxes is a pretty powerful mechanism for achieving scalability.&#160; With a shared-nothing approach, we can remove the need for such concurrency primitives such as locks.&#160; </p>
+<p>Taking cues from Erlang, F# has the capabilities as well through the use of the MailboxProcessor class.&#160; In this post, let’s walk through a canonical example and explain some of the design patterns around this.</p>
+<h2>Mailboxes, Etc</h2>
+<p>Before we begin, let’s make sure we have some of the basics down.&#160; As I stated above, the approach here is that inter-agent communication is accomplished through a shared-nothing asynchronous message passing system.&#160; Each of these agents have a mailbox, which is nothing more than a queue of messages sent by other processes.&#160; These messages are then retrieved via either a scan or receive approach, depending if you wish to continue receiving messages.&#160; To determine which message we received, we do basic pattern matching against our given message types and decide how we want to handle it.&#160;&#160; To continue processing, we then recurse the function again to keep sending and receiving.&#160; We can send any number of pieces of data as part of these messages.&#160; For our example, we’ll implement the Auction example that comes from Scala.</p>
+<h2>Going Once…&#160; Going Twice…&#160; Sold!</h2>
+<p>Our goal in this post is to walk through implementing the <a href="http://lampsvn.epfl.ch/svn-repos/scala/scala/trunk/docs/examples/actors/auction.scala">Auction example</a> which is an example given in Scala.&#160; The intent of this demo is to show an online auction service using the shared-nothing asynchronous message passing.&#160; We’ll have two clients bidding against each other to see who wins the particular item.&#160; Given that Scala has library support for actors, this is an attempt to see how well F# can handle this as well.&#160; The first impressions of the Scala model is that it’s much more focused on classes and objects than the F# version will be.&#160; </p>
+<p>Without further ado, let’s start digging through the code.&#160; First up, let’s get some utility functions out of the way to help us on our journey.&#160; Instead of using the dot operator on some objects to send messages, I prefer the &lt;—operator, as shown also in the Expert F# book.&#160; Also, I need a way to deconstruct an option type so that I can deal with a bidder that may not exist yet.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> (</span><span style="color: #000000">&lt;--</span><span style="color: #000000">) (m:_ MailboxProcessor) x </span><span style="color: #000000">=</span><span style="color: #000000"> m.Post x
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> unSome (Some x) </span><span style="color: #000000">=</span><span style="color: #000000"> x</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Both of these functions should be rather self explanatory.&#160; The unSome takes in an option type with Some value and returns the value.&#160; Let’s move on to the messages that we need to define.&#160; I have comments beside each as to define what each message signifies.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> AuctionMessage </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #000000">|</span><span style="color: #000000"> Offer </span><span style="color: #0000FF">of</span><span style="color: #000000"> int </span><span style="color: #000000">*</span><span style="color: #000000"> AuctionReply MailboxProcessor </span><span style="color: #008000">//</span><span style="color: #008000"> Make a bid</span><span style="color: #008000">
+</span><span style="color: #000000">  </span><span style="color: #000000">|</span><span style="color: #000000"> Inquire </span><span style="color: #0000FF">of</span><span style="color: #000000"> AuctionReply MailboxProcessor     </span><span style="color: #008000">//</span><span style="color: #008000"> Check the status</span><span style="color: #008000">
+</span><span style="color: #0000FF">and</span><span style="color: #000000"> AuctionReply </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #000000">|</span><span style="color: #000000"> Status </span><span style="color: #0000FF">of</span><span style="color: #000000"> int </span><span style="color: #000000">*</span><span style="color: #000000"> DateTime </span><span style="color: #008000">//</span><span style="color: #008000"> Asked sum and expiration</span><span style="color: #008000">
+</span><span style="color: #000000">  </span><span style="color: #000000">|</span><span style="color: #000000"> BestOffer                </span><span style="color: #008000">//</span><span style="color: #008000"> Ours is the best offer</span><span style="color: #008000">
+</span><span style="color: #000000">  </span><span style="color: #000000">|</span><span style="color: #000000"> BeatenOffer </span><span style="color: #0000FF">of</span><span style="color: #000000"> int       </span><span style="color: #008000">//</span><span style="color: #008000"> Yours is beaten by another offer</span><span style="color: #008000">
+</span><span style="color: #000000">  </span><span style="color: #000000">|</span><span style="color: #000000"> AuctionConcluded </span><span style="color: #0000FF">of</span><span style="color: #000000">      </span><span style="color: #008000">//</span><span style="color: #008000"> Auction concluded</span><span style="color: #008000">
+</span><span style="color: #000000">      AuctionReply MailboxProcessor </span><span style="color: #000000">*</span><span style="color: #000000"> AuctionReply MailboxProcessor
+  </span><span style="color: #000000">|</span><span style="color: #000000"> AuctionFailed            </span><span style="color: #008000">//</span><span style="color: #008000"> Failed without any bids</span><span style="color: #008000">
+</span><span style="color: #000000">  </span><span style="color: #000000">|</span><span style="color: #000000"> AuctionOver              </span><span style="color: #008000">//</span><span style="color: #008000"> Bidding is closed</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>I decided to use a recursive type definition as to allow my AuctionMessage discriminated union to appear before my AuctionReply discriminated union, because both messages in AuctionMessage references a MailboxProcessor that handles the AuctionReply messages.&#160; In F#, order does matter in which values are declared, so this is a quick way to get a readable output.&#160; Next, we need to define some constants such as time to shutdown and our allowed bid increments:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> timeToShutdown </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">3000</span><span style="color: #000000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> bidIncrement </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">10</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>It’s now time to define our auction agent.&#160; This will handle the overall orchestration of how the auction is handled.&#160; This includes handling both the Offer and the Inquire messages as well as what happens when we fail to get a message within a certain time period.&#160; Let’s step through the code now and then explain down below:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> auctionAgent seller minBid closing </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">new</span><span style="color: #000000"> AuctionMessage MailboxProcessor(</span><span style="color: #0000FF">fun</span><span style="color: #000000"> inbox </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #0000FF">rec</span><span style="color: #000000"> loop maxBid maxBidder </span><span style="color: #000000">=</span><span style="color: #000000">
+      async { </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> msg </span><span style="color: #000000">=</span><span style="color: #000000"> inbox.TryReceive((closing </span><span style="color: #000000">-</span><span style="color: #000000"> DateTime.Now).Milliseconds)
+              </span><span style="color: #0000FF">match</span><span style="color: #000000"> msg </span><span style="color: #0000FF">with</span><span style="color: #000000">
+                </span><span style="color: #000000">|</span><span style="color: #000000"> Some ( Offer(bid, client) ) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    </span><span style="color: #0000FF">if</span><span style="color: #000000"> bid </span><span style="color: #000000">&gt;=</span><span style="color: #000000"> maxBid </span><span style="color: #000000">+</span><span style="color: #000000"> bidIncrement </span><span style="color: #0000FF">then</span><span style="color: #000000">
+                      </span><span style="color: #0000FF">if</span><span style="color: #000000"> maxBid </span><span style="color: #000000">&gt;=</span><span style="color: #000000"> minBid </span><span style="color: #0000FF">then</span><span style="color: #000000"> unSome maxBidder </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> BeatenOffer bid
+                      client </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> BestOffer
+                      </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop bid (Some client)
+                    </span><span style="color: #0000FF">else</span><span style="color: #000000">
+                      client </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> BeatenOffer maxBid
+                      </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop maxBid maxBidder
+
+                </span><span style="color: #000000">|</span><span style="color: #000000"> Some ( Inquire client ) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    client </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> Status(maxBid, closing)
+                    </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop maxBid maxBidder
+
+                </span><span style="color: #000000">|</span><span style="color: #000000"> None </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    </span><span style="color: #0000FF">if</span><span style="color: #000000"> maxBid </span><span style="color: #000000">&gt;=</span><span style="color: #000000"> minBid </span><span style="color: #0000FF">then</span><span style="color: #000000">
+                      </span><span style="color: #0000FF">let</span><span style="color: #000000"> reply </span><span style="color: #000000">=</span><span style="color: #000000"> AuctionConcluded(seller, unSome maxBidder)
+                      unSome maxBidder </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> reply
+                      seller </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> reply
+                    </span><span style="color: #0000FF">else</span><span style="color: #000000"> seller </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> AuctionFailed
+
+                    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> msg</span><span style="color: #800000">'</span><span style="color: #800000"> = inbox.TryReceive timeToShutdown</span><span style="color: #800000">
+</span><span style="color: #000000">                    </span><span style="color: #0000FF">match</span><span style="color: #000000"> msg</span><span style="color: #800000">'</span><span style="color: #800000"> with</span><span style="color: #800000">
+</span><span style="color: #000000">                    </span><span style="color: #000000">|</span><span style="color: #000000"> Some ( Offer (_, client) ) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                        client </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> AuctionOver
+                        </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop maxBid maxBidder
+                    </span><span style="color: #000000">|</span><span style="color: #000000"> None </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">return</span><span style="color: #000000"> ()
+            }
+    loop (minBid </span><span style="color: #000000">-</span><span style="color: #000000"> bidIncrement) None)   </span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>It’s a bit of code to digest, but the gist of this is rather simple.&#160; When creating an instance of this auction agent, we need a seller, a minimum bid and a closing time for the auction.&#160; From this, we create our MailboxProcessor to handle AuctionMessage types.&#160; Since we are continuously in a cycle of receiving messages and sending results, we have a recursive loop which carries our state for us.&#160; This state, which we carry from recursive call to the next is our maximum bid and our maximum bidder at the time.&#160; When we begin our call to this loop function, we start with the max bid of the minimum bid minus the bid increment and no maximum bidder.&#160; </p>
+<p>When we are receiving messages, it’s important to handle any potential timeouts.&#160; In this case, we use this timeout as a mechanism for determining when our auction is over.&#160; In order to do this, we must use the TryReceive function instead of the Receive.&#160; Let’s look at the differences below:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> Throws an exception if timeout is exceeded</span><span style="color: #008000">
+</span><span style="color: #0000FF">member</span><span style="color: #000000"> MailboxProcessor.Receive : </span><span style="color: #000000">?</span><span style="color: #000000">timeout : int </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> Async</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">msg&gt;</span><span style="color: #800000">
+</span><span style="color: #000000">
+</span><span style="color: #008000">//</span><span style="color: #008000"> Returns None if timeout is exceeded</span><span style="color: #008000">
+</span><span style="color: #0000FF">member</span><span style="color: #000000"> MailboxProcessor.TryReceive : </span><span style="color: #000000">?</span><span style="color: #000000">timeout : int </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> Async</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">msg option&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Since we need to know how to handle timeouts, it’s best to use the TryReceive approach.&#160; If we receive an offer, we determine whether the bid is acceptable, meaning greater than our current maximum plus increment.&#160; If it is, then we check whether the maximum bid is greater than the minimum, and if so, then send a message to the current maximum bidder with the BeatenOffer message.&#160; If we receive an inquiry, we simply return a Status message back to the client with our current bid and how much time they have left.&#160; Finally, if we don’t receive a message in the given timeframe, it’s time to wind down our auction.&#160; If the maximum bid is greater than our minimum, our auction is a success and we let our maximum bidder and our seller know.&#160; If, however, we don’t receive any bids, then our auction is considered a failure.&#160; Finally, and additional offers received will be responded to with an AuctionOver message to indicate to the client that they are not the winner.&#160; If this operation times out, we simply exit.&#160; A bit of a mouthful, but fairly straight forward.</p>
+<p>Let’s move on to the client aspect.&#160; First, let’s set up a few things necessary for our client, encapsulated in the Auction module.&#160; We’ll set such parameters as our minimum bid, our closing date, our seller and our auction itself.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">module</span><span style="color: #000000"> Auction </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> random </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Random()
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> minBid </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">100</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> closing </span><span style="color: #000000">=</span><span style="color: #000000"> DateTime.Now.AddMilliseconds </span><span style="color: #800080">10000</span><span style="color: #000000">.
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> seller </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> AuctionReply MailboxProcessor(</span><span style="color: #0000FF">fun</span><span style="color: #000000"> inbox </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+    </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #0000FF">rec</span><span style="color: #000000"> loop() </span><span style="color: #000000">=</span><span style="color: #000000">
+      async { </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> _ </span><span style="color: #000000">=</span><span style="color: #000000"> inbox.Receive()
+              </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop()}
+    loop())
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> auction </span><span style="color: #000000">=</span><span style="color: #000000"> auctionAgent seller minBid closing</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In order to create a seller for our auction, we need to stub out basic features of this agent.&#160; In this case, we simply have a processing loop which receives a message, does nothing with it, and continues with the loop again.&#160; As I have stated above, we need both our seller agent, and our auction agent, but what about our clients?&#160; In our same module, we define them as the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">  </span><span style="color: #0000FF">let</span><span style="color: #000000"> client i increment top </span><span style="color: #000000">=</span><span style="color: #000000">
+    </span><span style="color: #0000FF">let</span><span style="color: #000000"> name </span><span style="color: #000000">=</span><span style="color: #000000"> sprintf </span><span style="color: #800000">"</span><span style="color: #800000">Client %i</span><span style="color: #800000">"</span><span style="color: #000000"> i
+    </span><span style="color: #0000FF">let</span><span style="color: #000000"> log msg </span><span style="color: #000000">=</span><span style="color: #000000"> Console.WriteLine(</span><span style="color: #800000">"</span><span style="color: #800000">{0}: {1}</span><span style="color: #800000">"</span><span style="color: #000000">, name, msg)
+
+    </span><span style="color: #0000FF">new</span><span style="color: #000000"> AuctionReply MailboxProcessor(</span><span style="color: #0000FF">fun</span><span style="color: #000000"> inbox </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+
+      </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #0000FF">rec</span><span style="color: #000000"> startAuction() </span><span style="color: #000000">=</span><span style="color: #000000">
+        async { log </span><span style="color: #800000">"</span><span style="color: #800000">started</span><span style="color: #800000">"</span><span style="color: #000000">
+                auction </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> Inquire inbox
+                </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> curMsg </span><span style="color: #000000">=</span><span style="color: #000000"> inbox.Receive()
+                </span><span style="color: #0000FF">match</span><span style="color: #000000"> curMsg </span><span style="color: #0000FF">with</span><span style="color: #000000">
+                </span><span style="color: #000000">|</span><span style="color: #000000"> Status(maxBid,_) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    log </span><span style="color: #000000">&lt;|</span><span style="color: #000000"> sprintf </span><span style="color: #800000">"</span><span style="color: #800000">status(%d)</span><span style="color: #800000">"</span><span style="color: #000000"> maxBid
+                    </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop </span><span style="color: #800080">0</span><span style="color: #000000"> maxBid }
+      </span><span style="color: #0000FF">and</span><span style="color: #000000"> loop current max </span><span style="color: #000000">=</span><span style="color: #000000">
+        async { </span><span style="color: #0000FF">if</span><span style="color: #000000"> max </span><span style="color: #000000">&gt;=</span><span style="color: #000000"> top </span><span style="color: #0000FF">then</span><span style="color: #000000"> log </span><span style="color: #800000">"</span><span style="color: #800000">too high for me</span><span style="color: #800000">"</span><span style="color: #000000">
+
+                </span><span style="color: #0000FF">let</span><span style="color: #000000"> current</span><span style="color: #800000">'</span><span style="color: #800000"> =</span><span style="color: #800000">
+</span><span style="color: #000000">                  </span><span style="color: #0000FF">if</span><span style="color: #000000"> current </span><span style="color: #000000">&lt;</span><span style="color: #000000"> max </span><span style="color: #0000FF">then</span><span style="color: #000000">
+                    </span><span style="color: #0000FF">let</span><span style="color: #000000"> current</span><span style="color: #800000">'</span><span style="color: #800000"> = max + increment</span><span style="color: #800000">
+</span><span style="color: #000000">                    Thread.Sleep (</span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #000000">+</span><span style="color: #000000"> random.Next </span><span style="color: #800080">1000</span><span style="color: #000000">)
+                    auction </span><span style="color: #000000">&lt;--</span><span style="color: #000000"> Offer(current</span><span style="color: #800000">'</span><span style="color: #800000">, inbox)</span><span style="color: #800000">
+</span><span style="color: #000000">                    current</span><span style="color: #800000">'
+</span><span style="color: #000000">                  </span><span style="color: #0000FF">else</span><span style="color: #000000"> current
+
+                </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> msg </span><span style="color: #000000">=</span><span style="color: #000000"> inbox.TryReceive timeToShutdown
+                </span><span style="color: #0000FF">match</span><span style="color: #000000"> msg </span><span style="color: #0000FF">with</span><span style="color: #000000">
+                </span><span style="color: #000000">|</span><span style="color: #000000"> Some BestOffer </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    log </span><span style="color: #000000">&lt;|</span><span style="color: #000000"> sprintf </span><span style="color: #800000">"</span><span style="color: #800000">bestOffer(%d)</span><span style="color: #800000">"</span><span style="color: #000000"> current</span><span style="color: #800000">'
+</span><span style="color: #000000">                    </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop current</span><span style="color: #800000">'</span><span style="color: #800000"> max</span><span style="color: #800000">
+</span><span style="color: #000000">                </span><span style="color: #000000">|</span><span style="color: #000000"> Some (BeatenOffer maxBid) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    log </span><span style="color: #000000">&lt;|</span><span style="color: #000000"> sprintf </span><span style="color: #800000">"</span><span style="color: #800000">beatenOffer(%d)</span><span style="color: #800000">"</span><span style="color: #000000"> maxBid
+                    </span><span style="color: #0000FF">return!</span><span style="color: #000000"> loop current</span><span style="color: #800000">'</span><span style="color: #800000"> maxBid</span><span style="color: #800000">
+</span><span style="color: #000000">                </span><span style="color: #000000">|</span><span style="color: #000000"> Some ( AuctionConcluded(seller, maxBidder) ) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    log </span><span style="color: #800000">"</span><span style="color: #800000">auctionConcluded</span><span style="color: #800000">"</span><span style="color: #000000">; </span><span style="color: #0000FF">return</span><span style="color: #000000"> ()
+                </span><span style="color: #000000">|</span><span style="color: #000000"> Some AuctionOver </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000">
+                    log </span><span style="color: #800000">"</span><span style="color: #800000">auctionOver</span><span style="color: #800000">"</span><span style="color: #000000">; </span><span style="color: #0000FF">return</span><span style="color: #000000"> ()
+                </span><span style="color: #000000">|</span><span style="color: #000000"> None </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">return</span><span style="color: #000000"> () }
+      startAuction())</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What we’re doing here is having two mutually recursive loops.&#160; The first loop, the startAuction loop will get the max bid for us and then go to the main loop where we do our main work.&#160; From there, we’ll receive a message sent from the auction to the inbox and determine whether we’re the highest bidder, we’re the maximum or it’s time to call it a day.&#160; Once again, fairly straight forward code.</p>
+<p>Lastly, it’s time to bring it all together.&#160; Let’s set up the calling code and see the results:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">open</span><span style="color: #000000"> Auction
+
+seller.Start()
+auction.Start()
+(client </span><span style="color: #800080">1</span><span style="color: #000000"> </span><span style="color: #800080">20</span><span style="color: #000000"> </span><span style="color: #800080">200</span><span style="color: #000000">).Start()
+(client </span><span style="color: #800080">2</span><span style="color: #000000"> </span><span style="color: #800080">10</span><span style="color: #000000"> </span><span style="color: #800080">300</span><span style="color: #000000">).Start()
+Console.ReadLine() </span><span style="color: #000000">|&gt;</span><span style="color: #000000"> ignore</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Executing this code gives us the following for our results:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Client </span><span style="color: #800080">2</span><span style="color: #000000">: started
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: started
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: status(</span><span style="color: #800080">90</span><span style="color: #000000">)
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: status(</span><span style="color: #800080">90</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">100</span><span style="color: #000000">)
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">110</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: beatenOffer(</span><span style="color: #800080">110</span><span style="color: #000000">)
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: beatenOffer(</span><span style="color: #800080">120</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">120</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: auctionConcluded
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: auctionOver</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What this tells us is that client 2 starts first and bids first.&#160; Client 2 then bids 100, only to be outdone by client 1 and goes back and forth until client 2 comes in with the best and final offer.&#160; The auction is then concluded and client 1 is notified that the auction is over.&#160; We can add additional client agents to the list and have just as much fun as before.&#160; To give you an idea, if we add another agent with an increment of 30 and a max bid of 150, we get the following results:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Client </span><span style="color: #800080">1</span><span style="color: #000000">: started
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: started
+Client </span><span style="color: #800080">3</span><span style="color: #000000">: started
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: status(</span><span style="color: #800080">90</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: status(</span><span style="color: #800080">90</span><span style="color: #000000">)
+Client </span><span style="color: #800080">3</span><span style="color: #000000">: status(</span><span style="color: #800080">90</span><span style="color: #000000">)
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">110</span><span style="color: #000000">)
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: beatenOffer(</span><span style="color: #800080">120</span><span style="color: #000000">)
+Client </span><span style="color: #800080">3</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">120</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: beatenOffer(</span><span style="color: #800080">120</span><span style="color: #000000">)
+Client </span><span style="color: #800080">3</span><span style="color: #000000">: auctionConcluded
+Client </span><span style="color: #800080">1</span><span style="color: #000000">: auctionOver
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: bestOffer(</span><span style="color: #800080">130</span><span style="color: #000000">)
+Client </span><span style="color: #800080">2</span><span style="color: #000000">: auctionConcluded</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now what we have here is that client 2 wins with an offer of 130 and the rest are notified of their loss.&#160; You can find the complete code for this example <a href="http://gist.github.com/113912">here</a>.</p>
+<h2>Conclusion</h2>
+<p>Solutions such as these using shared-nothing asynchronous message passing can create rather scalable architectures.&#160; Utilizing the MailboxProcessor class, we’re able to implement actor model concurrency to tackle some of these problems with coordination of concurrent processes.&#160; How might Axum handle this scenario?&#160; Good question and I hope to have that answered shortly.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/axum/" title="View all posts in Axum" rel="category tag">Axum</a>, <a href="http://codebetter.com/matthewpodwysocki/category/concurrency/" title="View all posts in Concurrency" rel="category tag">Concurrency</a>, <a href="http://codebetter.com/matthewpodwysocki/category/erlang/" title="View all posts in Erlang" rel="category tag">Erlang</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2009/05/20/f-actors-revisited/" title="Permalink to F# Actors Revisited" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2009/05/20/f-actors-revisited/feed/" title="Comments RSS to F# Actors Revisited" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-142 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2009/05/15/axum-ping-pong-with-dataflow-networks/" rel="prev"><span class="meta-nav">&larr;</span> Axum – Ping Pong with Dataflow Networks</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2009/05/20/ann-dc-alt-net-5-27-2009-introduction-to-pair-programming/" rel="next">[ANN] DC ALT.NET – 5/27/2009 – Introduction to Pair Programming <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-349">
+					<div id="dsq-comment-header-349" class="dsq-comment-header">
+						<cite id="dsq-cite-349">
+	http://www.stuff-for-geeks.com							<span id="dsq-author-user-349">Louis Hau&#223;knecht</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-349" class="dsq-comment-body">
+						<div id="dsq-comment-message-349" class="dsq-comment-message"><p>Thanks Matthew for the great article!</p>
+<p>How would you extend this example to cross AppDomains?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-350">
+					<div id="dsq-comment-header-350" class="dsq-comment-header">
+						<cite id="dsq-cite-350">
+	http://codebetter.com/members/Matthew.Podwysocki/default.aspx							<span id="dsq-author-user-350">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-350" class="dsq-comment-body">
+						<div id="dsq-comment-message-350" class="dsq-comment-message"><p>@Louis,</p>
+<p>That&#8217;s one item on my plate to work through.  I would like to implement a &#8220;remote actor&#8221; as part of F# but we&#8217;ll see how far I get on this.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-351">
+					<div id="dsq-comment-header-351" class="dsq-comment-header">
+						<cite id="dsq-cite-351">
+								<span id="dsq-author-user-351">Peer Reynders</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-351" class="dsq-comment-body">
+						<div id="dsq-comment-message-351" class="dsq-comment-message"><p>&#8220;I would like to implement a &#8220;remote actor&#8221; as part of F# but we&#8217;ll see how far I get on this.<br />
+Matt&#8221;</p>
+<p>Ultimately I have to wonder whether this is a fertile avenue of pursuit. In my understanding solving concurrency issues it the main driver behind the actor model, not  (yet another attempt at) the creation of network transparent RPC (***) or messaging.</p>
+<p>As I see it, the primary practical deployment scenario for actor/MailboxProcessor based applications is a single application with its concurrent parts replicated across a homogeneous processing environment, that is: multiple cores on the same processor, multiple (identical) processors on the same server, multiple (identical) servers on the same cluster.</p>
+<p>In this type of homogeneous processing environment the &#8220;remoteness&#8221; of the actors becomes the shared responsibility of the runtime and the actor implementation &#8211; not a choice to be made by the application logic. The concurrent processing environment needs be configurable as some actors prefer dedicated resources while others benefit from collocation of their instances &#8211; but configuration does not necessarily happen through the application logic. This is similar to the situation where the administration of a database system is largely a separate concern from any DML that application logic using the database may issue.</p>
+<p>Even under the constraint of a (closed) homogeneous environment the actor model solves real issues for the Producer-Consumer problem, however the producer and consumer are parts of the same application that collaborate to solve a larger problem. The example of an auction is valid from a simulation perspective but it may misleadingly suggest to some that actors are an ideal messaging solution for applications that are distributed over a heterogeneous networked environment, which is a problem that actors weren&#8217;t designed to solve.</p>
+<p>So it may be that in fact the current facilities of the MailboxProcessor and async workflow are sufficient for application logic (within a single application) to define its &#8220;concurrent parts&#8221;. Configuration of the concurrent processing environment running an application that uses MailboxProcessors is a separate matter.</p>
+<p>***:<br />
+SMLI-TR-94-29: A Note on Distributed Computing.<br />
+    <a href="http://research.sun.com/techrep/1994/smli_tr-94-29.pdf" rel="nofollow">http://research.sun.com/techrep/1994/smli_tr-94-29.pdf</a> ;<br />
+Steve Vinoski&#8217;s Blog: Convenience Over Correctness:<br />
+    <a href="http://steve.vinoski.net/blog/2008/07/01/convenience-over-correctness/" rel="nofollow">http://steve.vinoski.net/blog/2008/07/01/convenience-over-correctness/</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-352">
+					<div id="dsq-comment-header-352" class="dsq-comment-header">
+						<cite id="dsq-cite-352">
+	http://codebetter.com/members/Matthew.Podwysocki/default.aspx							<span id="dsq-author-user-352">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-352" class="dsq-comment-body">
+						<div id="dsq-comment-message-352" class="dsq-comment-message"><p>@Peer</p>
+<p>It was not the intention of the application logic to determine the remoteness of such an actor, but instead have it seamless much like it is in Erlang.  But, yes I do wonder about whether it is worth it or not.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2009/05/20/f-actors-revisited/ ';
+	var disqus_identifier = '142 /blogs/matthew.podwysocki/archive/2009/05/20/f-actors-revisited.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "F# Actors Revisited";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=142');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2009\/05\/20\/f-actors-revisited\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.318 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 11:32:21 -->
+<!-- super cache -->

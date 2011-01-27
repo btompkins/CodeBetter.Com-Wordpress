@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Task Parallel Library and Async Computation Expressions | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Recursing into Recursion &#8211; Memoization' href='http://codebetter.com/matthewpodwysocki/2008/08/01/recursing-into-recursion-memoization/' />
+<link rel='next' title='DC ALT.NET &#8211; 8/28/2008 &#8211; Ruby with Jeff Schoolcraft' href='http://codebetter.com/matthewpodwysocki/2008/08/04/dc-alt-net-8-28-2008-ruby-with-jeff-schoolcraft/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/08/02/task-parallel-library-and-async-computation-expressions/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=42' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-42" class="post-42 post type-post status-publish format-standard hentry category-concurrency category-f category-functional-programming">
+					<h1 class="entry-title">Task Parallel Library and Async Computation Expressions</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/08/02/task-parallel-library-and-async-computation-expressions/" title="4:29 am" rel="bookmark"><span class="entry-date">August 2, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Very recently, I&#8217;ve given a few talks on Asynchronous and Concurrent Programming in F#.&nbsp; In this talk, I gave a brief overview of the options you have when dealing with concurrency and asynchronous behavior.&nbsp; During these talks, I was asked a few times about where asynchronous computation expressions (workflows) fit and how it differs from doing things with the Task Parallel Library from the <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=348F73FD-593D-4B3C-B055-694C50D2B0F3&amp;displaylang=en">Parallel Extensions for .NET</a>.&nbsp; There are some differences worth exploring and I&#8217;ll post some code snippets to compare and contrast the two.</p>
+<p></p>
+<p><b>The Challenge</b></p>
+<p>Today&#8217;s challenge is to take a sample from the Task Parallel Library samples under AsyncDownload.&nbsp; The purpose of this example is to download HTML from a given website and return the HTML in a tuple with the original URL.&nbsp; We&#8217;ll take two approaches, one using the Task Parallel Library (TPL) and the other using asynchronous computation expressions.&nbsp; We&#8217;ll compare and contrast the approaches used to achieve the end result.</p>
+<p></p>
+<p><b>Using the Task Parallel Library</b></p>
+<p>Let&#8217;s take the original sample as written in C# and rewrite it in F#.&nbsp; Instead of returning an IEnumerable&lt;T&gt;, I&#8217;m going to rewrite this while using a sequence expression.&nbsp; The other change I&#8217;m going to make is using a tuple instead of a KeyValuePair&lt;TKey, TValue&gt; for my storage since it doesn&#8217;t have to be so formal.&nbsp; This sample uses the System.Net.WebClient to download the strings asynchronously.&nbsp; This particular class uses events in order to subscribe to the DownloadStringCompleted event and then begin the download below.&nbsp; Let&#8217;s take a look at what this code might look like:</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> download <span style="color: blue">(</span>urls<span style="color: blue">:</span><span style="color: blue">string</span> list<span style="color: blue">)</span> =     <br />&nbsp; seq <span style="color: blue">{</span> <font color="#0000ff">use</font> results = <span style="color: blue">new</span> BlockingCollection&lt;<span style="color: blue">(</span><span style="color: blue">string</span> * <span style="color: blue">string</span><span style="color: blue">)</span>&gt;<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">use</font> pagesRemain = <span style="color: blue">new</span> CountdownEvent<span style="color: blue">(</span><span style="color: maroon">1</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">let</span> _ = Task<span style="color: blue">.</span>Create<span style="color: blue">(</span><span style="color: blue">fun</span> _ <span style="color: blue">-&gt;</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; urls <span style="color: blue">|</span>&gt; List<span style="color: blue">.</span>iter<span style="color: blue">(</span><span style="color: blue">fun</span> url <span style="color: blue">-&gt;</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">let</span> wc = <span style="color: blue">new</span> WebClient<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wc<span style="color: blue">.</span>DownloadStringCompleted<span style="color: blue">.</span>Add<span style="color: blue">(</span><span style="color: blue">fun</span> args <span style="color: blue">-&gt;</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> args<span style="color: blue">.</span>Error = <span style="color: blue">null</span>&nbsp;<span style="color: blue">then</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results<span style="color: blue">.</span>Add<span style="color: blue">(</span><span style="color: blue">(</span><span style="color: blue">(</span>args<span style="color: blue">.</span>UserState <span style="color: blue">:</span>?&gt; <span style="color: blue">string</span><span style="color: blue">)</span>, args<span style="color: blue">.</span>Result<span style="color: blue">)</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> pagesRemain<span style="color: blue">.</span>Decrement<span style="color: blue">(</span><span style="color: blue">)</span>&nbsp;<span style="color: blue">then</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; results<span style="color: blue">.</span>CompleteAdding<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pagesRemain<span style="color: blue">.</span>Increment<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wc<span style="color: blue">.</span>DownloadStringAsync<span style="color: blue">(</span><span style="color: blue">new</span> Uri<span style="color: blue">(</span>url<span style="color: blue">)</span>, url<span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> pagesRemain<span style="color: blue">.</span>Decrement<span style="color: blue">(</span><span style="color: blue">)</span>&nbsp;<span style="color: blue">then</span> results<span style="color: blue">.</span>CompleteAdding<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">)</span>     <br />&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">for</span> result <span style="color: blue">in</span> results<span style="color: blue">.</span>GetConsumingEnumerable<span style="color: blue">(</span><span style="color: blue">)</span>&nbsp;<span style="color: blue">do</span>&nbsp;<font color="#0000ff">yield</font> result     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">}</span>     </p>
+<p><span style="color: blue">let</span> urls = <span style="color: blue">[</span><span style="color: maroon">"http://microsoft.com"</span>; <span style="color: maroon">"http://msn.com"</span><span style="color: blue">]</span>     <br /><span style="color: blue">let</span> results = download urls     <br />results <span style="color: blue">|</span>&gt; Seq<span style="color: blue">.</span>iter<span style="color: blue">(</span><span style="color: blue">fun</span> x <span style="color: blue">-&gt;</span> printfn <span style="color: maroon">&#8220;%s : %s&#8221;</span>&nbsp;<span style="color: blue">(</span>fst x<span style="color: blue">)</span>&nbsp;<span style="color: blue">(</span>snd x<span style="color: blue">)</span><span style="color: blue">)</span></div>
+<p>What this code accomplishes is the following:</p>
+<ul>
+<li>Wrap the entire operation in a sequence expression.</li>
+<li>Create a BlockingCollection of a tuple for storing our results</li>
+<li>Create a CountdownEvent to track whether we are done or not.</li>
+<li>Create a Task for the TPL</li>
+<li>Iterate through each URL given</li>
+<li>Create a WebClient and add a handler which checks whether it should add to the collection as well as complete adding</li>
+<li>Decrement the remaining and start the download async behavior</li>
+<li>Clean up and then iterate through each result tuple</li>
+</ul>
+<p>Due to shared state issues, we have to worry about locking and such while adding to our collection.&nbsp; Sometimes shared state is nice for quick operations, but I quickly shy away from this approach should I need to scale to the nth degree.&nbsp; Instead, I&#8217;d advocate more of a shared-nothing approach through message passing.&nbsp; Each situation must be analyzed to see whether a shared state approach works or not.&nbsp; Functional languages such as F# tend to shy away from this, especially when worried about the &#8220;Assembly Language&#8221; level approach of dealing with locks, mutexes, semaphores and other goodies.&nbsp; But, overall, I&#8217;m liking the abstraction layer over creating tasks and I think it&#8217;s getting better to a point where we don&#8217;t have to think about the concurrency constructs as much as we do today.&nbsp; </p>
+<p></p>
+<p><b>Using Asynchronous Computation Expressions</b></p>
+<p> Now, let&#8217;s take a look at an approach using asynchronous computation expressions.&nbsp; This time, we&#8217;ll use a monadic expression, much as we did above with the seqeuence one.&nbsp; We&#8217;ll make the Async&lt;&#8217;a&gt; class the heart and soul of our operation.&nbsp; This allows us to represent a program fragment that will be executed at some point in the future.&nbsp; That fragment being of course the much dreaded word, Monad.&nbsp; Which, I agree with <a href="http://research.microsoft.com/%7Esimonpj/">Simon Peyton Jones</a>, that they should be called &#8220;Warm Fuzzy Things&#8221; instead of Monad.&nbsp; We&#8217;ll get into what that word really means in the future, but in the mean time, let&#8217;s dig into the code.&nbsp; Note that we had to add the GetResponseAsync method back to the WebRequest due to it being removed from the latest public bits of F#.&nbsp; As you can see, it&#8217;s pretty trivial to extend any type that exposes the asynchronous behavior from the Begin/End pattern.&nbsp; </p>
+<div style="font-family: courier new"><span style="color: blue">type</span> System<span style="color: blue">.</span>Net<span style="color: blue">.</span>WebRequest <span style="color: blue">with</span>     <br />&nbsp; <span style="color: blue">member</span> x<span style="color: blue">.</span>GetResponseAsync<span style="color: blue">(</span><span style="color: blue">)</span> =     <br />&nbsp;&nbsp;&nbsp; Async<span style="color: blue">.</span>BuildPrimitive<span style="color: blue">(</span>x<span style="color: blue">.</span>BeginGetResponse, x<span style="color: blue">.</span>EndGetResponse<span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp; <br /><span style="color: blue">let</span> download<span style="color: blue">(</span>url<span style="color: blue">:</span><span style="color: blue">string</span><span style="color: blue">)</span> =&nbsp; <br />&nbsp; async <span style="color: blue">{</span>&nbsp;<span style="color: blue">let</span> request = WebRequest<span style="color: blue">.</span>Create<span style="color: blue">(</span>url<span style="color: blue">)</span>&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">use!</font> response = request<span style="color: blue">.</span>GetResponseAsync<span style="color: blue">(</span><span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">use</font> stream = response<span style="color: blue">.</span>GetResponseStream<span style="color: blue">(</span><span style="color: blue">)</span>&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">use</font> reader = <span style="color: blue">new</span> StreamReader<span style="color: blue">(</span>stream<span style="color: blue">)</span>&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">let</span>! html = reader<span style="color: blue">.</span>ReadToEndAsync<span style="color: blue">(</span><span style="color: blue">)</span>&nbsp; <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font color="#0000ff">return</font>&nbsp;<span style="color: blue">(</span>url, html<span style="color: blue">)</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: blue">}</span>     <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <br /><span style="color: blue">let</span> siteList = <span style="color: blue">[</span><span style="color: maroon">"http://www.microsoft.com/"</span>;<span style="color: maroon">"http://msn.com/"</span><span style="color: blue">]</span>     <br /><span style="color: blue">let</span> results =&nbsp; <br />&nbsp; Async<span style="color: blue">.</span>Run<span style="color: blue">(</span>Async<span style="color: blue">.</span>Parallel&nbsp; <br />&nbsp;&nbsp;&nbsp; <span style="color: blue">[</span><span style="color: blue">for</span> site <span style="color: blue">in</span> siteList <span style="color: blue">-&gt;</span> download site<span style="color: blue">]</span><span style="color: blue">)</span>&nbsp; <br />results <span style="color: blue">|</span>&gt; Seq<span style="color: blue">.</span>iter<span style="color: blue">(</span><span style="color: blue">fun</span> x <span style="color: blue">-&gt;</span> printfn <span style="color: maroon">&#8220;%s : %s&#8221;</span>&nbsp;<span style="color: blue">(</span>fst x<span style="color: blue">)</span>&nbsp;<span style="color: blue">(</span>snd x<span style="color: blue">)</span><span style="color: blue">)</span></div>
+<p> What this code is able to accomplish is the following:</p>
+<ul>
+<li>Create a WebRequest for the given URL.</li>
+<li>Asynchronously get the the response</li>
+<li>Get the stream and put it into a reader</li>
+<li>Asynchronously read the HTML on the page to the end</li>
+<li>Return a tuple of the URL and the HTML</li>
+<li>Run each URL from our site list in parallel to return us a list which I can iterate.</li>
+</ul>
+<p>Seems pretty simple, doesn&#8217;t it?&nbsp; Now if only concurrency were this easy.&nbsp; Oh wait, it just is&#8230;&nbsp; What we also get for free is resource lifetime management through the use keyword, binding with continuations, exception management and so on without much effort.&nbsp; I&#8217;ll cover more of this in the future.&nbsp; I just wanted to whet the appetite for what is coming down the pike.</p>
+<p></p>
+<p><b>Wrapping it Up</b></p>
+<p>This was just a quick primer on the differences between using the TPL tasks and asynchronous computation expressions.&nbsp; I&#8217;ll dive deeper into each in the near future and how they tick.&nbsp; And possibly I can rewrite to combine the two and see how well they can compliment each other.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/concurrency/" title="View all posts in Concurrency" rel="category tag">Concurrency</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/08/02/task-parallel-library-and-async-computation-expressions/" title="Permalink to Task Parallel Library and Async Computation Expressions" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/08/02/task-parallel-library-and-async-computation-expressions/feed/" title="Comments RSS to Task Parallel Library and Async Computation Expressions" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-42 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/08/01/recursing-into-recursion-memoization/" rel="prev"><span class="meta-nav">&larr;</span> Recursing into Recursion &#8211; Memoization</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/08/04/dc-alt-net-8-28-2008-ruby-with-jeff-schoolcraft/" rel="next">DC ALT.NET &#8211; 8/28/2008 &#8211; Ruby with Jeff Schoolcraft <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-116">
+					<div id="dsq-comment-header-116" class="dsq-comment-header">
+						<cite id="dsq-cite-116">
+	http://blog.magenic.com/blogs/aarone							<span id="dsq-author-user-116">Aaron Erickson</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-116" class="dsq-comment-body">
+						<div id="dsq-comment-message-116" class="dsq-comment-message"><p>Thanks for writing this &#8211; the word needs to get out about F#&#8217;s async story.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-117">
+					<div id="dsq-comment-header-117" class="dsq-comment-header">
+						<cite id="dsq-cite-117">
+	http://podwysocki.codebetter.com							<span id="dsq-author-user-117">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-117" class="dsq-comment-body">
+						<div id="dsq-comment-message-117" class="dsq-comment-message"><p>@Aaron</p>
+<p>Definitely, I think the word needs to get out, so I&#8217;ll continue on these posts with more topics such as monads, exception handling and so on.</p>
+<p>Matt</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-118">
+					<div id="dsq-comment-header-118" class="dsq-comment-header">
+						<cite id="dsq-cite-118">
+	http://toninio.com							<span id="dsq-author-user-118">Anton Andreev</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-118" class="dsq-comment-body">
+						<div id="dsq-comment-message-118" class="dsq-comment-message"><p>After referencing FSharp.PowerPack this is the working version of Asynchronous Computation Expressions:</p>
+<p>#light</p>
+<p>open System.Net<br />
+open System.IO</p>
+<p>type System.Net.WebRequest with<br />
+  member x.GetResponseAsync() =<br />
+    Async.BuildPrimitive(x.BeginGetResponse, x.EndGetResponse)</p>
+<p>let download(url:string) =<br />
+  async { let request = WebRequest.Create(url)<br />
+          use! response = request.AsyncGetResponse()<br />
+          use stream = response.GetResponseStream()<br />
+          use reader = new StreamReader(stream)<br />
+          let! html = reader.AsyncReadToEnd()<br />
+          return (url, html)<br />
+        }</p>
+<p>let siteList = ["http://www.microsoft.com/";"http://msn.com/"]<br />
+let results =<br />
+  Async.Run(Async.Parallel<br />
+    [for site in siteList -> download site])<br />
+results |> Seq.iter(fun x -> printfn &#8220;%s : %s&#8221; (fst x) (snd x))</p>
+<p>-Anton</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-119">
+					<div id="dsq-comment-header-119" class="dsq-comment-header">
+						<cite id="dsq-cite-119">
+	http://toninio.com							<span id="dsq-author-user-119">Anton Andreev</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-119" class="dsq-comment-body">
+						<div id="dsq-comment-message-119" class="dsq-comment-message"><p>Hi,</p>
+<p>I &#8216;ve just made a Google code project and added some samples that I made to work:<br />
+<a href="http://code.google.com/p/fsharpdemos/" rel="nofollow">http://code.google.com/p/fsharpdemos/</a><br />
+Everyone is welcome to contribute.</p>
+<p>Cheers,<br />
+Anton</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/08/02/task-parallel-library-and-async-computation-expressions/ ';
+	var disqus_identifier = '42 /blogs/matthew.podwysocki/archive/2008/08/02/task-parallel-library-and-async-computation-expressions.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Task Parallel Library and Async Computation Expressions";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=42');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/08\/02\/task-parallel-library-and-async-computation-expressions\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.254 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 12:07:46 -->
+<!-- super cache -->

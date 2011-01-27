@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Much Ado About Monads – Creating Extended Builders | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='[ANN] DC ALT.NET – 1/27/2010 &#8211; Clojure' href='http://codebetter.com/matthewpodwysocki/2010/01/14/ann-dc-alt-net-1-27-2010-clojure/' />
+<link rel='next' title='Much Ado About Monads – Creating Extended Builders Part II' href='http://codebetter.com/matthewpodwysocki/2010/01/21/much-ado-about-monads-creating-extended-builders-part-ii/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/01/18/much-ado-about-monads-creating-extended-builders/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=193' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-193" class="post-193 post type-post status-publish format-standard hentry category-f category-functional-programming category-haskell category-reactive-framework">
+					<h1 class="entry-title">Much Ado About Monads – Creating Extended Builders</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/01/18/much-ado-about-monads-creating-extended-builders/" title="10:10 pm" rel="bookmark"><span class="entry-date">January 18, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>In the past two posts in this series, we’ve covered both the <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2009/12/30/much-ado-about-monads-state-edition.aspx">State Monad</a> and <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/01/07/much-ado-about-monads-reader-edition.aspx">Reader Monad</a>, not only the motivations, but how you would implement them in F#.&#160; With defining the Return and Bind methods on our computation expression builders, we’re able to do composable linear programming.&#160; But, what we lack is an imperative programming model on top to allow for such things as if statements, for and while loops, and try/catch or try/finally blocks.&#160; Luckily, there is a programmatic model to follow to make these things possible inside of our expressions.&#160; Let’s cover each of these functions in turn and see what each one does and in the process implement them for the Reader Monad.</p>
+<h2>Explaining the Methods</h2>
+<p>In order to enable the syntactic sugar we’ve enjoyed in this post series, we have been defining custom builders.&#160; For the most part, we’ve spent the majority of our time defining both Bind and Return.&#160; This time, I’ll walk you through each of these methods that are supported and I’ll show how they should work through the beauty of tests (examples).</p>
+<h2>Return</h2>
+<p>First, let’s look back at our Return method.&#160; This method is one of the core monadic methods that takes a value and then encapsulates it within the monadic type.&#160; For example, in the List Monad, the Return method would take a value and then encapsulate it in a list, and in the case of the Reader Monad from the last post, it would simply ignore the environment variable and simply return the value.&#160; Implementing the Return method enables the use of the return keyword which then wraps the value in the monadic type.</p>
+<p>To enable the return keyword, we must implement the Return method which looks like the following, keeping in mind that the Monad type is replaced with the actual monadic type.&#160; This method takes a value and returns it encapsulates it within the monadic type.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Return : value : </span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; </span><span style="color: #800000">'</span><span style="color: #000000"> Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">a&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now that we have a general idea of the format of this method, we can write a test to verify the behavior.&#160; What we’ll do is have the Reader implementation return our expected value and then compare it with the value we get when we run our Reader.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Return should enable </span><span style="color: #0000FF">return</span><span style="color: #000000">``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> expected </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">1</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> expected }
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> actual </span><span style="color: #000000">=</span><span style="color: #000000"> runReader r </span><span style="color: #800080">0</span><span style="color: #000000">
+  areEqual expected actual</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now that we have our test in place, we can now turn our attention to implementing the Return method.&#160; The implementation of the Reader Monad take a value return should return a Reader with the constructed function which ignores the environment parameter and returns our value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Return(a) </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> _ </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> a)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now, let’s move onto ReturnFrom.</p>
+<h2>ReturnFrom</h2>
+<p>The next method we’ll implement is ReturnFrom.&#160; This method enables the return! keyword inside of our computation expressions.&#160; Through the use of this keyword, we’re able to simply take a monadic value and return it from our computation expression, as opposed to the return keyword which encapsulates a value in it’s corresponding monadic type.&#160; In order to enable this return! keyword, we’ll implement the ReturnFrom method which has the following signature which takes a monadic value and returns a monadic value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> ReturnFrom : computaton : Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">a&gt; -&gt; Monad&lt;</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>We should be able to easily write a test for the Reader Monad method implementation which will invoke the ask method which does nothing more than return a Reader with a function that takes the environment and returns that same environment.&#160; I’ll then call runReader with my Reader and the environment of my expected value and my actual should be the same value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> ask </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (id)
+
+[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``ReturnFrom should enable </span><span style="color: #0000FF">return</span><span style="color: #000000">!</span><span style="color: #000000">``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> expected </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">1</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">return</span><span style="color: #000000">!</span><span style="color: #000000"> ask }
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> actual </span><span style="color: #000000">=</span><span style="color: #000000"> runReader r expected
+  areEqual expected actual</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Implementing this method is by far the easiest as we simply return the value we are given.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.ReturnFrom(a:Reader</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">r,</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span><span style="color: #000000">) </span><span style="color: #000000">=</span><span style="color: #000000"> a</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now, let’s move onto the Bind method</p>
+<h2>Bind</h2>
+<p>The next method we&#8217;ll look at the Bind method.&#160; This method, like the Return method are the core monadic methods and provide some of the basic functionality within our computation expressions.&#160; By implementing this method, we enable the ability to use the let! keyword.&#160; When thinking about LINQ, you can think of this method as SelectMany, which by no means is a coincidence as Erik Meijer, the creator of LINQ was also instrumental in the Haskell 98 report.&#160; Let’s look at the method signature required.</p>
+<p><div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Bind : computation : Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">a&gt; *  </span><span style="color: #800000">
+</span><span style="color: #000000">                binder : (</span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; Monad&lt;</span><span style="color: #800000">'</span><span style="color: #000000">b</span><span style="color: #000000">&gt;</span><span style="color: #000000">) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">b&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+</p>
+<p>Our first argument, the computation is a valid in the monadic type, our second argument is a function that mapes the underlying type of the first argument to another monadic type and the result of this function is that other monadic type.&#160; To explain further, we can explain it in four stages:</p>
+<ol>
+<li>The monadic type of the first argument is unwrapped to expose any number of values of type ‘a.</li>
+<li>The binder function is applied to all values to create monadic types of Monad&lt;’b&gt;.</li>
+<li>The monadic result from the function is also unwrapped to expose it’s values of &#8216;type ‘b.</li>
+<li>The monadic structure of Monad&lt;’b&gt; is then reassembled over all results, which then is represented by a single value of Monad&lt;’b&gt;.</li>
+</ol>
+<p>Let’s now write a test that defines the expected behavior of the Bind function and its syntactic sugar equivalent of let!.&#160; We’ll first create a reader which asks for the environment and then we’ll return that value much as we’ve done before.&#160; Then, we’ll ensure that our expected value of 1 is returned when we call runReader.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Bind should enable </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000">``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> expected </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">1</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> env </span><span style="color: #000000">=</span><span style="color: #000000"> ask
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> env }
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> actual </span><span style="color: #000000">=</span><span style="color: #000000"> runReader r expected
+  areEqual expected actual</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Implementing this method is quite straight forward such as the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Bind(comp, binder) </span><span style="color: #000000">=</span><span style="color: #000000">
+    Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> env </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> runReader (binder (runReader comp env)) env)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The Bind method takes two parameters, the computation which is our Reader, and then our second parameter of our binder.&#160; We break down the Bind into the following steps:</p>
+<ol>
+<li>Run the reader of our computation (comp) and our environment (env)</li>
+<li>Apply the binder function to the result of step 1</li>
+<li>Run the reader against the result of step 2 and our environment</li>
+</ol>
+<p>Next, let’s turn our attention to the Zero method.</p>
+<h2>Zero</h2>
+<p>The Zero method, when provided, gives us the ability to execute expressions that have no value.&#160; Examples of this could include a return with an if without a matching else and the condition was false, or in the case of the List Monad, an empty list.&#160; In order to enable this functionality, our Zero method must look like the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Zero : unit </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> Monad</span><span style="color: #000000">&lt;</span><span style="color: #000000">unit</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>We can write a test to define the expected behavior of this method by simulating a false condition of an if statement without a corresponding else statement, such as the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Zero should allow no </span><span style="color: #0000FF">else</span><span style="color: #000000"> branch``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> called </span><span style="color: #000000">=</span><span style="color: #000000"> ref </span><span style="color: #0000FF">false</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">if</span><span style="color: #000000"> </span><span style="color: #0000FF">false</span><span style="color: #000000"> </span><span style="color: #0000FF">then</span><span style="color: #000000">
+      called :</span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> }
+
+  runReader r </span><span style="color: #800080">1</span><span style="color: #000000">
+  isFalse </span><span style="color: #000000">!</span><span style="color: #000000">called </span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In this case, we have an if statement that should never execute and to ensure that we change a called to true.&#160; In the end, our called should always be false and our computation expression should execute normally and return a unit value.&#160; Implementing the Zero method is quite simple for the Reader Monad in that we simply return a unit value.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Zero() </span><span style="color: #000000">=</span><span style="color: #000000"> this.Return ()</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In the above method, we have the Zero method calling the Return method with unit, which then wraps it in our Reader type.&#160; Next, let’s move onto Combine.</p>
+<h2>Combine</h2>
+<p>The last method we’re going to cover in this post is the Combine method.&#160; This method, when given two computations, runs the first which returns unit (or void), and then returns the value of the second.&#160; This way, we can link together such things as if statements, for and while loops, etc which all return unit, with another computation.&#160; In order to make this functionality available, we should implement the Combine method which has the following signature.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Builder </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> Combine : comp1 : Monad</span><span style="color: #000000">&lt;</span><span style="color: #000000">unit</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #000000">*</span><span style="color: #000000"> comp2 : Monad</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">a&gt; -&gt; Monad&lt;</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>As you can see, we have two computations, comp1 and comp2.&#160; The first computation returns unit (or void to others), the second returns a generic type, and our return is our second parameter.&#160; This is useful in such scenarios as the State Monad where the state could change within this unit computation and we need to feed it to the next binding call.&#160; Now, we need a test to show how this should work for the Reader Monad.&#160; In this case, let’s have an if statement (which should have no return value), and then we return our original value we fed to the Reader Monad.&#160; As with our tests, we want to do nothing more than what is required to show off this functionality, and in this instance we’re doing very little but combining the result of an if statement with a return.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Combine should combine </span><span style="color: #0000FF">if</span><span style="color: #000000"> statement``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> expected </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">0</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> x </span><span style="color: #000000">=</span><span style="color: #000000"> ask
+
+    </span><span style="color: #0000FF">if</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> </span><span style="color: #0000FF">then</span><span style="color: #000000"> ()
+
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> x }
+
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> actual </span><span style="color: #000000">=</span><span style="color: #000000"> runReader r expected
+  areEqual expected actual</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In order to implement this method, we could use our existing Bind method to express a Combine.&#160; In order to do so, we can supply the first Reader as the first argument to our Bind, and our second argument to the Bind would be a function which takes no arguments and returns the second Reader instance.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Combine(r1, r2) </span><span style="color: #000000">=</span><span style="color: #000000">
+    this.Bind(r1, </span><span style="color: #0000FF">fun</span><span style="color: #000000"> () </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> r2)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<h2>What’s Next?</h2>
+<p>We’ve still got a bit left to cover to enable some imperative programming structures inside our custom computation expressions.&#160; These include:</p>
+<ul>
+<li>For</li>
+<li>While</li>
+<li>Try/Catch</li>
+<li>TryFinally</li>
+<li>Yield/YieldFrom</li>
+<li>Using</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Besides the usual Bind and Return functions that we’ve talked about extensively here, there are quite a few other constructs which allow for rich programming models inside our computation expressions.&#160; Whereas LINQ has a rather linear programming model based upon monads, the computation expression includes richer features which include exception handling, control statements, loops, and side effects.&#160; </p>
+<p>We have a bit more in this series as well when talking about Monads/Computation Expressions as we work our way towards the Continuation Monad and the basis for the Async Workflow and the Reactive Extensions.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/01/18/much-ado-about-monads-creating-extended-builders/" title="Permalink to Much Ado About Monads – Creating Extended Builders" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/01/18/much-ado-about-monads-creating-extended-builders/feed/" title="Comments RSS to Much Ado About Monads – Creating Extended Builders" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-193 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/01/14/ann-dc-alt-net-1-27-2010-clojure/" rel="prev"><span class="meta-nav">&larr;</span> [ANN] DC ALT.NET – 1/27/2010 &#8211; Clojure</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/01/21/much-ado-about-monads-creating-extended-builders-part-ii/" rel="next">Much Ado About Monads – Creating Extended Builders Part II <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-723">
+					<div id="dsq-comment-header-723" class="dsq-comment-header">
+						<cite id="dsq-cite-723">
+	http://localtraders.bfora.com							<span id="dsq-author-user-723">http://localtraders.bfora.com</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-723" class="dsq-comment-body">
+						<div id="dsq-comment-message-723" class="dsq-comment-message"><p>Very handy information thanks!</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/01/18/much-ado-about-monads-creating-extended-builders/ ';
+	var disqus_identifier = '193 /blogs/matthew.podwysocki/archive/2010/01/18/much-ado-about-monads-creating-extended-builders.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Much Ado About Monads – Creating Extended Builders";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=193');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/01\/18\/much-ado-about-monads-creating-extended-builders\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.275 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 09:08:02 -->
+<!-- super cache -->

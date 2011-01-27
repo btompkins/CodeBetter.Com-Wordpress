@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Build your own CAB Part #6 &#8211; View to Presenter Communication | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jeremymiller/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jeremymiller/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Build your own CAB Part #5 &#8211; The Presentation Model' href='http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-5-the-presentation-model/' />
+<link rel='next' title='Best blog comment ever' href='http://codebetter.com/jeremymiller/2007/06/05/best-blog-comment-ever/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=355' />
+<link rel="stylesheet" href="http://codebetter.com/jeremymiller/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jeremymiller/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-355" class="post-355 post type-post status-publish format-standard hentry category-build-your-own-cab category-design-patterns">
+					<h1 class="entry-title">Build your own CAB Part #6 &#8211; View to Presenter Communication</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication/" title="9:44 pm" rel="bookmark"><span class="entry-date">June 4, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jeremymiller/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>If you&#8217;re reading this post and wondering about 1-5, you might give the previous posts a perusal first.&nbsp; This post&nbsp;(hopefully) builds on the previous posts in this series.</p>
+<h4>Build your own CAB Table of Contents</h4>
+<ol>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/21/build-your-own-cab-part-1-the-preamble.aspx">Preamble</a> </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/23/build-your-own-cab-part-2-the-humble-dialog-box.aspx">The Humble Dialog Box</a> </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a> </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/30/build-your-own-cab-part-4-the-passive-view.aspx">Passive View</a> </li>
+<li><a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/06/03/build-your-own-cab-part-5-the-presentation-model.aspx">Presentation Model</a></li>
+</ol>
+<h4>View to Presenter Communication</h4>
+<p>Alright, I&#8217;ve purposely hid the View to Presenter communication in my previous posts on Supervising Controller and Passive View because I thought that subject was worthy of its own post.&nbsp; As I see it, there are&nbsp;2 1/2&nbsp;basic ways to communicate screen events back to the Presenter.</p>
+<ol>
+<li>Expose events off of the IView interface.&nbsp; <a href="http://codebetter.com/blogs/jeffrey.palermo/default.aspx">Jeffrey Palermo</a> has told me before that he will do something very similar, but attaches delegates through setter properties instead.&nbsp; I&#8217;m calling that technique the &#8220;1/2&#8243; because it feels very similar to me to using events.  </li>
+<li>Let the View have&nbsp;a reference to the actual Presenter and just call methods on the Presenter inside of screen events.</li>
+</ol>
+<p>Just taking a straw poll of the blog posts out there about this topic, the majority of the world seems to favor events.&nbsp;&nbsp;Just to be contrary, I&nbsp;very strongly prefer direct communication and it&#8217;s time for that approach to get some love .</p>
+<p>&nbsp;</p>
+<h4>Doing it with Events</h4>
+<p>Making the View to Presenter communication work through events has the indisputable advantage of maximizing loose coupling.&nbsp; The View doesn&#8217;t even need to know that there&#8217;s anything out there listening.&nbsp; It&#8217;s just shouting in the dark hoping someone will answer with help.&nbsp; There&#8217;s no need to pass around instances of the Presenter, so wiring MVP triads together is a little bit simpler.&nbsp; Let&#8217;s take a look.&nbsp; The first step is to define the proper events on the View interface.&nbsp; Here&#8217;s an example from the Shipping Screen first described in the <a href="http://codebetter.com/blogs/jeremy.miller/archive/2007/05/25/build-you-own-cab-part-3-the-supervising-controller-pattern.aspx">Supervising Controller</a>&nbsp;post.</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">delegate</span> <span style="color: blue">void</span> <span style="color: teal">VoidHandler</span>();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: teal">IShippingScreen</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">event</span> <span style="color: teal">VoidHandler</span> ShippingOptionChanged;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span> ShippingOption { <span style="color: blue">get</span>;}</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The ShippingOptionChanged event is the interesting thing here.&nbsp; When this event fires, the Presenter needs to recalculate the cost of the selected shipment and decide whether or not other shipment options for purchasing insurance or requiring a signature are still valid.&nbsp; The actual View implementation is to simply relay the screen event with no interpretation:</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> ShippingScreen()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; InitializeComponent();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; shippingOptionField.SelectedIndexChanged += <span style="color: blue">new</span> <span style="color: teal">EventHandler</span>(shippingOptionField_SelectedIndexChanged);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> shippingOptionField_SelectedIndexChanged(<span style="color: blue">object</span> sender, <span style="color: teal">EventArgs</span> e)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">if</span> (ShippingOptionChanged != <span style="color: blue">null</span>)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ShippingOptionChanged();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>Now, on the Presenter side we have to register the event handler.&nbsp; Since the event has a no argument signature, all we have to do is basically tell the screen which method on the Presenter to call.&nbsp; No ugly anonymous delegates or ugly new SomethingDelegate(blah, blah) syntax.</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">ShippingPresenter</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">readonly</span> <span style="color: teal">IShippingScreen</span> _screen;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> ShippingPresenter(<span style="color: teal">IShippingScreen</span> screen)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen = screen;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Attach to the event in the constructor</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.ShippingOptionChanged += <span style="color: blue">this</span>.ShippingOptionChanged;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ShippingOptionChanged()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// fetch the state the Presenter needs inside this operation </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// from the Vjiew</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">string</span> option = _screen.ShippingOption;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// do whatever it is that you do to respond to this</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// event</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>And yes, I would definitely make the event handler methods public.&nbsp; I think you should do at least one unit test to verify that you&#8217;re wired to the correct event handler on the View interface, but otherwise I think you&#8217;ll find it much more convenient to test the ShippingOptionChanged() method by calling straight into the ShippingOptionChanged() method.&nbsp; I know the semantics of the unit test are simpler when you do it that way.</p>
+<p>Assuming that you are going to unit test by simulating the event being raised, your unit test for the functionality above will look something like this (assuming that you use RhinoMocks anyway):</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [<span style="color: teal">Test</span>]</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> HandleTheShippingOptionChangedEvent()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">MockRepository</span> mocks = <span style="color: blue">new</span> <span style="color: teal">MockRepository</span>();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">IShippingScreen</span> screen = mocks.CreateMock&lt;<span style="color: teal">IShippingScreen</span>&gt;();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Keep a reference to the IEventRaiser for ShippingOptionChanged</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; screen.ShippingOptionChanged += <span style="color: blue">null</span>;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">IEventRaiser</span> eventRaiser = <span style="color: teal">LastCall</span>.IgnoreArguments().GetEventRaiser();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// other expectations here for the Presenter interacting with both</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// the backend and the View</span></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; mocks.ReplayAll();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Raise the event</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: teal">ShippingPresenter</span> presenter = <span style="color: blue">new</span> <span style="color: teal">ShippingPresenter</span>(screen);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eventRaiser.Raise();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// Check the interactions</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; mocks.VerifyAll();</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The thing to note is how we grab onto the event with RhinoMocks to simulate the event.&nbsp; In a normal test harness I usually build the presenter under test and all of the mock objects in the SetUp() method.&nbsp; That requires a little bit of knowledge about RhinoMocks to keep the tests running correctly.&nbsp; Check out the links at the bottom to Phil Haack and Jean-Paul for more information on how to do this.</p>
+<h4>Direct Communication</h4>
+<p>Why do I prefer direct communication?&nbsp; Two reasons.&nbsp;&nbsp;&nbsp; </p>
+<ol>
+<li>&#8220;CTRL-B&#8221;&nbsp;and &#8220;CTRL-ALT-B.&#8221;&nbsp; If the this isn&#8217;t ringing a bell, these are the ReSharper keyboard shortcuts you use inside one method to quickly navigate to another method (or class or interface or delegate, etc.).&nbsp; I think it&#8217;s easier to understand the codebase when there&#8217;s a direct semantic link from View to Presenter and vice versa.&nbsp; With direct communication I think the code is more intention revealing.&nbsp; When I look at the View code I know more about what happens when a dropdown value changes.&nbsp; With events there&#8217;s more mechanical steps to figure out what&#8217;s registered for the event.  </li>
+<li>I think the mechanics for mocking events are awkward (I don&#8217;t particularly&nbsp;have a better suggestion than what RhinoMocks does now).&nbsp; Heck, I think events in general are awkward and I&#8217;ve never liked them.&nbsp; I would rather just treat my Presenter like an <a href="http://en.wikipedia.org/wiki/Observer_pattern">Observer</a> of the View so I can make all of the event notification registration in a single line of code in the Presenter.&nbsp;</li>
+</ol>
+<p>So the obvious downside is that now the View has to know about the Presenter,&nbsp;which spawns a new design question &#8211; who begat&#8217;s who?&nbsp;&nbsp;The majority of the time I say that it&#8217;s a Presenter-centric world.&nbsp; I create the Presenter first with the View coming in as a constructor argument.</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: teal">ShippingScreenPresenter</span> : <span style="color: teal">IShippingScreenObserver</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: blue">readonly</span> <span style="color: teal">IShippingScreen</span> _screen;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// The view is injected in through the constructor</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> ShippingScreenPresenter(<span style="color: teal">IShippingScreen</span> screen)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen = screen;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// I suppose you could do this operation in the constructor instead, but </span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// it always feels so wrong to do much more than set fields in a constructor</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> Start()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// bootstrap the screen</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _screen.AttachPresenter(<span style="color: blue">this</span>);</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> ShippingOptionChanged()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// do what you do so well</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>I usually have some sort of explicit call to a Start() method on my Presenter&#8217;s to bootstrap the screen.&nbsp; In this case, the very first operation in Start() is telling the View about the Presenter.&nbsp; I know what you&#8217;re thinking, this is going to tightly couple my View to the Presenter.&nbsp; What if I want to use a different Presenter with the same View (it&#8217;s not that uncommon)?&nbsp; What if I want to test the View itself?&nbsp; The easy answer is to treat the Presenter as an Observer of the View.&nbsp; In my DevTeach talk I brought up the tight coupling issue and promptly did an &#8220;Extract Interface&#8221; refactoring with ReSharper to show how easy it was to decouple the View from the concrete Presenter.&nbsp; No one was impressed.&nbsp; The View only sees:</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">interface</span> <span style="color: teal">IShippingScreenObserver</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> ShippingOptionChanged();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: green">// all other callback methods for screen events</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>The event handlers in the View itself get reduced to an immediate call to the Presenter (in bold).</p>
+<div style="background: white none repeat scroll 0% 50%;font-size: 10pt;color: black;font-family: courier new">
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">partial</span> <span style="color: blue">class</span> <span style="color: teal">ShippingScreen</span> : <span style="color: teal">Form</span>, <span style="color: teal">IShippingScreen</span></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">private</span> <span style="color: teal">IShippingScreenObserver</span> _presenter;</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> ShippingScreen()</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; InitializeComponent();</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <b>shippingOptionField.SelectedIndexChanged += <span style="color: blue">new</span> <span style="color: teal">EventHandler</span>(shippingOptionField_SelectedIndexChanged);</b></p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px"><b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">void</span> shippingOptionField_SelectedIndexChanged(<span style="color: blue">object</span> sender, <span style="color: teal">EventArgs</span> e)</b></p>
+<p style="margin: 0px"><b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</b></p>
+<p style="margin: 0px"><b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _presenter.ShippingOptionChanged();</b></p>
+<p style="margin: 0px"><b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</b></p>
+<p style="margin: 0px">&nbsp;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <span style="color: blue">public</span> <span style="color: blue">void</span> AttachPresenter(<span style="color: teal">IShippingScreenObserver</span> presenter)</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _presenter = presenter;</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</p>
+<p style="margin: 0px">&nbsp;&nbsp;&nbsp; }</p>
+</div>
+<p>In the section on MicroController, I&#8217;ll show how my project is creating the screen behavior for calls to the Presenter.</p>
+<p>&nbsp;</p>
+<h4>Best Practices in either case</h4>
+<p>The single best advice I think I could give is to make the communication as simple as possible.&nbsp; As much as possible, make the callbacks and event handlers&nbsp;to the Presenter take in zero arguments.&nbsp; Make the Presenter go back to the View&nbsp;and/or the Model to get current state.&nbsp; On one had it makes the View simpler by eliminating code from the marginally testable View, on the other hand it decouples the View from needing to &#8220;Know&#8221; what the Presenter needs for its behavior determinations.&nbsp; The exception cases would be for things like double clicking a single line inside of a grid to launch a new screen.&nbsp; In that case I think the simplest thing to do is to send over just enough information in the handler for the Presenter to know which data member was the subject of the event.</p>
+<p>The other advice I&#8217;ll give is to make the method names for event handling on the Presenter be as descriptive as possible.&nbsp; Ideally, you should be able to almost entirely comprehend the behavior of a screen from looking at the Presenter alone.</p>
+<p>I&#8217;ll talk about integration testing in later posts in this series.</p>
+<p>&nbsp;</p>
+<h4>Other Viewpoints</h4>
+<p>I&#8217;m fully aware that I&#8217;m almost a deviant by preferring direct calls from the View to the Presenter.&nbsp; Here&#8217;s the other side:</p>
+<ul>
+<li><a href="http://ayende.com/Blog/archive/2007/06/01/MVC-in-WebForms-The-impossible-fight-to-get-rid-of.aspx">This very topic came up recently on Ayende&#8217;s blog</a> </li>
+<li><a href="http://haacked.com/archive/2006/06/23/UsingRhinoMocksToUnitTestEventsOnInterfaces.aspx">Phil Haack likes events</a>  </li>
+<li><a href="http://www.jpboodhoo.com/blog/RaisingEventsFromAMockUsingRhinoMocks.aspx">Jean-Paul has a nice technique for handling RhinoMocks and events</a>, but the call to VerifyAll() in the TearDown() method feels like cheating somehow to me. </li>
+<li><a href="http://devlicio.us/blogs/jim_bolla/archive/2006/10/03/ObservableViewPattern.aspx">Jim Bolla likes the Observable View</a></li>
+</ul>
+<p>In the end, just talk it over with the rest of your team and decide if you want to be a cool kid like me or a slave to Microsoft&#8217;s obsession with ugly event handling syntax, not that I want to prejudice you in any way;)</p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/build-your-own-cab/" title="View all posts in Build your own CAB" rel="category tag">Build your own CAB</a>, <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication/" title="Permalink to Build your own CAB Part #6 &#8211; View to Presenter Communication" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication/feed/" title="Comments RSS to Build your own CAB Part #6 &#8211; View to Presenter Communication" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-355 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-5-the-presentation-model/" rel="prev"><span class="meta-nav">&larr;</span> Build your own CAB Part #5 &#8211; The Presentation Model</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2007/06/05/best-blog-comment-ever/" rel="next">Best blog comment ever <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2121">
+					<div id="dsq-comment-header-2121" class="dsq-comment-header">
+						<cite id="dsq-cite-2121">
+								<span id="dsq-author-user-2121">Marlun</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2121" class="dsq-comment-body">
+						<div id="dsq-comment-message-2121" class="dsq-comment-message"><p>Thanks again for a great article! I&#8217;ve got a question: Where does the IShippingScreen come from in the presenter contructor? </p>
+<p>In the code I&#8217;ve done now the view is created first and then it creates a presenter and sends itself into it. Why are you doing it the way you are doing it? Is it to take the responsibility of hooking them together from the view?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2122">
+					<div id="dsq-comment-header-2122" class="dsq-comment-header">
+						<cite id="dsq-cite-2122">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2122">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2122" class="dsq-comment-body">
+						<div id="dsq-comment-message-2122" class="dsq-comment-message"><p>Marlun,</p>
+<p>I was going to address that very subject, but got lazy and published it as is.  I say it&#8217;s a Presenter-centric world, and all navigation and screen activation happens by creating a Presenter first, then fetching the View from the Presenter.  In a real system the construction of the View to the constructor of the Presenter is always done with an Inversion of Control tool.  In my case it&#8217;s StructureMap (<a href="http://structuremap.sourceforge.net" rel="nofollow">http://structuremap.sourceforge.net</a>).  </p>
+<p>I will have the View construct the Presenter the way you&#8217;re describing on occasion, but it&#8217;s the exception not the rule.  </p>
+<p>This is a topic for a later post in this series, but something like this would be in the ApplicationController:</p>
+<p>IPresenter nextScreen = ObjectFactory.GetNamedInstance<ipresenter>(&#8220;name of screen&#8221;);</p>
+<p>nextScreen.Activate();</p>
+<p>shell.ShowView(nextScreen.View);</ipresenter></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2123">
+					<div id="dsq-comment-header-2123" class="dsq-comment-header">
+						<cite id="dsq-cite-2123">
+								<span id="dsq-author-user-2123">Marlun</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2123" class="dsq-comment-body">
+						<div id="dsq-comment-message-2123" class="dsq-comment-message"><p>Ah, I havn&#8217;t really got into the Inversion of Control tools yet, I&#8217;ll have to look into StructureMap. I also don&#8217;t know the ApplicationController or ApplicationShell which I think you had as possible subjects for articles, I&#8217;ll just have to wait some <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>Right now I&#8217;ve only got the default Program.cs which does Application.Run(new MainView());</p>
+<p>I&#8217;ll go search for information about ApplicationController and ApplicationShell. I believe I&#8217;ve read about the ApplicationController but for web development in PHP, not sure if it&#8217;s the same thing but we will see.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2124">
+					<div id="dsq-comment-header-2124" class="dsq-comment-header">
+						<cite id="dsq-cite-2124">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2124">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2124" class="dsq-comment-body">
+						<div id="dsq-comment-message-2124" class="dsq-comment-message"><p>Marlun,</p>
+<p>Try here:  <a href="http://www.martinfowler.com/eaaCatalog/applicationController.html" rel="nofollow">http://www.martinfowler.com/eaaCatalog/applicationController.html</a></p>
+<p>&#8220;ApplicationShell&#8221; is just my name for the main Form.</p>
+<p>As for the rest, I&#8217;m getting there&#8230;</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2125">
+					<div id="dsq-comment-header-2125" class="dsq-comment-header">
+						<cite id="dsq-cite-2125">
+	http://blogs.meetandplay.com/wpierce/							<span id="dsq-author-user-2125">Bill Pierce</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2125" class="dsq-comment-body">
+						<div id="dsq-comment-message-2125" class="dsq-comment-message"><p>Hey Jeremy,<br />
+To save some myself some typing when creating views and presenters I started with these simple interfaces:</p>
+<p>public interface IPresenter<br />
+{<br />
+  IView View { get; }<br />
+}</p>
+<p>public interface IView<br />
+{<br />
+  void SetPresenter(IPresenter presenter);<br />
+}</p>
+<p>public interface IPresenterBase<t> : IPresenter where T : IView<br />
+{<br />
+  new T View { get; }<br />
+}</p>
+<p>public interface IViewBase</t><t> : IView where T : IPresenter<br />
+{<br />
+  void SetPresenter(T presenter);<br />
+}</p>
+<p>Then just add a base view that inherits from Control/Form and implements IViewBase and it will save you quite a bit of typing in the long run.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2126">
+					<div id="dsq-comment-header-2126" class="dsq-comment-header">
+						<cite id="dsq-cite-2126">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2126">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2126" class="dsq-comment-body">
+						<div id="dsq-comment-message-2126" class="dsq-comment-message"><p>Nice Bill.  I blew off generics for quite a while but they&#8217;re so handy for things like this.</p>
+<p>I&#8217;m definitely getting around to a Layer SuperType discussion for the Presenter and View when I hit the sections on the ApplicationShell.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2127">
+					<div id="dsq-comment-header-2127" class="dsq-comment-header">
+						<cite id="dsq-cite-2127">
+								<span id="dsq-author-user-2127">SteveJ</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2127" class="dsq-comment-body">
+						<div id="dsq-comment-message-2127" class="dsq-comment-message"><p>So does the presenter provide the data from the model to the view, or does the view also have a reference to the model?  Or does it depend on which of the patterns from earlier in the series that you pick?</p>
+<p>I&#8217;m still wrapping my head around the Presenter.  Is it tightly coupled to the view?  For instance if I have some code that says turn these fields blue when the user does x, does that code live in the presenter or the view?</p>
+<p>I have read the previous articles (may not be apparent from the questions), but I think the sheer diversity of options has just completely thrown me.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2128">
+					<div id="dsq-comment-header-2128" class="dsq-comment-header">
+						<cite id="dsq-cite-2128">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2128">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2128" class="dsq-comment-body">
+						<div id="dsq-comment-message-2128" class="dsq-comment-message"><p>@SteveJ,</p>
+<p>If it&#8217;s okay, I&#8217;m gonna write a separate post to answer your questions tonight. </p>
+<p>Jeremy</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2129">
+					<div id="dsq-comment-header-2129" class="dsq-comment-header">
+						<cite id="dsq-cite-2129">
+								<span id="dsq-author-user-2129">SteveJ</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2129" class="dsq-comment-body">
+						<div id="dsq-comment-message-2129" class="dsq-comment-message"><p>Great!  Thanks for the great series (and great blog).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2130">
+					<div id="dsq-comment-header-2130" class="dsq-comment-header">
+						<cite id="dsq-cite-2130">
+								<span id="dsq-author-user-2130">D Rapp</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2130" class="dsq-comment-body">
+						<div id="dsq-comment-message-2130" class="dsq-comment-message"><p>Dare I mention the product this blog series is meant to replace, but the SCSF (CAB gone wild) tackled View -> Presenter communication in an interesting manner: Attributes.  It&#8217;s been a while since I&#8217;ve explored the SCSF inner-workings but by registering with the view various Command names, framework code can scan your application for code designed to listen for those commands.  To specify a new listener, simply tag your event handler method in your presenter like this:</p>
+<p>[CommandHandler(CommandNames.ChangedShippingOption)]<br />
+public void HandleChangeOfShippingOption(object sender, EventArgs e)<br />
+{<br />
+    &#8230;<br />
+}</p>
+<p>The advantage (and simultaneous drawback) of this approach is that you can have a presenter responsible for an entirely different section of the UI be notified when the shipping option is changed.  For instance, maybe you have a progress bar in the footer of the app scroll from 0 to 100 if computing new shipping options is a lengthy process&#8230;  </p>
+<p>I think it deserves some mention.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2131">
+					<div id="dsq-comment-header-2131" class="dsq-comment-header">
+						<cite id="dsq-cite-2131">
+	http://www.jenswinter.com							<span id="dsq-author-user-2131">Jens Winter</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2131" class="dsq-comment-body">
+						<div id="dsq-comment-message-2131" class="dsq-comment-message"><p>Hello Jeremy,</p>
+<p>Did I spot a small drawback with your approach here? You have to always remember to call presenter.Start(); in order to get the presenter attached to the view.<br />
+And besides that you have to be aware of NullReferenceExceptions within the view in case the presenter hasn&#8217;t been attached. Perhaps some kind of NullPresenter (Null Object pattern) should be introduced to handle that scenario better.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2132">
+					<div id="dsq-comment-header-2132" class="dsq-comment-header">
+						<cite id="dsq-cite-2132">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2132">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2132" class="dsq-comment-body">
+						<div id="dsq-comment-message-2132" class="dsq-comment-message"><p>@Derrick,</p>
+<p>That&#8217;s nice, but again, where does that event go?  Who&#8217;s listening?  What happens?  Can you tell by reading the code?</p>
+<p>The wiring may be easier to develop mechanically, and I&#8217;m a bit dubious on that as well, but the understandability of the code is definitely compromised.  It&#8217;s a cool solution for really complicated composite views.</p>
+<p>All the reflection going on might have something to do with the performance problems in CAB I&#8217;ve heard complained about too.</p>
+<p>It&#8217;s a classic Microsoft solution.  They&#8217;ve optimized the &#8220;first write&#8221; while sacrificing maintainability.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2133">
+					<div id="dsq-comment-header-2133" class="dsq-comment-header">
+						<cite id="dsq-cite-2133">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2133">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2133" class="dsq-comment-body">
+						<div id="dsq-comment-message-2133" class="dsq-comment-message"><p>@Jens,</p>
+<p>You could do all that work in the constructor, but that&#8217;s kind of smelly in a way.  Every unit test will have to remember to accomodate the stuff that&#8217;s happening in the constructor &#8212; and that&#8217;s what I wanted to avoid.</p>
+<p>Plus there&#8217;s the very real possibility that the Presenter gets bootstrapped differently in different scenarios.  A &#8220;StartNewTrade()&#8221; method versus &#8220;DisplayTrade(Trade trade)&#8221; method for creating versus updating.</p>
+<p>As to forgetting to call Start()?  That&#8217;s going to be very easy to detect since the screen won&#8217;t work without it.  Besides, much of the time some sort of ApplicationController will be calling those methods as Presenter&#8217;s are made active.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2134">
+					<div id="dsq-comment-header-2134" class="dsq-comment-header">
+						<cite id="dsq-cite-2134">
+	http://codebetter.com/blogs/john.papa							<span id="dsq-author-user-2134">John Papa</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2134" class="dsq-comment-body">
+						<div id="dsq-comment-message-2134" class="dsq-comment-message"><p>Great blog post, Jeremy.</p>
+<p>I am a fan of the MVP Passive View pattern. I recently found myself readdressing this exact issue and I chose to stick with using events. I used the direct hookup in the past and while I enjoyed the CTRL-B goodness (yes, I am a R#&#8217;er fanatic) it always seemed to smell to me. There was nothin i could ever tangibly point out that was causing the smell either. It was like a hit and run in the men&#8217;s locker room. <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>I am currently on a new project that I am architecting. I am reexamining all of my current practices and tweaking here and there.</p>
+<p>One new feature I recently began using is a slim WCF layer between the Presenter and the Service Layer. I used Dependency Injection to get the WCF Service Contract into the Presenter and it works like a champ. The separation is nice and loose, although I had to create a WCFServiceInterface assembly that so both the presenter and the WCF Service could see that. You just don&#8217;t see much WCF out there.</p>
+<p>My next examination is if I want to integrate some sort of repository in the Domain Model. I currently have  Service Layer that coordinates the requests for Domain Model Entities through a Mapper (and then on to the DAL and to the DB). My clients have never gone for OR Mapping tools due to their open source fear and I certainly don;t want to build one (especialy since I think Entity Framework will be a good choice when they resolve a lot of the current issues and tidy it up).</p>
+<p>Anyway, just wanted to share and say that I have been enjoying your posts, even though we disagree on the implementation of the events in tis case <img src='http://codebetter.com/jeremymiller/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2135">
+					<div id="dsq-comment-header-2135" class="dsq-comment-header">
+						<cite id="dsq-cite-2135">
+								<span id="dsq-author-user-2135">Jason</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2135" class="dsq-comment-body">
+						<div id="dsq-comment-message-2135" class="dsq-comment-message"><p>With the 2nd (Direct Communication) option how do you test that the view is correctly wired up to the presenter?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2136">
+					<div id="dsq-comment-header-2136" class="dsq-comment-header">
+						<cite id="dsq-cite-2136">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2136">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2136" class="dsq-comment-body">
+						<div id="dsq-comment-message-2136" class="dsq-comment-message"><p>@Jason,</p>
+<p>Quite easily actually.  We attach a mocked presenter and use NUnitForms to perform the mouse clicks and other events on the screen and use RhinoMocks just to check that the right method on the presenter is called.</p>
+<p>Likewise for the event model.  You just attach anonymous delegates to the View events.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2137">
+					<div id="dsq-comment-header-2137" class="dsq-comment-header">
+						<cite id="dsq-cite-2137">
+								<span id="dsq-author-user-2137">Jason</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2137" class="dsq-comment-body">
+						<div id="dsq-comment-message-2137" class="dsq-comment-message"><p>I was afraid that you were going to say that! I agree that the Direct Communication option is more expressive than Events but IMHO NUnitForms (or Selenium etc. for the web) tests are far more flaky than simple unit tests. So I&#8217;m jumping on the events and CTL+ALT+F7 in R# bandwagon. Thanks for the great series.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2138">
+					<div id="dsq-comment-header-2138" class="dsq-comment-header">
+						<cite id="dsq-cite-2138">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2138">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2138" class="dsq-comment-body">
+						<div id="dsq-comment-message-2138" class="dsq-comment-message"><p>Definitely that.  At some point you might say that you&#8217;ve cut you&#8217;re forms thin enough that it isn&#8217;t that risky to leave the views untested.  Going to Events doesn&#8217;t change the testability equation in the slightest though.  You&#8217;ve still got to prove (or just not worry about) that clicking a button raises the proper event in the public interface that the presenter sees.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2139">
+					<div id="dsq-comment-header-2139" class="dsq-comment-header">
+						<cite id="dsq-cite-2139">
+								<span id="dsq-author-user-2139">jack</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2139" class="dsq-comment-body">
+						<div id="dsq-comment-message-2139" class="dsq-comment-message"><p>what about using typed datasource controls in asp.net which will do insert,update and delete without writing a line of code ,as produced by nettiers.Is is a good solution? How to do it using MVP?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2140">
+					<div id="dsq-comment-header-2140" class="dsq-comment-header">
+						<cite id="dsq-cite-2140">
+	http://codebetter.com/blogs/jeremy.miller							<span id="dsq-author-user-2140">Jeremy D. Miller</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2140" class="dsq-comment-body">
+						<div id="dsq-comment-message-2140" class="dsq-comment-message"><p>Jack,</p>
+<p>I&#8217;m sorry, but you&#8217;ve got to put me in the camp of people who think that pattern is unsuitable for anything but the simplest &#8220;forms over the web&#8221; screens.  That effectively negates the usefulness of MVP by collapsing everything down to just the &#8220;V.&#8221;</p>
+<p>If you&#8217;re using it and it&#8217;s working, go for it.  </p>
+<p>Jeremy</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2141">
+					<div id="dsq-comment-header-2141" class="dsq-comment-header">
+						<cite id="dsq-cite-2141">
+	http://www.illede.net							<span id="dsq-author-user-2141">r&#252;ya tabiri</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2141" class="dsq-comment-body">
+						<div id="dsq-comment-message-2141" class="dsq-comment-message"><p>Thank You..</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication/ ';
+	var disqus_identifier = '355 /blogs/jeremy.miller/archive/2007/06/04/build-your-own-cab-part-6-view-to-presenter-communication.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Build your own CAB Part #6 &#8211; View to Presenter Communication";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=355');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/jeremymiller/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2007\/06\/04\/build-your-own-cab-part-6-view-to-presenter-communication\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">InspiringCode on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6753">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.320 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 05:07:50 -->
+<!-- super cache -->

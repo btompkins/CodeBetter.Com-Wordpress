@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Recursing into List Processing | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Learning Erlang &#8211; Erlang Gaining Momentum' href='http://codebetter.com/matthewpodwysocki/2008/07/16/learning-erlang-erlang-gaining-momentum/' />
+<link rel='next' title='Reminder &#8211; DC ALT.NET Meeting 7/24/2008 &#8211; LINQ Deep Dive' href='http://codebetter.com/matthewpodwysocki/2008/07/24/reminder-dc-alt-net-meeting-7-24-2008-linq-deep-dive/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2008/07/16/recursing-into-list-processing/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=39' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-39" class="post-39 post type-post status-publish format-standard hentry category-c category-f category-functional-programming">
+					<h1 class="entry-title">Recursing into List Processing</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/07/16/recursing-into-list-processing/" title="9:22 pm" rel="bookmark"><span class="entry-date">July 16, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>Lately I&#8217;ve been getting back to basics with regards to recursion.&nbsp; This is a basic and essential skill, especially in the functional programming world.&nbsp; Today&#8217;s dive will be into immutable lists and recursion.&nbsp; I&#8217;ll do my best to provide the F# and C# equivalent to each call.&nbsp; This is in part of the back to basics and from here I&#8217;ll move onto other subjects.</p>
+<p>Let&#8217;s catch up to where we are today:</p>
+<ul>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/07/02/define-recursion-see-recursion.aspx">Part 1 &#8211; Basic Recursion Techniques</a></li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/07/07/recursing-into-linear-tail-and-binary-recursion.aspx">Part 2 &#8211; Linear, Tail, and Binary Recursion</a></li>
+</ul>
+<p>
+<span style="font-weight: bold"> Recursive List Processing</span></p>
+<p>In the functional programming world, and especially in the functional programming world are singly linked immutable lists.&nbsp; Each of the items in the list is a cell with a reference to the next item in the list.&nbsp; For functional programming, unlike imperative programming, they are optimized for recursion.&nbsp; By that I mean that they have a head (the first item) and the tail (the rest of the list).&nbsp; F# has the use of this through the List&lt;&#8217;a&gt; class.</p>
+<p>Let&#8217;s walk through a simple example of how you might sum up all items in a list using recursion as well as one for calcuating the length of the list.&nbsp; In F# this is pretty simple, using pattern matching.</p>
+<p><span style="text-decoration: underline">F#</span></p>
+<pre>#light
+
+module ListExtensions =  let rec sum = function  | [] -&gt; 0  | h::t -&gt; h + sum t
+
+  let rec length = function    | [] -&gt; 0    | h::t -&gt; 1 + length t
+
+[1..20] |&gt; ListExtensions.sum |&gt; print_any[1..10] |&gt; ListExtensions.length |&gt; print_any</pre>
+<p>
+This function above had a simple pattern matching over the list which said for an empty list, the result would be zero, else it would be the sum of the head and the calculation of the rest of the list and eventually winds its way down to the end of the list.&nbsp; Likewise inthe length, it adds 1 to the calculation of the length function until it winds down to nothing left in the list.&nbsp; In the base .NET libraries, we don&#8217;t have a list like this, but it&#8217;s actually not that hard to create one.&nbsp; Let&#8217;s walk through a simple immutable linked list much like the List&lt;&#8217;a&gt; in F#.</p>
+<p>Let&#8217;s define in C# what something like that might look like.&nbsp; I&#8217;ll start with something the way <a href="http://blogs.msdn.com/wesdyer/archive/2007/02/12/why-all-of-the-love-for-lists.aspx">Wes Dyer</a> had it but with a few changes:</p>
+<pre>public interface IImmutableList : IEnumerable{    T Head { get; }    IImmutableList Tail { get; }    bool IsEmpty { get; }    bool IsCons { get; }}</pre>
+<p>
+As you can see, we have a head, a tail and a way to determine if this list is empty or if it is a cons.&nbsp; All very important pieces to the puzzle.&nbsp; This also inherits the IEnumerable&lt;T&gt; interface as well so that we can iterate this should we need to.&nbsp; Now, let&#8217;s go into the implementation details of the immutable list.</p>
+<pre>public class ImmutableList : IImmutableList{    public class EmptyList : ImmutableList { }
+
+    public class ConsList : ImmutableList    {        internal ConsList(T head, IEnumerator enumerator)        {            Head = head;            this.enumerator = enumerator;        }    }
+
+    private static readonly IImmutableList empty = new EmptyList();
+
+    IImmutableList tail;    IEnumerator enumerator;
+
+    public T Head { get; private set; }
+
+    public static IImmutableList Cons(T head, IImmutableList tail)    {        return new ConsList(head, tail.GetEnumerator());    }
+
+    public static IImmutableList Cons(IEnumerator enumerator)    {        return enumerator.MoveNext() ? new ConsList(enumerator.Current, enumerator) : empty;    }
+
+    public IImmutableList Tail    {        get        {            if (enumerator != null)            {                tail = Cons(enumerator);                enumerator = null;            }            return tail;        }    }
+
+    public bool IsCons { get { return this is ConsList;  } }
+
+    public bool IsEmpty { get { return this is EmptyList;  } }
+
+    public static IImmutableList Empty { get { return empty; } }
+
+    IEnumerator IEnumerable.GetEnumerator()    {        return ((IEnumerable) this).GetEnumerator();    }
+
+    public IEnumerator GetEnumerator()    {        for (IImmutableList current = this; !current.IsEmpty; current = current.Tail)            yield return current.Head;    }}</pre>
+<p>
+Now what I have done here is implemented two internal lists to represent a &#8220;cons&#8221; and one to represent an empty list.&nbsp; This helps when determining whether the list is empty or not without having to check references and whether something is null.&nbsp; Inside my ConsList&lt;T&gt;, I&#8217;m able to create a new instance of the ImmutableList&lt;T&gt; with the head value and the rest of the list.&nbsp; </p>
+<p>The head of the list is just simply that, the first item.&nbsp; When the tail property is called, I create a new IImmutableList&lt;T&gt; with my enumerator by calling the Cons method.&nbsp; I also have properties which define and empty list, whether it is empty or whether it is a &#8220;cons&#8221;.&nbsp; Like I said, there&#8217;s nothing hard about this.&nbsp; </p>
+<p>Then I&#8217;m able to define a Sum and Length methods much as above with something like this:</p>
+<pre>public static int Sum(this IImmutableList list){    if (list.IsEmpty)        return 0;
+
+    return list.Head + Sum(list.Tail);}
+
+public static int Length(this IImmutableList list){    if (list.IsEmpty)        return 0;
+
+    return 1 + Length(list.Tail);}</pre>
+<p>
+And then invoking this is pretty straight forward through the main method:<br />
+</p>
+<pre>static void Main(string[] args){    var enumerator = Enumerable.Range(1, 10).GetEnumerator();    var list = ImmutableList.Cons(enumerator);    var sum = list.Sum();    var length = list.Length();    Console.WriteLine("List sum : {0}", sum);    Console.WriteLine("List length :{0}", length);}</pre>
+<p>
+But what about tail recursion when doing list processing?&nbsp; Let&#8217;s walk through one more example of tail recursion with lists.&nbsp; In this example, I&#8217;m going to go ahead and return the last item in the list.&nbsp; It&#8217;s a pretty simple and straight forward function which determines whether the list only has a head, or if it also has a tail, then recurse on the function again.</p>
+<p><span style="text-decoration: underline">F#</span></p>
+<pre>#light
+
+module ListExtensions =  let rec last = function    | [] -&gt; invalid_arg "last"    | [h] -&gt; h    | h::t -&gt; last t
+
+[1;5;3;2;6;] |&gt; ListExtensions.last |&gt; print_any</pre>
+<p>
+Now the C# version should look just as familiar to you.&nbsp; Basically instead of the pattern matching, which I&#8217;d love to have in C#, I&#8217;m using if statements to determine whether I&#8217;m returning the head, or the evaluation of the Last function again until I wind down to the head.</p>
+<p><span style="text-decoration: underline">C#</span></p>
+<pre>public static T Last(this ImmutableList items){    if(items.IsEmpty)        throw new ArgumentNullException("items");
+
+    var tail = items.Tail;    return tail.IsEmpty ? items.Head : tail.Last();}
+
+var e1 = new List {1,5,3,2,6}.GetEnumerator();var items = ImmutableList.Cons(e1);var last = items.Last();Console.WriteLine("Last item: {0}", last);</pre>
+<p>
+In the past I covered why tail recursion is important in my previous post.&nbsp; Unfortunately, the C# code won&#8217;t do much for you uniless the compiler is optimized for tail calls, or you are using the x64 version of Windows.&nbsp; I have some of these samples in my <a href="http://code.msdn.microsoft.com/FunctionalCSharp">Functional C# samples</a> on <a href="http://code.msdn.microsoft.com/">MSDN Code Gallery</a>.</p>
+<p><span style="font-weight: bold">Wrapping it Up</span></p>
+<p>As you can see, recursion is a pretty interesting topic.&nbsp; One of the best ways to avoid mutable state in your programs is through recursion.&nbsp; I&#8217;ve shown some simple examples of where recursion can help to solve some of those issues.&nbsp; This will wrap up a lot of the discussions about recursion and then I&#8217;m moving into such topics as memoization, continuations and so on.&nbsp; The code samples will be available on the <a href="http://code.msdn.microsoft.com/FunctionalCSharp">Functional C# Samples</a> during this back to basics trip.</p>
+<p></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/07/16/recursing-into-list-processing/" title="Permalink to Recursing into List Processing" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/07/16/recursing-into-list-processing/feed/" title="Comments RSS to Recursing into List Processing" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-39 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/07/16/learning-erlang-erlang-gaining-momentum/" rel="prev"><span class="meta-nav">&larr;</span> Learning Erlang &#8211; Erlang Gaining Momentum</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/07/24/reminder-dc-alt-net-meeting-7-24-2008-linq-deep-dive/" rel="next">Reminder &#8211; DC ALT.NET Meeting 7/24/2008 &#8211; LINQ Deep Dive <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/07/16/recursing-into-list-processing/ ';
+	var disqus_identifier = '39 /blogs/matthew.podwysocki/archive/2008/07/16/recursing-into-list-processing.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Recursing into List Processing";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=39');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/07\/16\/recursing-into-list-processing\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.273 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 11:37:14 -->
+<!-- super cache -->

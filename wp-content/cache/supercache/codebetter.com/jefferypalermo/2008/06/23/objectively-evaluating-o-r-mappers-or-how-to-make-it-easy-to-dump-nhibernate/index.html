@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Objectively evaluating O/R Mappers (or how to make it easy to dump NHibernate) | Jeffery Palermo</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jefferypalermo/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/jefferypalermo/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jefferypalermo/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/jefferypalermo/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeffery Palermo' href='http://codebetter.com/jefferypalermo/' />
+<link rel='start' title='ASP.NET 1.1 Request Validation.' href='http://codebetter.com/jefferypalermo/2004/04/16/asp-net-1-1-request-validation/' />
+<link rel='prev' title='MvcContrib 0.0.1.117 released to match ASP.NET MVC Preview 3' href='http://codebetter.com/jefferypalermo/2008/06/02/mvccontrib-0-0-1-117-released-to-match-asp-net-mvc-preview-3/' />
+<link rel='next' title='Realistically achieving high test coverage &#8211; MvcContrib' href='http://codebetter.com/jefferypalermo/2008/06/23/realistically-achieving-high-test-coverage-mvccontrib/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/' />
+<link rel='shortlink' href='http://codebetter.com/jefferypalermo/?p=656' />
+<link rel="stylesheet" href="http://codebetter.com/jefferypalermo/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/jefferypalermo/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-656" class="post-656 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Objectively evaluating O/R Mappers (or how to make it easy to dump NHibernate)</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jefferypalermo/author/jefferypalermo/" title="View all posts by jefferypalermo">jefferypalermo</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/" title="5:07 am" rel="bookmark"><span class="entry-date">June 23, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jefferypalermo/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/jefferypalermo/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jefferypalermo/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I&#8217;m amazed that there is so much talk about object/relational mappers these days.&nbsp; Pleased, but amazed.&nbsp; I tend to be in the &#8220;early adopter&#8221; part of the Rogers technology adoption curve. (Subscribe to my feed:&nbsp; <a href="http://feeds.feedburner.com/jeffreypalermo">http://feeds.feedburner.com/jeffreypalermo</a>)</p>
+<p><img src="http://upload.wikimedia.org/wikipedia/en/4/45/DiffusionOfInnovation.png"> </p>
+<p>In the .Net world, I didn&#8217;t hear much talk about O/R Mappers in the early 2000s.&nbsp; I started working with NHibernate in 2005 while on a project with <a href="http://codebetter.com/blogs/jeremy.miller/">Jeremy Miller</a>, <a href="http://donie.homeip.net:8080/pebble/Steve/">Steve Donie</a>, <a href="http://jimhmatthews.wordpress.com/">Jim Matthews</a>, and <a href="http://www.pettichord.com/">Bret Pettichord</a>.&nbsp; I researched, but never used, other O/R Mappers available at the time.&nbsp; Now, in 2008, I find that O/R Mappers in the .Net world are still in the early adopter part of the adoption curve.&nbsp; We have not yet hit early majority, but we have left the innovators section.</p>
+<p>Microsoft has single-handedly pushed O/R Mapping to the center of conversation, and we struggle to objectively differentiate between the choices.&nbsp; Arguments like &#8220;Tool X rocks&#8221;, or &#8220;Tool Y sucks&#8221; are hard to understand.&nbsp; I&#8217;d like to more objectively discuss the basis on which we should accept or reject an O/R Mapper.&nbsp; As always, it depends on context.&nbsp; </p>
+<p><b>Context 1</b>:&nbsp; Small,&nbsp;disposable&nbsp;application:&nbsp; In this case, we would put a premium on time to market while accepting technical debt given the application has a known lifespan.&nbsp; For this type of of situation, I think it depends on the skill set of the team we start with.&nbsp; If the team already knows an O/R Mapper, the team should probably stick with it since the learning curve of any other tool would slow down delivery.&nbsp; </p>
+<p><b>Context 2</b>:&nbsp; Complex line-of-business application:&nbsp; Here, the business is making an investment by building a system that is expected to yield return on the engineering investment.&nbsp; The life of the application is unbounded, so maintainability is king.&nbsp; We still want to be able to build quickly, but long-term cost of ownership has a heavy hand in decisions.&nbsp; Here, we have to objectively think about the tools used by the system.</p>
+<p><img src="http://farm4.static.flickr.com/3092/2603379998_d064027cbd_o.png" align="right"> I&#8217;ll use O/R Mappers in this example.&nbsp; On the right is a common visual studio solution structure.&nbsp; We would probably leverage the O/R Mapper in the DataAccess project.&nbsp; I consider the O/R Mapper to be infrastructure since it doesn&#8217;t add business value to the application.&nbsp; It merely is plumbing to help the application function.&nbsp; By following the references, we find that our business logic is coupled to the data access approach we choose as well as infrastructure we employ.&nbsp; Often we can build the system like this, and we can even keep the defect rate really low.&nbsp; This is very common, and I&#8217;d venture to guess that most readers have some experience with this type of structure.&nbsp; The problem with this structure is long-term maintainability.&nbsp; In keeping with the O/R Mapper decision, five years ago, I was not using NHibernate.&nbsp; If I ask myself if I&#8217;ll be using NHibernate five years from now, I have to assume that I probably won&#8217;t be, given the pace of technology.&nbsp; If this system has a chance of maintainability five years from now, I need to be able to upgrade parts of the system that are most affected by the pace of technology, like data access.&nbsp; My business logic shouldn&#8217;t be held hostage by the data access decision I made back in 2008.&nbsp; I don&#8217;t believe it&#8217;s a justified business position to say that when technology moves on, we will rewrite entire systems to keep up.&nbsp; Sadly, most of the industry operates this way.&nbsp; </p>
+<p><img src="http://farm4.static.flickr.com/3151/2603380030_d57dcd1c6a_o.png" align="left"> </p>
+<p>On the left is the general solution structure I&#8217;m more in favor of.&nbsp; You see that the core of the application doesn&#8217;t reference my other projects.&nbsp; The core project (give it whatever name you like) contains all my business logic, namely the domain model and supporting logical services that give my application its unique behaviors.&nbsp; Add a presentation layer for some screens, and the system delivers business value.&nbsp; Here, you see I&#8217;ve lumped data access in with infrastructure.&nbsp; <b>Data access is just not that interesting, </b>and system users don&#8217;t give a hoot how we write to the database.&nbsp; As long as the system is usable and has good response times, they are happy.&nbsp; After all, they are most happy when they are _not_ using the system.&nbsp; They don&#8217;t spend their leisure time using our system.</p>
+<p>I consider data access to be infrastructure because it changes every year or two.&nbsp; Also consider communication protocols like ASMX, remoting, WCF to be infrastructure.&nbsp; WCF, too, will pass in a year or 10 for the next wave of communication protocols that &#8220;will solve all our business problems&#8221;.&nbsp; Given this reality, it&#8217;s best not to couple the application to infrastructure.&nbsp; Any application today that is coupled to Enterprise Library data access will likely have to be completely rewritten in order to take advantage of any newer data access method.&nbsp; I&#8217;d venture to say that the management that approved the budget for the creation of said system didn&#8217;t know that a rewrite would be eminent in just 4 short years.</p>
+<p><b>How do we ensure the long-term maintainability of our systems in the face of constantly changing infrastructure?</b>&nbsp; The answer:&nbsp; Don&#8217;t couple to infrastructure.&nbsp; Regardless of the O/R Mapping tool you choose, don&#8217;t couple to it.&nbsp; The core of your application should not know or care what data access library you are using.&nbsp; I am a big fan of NHibernate right now, but I still keep it at arms length and banished to forever live in the Infrastructure project in the solution.&nbsp; I know that when I want to dump NHibernate for the next thing, it won&#8217;t be a big deal</p>
+<p><b>How do I ensure I&#8217;m not coupled to my O/R Mapper?</b></p>
+<ul>
+<li>The project my domain object reside in doesn&#8217;t have a reference to NHibernate.dll or your O/R Mapper of choice</li>
+<li>The unit tests for my domain model don&#8217;t care about data access</li>
+<li>My domain objects don&#8217;t have specific infrastructure code specific to the O/R Mapper</li>
+</ul>
+<p>The key is in the flipped project reference.&nbsp; Have the infrastructure project reference the core, not the other way around.&nbsp; My core project has no reference to NHibernate.dll.&nbsp; The UI project has not reference either.&nbsp; Only in the infrastructure project.</p>
+<p><b>Keep it easy to dump NHibernate when its time has come</b></p>
+<p>For now, NHibernate is the O/RM of choice in .Net-land.&nbsp;&nbsp; When it&#8217;s time comes, don&#8217;t go to management and recommend a rewrite of the system because it&#8217;s completely tightly-coupled to NHibernate.&nbsp; Keep NHibernate off to the side so you can slide in the next data access library that comes along.&nbsp; If you tightly couple to your O/RM, you&#8217;ll sacrifice long-term maintainability.</p>
+<p><b>When choosing an O/R Mapper:</b>&nbsp; The objective criteria I think is most compelling is to determine of the library allows isolation.&nbsp; If the tool forces you to create an application around it, move on for a better one.&nbsp; The good libraries stay out of the way.&nbsp; If your O/R M always wants to be the center of attention, dump it for one that&#8217;s more humble.&nbsp; Use an O/R M that plays well behind a wall of interfaces.&nbsp; Beware the O/R M that doesn&#8217;t allow loose coupling.&nbsp; If you tightly couple, it&#8217;s a guaranteed rewrite when you decide to change data access strategies.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jefferypalermo/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/" title="Permalink to Objectively evaluating O/R Mappers (or how to make it easy to dump NHibernate)" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/feed/" title="Comments RSS to Objectively evaluating O/R Mappers (or how to make it easy to dump NHibernate)" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-656 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jefferypalermo/2008/06/02/mvccontrib-0-0-1-117-released-to-match-asp-net-mvc-preview-3/" rel="prev"><span class="meta-nav">&larr;</span> MvcContrib 0.0.1.117 released to match ASP.NET MVC Preview 3</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jefferypalermo/2008/06/23/realistically-achieving-high-test-coverage-mvccontrib/" rel="next">Realistically achieving high test coverage &#8211; MvcContrib <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">29 Responses to <em>Objectively evaluating O/R Mappers (or how to make it easy to dump NHibernate)</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2483">
+		<div id="comment-2483">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2483">July 11, 2008 at 1:02 pm</a></div>
+
+		<div class="comment-body"><p>This discussion can be continued here:<br />
+<a href="http://jeffreypalermo.com/blog/making-it-easy-to-replace-nhibernate-in-five-years/" rel="nofollow">http://jeffreypalermo.com/blog/making-it-easy-to-replace-nhibernate-in-five-years/</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2482">
+		<div id="comment-2482">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dotNetProfessional.com/blog/' rel='external nofollow' class='url'>Garry McGlennon</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2482">July 10, 2008 at 11:44 pm</a></div>
+
+		<div class="comment-body"><p>Such a heated debate but also interesting too. For my two cents worth I agree with the concepts of the article and question anyone using features of an O/RM outside of their business/application layers. The general approach I take is one of service based whereby data access is service based at a CRUD level and business process level (two logical layers). Should we want to change the O/RM we&#8217;d only have to swap out the CRUD service layer (its the only thing that typically access the database). Now, having said that, this &#8216;seperation&#8217; does have its drawbacks, namely that you can&#8217;t access data as easily as you might like ie via an LLBGEN/nHibernate/Linq etc query from other layers. As you&#8217;ve abstracted this into data retrieval/storage interfaces, which have no understanding of the implementation. There are definately pros and cons for any solution, though I think the added abstractions will serve you better in the long run.</p>
+<p>As a side note: Am I the only one who doesn&#8217;t like the concept of DataContexts with O/RMs? Ie they don&#8217;t play very well in service oriented architectures.<br />
+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;<br />
+Disclosure: I&#8217;m working on an O/RM mapper using a service based approach. Based on templates and the assumption you will change it!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2481">
+		<div id="comment-2481">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ed</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2481">July 8, 2008 at 8:30 pm</a></div>
+
+		<div class="comment-body"><p>Late to the conversation here, but have a real(ish) example.</p>
+<p>If you stick to using Interfaces, such as IRepository<tentity> and implement concrete repositories such as NHibernateRepository</tentity><tentity>, which has minimal bleed through, so you&#8217;re practising strict separation of concerns and decoupling  then exercises like this become easier:</p>
+<p>A quick prototype app, which utilises ISubSonicRepository, suddenly &#8216;evolves&#8217; into production and then in a blink of an eye needs to scale&#8230;</p>
+<p>Just to keep you on your toes (and more likely to happen to all of us) the business decides to Persist People entities in Active Directory, of course augmented with database persisted details&#8230;(that hurt, hence my strong endorsement of at least trying to implement Jeffrey&#8217;s suggestion.)</p>
+<p>We recently outsourced an application the data is still available and mutable. However we have to use web services (some XML-RPC, some SOAP).</p>
+<p>Therefore I think the above article is incredibly sensible because not only may you need to change O/RMs but you may need to chance persistence technologies entirely. LDAP is very different to SubSonic!</p>
+<p>Don&#8217;t learn the hard way like I did!</tentity></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2480">
+		<div id="comment-2480">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dotnettricks.com' rel='external nofollow' class='url'>Fregas</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2480">June 25, 2008 at 2:43 pm</a></div>
+
+		<div class="comment-body"><p>@Z</p>
+<p>It depends on the application.  For many applications such as small business websites we work on, the ORM will possibly outlive the website, i.e. the website will be rewritten or die before there is a need to switch out an ORM.  For other applications with a longer lifespan, a new ORM may come along that works better, no matter how much homework you do ahead of time.  Its not unusual for some applications to have a very long life&#8211;think of all the cobol apps that are still out there!</p>
+<p>As an example, we have this one &#8220;small&#8221; website with a lot of database functionality that has homemade domain objects that are tightly coupled to a homemade ORM using ado.net objects like datareaders.  I can&#8217;t switch out the homemade ORM because all the persistence logic is mixed in with the domain objects.  But man would i ever be more productive if i could plug in NHibernate or EF without having to rewrite the whole thing!  So in this case, we really would have benefited from the previous developers loosely coupling the ORM from day one.  </p>
+<p>Another example was at my last job we had some apps using CSLA and one using LLBLGen and we were moving to WilsonORM.  The swap was impossible without a rewrite, but desired by management in order to standardize on WIlson.</p>
+<p>Most companies don&#8217;t want to switch out their ORMs precisely because it would involve rewriting their whole application.  But if it only involved swapping one layer and could provide standardization on the new ORM and enable more productivity, I think many companies would.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2479">
+		<div id="comment-2479">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Z</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2479">June 25, 2008 at 2:03 pm</a></div>
+
+		<div class="comment-body"><p>I do wonder why you would want to swap an orm. Because you start using another database? Nah, that can&#8217;t be the reason; most mappers support the majority of databases and if not they most likely have an API you can implement. And if it really doesn&#8217;t support it, you have done something wrong in the beginning.</p>
+<p>Or because you reach technical/functional limitations of the ORM? In that case, you didn&#8217;t do your homework correctly in the first place. You should already have looked at that kind of stuff when you decided what to use.</p>
+<p>There is not a single company in the world who would want to switch their existing perfectly working applications which are using NHibernate to EF (Just an example), because it is &#8220;available&#8221; or &#8220;possible&#8221;. Maybe in an application rebuild or a business decision to migrate fully to EF. But if you start keeping all that kind of things in mind, start preparing your applications for an nuclear warfare! It might happen!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2478">
+		<div id="comment-2478">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dotnettricks.com' rel='external nofollow' class='url'>Fregas</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2478">June 25, 2008 at 1:35 pm</a></div>
+
+		<div class="comment-body"><p>My experience with O/R Mappers is that you&#8217;ll have to rewrite at least some code if you decide to switch out SOME code, like querying, no matter how loosely coupled your application was written.  As Jeffrey already mentioned, in order to switch out nhibernate he would have to rewrite his repository implementations, but thats it.  </p>
+<p>NHIbernate is probably the one mapper that allows the LEAST possible coupling to itself.  I&#8217;ve used Wilson, LLBLGen, Nolics, and a few others.  By far, NHibernate is the least intrusive to your code.  </p>
+<p>Frans, I&#8217;m going to pick on you a bit here, but please don&#8217;t take it personally:</p>
+<p>&#8220;This means that your own code will use and will be based on the characteristics provided by the data-access solution of choice&#8230;Also, the naive view on being able to swap out any o/r mapper you pick clearly shows you never gave it much thought: no matter which data access solution you pick, (so that means: whatever you choose) it will leak through into your own code&#8221; </p>
+<p>Not so.  If you layer your code correctly, you won&#8217;t have to change near as much.  I recently switched a small application from using WilsonORM to NHibernate.  It took me about 4 hours, and most of that was changing queries to use HQL instead of OPath.  Its true that if it was a bigger application it would have taken longer, but it would have also been easier had a layered things more the way Jeffrey suggests.</p>
+<p>&#8220;Does it offer entity views on entity collections for easy in-memory filtering/sorting ? does it offer auditing/authorization? Which concurrency models are supported? Does it offer deep support for distributed systems so you don&#8217;t have to babysit what&#8217;s going over the wire?&#8221;</p>
+<p>Those are all great features, but honestly, even for large complex applications, i don&#8217;t often need all that.  I can do an in-memory sort or filter of a collection using lambdas in .net 3.5 in just a few lines of code.  I follow the Martin Fowler first rule of distributed architectures: &#8220;Don&#8217;t distribute&#8221; unless there&#8217;s a real need to.  There are other tools to do auding and authorization.  And in any case, do all these BELONG in an o/r mapper?  Yes, if you rely on an ORM that has all these features and you use all of them throughout your domain objects, you&#8217;ll be pretty tied that that ORM.  But i see no compelling reason to do that.  Those kind of things don&#8217;t really belong in my domain model. If the ORM forces you to put them in the domain model, then something is wrong, in my opinion.  But if you stick to the core of your application being POCOs and not being tied to the ORM, switching the ORM out really doesn&#8217;t require a full rewrite.  </p>
+<p>It really depends on the ORM being used and how its used.  Just because many ORMs require strong coupling between themselves and the domain objects doesn&#8217;t mean all of them do.  I think its a good idea to consider that coupling when choosing an ORM and whether or not you want your app to be tied to it 5 years from now.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2477">
+		<div id="comment-2477">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2477">June 25, 2008 at 3:30 am</a></div>
+
+		<div class="comment-body"><p>@Tim,<br />
+We don&#8217;t de-couple NHibernate from our repository classes.  We intentionally couple them to NHibernate.  The core of the application relies on repository interfaces, which merely have implementing classes that are coupled to NHibernate.  The core only depends on the interfaces.</p>
+<p>To bring in different persistence, we would create new repository classes that all implement the same repository interfaces.  By using the same automated test cases (APIs changed to support the new persistence technique), we can reliably ensure that the needed persistence scenarios are supported.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2476">
+		<div id="comment-2476">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2476">June 25, 2008 at 3:27 am</a></div>
+
+		<div class="comment-body"><p>@Paul,<br />
+At Headspring, we tend not to prefer frameworks.  Rather, we enjoy using libraries.  For instance, we hand-role the entire core of our application and then use libraries to keep from writing the following types of code:  logging, data access, UI controls, caching, mocking, IoC. . . </p>
+<p>We use a framework in ASP.NET, but that&#8217;s our only compromise.  The other libraries used are easily kept behind interfaces, and they don&#8217;t bleed into the core of the system.  These libraries include: Log4Net, NHibernate, various UI controls, Lucene.Net, RhinoMocks, StructureMap, Windsor.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2475">
+		<div id="comment-2475">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2475">June 25, 2008 at 3:23 am</a></div>
+
+		<div class="comment-body"><p>@Onur,<br />
+Isolating NHibernate _does_ work in practice, and I have 10 systems in production using NHibernate (for various clients) that illustrates how it can be done.  I intend to release a reference application to help the community with this issue.</p>
+<p>There are some conventions that _could_ bleed over if we aren&#8217;t careful, but with a disciplined domain-driven design approach, it&#8217;s not only possible, but quite easy to pull out NHibernate and create new repository implementations which persist in a different way.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2474">
+		<div id="comment-2474">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2474">June 25, 2008 at 3:20 am</a></div>
+
+		<div class="comment-body"><p>@Andy,<br />
+>&#8221;The blurring of Data Access and Business Logic isn&#8217;t too evil after all.&#8221;</p>
+<p>The coupling of data access and business logic is still &#8220;evil&#8221;.  The context I&#8217;m living in is long-lived enterprise applications, not small, quick-hit applications.  Therefore, these parts need to be de-coupled for maintenance reasons.</p>
+<p>I am fully aware of the new technologies and APIs coming from Microsoft, but object-oriented principles and design practices are not altered by these new APIs.  Consider them all and then choose which to use on small, trivial apps vs. which to use on long-lived enterprise apps.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2473">
+		<div id="comment-2473">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2473">June 25, 2008 at 3:16 am</a></div>
+
+		<div class="comment-body"><p>@Rick,<br />
+Discussing theory and being impractical is a bit dangerous, and I try not to give any guidance through my blog unless I have specific experience with it through real work.  As the CTO of Headspring Systems in Austin, this is a topic we&#8217;ve put quite a bit of work into.  We&#8217;ve worked with legacy systems, built new systems and continually upgraded and enhanced systems already built.</p>
+<p>This scenario is real for us and practical.  We don&#8217;t have a lot of code around this (I also am leery about overengineering).  We accomplish this loose coupling by interfaces and reversing the project reference so that infrastructure references core and not the other way around.</p>
+<p>I intend to make a full application available to the community that illustrates the principles we follow as a company.  I understand it&#8217;s difficult for me to clearly communicate without concrete examples.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2472">
+		<div id="comment-2472">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2472">June 25, 2008 at 3:13 am</a></div>
+
+		<div class="comment-body"><p>@Frans,<br />
+I definitely did now write a comparison of O/R Mappers.  Rather I&#8217;m trying to communicate that whatever tool is used, it should be used decoupled from the core of the application&#8217;s logic.  In this way, upgrades and eventual replacement will be possible without rewriting the entire application.</p>
+<p>Since you bring up features, I&#8217;m sure LLBLGen has many more features than NHibernate.  Given that, if folks bought products based on feature lists, our economy would be quite a bit more predictable.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2471">
+		<div id="comment-2471">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2471">June 25, 2008 at 3:11 am</a></div>
+
+		<div class="comment-body"><p>@Gary,<br />
+You are correct about the presentation layer and other infrastructure.  My company also uses ASP.NET with MonoRail and is starting a large project with the MVC Framework.  We consider that as infrastructure and likely to change, and we keep that away from the application core.  We treat WinForms and WPF similarly.</p>
+<p>I don&#8217;t expect my clients to have to rewrite an application I delivered after only five short years.  If they had to rewrite Headspring&#8217;s work at five years, we would have a pretty bad reputation.  We expect that system we develop will have a very long life.  They will see infrastructure technology come and go, and the core will live on.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2470">
+		<div id="comment-2470">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://lunaverse.wordpress.com' rel='external nofollow' class='url'>Tim Scott</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2470">June 25, 2008 at 12:16 am</a></div>
+
+		<div class="comment-body"><p>I guess de-coupling does get a little fuzzy.  When I first used nHibernate, we had the idea to build a data gateway layer that would know about nHibernate.  This layer would be ignorant to concrete business entities.  The repository layer would know about entities and not about nHibernate.  In theory we could then swap out the data gateway for something non-nHibernate.</p>
+<p>This is not practical.  As soon you start to write HQL in the repository layer, you have coupling.  The repository must be aware of session&#8230;more coupling.</p>
+<p>However, it surely is possible to achieve near persistence ignorance in the core business entity layer and also clients higher up the stack.</p>
+<p>So +1 for the overall idea of the article.  I just inherited a system that has Linq to SQL woven throughout (up to the UI.)  Luckily it&#8217;s a sort of prototype, and the boss has told me I am free to chuck it.  However, I could have kept a lot more if the spirit of this article had been followed.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2469">
+		<div id="comment-2469">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.dotnettricks.com' rel='external nofollow' class='url'>Fregas</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2469">June 24, 2008 at 8:55 pm</a></div>
+
+		<div class="comment-body"><p>@onur</p>
+<p>I think you&#8217;re missing the point.  Your business objects *SHOULDN&#8217;T* be saving themselves.  Thats persistance logic (plumbing) not business or domain logic.  Its true if you remove nhibernate you&#8217;d have to replace it with something else since the objects aren&#8217;t saving themselves, but presumably another ORM that supports Persistance Ignorance will let you do the same thing without your domain objects being touched.</p>
+<p>If for some reason you DID have to remove nhibernate and roll your own, you could do so by replacing the Repositories and the business objects wouldn&#8217;t have to change.  It would be a lot of work, but thats thats the whole reason we use ORMs.</p>
+<p>As for the HttpModule, being able to switch that out with something else is built into NHibernate I believe.  That part is actually pretty easy.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2468">
+		<div id="comment-2468">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://sourceforge.net/projects/stormfactory' rel='external nofollow' class='url'>Paul Smith</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2468">June 23, 2008 at 11:25 pm</a></div>
+
+		<div class="comment-body"><p>Thanks so much for this article and this perspective, Jeffrey. So often &#8220;the basis on which we should accept or reject an O/R Mapper&#8221; gets missed in the rush to use whatever&#8217;s perceived as the &#8220;new hotness&#8221; at the time of consideration. nHibernate and Enterprise Library&#8217;s data helpers certainly have their merits and I don&#8217;t mean to discount those, but I&#8217;ve personally never seen why they are *quite* as popular as they are. </p>
+<p>There is tension in any ORM solution between learning curve, performance, time saved on deliverables, dependencies, redundancy, and maintainability. I started out preferring frameworks to generated code (and so, dependencies to redundancy), but over time I&#8217;ve been converted to the opposite viewpoint and gone the roll-your-own-tool route in the process. Maybe I&#8217;m just a System-namespace purist curmudgeon now, but I can live with that label.</p>
+<p>Now I use generators instead of templates or helper frameworks. As a result I have a bit of redundancy in my Data Access tier, but I can tolerate that. The domain objects are pure collections of value types, with a DA layer fronted by a simple get / save / serialize to stream / deserialize from stream interface that could quickly be remapped to any persistence or caching mechanism. The generator tool itself is a bit ugly, to be sure (never bothered prettying it up much), but in return it buys me (a) an extremely quick learning curve, even for less experienced developers, (b) respectable runtime performance, (c) no dependencies outside of .NET itself, (d) really rapid CRUD coding, (e) domain objects that are coupled to nothing, and (f) a DA tier that&#8217;s only coupling is a loose one to SQL Server, but with an interface that would allow for uncomplicated substitution with another provider, whether by tweaking the generator or updating the classes by hand. It may not be &#8220;sexy,&#8221; and it may have a lot of room for improvement in the SQL coupling, but it&#8217;s functional, easily taught &#038; learned, and leaves very portable code behind. </p>
+<p>Anyway, I really appreciated this article. Whatever tool people use, designers would do well to print out your &#8220;How do I ensure I&#8217;m not coupled to my O/R Mapper?&#8221; and &#8220;When choosing an O/R Mapper&#8221; sections and pin them up where they&#8217;ll be seen often.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2467">
+		<div id="comment-2467">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.cwash.org' rel='external nofollow' class='url'>Chris Wash</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2467">June 23, 2008 at 8:06 pm</a></div>
+
+		<div class="comment-body"><p>What Onur Gumus said above is actually a very valid point, a point of much contention between the Hibernate and Spring groups and the motivating factor behind another new framework in Java.  Seam is the next step after ORM to provide a proper implementation and ease of use around conversational access to your domain objects (in particular, when they&#8217;re stored in a transactional system like a RDBMS).</p>
+<p>Hibernate is under the covers, but Seam will likely be where Hibernate is in a few years, at least in the Java space.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2466">
+		<div id="comment-2466">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://reverseblade.blogspot.com' rel='external nofollow' class='url'>Onur Gumus</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2466">June 23, 2008 at 7:11 pm</a></div>
+
+		<div class="comment-body"><p>Isolating nhibernate doesn&#8217;t work in practice. Here&#8217;s the reason, first 99% of the time you will have to use ISession per request pattern where an httpmodule will ignite Isession and commit it back at the end. 2nd consider within the business layer you have modified a typical domain object which you got it from ISession. You know it nhibernate is tracking your domain object. Thus within your business code you won&#8217;t be doing anything to save your object since your session will be committed at the end. Once you have such a coding style , how are you going to replace it ?. I think trying to loosely couple against NHibernate is impractical and has little benefit.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2465">
+		<div id="comment-2465">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://mike.griffin@entityspaces.net' rel='external nofollow' class='url'>Mike Griffin</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2465">June 23, 2008 at 6:38 pm</a></div>
+
+		<div class="comment-body"><p>Frans, now you know why I don&#8217;t comment on such posts, we are allowed to write them, but unable to comment on them, sigh &#8230;. That is not true with Microsoft as was pointed out.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2464">
+		<div id="comment-2464">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://swoofware.com/' rel='external nofollow' class='url'>Matt Smith</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2464">June 23, 2008 at 3:32 pm</a></div>
+
+		<div class="comment-body"><p>I agree with Jeff&#8217;s fundamental premise: &#8220;How do we ensure the long-term maintainability of our systems in the face of constantly changing infrastructure?  The answer:  Don&#8217;t couple to infrastructure.&#8221;</p>
+<p>This applies to all aspects of the system regardless of whether or not it is infrastructure, presentation, core, etc.</p>
+<p>However, like Gary and Frans said &#8220;Whatever you pick / choose in the other layers is also important and will also be a factor in maintenance of the application, like which UI package is chosen.&#8221;</p>
+<p>As much as we would love to have completely pluggable and swappable components and layers in the application, there are usually a number of areas (despite your best attempts at abstraction) where said component has coupled itself a little more deeply that you would have liked.</p>
+<p>For our application, we have swapped date pickers twice now. We&#8217;d love to do it a third time but it is such a pain. </p>
+<p>And for the record, we use LLBLGen Pro. However, we spent a lot of time arguing about whether or not we should use the generated entities in the presentation layer. Gut feel is that we didn&#8217;t want to do it to avoid coupling the application. However, at the time the benefit of all the plumbing code that was provided (IBindable, etc.) was worth it (CSLA just wasn&#8217;t working for us at the time). </p>
+<p>As so many things in life, there aren&#8217;t many clear cut answers to everyone&#8217;s problems. Everybody has to make their decisions based on experiences.</p>
+<p>Matt</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2463">
+		<div id="comment-2463">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mike</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2463">June 23, 2008 at 3:07 pm</a></div>
+
+		<div class="comment-body"><p>@Jeffrey</p>
+<p>I completely agree with this approach, both the isolation of the OR/M and the IoC bits. Could you please post a small sample solution demonstrating your technique? If you could keep the mappings simple and provide an IoC swap between NHibernate and LinqToSql you would probably be the first to provide such a sample.</p>
+<p>@Frans</p>
+<p>I believe you may be one of the most knowledgeable people in the OR/M arena, so with all due respect. The discussion is about architecture and even if LL is the OR/M of choice the points Jeffrey is making are valid. As you have stated Linq is a great step as it provides a unified query language.  Linq eliminates the largest hurdle in swapping OR/Ms, eventually all OR/Ms will have Linq providers. We still need a unified session or context but IoC with a simple interface and proxy for the context/session gets us pretty close to a swappable data layer.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2462">
+		<div id="comment-2462">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Andy</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2462">June 23, 2008 at 12:49 pm</a></div>
+
+		<div class="comment-body"><p>I&#8217;m interested this article doesn&#8217;t mention IUpdateable or IQueryable. For ASP.NET Dynamic Data, ADO.NET Entity Framework and any other entity technology from Microsoft at the moment, LINQ and providers for these new scaffolding and web service technologies are surely essential. Which is great that LLGLGen is supporting these, to provide a key alternative to ADO.NET Entity Framework. I think it&#8217;s for these specifics that NHibernate will struggle. For new projects, it doesn&#8217;t play nice with new takes on rapid development and tooling in Visual Studio.</p>
+<p>In other words, too strict de-coupling can actually hinder some enterprise application from quickly creating new interfaces such as for Silverlight or use new Sync type technologies. The blurring of Data Access and Business Logic isn&#8217;t too evil after all.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2461">
+		<div id="comment-2461">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/fbouma' rel='external nofollow' class='url'>FransBouma</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2461">June 23, 2008 at 11:46 am</a></div>
+
+		<div class="comment-body"><p>Mike: where do I say that? </p>
+<p>That&#8217;s the stupidity of these kind of discussions and comparisons: the people who write o/r mappers, and that group is really small, know these systems in and out, what they can do and can&#8217;t do. If a person of that group points out that the world is bigger than just fetching objects, it might be the case that that person does that because&#8230; the world IS actually bigger than just fetching objects? You also don&#8217;t listen to any MS employee on any MS organized conference? (because, hey, they&#8217;re just trying to sell you their stuff! <img src='http://codebetter.com/jefferypalermo/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> ).</p>
+<p>What I don&#8217;t like about the article is that it appears to make nhibernate as the most feature rich, standard o/r mapper for .NET. That&#8217;s simply not the case, on the contrary.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2460">
+		<div id="comment-2460">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mike</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2460">June 23, 2008 at 10:43 am</a></div>
+
+		<div class="comment-body"><p>Frans,</p>
+<p>So, you are saying he should use LLBLGen?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2459">
+		<div id="comment-2459">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.west-wind.com/weblog' rel='external nofollow' class='url'>Rick Strahl</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2459">June 23, 2008 at 10:28 am</a></div>
+
+		<div class="comment-body"><p>Jeff, can you give a concrete example of what your abstraction that you&#8217;re talking about here would look like? </p>
+<p>I agree with your point to a large extent which is why I typically build another layer ontop of the whatever data access mechanism I use be it high or low level. This helps with abstraction considerably and would make a conversion relatively painless, but I can&#8217;t see how to make this completely transparent. So I&#8217;d like to know how you can do this in a way that is indeed pluggable?</p>
+<p>I&#8217;ve always done this for many different applications mainly because it provides a more consistent model to talk to data for my own work.  But in the end I&#8217;ve also found that I have never actually built an application and switched out the data engine completely (backends yes, but DAL engines no). I&#8217;ve seen apps where the engine&#8217;s been swapped but in the process the app was redesigned and re-written. </p>
+<p>So I&#8217;m not so sure that this is as valuable as you are making this out to be and maybe falls under the category over-designing for a non realistic scenario :-}</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2458">
+		<div id="comment-2458">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://weblogs.asp.net/fbouma' rel='external nofollow' class='url'>FransBouma</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2458">June 23, 2008 at 9:07 am</a></div>
+
+		<div class="comment-body"><p>If you see an O/R mapper as a layer which simply pulls data out of a database and stores it into objects and vice versa, creates queries to save data inside objects, then yes, there&#8217;s little to be said about o/r mappers.</p>
+<p>But that&#8217;s a very naive view on the world. In 2008, O/R mappers are far more powerful than object fetchers. Just because you use nhibernate and think there&#8217;s nothing to be said about entity graph management in memory for example, because nhibernate doesn&#8217;t have features in that direction, doesn&#8217;t mean all O/R mappers don&#8217;t have these and other advanced features. </p>
+<p>Also, the naive view on being able to swap out any o/r mapper you pick clearly shows you never gave it much thought: no matter which data access solution you pick, (so that means: whatever you choose) it will leak through into your own code. This means that your own code will use and will be based on the characteristics provided by the data-access solution of choice: does it do graph maintenance in memory? Does it offer entity views on entity collections for easy in-memory filtering/sorting ? does it offer auditing/authorization? Which concurrency models are supported? Does it offer deep support for distributed systems so you don&#8217;t have to babysit what&#8217;s going over the wire? Does it offer what I need out of the box or do I have to invest a couple of man-months writing additional code ?etc. etc..</p>
+<p>And as Gary said above: whatever you pick / choose in the other layers is also important and will also be a factor in maintenance of the application, like which UI package is chosen. But, isn&#8217;t it also important how database migrations and feature migrations can be done with the data-access solution of choice? Like: if the database chances in the coming year, how easy is it to adapt to those changes? Is it possible to simply point the data-access solution of choice to the new database schemas and let it migrate the work you&#8217;ve done? Or do you have to do that all by yourself and therefore schedule alot of extra testing to check whether you didn&#8217;t miss a spot? </p>
+<p>If you&#8217;re so concerned about maintenance, those things would be on the top of your list. However you don&#8217;t even mention them.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2457">
+		<div id="comment-2457">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Gary A</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2457">June 23, 2008 at 7:58 am</a></div>
+
+		<div class="comment-body"><p>I&#8217;m not sure why you&#8217;re focussing on the Data Access layer when you say that you want to keep it independent of the technology.  The same applies to the presentation layer and business layer.  Technology moves on. ASP and .NET 1.1 are legacy technologies that, unfortunately, we have to support.  I don&#8217;t know what we will be wriring apps in in 5 years time, but it won&#8217;t be in .NET 3.5.  You say that you don&#8217;t believe there is a business justification for re-writing apps when technology moves on.  I beleive there is &#8211; cost of support and maintenance.  My belief is that when we build apps it should be done on the basis that in 5 years the technology will be outdated and we have to rewrite it.  Giving the business the impression that this is not the case is misleading.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2456">
+		<div id="comment-2456">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.codebucket.org' rel='external nofollow' class='url'>Lee Brandt</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2456">June 23, 2008 at 5:46 am</a></div>
+
+		<div class="comment-body"><p>Nice post. +1 for loose coupling data access. Those who say &#8220;We&#8217;ll never change our database vendor or O/R mapper&#8221; will end up have to explin to their boss later, why they need to spend 50K to rewrite the application later and it will be harder to convince theiry boss that the &#8220;new and improved&#8221; solution won&#8217;t need a rewrite in a few years.<br />
+~Lee</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2455">
+		<div id="comment-2455">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#comment-2455">June 23, 2008 at 5:29 am</a></div>
+
+		<div class="comment-body"><p>test</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/jefferypalermo/2008/06/23/objectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/jefferypalermo/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fjefferypalermo%2F2008%2F06%2F23%2Fobjectively-evaluating-o-r-mappers-or-how-to-make-it-easy-to-dump-nhibernate%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.577 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 14:15:45 -->
+<!-- super cache -->

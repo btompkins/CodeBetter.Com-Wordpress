@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>An easy and efficient way to improve .NET code performances | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='2 talks on Architecture and on Regression at Prio Conference' href='http://codebetter.com/patricksmacchia/2008/11/08/2-talks-on-architecture-and-on-regression-at-prio-conference/' />
+<link rel='next' title='Composing Code Metrics Values' href='http://codebetter.com/patricksmacchia/2008/11/25/composing-code-metrics-values/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=84' />
+<link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-84" class="post-84 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">An easy and efficient way to improve .NET code performances</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances/" title="6:24 pm" rel="bookmark"><span class="entry-date">November 19, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p style="margin: 1pt 0cm">&nbsp;<br />
+<br /><span lang="EN-US">Currently, I am getting<br />
+serious about measuring and improving performances of .NET code. I’ll post more<br />
+about this topic within the next weeks. For today I would like to present an efficient<br />
+optimization I found on something we all use massively: <b>loops on collections</b>. I talk here about the cost of the loop itself,<br />
+i.e <b>for</b> and <b>foreach</b> instructions, not the cost of the code executed in the<br />
+loop. I basically found that: </span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<ul>
+<li><i><span lang="EN-US">for</span></i><span lang="EN-US"> loops on<br />
+List&lt;T&gt; are a bit more than <b>2<br />
+times cheaper</b> than <i>foreach</i> loops on<br />
+List&lt;T&gt;.</span></li>
+</ul>
+<ul>
+<li><span lang="EN-US">Looping on array is<br />
+around <b>2 times cheaper</b> than looping<br />
+on List&lt;T&gt;.</span></li>
+</ul>
+<ul>
+<li><span lang="EN-US">As a consequence, looping<br />
+on array using <i>for</i> is <b>5 times cheaper</b> than looping on<br />
+List&lt;T&gt; using <i>foreach</i> (which I<br />
+believe, is what we all do).</span></li>
+</ul>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The <i>foreach</i> syntax sugar is a blessing and for many complex loops it is<br />
+not worth transforming <i>foreach</i> into <i>for</i>. But for certain kind of loops,<br />
+like short loops made of one or two instructions nested in some other loops, these 5 times factor can become a huge<br />
+bonus. And the good news is that the code of <a href="http://www.NDepend.com" target="_blank">NDepend&nbsp;</a>has plenty of these nested short<br />
+loops because of algorithm such as <a href="http://www.ndepend.com/Metrics.aspx#MethodRank" target="_blank">Ranking</a>,<br />
+<a href="http://www.ndepend.com/Metrics.aspx#Level" target="_blank">Level</a><a href="http://www.ndepend.com/Metrics.aspx#Level" target="_blank"><br />
+</a>and <a href="/blogs/patricksmacchia/archive/2007/12/02/dconstructing-software.aspx" target="_blank">dependencies transitive closure computation</a>.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Here is the code used to benchmark all this:</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p><textarea name="code" cols="80" rows="24">static void IterateForeachOnList(List&lt;int&gt; list) {<br />
+      foreach(int i in list) { int j = i; }<br />
+   }<br />
+   static void IterateForOnListWithoutCountOptimization(List&lt;int&gt; list) {<br />
+      for(int i=0; i &lt; list.Count; i++) { int j = list [ i ] ; }<br />
+   }<br />
+   static void IterateForOnListWithCountOptimization(List&lt;int&gt; list) {<br />
+      int count = list.Count;<br />
+      for (int i = 0; i &lt; count; i++) { int j = list [ i ] ; }<br />
+   }<br />
+   static void IterateForeachOnArray(int[] array) {<br />
+      foreach (int i in array) { int j = i; }<br />
+   }<br />
+   static void IterateForOnArrayWithoutCountOptimization(int[] array) {<br />
+      for (int i = 0; i &lt; array.Length; i++) { int j = array [ i ] ; }<br />
+   }<br />
+   static void IterateForOnArrayWithCountOptimization(int[] array) {<br />
+      int length = array.Length;<br />
+      for (int i = 0; i &lt; length; i++) { int j = array [ i ] ; }<br />
+   }<br />
+</textarea></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"></span>
+</p>
+<p style="margin: 1pt 0cm">&nbsp;<br /><span lang="EN-US">Here are the results obtained with the <a href="http://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch.aspx" target="_blank">System.Diagnostics.Stopwatch</a> class</span>: </p>
+<p style="margin: 1pt 0cm"><b><span lang="EN-US">&nbsp;</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><img src="/blogs/patricksmacchia/LoopPerformance/ConsoleOutput.jpg"> <br /></span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The fact that <i>for</i> is more efficient than <i>foreach</i> results from the fact that <i>foreach</i> is using an enumerator object<br />
+behind the scene.<br /></span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">The fact that iterating on array is<br />
+cheaper than iterating on List&lt;T&gt; comes from the fact that the IL has<br />
+instructions dedicated for array iteration. Here is the Reflector view of the<br />
+methods:</span></p>
+<p style="margin: 1pt 0cm"><b><span lang="EN-US">&nbsp;</span></b></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><img src="/blogs/patricksmacchia/LoopPerformance/Reflector.jpg">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">In the console output, we can see that <i>foreach</i> on array is a tiny bit more<br />
+costly than <i>for</i> on array. Interestingly<br />
+enough, I just checked that the C# compiler doesn’t use an enumerator object<br />
+behind the scene for <i>foreach</i> on array.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Some more interesting finding.<br />
+The profiler <a href="http://www.jetbrains.com/profiler/" target="_blank">dotTrace v3.1</a><a href="http://www.jetbrains.com/profiler/" target="_blank"></a><a href="http://www.jetbrains.com/profiler/" target="_blank"><span></span></a> gives some <i>unrealistic</i> results for this benchmark. <i>IterateForeachOnList</i> is deemed more than 40 times more costly than <i>IterateForOnArray</i> (instead of 5 times).<br />
+I tested both <i>RecordThreadTime</i> and <i>RecordWallTime</i> mode of the profiler:</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US"><span style="text-decoration: underline"><img src="/blogs/patricksmacchia/LoopPerformance/DotTrace_RecordWallTime.jpg"></span>&nbsp;</span></p>
+<p style="margin: 1pt 0cm">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Thus I also ran the<br />
+benchmark with <a href="http://www.red-gate.com/Products/ants_profiler/index.htm" target="_blank">ANTS Profiler v4.1</a><br />
+and got some more realistic results, still not perfect however (<i>IterateForeachOnList</i> is now deemed 8<br />
+times more costly than <i>IterateForOnArray</i>,instead<br />
+of 5 times).</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><img src="/blogs/patricksmacchia/LoopPerformance/ANTS_MethodLevelTiming.jpg">&nbsp;</p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">&nbsp;</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">You can download the code<br />
+of the benchmark <a href="/blogs/patricksmacchia/LoopPerformance/Program.zip" target="_blank">here</a>.<br />
+All tests have been done with release compilation mode.</span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances/" title="Permalink to An easy and efficient way to improve .NET code performances" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances/feed/" title="Comments RSS to An easy and efficient way to improve .NET code performances" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-84 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2008/11/08/2-talks-on-architecture-and-on-regression-at-prio-conference/" rel="prev"><span class="meta-nav">&larr;</span> 2 talks on Architecture and on Regression at Prio Conference</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2008/11/25/composing-code-metrics-values/" rel="next">Composing Code Metrics Values <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-464">
+					<div id="dsq-comment-header-464" class="dsq-comment-header">
+						<cite id="dsq-cite-464">
+								<span id="dsq-author-user-464">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-464" class="dsq-comment-body">
+						<div id="dsq-comment-message-464" class="dsq-comment-message"><p>Have you tried this with a non-primitive type? I wonder if unboxing the int skews the results.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-465">
+					<div id="dsq-comment-header-465" class="dsq-comment-header">
+						<cite id="dsq-cite-465">
+	http://www.NDepend.com							<span id="dsq-author-user-465">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-465" class="dsq-comment-body">
+						<div id="dsq-comment-message-465" class="dsq-comment-message"><p>Actually there is no boxing/unboxing here. Array is &#8216;generic&#8217; since .NET V1.0 and doesn&#8217;t lead to boxing/unboxing. List<int>  neither lead to any boxing/unboxing, this is one big benefits of generic implementation in .NET (and a major advantage over Java).</p>
+<p>I did the test with string instead of int and the result is even more interesting:</p>
+<p>IterateForeachOnList:                                       947 956<br />
+IterateForOnListWithoutCountOptimization: 529 602<br />
+IterateForOnListWithCountOptimization:       486 664<br />
+IterateForeachOnArray:                                      228 194<br />
+IterateForOnArrayWithoutCountOptimization:178 033<br />
+IterateForOnArrayWithCountOptimization:     178 902</int></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-466">
+					<div id="dsq-comment-header-466" class="dsq-comment-header">
+						<cite id="dsq-cite-466">
+	http://www.cuttingedge.it/blogs/steven/pivot/entry.php?id=33							<span id="dsq-author-user-466">Steven</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-466" class="dsq-comment-body">
+						<div id="dsq-comment-message-466" class="dsq-comment-message"><p>aaronjensen,</p>
+<p>There is no boxing/unboxing happening here.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-467">
+					<div id="dsq-comment-header-467" class="dsq-comment-header">
+						<cite id="dsq-cite-467">
+								<span id="dsq-author-user-467">aaronjensen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-467" class="dsq-comment-body">
+						<div id="dsq-comment-message-467" class="dsq-comment-message"><p>ah yea, you&#8217;re right. my head was in a distant land.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-468">
+					<div id="dsq-comment-header-468" class="dsq-comment-header">
+						<cite id="dsq-cite-468">
+								<span id="dsq-author-user-468">will</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-468" class="dsq-comment-body">
+						<div id="dsq-comment-message-468" class="dsq-comment-message"><p>I haven&#8217;t used PostSharp yet but maybe it could be used to swap out loop code without mangling code readability?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-469">
+					<div id="dsq-comment-header-469" class="dsq-comment-header">
+						<cite id="dsq-cite-469">
+								<span id="dsq-author-user-469">Kamran Sahhid</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-469" class="dsq-comment-body">
+						<div id="dsq-comment-message-469" class="dsq-comment-message"><p>Very Nice Article</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-470">
+					<div id="dsq-comment-header-470" class="dsq-comment-header">
+						<cite id="dsq-cite-470">
+	http://www.NDepend.com							<span id="dsq-author-user-470">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-470" class="dsq-comment-body">
+						<div id="dsq-comment-message-470" class="dsq-comment-message"><p>What a nice idea, to use a tool like PostSharp to tweak the &#8216;foreach IL&#8217; to transform it into &#8216;for IL&#8217;. This way we could get the best of both world, the syntax + the performance.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-471">
+					<div id="dsq-comment-header-471" class="dsq-comment-header">
+						<cite id="dsq-cite-471">
+	http://shishkin.org							<span id="dsq-author-user-471">Sergey Shishkin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-471" class="dsq-comment-body">
+						<div id="dsq-comment-message-471" class="dsq-comment-message"><p>After modifying your tests to eliminate JIT-compilation (pre-run all the test methods before the measurements) and compiling them in &#8220;Release&#8221; I got different results. Foreach over List is still slower than everything else, but not as dramatically:</p>
+<p>IterateForeachOnList:                     2398126<br />
+IterateForOnListWithoutCountOptimization: 1317010<br />
+IterateForOnListWithCountOptimization:    1336468<br />
+IterateForeachOnArray:                    1039196<br />
+IterateForOnArrayWithoutCountOptimization:1033318<br />
+IterateForOnArrayWithCountOptimization:   879804</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-472">
+					<div id="dsq-comment-header-472" class="dsq-comment-header">
+						<cite id="dsq-cite-472">
+								<span id="dsq-author-user-472">Vincent Jacquet</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-472" class="dsq-comment-body">
+						<div id="dsq-comment-message-472" class="dsq-comment-message"><p>@Sergey: It looks like the &#8220;int j = i;&#8221; inside the foreach loop is removed in release mode. This could explain wihy it is a little bit faster than expected.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-473">
+					<div id="dsq-comment-header-473" class="dsq-comment-header">
+						<cite id="dsq-cite-473">
+	http://wekempf.spaces.live.com							<span id="dsq-author-user-473">wekempf</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-473" class="dsq-comment-body">
+						<div id="dsq-comment-message-473" class="dsq-comment-message"><p>This has been discussed to death through out the history of .NET.</p>
+<p>On an Array, for vs. foreach is a wash.  On other types, it&#8217;s basically anyone&#8217;s guess, but you can expect them to be no better than the same operation on an Array.</p>
+<p>However, as Eric Gunnerson said on this topic (<a href="http://blogs.msdn.com/ericgu/archive/2004/04/18/115566.aspx" rel="nofollow">http://blogs.msdn.com/ericgu/archive/2004/04/18/115566.aspx</a>), changing to a for loop is generally a premature optimization.  If you&#8217;ve got specific code that&#8217;s proven to be a bottle neck, and the switch works for you, then great!  But this isn&#8217;t a general optimization, and shouldn&#8217;t just be applied to code under the assumption that it&#8217;s universally a good idea.  There&#8217;s benefits to foreach even in the cases where it&#8217;s less performant, so if it&#8217;s not proven to be a hot point in your code, do NOT simply switch to using for.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-474">
+					<div id="dsq-comment-header-474" class="dsq-comment-header">
+						<cite id="dsq-cite-474">
+								<span id="dsq-author-user-474">Vincent Jacquet</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-474" class="dsq-comment-body">
+						<div id="dsq-comment-message-474" class="dsq-comment-message"><p>IEnumerable has its virtue: isolation from the type of collection and its count of items, possible execution in parallel (the next value begin prepared on a thread while the current one is handled on another), possible lower memory footprint (once items are enumerated, they can be recycled).</p>
+<p>But of course, when dealing with optimization, arrays are often a better choice. Not only their &#8220;enumeration&#8221; using a for loop is faster, but they are also easier to use in &#8220;divide for conquer&#8221; types of parallel algorithm.</p>
+<p>Copying data from a List<t> into an T[] can also provide some isolation from the data structure in the UI thread, while processing them in several background threads.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-475">
+					<div id="dsq-comment-header-475" class="dsq-comment-header">
+						<cite id="dsq-cite-475">
+	http://www.NDepend.com							<span id="dsq-author-user-475">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-475" class="dsq-comment-body">
+						<div id="dsq-comment-message-475" class="dsq-comment-message"><p>>This has been discussed to death through out the history of .NET.</p>
+<p>wekempf, I didn&#8217;t found some detailed analysis with solid benchmark on the web so from my point of view it hasn&#8217;t been discussed at all. One needs to test and measure before rambling on a subject, this is the only way scientist can work.</p>
+<p>Applying this trick for some part of my code improved performance from more than 50% and so I thought that readers could benefit from it. </p>
+<p>If I was only listening to mainstream advices such as &#8216;don&#8217;t switch to for&#8217; I would have miss this huge performance improvement.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-476">
+					<div id="dsq-comment-header-476" class="dsq-comment-header">
+						<cite id="dsq-cite-476">
+	http://PauloMorgado.NET/							<span id="dsq-author-user-476">Paulo Morgado</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-476" class="dsq-comment-body">
+						<div id="dsq-comment-message-476" class="dsq-comment-message"><p>Hi Patrick,</p>
+<p>Have you tried to benchmark Array.ForEach<t> and List</t><t>.ForEach?</p>
+<p>I would expect the use of array.Length in the for loop to be more performant than the use of a variable. Was this a debug build?</p>
+<p>Rico Mariani&#8217;s (<a href="http://blogs.msdn.com/ricom/" rel="nofollow">http://blogs.msdn.com/ricom/</a>) advice is always to measure. Looks like that&#8217;s what you did and what everyone should do. Your analysis shows that always using foreach is not always good but should not be inferred that using foreach is always bad.</t></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-477">
+					<div id="dsq-comment-header-477" class="dsq-comment-header">
+						<cite id="dsq-cite-477">
+	http://www.NDepend.com							<span id="dsq-author-user-477">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-477" class="dsq-comment-body">
+						<div id="dsq-comment-message-477" class="dsq-comment-message"><p>Here are the result Paulo, on List using list.Foreach() is the same cost as foreach while on array it is a much higher cost. In this example, the cost of the extra-delegate invocation seems to be the same as the cost of foreach.</p>
+<p>IterateForeachOnList:                                       5196157<br />
+IterateForOnListWithoutCountOptimization: 2239475<br />
+IterateForOnListWithCountOptimization:    1838549<br />
+IterateListForeachWithDelegate:                  5109180</p>
+<p>IterateForeachOnArray:                                       1011873<br />
+IterateForOnArrayWithoutCountOptimization:1027431<br />
+IterateForOnArrayWithCountOptimization:      1020517<br />
+IterateArrayForeachWithDelegate:                  4689408</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-478">
+					<div id="dsq-comment-header-478" class="dsq-comment-header">
+						<cite id="dsq-cite-478">
+								<span id="dsq-author-user-478">Greg</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-478" class="dsq-comment-body">
+						<div id="dsq-comment-message-478" class="dsq-comment-message"><p>Patrick for discussion:</p>
+<p><a href="http://codebetter.com/blogs/gregyoung/archive/2006/06/11/146343.aspx" rel="nofollow">http://codebetter.com/blogs/gregyoung/archive/2006/06/11/146343.aspx</a></p>
+<p>Your idea of looking at IL is fundamentally flawed as the CLR has an optimizing JIT as well.</p>
+<p>Cheers,</p>
+<p>Greg</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-479">
+					<div id="dsq-comment-header-479" class="dsq-comment-header">
+						<cite id="dsq-cite-479">
+	http://www.NDepend.com							<span id="dsq-author-user-479">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-479" class="dsq-comment-body">
+						<div id="dsq-comment-message-479" class="dsq-comment-message"><p>Greg looking at IL is not my approach, my approach is to measure perf with Stopwatch and also .NET profilers. </p>
+<p>I look at IL just to give a coherent explanation of the result exposed but not vice-versa. I agree with you, just looking at IL without measuring perf doesn&#8217;t make sense.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-480">
+					<div id="dsq-comment-header-480" class="dsq-comment-header">
+						<cite id="dsq-cite-480">
+	http://blogs.msdn.com/lucian							<span id="dsq-author-user-480">Lucian Wischik</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-480" class="dsq-comment-body">
+						<div id="dsq-comment-message-480" class="dsq-comment-message"><p>I couldn&#8217;t replicate your results. For me, &#8220;for&#8221; on a list and &#8220;foreach&#8221; on a list had pretty much identical performance. (on some runs one was better, on some runs the other was better). With this code:</p>
+<p>public class Program<br />
+{<br />
+    static int store;<br />
+    static void Main(string[] args)<br />
+    {<br />
+        var max = 100000000;<br />
+        System.Console.WriteLine(&#8220;constructing&#8221;);<br />
+        var xs = new System.Collections.Generic.List<int>(max);<br />
+        for (int i = 0; i < max; i++) xs.Add(i);<br />
+        System.Console.WriteLine(&#8220;testing&#8221;);<br />
+        for (int iloop = 1; iloop <= 2; iloop++)<br />
+        {<br />
+            System.Console.WriteLine(&#8220;for&#8221;);<br />
+            var length = xs.Count;<br />
+            var s = new System.Diagnostics.Stopwatch();<br />
+            s.Start();<br />
+            for (int i = 0; i < length; i++) store = xs[i];<br />
+            s.Stop();<br />
+            System.Console.WriteLine(&#8220;for: {0}ms&#8221;, s.ElapsedMilliseconds);<br />
+            s.Reset(); s.Start();<br />
+            foreach (int i in xs) store = i;<br />
+            s.Stop();<br />
+            System.Console.WriteLine(&#8220;foreach: {0}ms&#8221;, s.ElapsedMilliseconds);<br />
+        }<br />
+    }<br />
+}</int></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-481">
+					<div id="dsq-comment-header-481" class="dsq-comment-header">
+						<cite id="dsq-cite-481">
+								<span id="dsq-author-user-481">Yogesh</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-481" class="dsq-comment-body">
+						<div id="dsq-comment-message-481" class="dsq-comment-message"><p>Dear patrick,</p>
+<p>This article is more of a generalised one. The results are not always true. Here is some code which uses a View Model for a wpf tree transversal and the results are there for you to see:<br />
+			Stopwatch sw = new Stopwatch();<br />
+			sw.Start();<br />
+			int groupCount = commandTree.Count;<br />
+			for (int i = 0; i < groupCount; i++)<br />
+			{<br />
+				var subGroupList = commandTree[i].Children;<br />
+				int subGroupCount = subGroupList.Count;</p>
+<p>				for (int j = 0; j < subGroupCount; j++)<br />
+				{<br />
+					var itemList = subGroupList[j].Children;<br />
+					int itemCount = itemList.Count;</p>
+<p>					for (int k = 0; k < itemCount; k++)<br />
+					{<br />
+						action(itemList[k]);<br />
+					}<br />
+				}<br />
+			}<br />
+			sw.Stop();<br />
+			Trace.WriteLine(&#8220;Part 0 EvaluteCommandTree: &#8221; + sw.ElapsedTicks);</p>
+<p>			sw.Reset();<br />
+			sw.Start();<br />
+			foreach (CommandViewModel group in commandTree)<br />
+			{<br />
+				foreach (CommandViewModel subGroup in group.Children)<br />
+				{<br />
+					foreach (CommandViewModel item in subGroup.Children)<br />
+					{<br />
+						action(item);<br />
+					}<br />
+				}<br />
+			}<br />
+			sw.Stop();<br />
+			Trace.WriteLine(&#8220;Part 1 EvaluteCommandTree: &#8221; + sw.ElapsedTicks);</p>
+<p>The result is:<br />
+Part 0 EvaluteCommandTree: 30392<br />
+Part 1 EvaluteCommandTree: 943</p>
+<p>Atleast it shows that complex for&#8217;s are slower than complex foreach&#8217;s!!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-482">
+					<div id="dsq-comment-header-482" class="dsq-comment-header">
+						<cite id="dsq-cite-482">
+								<span id="dsq-author-user-482">Yogesh</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-482" class="dsq-comment-body">
+						<div id="dsq-comment-message-482" class="dsq-comment-message"><p>BTW: I forgot to mention that I took the third iteration&#8217;s time so that none of the time goes in initialisation or overheads.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances/ ';
+	var disqus_identifier = '84 /blogs/patricksmacchia/archive/2008/11/19/an-easy-and-efficient-way-to-improve-net-code-performances.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "An easy and efficient way to improve .NET code performances";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=84');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2008\/11\/19\/an-easy-and-efficient-way-to-improve-net-code-performances\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.250 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 10:02:11 -->
+<!-- super cache -->

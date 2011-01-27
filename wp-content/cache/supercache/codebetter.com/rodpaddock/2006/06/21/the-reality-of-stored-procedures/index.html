@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>The Reality of Stored Procedures | Rod Paddock</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/rodpaddock/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/rodpaddock/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/rodpaddock/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/rodpaddock/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/rodpaddock/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Rod Paddock' href='http://codebetter.com/rodpaddock/' />
+<link rel='start' title='Devteach 2006' href='http://codebetter.com/rodpaddock/2006/05/05/devteach-2006/' />
+<link rel='prev' title='Robert Scoble Leaving Microsoft (Good for Robert)' href='http://codebetter.com/rodpaddock/2006/06/11/robert-scoble-leaving-microsoft-good-for-robert/' />
+<link rel='next' title='Where&#8217;s Rodman Been and Another Blog' href='http://codebetter.com/rodpaddock/2006/10/06/wheres-rodman-been-and-another-blog/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/' />
+<link rel='shortlink' href='http://codebetter.com/rodpaddock/?p=11' />
+<link rel="stylesheet" href="http://codebetter.com/rodpaddock/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/rodpaddock/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-11" class="post-11 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">The Reality of Stored Procedures</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/rodpaddock/author/rodpaddock/" title="View all posts by rodpaddock">rodpaddock</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/" title="1:51 pm" rel="bookmark"><span class="entry-date">June 21, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/rodpaddock/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/rodpaddock/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/rodpaddock/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2"></font></span>&nbsp;</p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">OK I’ve decided to jump into this discussion of using stored procedures for data access and manipulation.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">First I will start out with some background. I have been involved in building multi tier applications for nearly 10 years. In this time we have adopted a rule for our projects:</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><i><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Stored Procedures are the ONLY mechanism for accessing data.</font></font></span></i></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">In this post I will discuss some of the points made by Jermey Miller in his post: </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><a href="/blogs/jeremy.miller/archive/2006/05/25/145450.aspx"><font face="Tahoma" size="2">http://codebetter.com/blogs/jeremy.miller/archive/2006/05/25/145450.aspx</font></a></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">One thing I will compliment Jeremy on is his disclosure of the types of applications he builds.<span>&nbsp; </span>Jeremy discusses using the database as mechanism for object persistence.<span>&nbsp; </span>Jermemy states his apps are <b><i>“are primarily about business rules, not reporting”.</i></b> <span>&nbsp;</span>Fair enough.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Generally speaking the applications I work on deal with large amounts of data and an equally large number of users. The largest application I work on has over a Terabyte of live OLTP data and upwards of 1,000 concurrent users. This application started with 70GB of data in 1999 and had grown to that size in 7 years. This application was created with 100% stored procedures.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">In the interest of disclosure: I am not a TDD expert, nor do we implement a TDD style of development here. However, we do use&nbsp;concepts that have been adopted by the TDD world. Further down this blog post I will discuss TDD concepts so keep this in mind.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">So here are some of our realities:</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Stored Procedures are a Requirement for Batch Processing</font></font></span></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">In systems of any size there are always batch processes: Credit card applications need to be scored, letter files need to be created for export to mail houses, customer statements need to be created. How much of this data will you transfer to a middle tier server? If your data is of any significant size the answer&nbsp;should be none or very little. These types of processes need to be run on the server. Transferring data back and forth to a middle tier is not a wise idea on a number of levels the primary one being network performance. These types of operations are best suited to running in a stored procedure. </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Stored Procedures as API</font></font></span></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Another benefit of stored procedures is that they are an API. Stored procedures separate implementation from interface.<span>&nbsp; </span>Stored procedures are a contract between the developer layer and the database layer.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">The physical storage mechanism for data may differ greatly from<span>&nbsp; </span>the presented view of the data. DBA’s must be able to physically change the underlying data without the permission of the developers. There job is to conform to the contract they provided the developer.<span>&nbsp; </span>How they implement that contract is up to them.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Also… stored procedures can be testing in an automated way. You can incorporate stored procedure calls into your unit testing framework.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Stored Procedures and TDD</font></font></span></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2"><span>&nbsp;</span>One of Jeremy’s criticisms about stored procedures is that they: <b><i>“make TDD a slower, less productive process.” </i></b><span>&nbsp;</span>He goes on to state that referential integrity (or other database constraints) requires you to set up a lot of other data in order to run your tests. <span>&nbsp;</span>From his words he never says it’s not possible, just more difficult.<span>&nbsp; </span>It seems to me that having ordered sets of tests or branched sets of tests might solve this issue. </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><b><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">DBA’s Do Work Separately from Developers</font></font></span></b></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">In a lot of companies this is the reality: <b>DBA’s work separately from developers.</b> A lot of organizations separate operational and<span>&nbsp;&nbsp; </span>developmental (R&amp;D) duties.<span>&nbsp; </span>DBA’s responsibility is to keep a database operating within acceptable performance parameters.<span>&nbsp; </span>The function of DBA is not just making sure there’s enough disk space and that the data is backed up.</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">DBA’s do lots of query analysis and tuning. One thing that may not be obvious in a database is that a query that runs fine today might not run the same way tomorrow. Why not ? Well as data is added to a database the statistics surrounding that data may change. This means queries that ran fine last night might not run the same way today. It is the job of the DBA to fix these problems ASAP when they are found. </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">So if the queries are all being fired from a client, what is a DBA to do? Are they going to ask a developer to make a change to production code and slip stream a version to 1000 desktops during production? Yah right! What they will do in a production environment is: change the offending stored procedure, test it and put it into production on demand. This is a much less intrusive mechanism for making a change during production.<span>&nbsp; </span>Is this recommended? Not necessarily but it is a reality in a production world. </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Another reality is that in a lot of cases DBA’s own their databases. Developers are required to live in the world of the DBAs and they dictate just how data is access from there database and who can access that data.<span>&nbsp; </span>In a lot of cases DBAs will provide data to developers in the form of stored procedures, no questions asked. <span>&nbsp;</span>If this is the case what do you do with your TDD process? As Clint Eastwood said in Heartbreak Ridge: “You adapt, you overcome”. Just because it’s hard doesn’t mean it can be done. TDD developers need to adapt there processes to this reality. </font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Without saying: Let me know whatcha think!</font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2">Rodman</font></font></span></p>
+<p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt">[tags: SQL Server, SQL, TDD, Stored Procedures]<br /><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma"><font size="2"></font></font></span></p>
+<p class="MsoNormal" style="margin: 0in 0in 0pt"><span style="font-size: 14pt;font-family: 'Comic Sans MS'"><font face="Tahoma" size="2">&nbsp;</font></span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/rodpaddock/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/" title="Permalink to The Reality of Stored Procedures" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/feed/" title="Comments RSS to The Reality of Stored Procedures" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-11 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/rodpaddock/2006/06/11/robert-scoble-leaving-microsoft-good-for-robert/" rel="prev"><span class="meta-nav">&larr;</span> Robert Scoble Leaving Microsoft (Good for Robert)</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/rodpaddock/2006/10/06/wheres-rodman-been-and-another-blog/" rel="next">Where&#8217;s Rodman Been and Another Blog <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">20 Responses to <em>The Reality of Stored Procedures</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-61">
+		<div id="comment-61">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.harborobjects.com' rel='external nofollow' class='url'>Allen Berezovsky</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-61">September 24, 2009 at 7:17 pm</a></div>
+
+		<div class="comment-body"><p>Ok,</p>
+<p>I have almost a daily argument about this topic at work, and I have a pretty passionate opinion on the subject. </p>
+<p>Before I share, a little bit about me. I&#8217;ve been working on multi-tier enterprise applications, both big and small, for over eleven years now. I am both a front/end and a back/end guy. I&#8217;ve built web-based, data driven applications from Server Side Java Script on Netscape platform, to classic ASP, and all versions of .NET. I&#8217;ve worked with SQL Server 6.5 &#8211; 2008, and have done some Oracle.</p>
+<p>First of all, THERE IS NO ONE WAY TO DO THINGS THAT IS &#8220;RIGHT&#8221;! Each project presents a set of it&#8217;s own constraints, whether it&#8217;s development resources, technologies, or simply small budgets.</p>
+<p>As programmers, we some times get carried away with being adiment about doing thigs the &#8220;right&#8221; way at the expense of delivering working code quickly. A lot of times, the &#8220;right&#8221; way is code that WORKS, and is delivered QUCKLY, and is fixed QUICKLY if there is a bug. The business customer usually could care less if you have one or 4 tiers in your application. With that said, if I&#8217;m building a small to medium application, where my team is 1-5 people, and quick and working is the key, I&#8217;m using two tiers&#8230;.the front end, and stored procedures, with most of my business rules in the stored procedures, and some UI type rules in the code behind. I might utilize Microsoft Application Blocks to talk to the DB, but that&#8217;s about as far as I would go.</p>
+<p>If I&#8217;m building a big system like and ERP or something like that, and I have a big budget and a big development team where I can abstract objects, tiers, and DB roles to different development groups, and I have a strong process for unit, and integration testing, I&#8217;m putting business rules into int&#8217;s own layer, entities into it&#8217;s own layer, my sprocs are doing minimum complex work, etc.</p>
+<p>Also, we have to consider what kind of an application we are building.  If our application is simply for reporting, then just use sprocs for delivering your data. It&#8217;s a lot easier to do a complex join in a stored procedure than it is joining objects in code, even with LINQ. On the other hand if you are doing a lot of inserts, updates, single object manupulations, then it&#8217;s probably better to do it in the business layer.</p>
+<p>To continue my point, if I&#8217;m doing batch data processes that need to be scheduled, data migrations, extractions, transformations, I&#8217;m using SQL Server for that, whether it&#8217;s sprocs and jobs, or SSIS and jobs, etc. I don&#8217;t want to be writing my own services to do this when Microsoft has already done those for me, and they are already running. </p>
+<p>Here is my pet peve&#8230;..developers that create 4 tiers just for the sake of creating 4 tiers. Usually their code looks like this:  The database has just the tables, streight insert, update, select and delete stored procedures. A Data Access Layer that just calls the sprocs, A Data Layer that just calls the Data Access Layer, and a business layer that just calls the Data layer, and 99 % of all real business logic is done in the code behind of an aspx page! WHY!!!!!????? Now every time you need to add a column to the database, you have to regenerate 4 layers, and still change your code behind! What a waste of time!</p>
+<p>So as a rule of thumb, there is no rule of thumb! Every situation has to be analysed for what it is, and procede accordingly.</p>
+<p>Allen Berezovsky<br />
+MCITP Database Developer</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-60">
+		<div id="comment-60">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://PohEe.com' rel='external nofollow' class='url'>PohEe.com</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-60">January 12, 2007 at 3:36 pm</a></div>
+
+		<div class="comment-body"><p>I 100% agreed on using Stored Procedures. For my xp in Monster.com, we have a very dedicated role when designing Stored Proc. It save us alot of times esp on fine tuning our stored proc because all this job is done by our DB Engineer and not DBA</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-59">
+		<div id="comment-59">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">mike bayer</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-59">January 5, 2007 at 11:29 pm</a></div>
+
+		<div class="comment-body"><p>if im working in a place where the DBAs are actively involved in the workings of an application, are pushing as hard as the development team to get things done and add features, then the stored procedure approach can be a dream&#8230;.ive been on one project where this was the case.  it is a great model when you have the right people.</p>
+<p>on the other hand, if you work in a place where the DBA&#8217;s handle about 50 different databases for 50 different applications which they have no clue what theyre even used for, much less how to even log in (nor do they particularly care&#8230;they really do just want to do &#8220;backups and checking disk space&#8221;) declaring that &#8220;all database access shall be via SP&#8221; will lead to almost instant immobility.  most places I&#8217;ve worked have this kind of DBA.  they want to give you your tables (but question every single new column add without bothering to understand the application), and then just have you go away.</p>
+<p>so i think the question of &#8220;where do you put your business/application/persistence&#8221; logic, i.e. SP level or application, depends on largely on organizational factors and not technical ones (not to mention if youre in a shop that only uses MySQL)&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-58">
+		<div id="comment-58">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">RVBoy</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-58">November 23, 2006 at 8:11 pm</a></div>
+
+		<div class="comment-body"><p>The fact is that sometimes SP are the best and obvious choice and sometimes they are not. To start out saying &#8220;We always use SP&#8221; is Junk Science &#8211; the process of deciding the desired outcome then assembling convenient &#8220;evidence&#8221; to support it.</p>
+<p>SP for everything, all the time? How can that be? Come on, Rod, tell us it ain&#8217;t so.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-57">
+		<div id="comment-57">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.bloggingabout.net' rel='external nofollow' class='url'>Patrick Wellink</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-57">July 20, 2006 at 6:05 am</a></div>
+
+		<div class="comment-body"><p>Well, if you build your app and people start inserting records you have the possibillity to tune performance of a sproc. Usually users enter a lot more records than the testers test with. And so the performance of the DB will be different as well.</p>
+<p>To have Stored procedures only is a very usefull feature cause I as a DBA can focus on peformance and tweak SP&#8217;s to perform as best as they can.</p>
+<p>Using INDEX hints and WITH NOLOCK options can greatly affect performance without touching the logic in any way. If all those queries are hard coded you cannot tune anything and you are left witha an untunable system.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-56">
+		<div id="comment-56">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://adarshbhat.blogspot.com/' rel='external nofollow' class='url'>Adarsh Bhat</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-56">June 29, 2006 at 5:07 pm</a></div>
+
+		<div class="comment-body"><p>The lesser logic you have in the lower layers, the more flexible your overall application is. Stored procedures certainly do help when you know exaclty what is to be done. In the case of a application that expects heavy customization, this may not be such a great choice.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-55">
+		<div id="comment-55">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Neil</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-55">June 25, 2006 at 12:21 pm</a></div>
+
+		<div class="comment-body"><p>What about shrink-wrapped applications that are sent to thousands of users without DBAs? I avoid stored procs because they are hard to update as compared with queries embedded in the source code. We do not want users touching the queries anyway, so stored procs make no sense for shrink-wrapped apps.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-54">
+		<div id="comment-54">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">mb</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-54">June 22, 2006 at 9:06 pm</a></div>
+
+		<div class="comment-body"><p>Adam Machanic:</p>
+<p>&#8220;You&#8217;re saying that instead of using built-in scheduling tools, which most DBMSs ship with, that the wheel should be reinvented and developers should write their own offline processes?  That doesn&#8217;t seem like an efficient use of time to me.  What benefit do you see?&#8221;</p>
+<p>No &#8211; I believe the intent of this flurry of discussion is centered around the use of procs within applications &#8211; business object persistence, implications on TDD, etc&#8230; If I need to have a scheduled import to my database yes I&#8217;m going to use SQL Server&#8217;s built-in scheduling and DTS services. If management wants to have XYZ reports then yes, I&#8217;m going to use SQL Server Reporting Services &#8211; no way in hell am I going to recreate the wheel if it exists for me already. So no, that&#8217;s not what I was implying with my comment.</p>
+<p>What I *was* implying was that there are certain aspects of most applications that are prime candidates for external tools to handle. Batch  credit card processing in the off hours, processing canned reports and emailing them off to the appropriate parties, hitting an FTP server for the latest remote updates, etc&#8230; These activities have nothing to do with my business logic and how my objects are supposed to behave and interact with one another, which is the driving functional area behind these latest blog posts.</p>
+<p>I have seen the &#8220;I can update a stored procedure while an application is running and save the world!&#8221; notion fall on it&#8217;s face more times than I care to remember. What if you forget to put your change back into source control? (assuming you&#8217;re keeping your database scripts in source control in the first place) What if the change is localized to the site and doesn&#8217;t apply to the common code base? What happens when you need to update that customer with a new release? Having one or two of these special cases to track might not be such a big deal but once one or two people do it, it catches on real quick &#8211; you end up with a mess in no time.</p>
+<p>In the end I want the applications I create to be as loosely coupled and as easy to test as possible, and in my experience using an ORM (or similar) for the application components (not aux processes as noted above) has been the best way to achieve that. (again, my experience, YMMV)  In those situations where stored procedures cannot be avoided in an application component, such as working with a legacy database, I&#8217;ll employ iBATIS to achieve my end goals.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-53">
+		<div id="comment-53">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.encore-c.com/' rel='external nofollow' class='url'>Aaron Erickson</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-53">June 22, 2006 at 4:04 pm</a></div>
+
+		<div class="comment-body"><p>A nice dose of reality.  Thanks!</p>
+<p>The bottom line is that the DBAs are usually seen as the most &#8220;agile&#8221; people in the entire IT shop much of the time.  A DBA can produce a report for the CFO that is not defined by one of the applications laying around in an hour (yes, it might be rough, no UI, etc).  In fact, ask any DBA about Ad-Hoc requests coming in from various departments, and you might get an idea why the DBA side of the house is considered to have &#8220;more&#8221; agility much of the time than does the dev house.</p>
+<p>In no way, shape, or form, do I believe this is right or good.  But it is perception.  And it is the genesis of why the middle tier dev folks will never be the place that the DBAs are folded into for most organizations.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-52">
+		<div id="comment-52">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.datamanipulation.net' rel='external nofollow' class='url'>Adam Machanic</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-52">June 22, 2006 at 2:57 pm</a></div>
+
+		<div class="comment-body"><p>MB:</p>
+<p>&#8220;I agree that procs definitely have their place (batch processing, reporting, etc&#8230;) but really those should be external running / scheduled processes &#8221;</p>
+<p>You&#8217;re saying that instead of using built-in scheduling tools, which most DBMSs ship with, that the wheel should be reinvented and developers should write their own offline processes?  That doesn&#8217;t seem like an efficient use of time to me.  What benefit do you see?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-51">
+		<div id="comment-51">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.datamanipulation.net' rel='external nofollow' class='url'>Adam Machanic</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-51">June 22, 2006 at 2:55 pm</a></div>
+
+		<div class="comment-body"><p>Stored procedures as API.  Exactly!</p>
+<p><a href="http://www.simple-talk.com/2006/06/06/to-sp-or-not-to-sp-in-sql-server-an-argument-for-stored-procedures/" rel="nofollow">http://www.simple-talk.com/2006/06/06/to-sp-or-not-to-sp-in-sql-server-an-argument-for-stored-procedures/</a></p>
+<p>To those who say otherwise, ask yourself a simple question:  When designing an object-oriented system, would you mark all of your internal properties as public?  By not using stored procedures, that&#8217;s EXACTLY what you&#8217;re doing with the database.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-50">
+		<div id="comment-50">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.codebetter.com/blogs/eric.wise' rel='external nofollow' class='url'>ewise</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-50">June 22, 2006 at 2:53 pm</a></div>
+
+		<div class="comment-body"><p>In our environment things like credit cards get scrubbed on the UI layer and once again in the stored procedure.</p>
+<p>Repeat business logic?  Certainly.  Safety for both in process and out of process calls? Definitely.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-49">
+		<div id="comment-49">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://flimflan.com/blog' rel='external nofollow' class='url'>Joshua Flanagan</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-49">June 22, 2006 at 12:51 pm</a></div>
+
+		<div class="comment-body"><p>Rod &#8211; it seems like your argument is heavily based on &#8220;if stored procedures are being forced on you, then stored procedures are a viable solution.&#8221;  I don&#8217;t think anyone would argue that.<br />
+When people discuss preferences over whether to use stored procedures or not, there is an assumption that they have a choice. It is &#8220;what would I do, when given the chance to make a design decision.&#8221;<br />
+So with that in mind, of course most of the arguments are going to make assumptions that projects are new, and all code can go through the middle tier (since you are designing it). That should not be surprising.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-48">
+		<div id="comment-48">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://DevPrime.com' rel='external nofollow' class='url'>Rob</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-48">June 21, 2006 at 10:14 pm</a></div>
+
+		<div class="comment-body"><p>Jake, absolutely, although rather than pure opinion, I&#8217;d like to say that it should probably depend on the realities and possibilities of the project and environment as well.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-47">
+		<div id="comment-47">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Sachin Rao</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-47">June 21, 2006 at 8:23 pm</a></div>
+
+		<div class="comment-body"><p>Tired old discussion.  I&#8217;m not sure if anything new came out of this blog.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-46">
+		<div id="comment-46">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">mb</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-46">June 21, 2006 at 7:48 pm</a></div>
+
+		<div class="comment-body"><p>Check out iBATIS (<a href="http://ibatis.apache.org/" rel="nofollow">http://ibatis.apache.org/</a>) &#8211; gives you that clean break between the role of DBA and developer &#8211; map existing procs / queries to objects via an external definition file &#8211; very handy.</p>
+<p>I agree that procs definitely have their place (batch processing, reporting, etc&#8230;) but really those should be external running / scheduled processes IMO</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-45">
+		<div id="comment-45">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.thoughtstoblog.com' rel='external nofollow' class='url'>Jake Good</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-45">June 21, 2006 at 6:33 pm</a></div>
+
+		<div class="comment-body"><p>I would agree that my arguments were tailored towards new projects&#8230; </p>
+<p>I would also agree that its dangerous to view entirely from tools/methodologies&#8230;</p>
+<p>The interesting part of the discussion is that&#8230; if there really were hard concrete, quantifiable facts that prove one way or the other (using stored procs)&#8230; we&#8217;d all be in the same boat. Maybe this topic will always be left up to an opinion! <img src='http://codebetter.com/rodpaddock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-44">
+		<div id="comment-44">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://DevPrime.com' rel='external nofollow' class='url'>Rob</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-44">June 21, 2006 at 6:05 pm</a></div>
+
+		<div class="comment-body"><p>RE: Jake<br />
+>If you&#8217;re using stored procedures to dump data, you better be doing<br />
+>some validation&#8230; and I don&#8217;t really like the idea of having that logic in<br />
+>stored procedures.</p>
+<p>I keep seeing this assumption over and over &#8211; the assumption that all code will go through the middle tier you are creating and that all projects are new. This is very far from the reality of many IT environments. They already have existing DBs with existing SPs that contain business logic. Additionally, other legacy systems may already be using the database. Perhaps they need incomaptible (with the middle tier) systems to also work with the database. This ideal world where all the logic can exist purely as .NET code with inline SQL generated by some template is something that isn&#8217;t always feasible.</p>
+<p>Also, in shops where the DBA&#8217;s are responsible for data integrity, pushing that job onto the .NET developers will never be allowed. And while you may find that perhaps it should be ideally, you still have to deal with systems that do not fit that model. The cost-benefit analysis will prevent those systems from being changed just because some TDD people prefer to put all the logic in *their* middle tier. Obviously, this approach is better suited to new projects, and won&#8217;t work everywhere.</p>
+<p>Again, the ideological and pure (and sometimes dogmatically religious) approach needs to be tempered with practicality and possibilty. That&#8217;s where we need to be careful and separate the arguments for &#8220;should be&#8221;, &#8220;can be&#8221;, and &#8220;must be&#8221;. I still think that people are viewing everything in the context of their tools/methodologies (in this case, TDD with templates/nHibernate), and that&#8217;s coloring their reality. The danger then is that the methodologies and tools become more important than the projects and environments, which is a little self-defeating. If all you have is a hammer, everything looks like a nail.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-43">
+		<div id="comment-43">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dotnetjunkies.com/weblog/johnwood' rel='external nofollow' class='url'>johnwood</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-43">June 21, 2006 at 5:39 pm</a></div>
+
+		<div class="comment-body"><p>>> Transferring data back and forth to a middle tier is not a wise idea on a number of levels the primary one being network performance.  <<<br />
+I&#8221;m not sure I buy the performance argument. If it&#8217;s really an issue you can run the process on the same machine as the database and you&#8217;ll just end up with IPC and nothing on the wire, and IPC can be pretty fast. Saying that I haven&#8217;t done any actual performance comparisons between using cursors in an SP and cursors via IPC. The slight drawback in performance, IMO, is eclipsed by the advantages in being able to write your business logic against abstract business entities rather than rows of data.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-42">
+		<div id="comment-42">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.thoughtstoblog.com' rel='external nofollow' class='url'>Jake Good</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#comment-42">June 21, 2006 at 5:26 pm</a></div>
+
+		<div class="comment-body"><p>Though I&#8217;m happy that no argument was posed that stored procedures are useful as they are compiled/in-memory and run faster&#8230; I still want to comment on a few items that you posed (without reading the original story).</p>
+<p>*Stored Procedures are a Requirement for Batch Processing*<br />
+Though I think we all agree that your problem is definitely one that a lot of systems can fall to&#8230; I don&#8217;t think that stored procedures are the only answer. Intelligent software in code can accomplish similar tasks. This assumes that no sort of business logic or validation needs to take place.</p>
+<p>Which brings up my next point:<br />
+*Stored Procedures as API*<br />
+Duplicating code or having business logic / validation in stored procedures breaks many accepted development practices. If you&#8217;re using stored procedures to dump data, you better be doing some validation&#8230; and I don&#8217;t really like the idea of having that logic in stored procedures. APIs means that there&#8217;s encapsulation&#8230; which means some sort of logic that people can&#8217;t see unless they know how to read / edit stored procs, another bad idea.</p>
+<p>In the case you presented about credit card processing&#8230; it&#8217;s a business rule that the credit card numbers have to be entered in correctly&#8230; this logic clearly needs to go in the middle layer AND/OR in the presentation layer. Otherwise we have lots of duplicate logic and a potential for multiple points of failure.</p>
+<p>*Stored Procedures and TDD*<br />
+I would agree with your point that if your tests are setup properly, then there&#8217;s no excuse. Test Scaffoldings work out really well. If your data access code is written well.. and your middle tiers are written well, then your tests should have an easy time proving it.</p>
+<p>*DBA’s Do Work Separately from Developers*<br />
+I see the role of a DBA diminishing and being folded into development all the time. Our team of people working on a project continually does it&#8217;s own DBA style stuff. Granted when you&#8217;re in a high-demand&#8230; large data scenario, you&#8217;ll want someone to optimize the data storage, but for a lot of applications&#8230; it&#8217;s not the first thing you should be looking at.</p>
+<p>Of course this is all rambling and my opinion&#8230; but you asked! <img src='http://codebetter.com/rodpaddock/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/rodpaddock/2006/06/21/the-reality-of-stored-procedures/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/rodpaddock/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Frodpaddock%2F2006%2F06%2F21%2Fthe-reality-of-stored-procedures%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.318 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 13:54:03 -->
+<!-- super cache -->

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Introduction to the Reactive Extensions for JavaScript – Composing Callbacks | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Introduction to the Reactive Extensions for JavaScript – jQuery Integration' href='http://codebetter.com/matthewpodwysocki/2010/03/05/introduction-to-the-reactive-extensions-for-javascript-jquery-integration/' />
+<link rel='next' title='Introduction to the Reactive Extensions for JavaScript – From Blocking to Async' href='http://codebetter.com/matthewpodwysocki/2010/03/12/introduction-to-the-reactive-extensions-for-javascript-from-blocking-to-async/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=207' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-207" class="post-207 post type-post status-publish format-standard hentry category-event-based-porgramming category-javascript category-jsconf category-reactive-framework">
+					<h1 class="entry-title">Introduction to the Reactive Extensions for JavaScript – Composing Callbacks</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks/" title="5:27 am" rel="bookmark"><span class="entry-date">March 11, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>So far in this series, we’ve covered some basic information about the Reactive Extensions for JavaScript (RxJS) including creating observables and creating observers as well as jQuery integration.&#160; Now that we have a foundation in some of the basic building blocks, let’s actually do something interesting with it.&#160; For example, how would we compose two AJAX calls together with callbacks?&#160; In this post, we’ll explore using the Bing Translator in combination with jQuery and the RxJS.</p>
+<p>Before we get started, let’s get caught up to where we are today:</p>
+<ul>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/16/introduction-to-the-reactive-extensions-to-javascript.aspx">Introduction</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/23/introduction-to-the-reactive-extensions-for-javascript-creating-observables.aspx">Creating Observables</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/27/introduction-to-the-reactive-extensions-for-javascript-creating-observers.aspx">Creating Observers</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/05/introduction-to-the-reactive-extensions-for-javascript-jquery-integration.aspx">jQuery Integration</a> </li>
+</ul>
+<h2>Detecting and Translating Text with the Microsoft Translator</h2>
+<p>One of the many examples I’ve played with involving asynchronous programming, especially with my F# samples as well as the Reactive Extensions for .NET is using the <a href="http://www.microsofttranslator.com/Default.aspx">Microsoft Translator</a>.&#160; This API, which is provided in several flavors (SOAP, AJAX and HTTP) allows us to not only translate but also detect the language of a given piece of text.&#160; Just as well, there are other functions such as getting all languages codes and getting all language names by language code, and we’ll cover that in a subsequent post.&#160; Getting started, you need to apply for a developer key which you can get <a href="http://www.microsofttranslator.com/Dev/Ajax/">here</a>.&#160; From there, we can embed our JavaScript link in our HTML so that we can get started.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">&lt;</span><span style="color: #800000">script </span><span style="color: #FF0000">type</span><span style="color: #0000FF">="text/javascript"</span><span style="color: #FF0000">
+        src</span><span style="color: #0000FF">="http://api.microsofttranslator.com/V1/Ajax.svc/Embed?appId=myAppId"</span><span style="color: #0000FF">&gt;</span><span style="background-color: #F5F5F5;color: #000000">
+</span><span style="color: #0000FF">&lt;/</span><span style="color: #800000">script</span><span style="color: #0000FF">&gt;</span><span style="color: #000000">
+</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In this example, we’re going to first detect the language of the given piece of text and then translate it into another language.&#160; In honor of Erik and his team, I decided on Dutch as the destination language.&#160; In order to detect the language we need to call the detect function which looks like the following.&#160; It takes in some text and then a callback which then will give us our result as the function parameter.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Microsoft.Translator.detect(
+    text,      </span><span style="color: #008000">//</span><span style="color: #008000"> Text of the unknown language </span><span style="color: #008000">
+</span><span style="color: #000000">    callback); </span><span style="color: #008000">//</span><span style="color: #008000"> A callback on complete</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Next, we need the ability to translate our text to Dutch once we’ve determined the source language.&#160; In order to do so, we must call the aptly named translate function which we provide our text, a from language that we’ll provide from our detect function callback, our destination language and finally a callback which provides us with the resulting text.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Microsoft.Translator.translate(
+    text,      </span><span style="color: #008000">//</span><span style="color: #008000"> Text to translate </span><span style="color: #008000">
+</span><span style="color: #000000">    from,      </span><span style="color: #008000">//</span><span style="color: #008000"> The source language</span><span style="color: #008000">
+</span><span style="color: #000000">    to,        </span><span style="color: #008000">//</span><span style="color: #008000"> The destination language</span><span style="color: #008000">
+</span><span style="color: #000000">    callback); </span><span style="color: #008000">//</span><span style="color: #008000"> The handling callback</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What you’ve noticed from these two functions is that they provide callback functions for each.&#160; If we want truly compositional behavior, our code could get quite messy especially if we’re doing anything such as filtering results, transforming, aggregating and so forth.&#160; But for now, we’ll have a simple example of composing these callbacks together.&#160; In order to do so, we have to turn these two functions, detect and translate into Observables.&#160; So, how do we do that?&#160; </p>
+<p>In this case, we’ll make use of the AsyncSubject class which allows us to represent the result of an asynchronous operation.&#160; This class will take one value and only one value and then caches it for all future calls and acts as both an Observer and an Observable.&#160; So for each time we call this subsequently, it will not cause a side effect and instead yield us the cached calculated value.&#160; We’ll then call the detect method with our text and a callback, and inside of our callback, we’ll yield the value with OnNext and then mark our sequence as completed by calling OnCompleted.&#160; Finally, we’ll return our AsyncSubject as an Observable and hide the fact that it’s both an Observer and Observable.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">function</span><span style="color: #000000"> detect(text) {
+    </span><span style="color: #0000FF">var</span><span style="color: #000000"> subject </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Rx.AsyncSubject();
+
+    Microsoft.Translator.detect(
+        text,
+        </span><span style="color: #0000FF">function</span><span style="color: #000000">(result) {
+            subject.OnNext(result);
+            subject.OnCompleted();
+    });
+
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> subject.AsObservable();
+}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The same also applies to our translate function in pretty much the same form as we have above. </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">function</span><span style="color: #000000"> translate(text, from, to) {
+    </span><span style="color: #0000FF">var</span><span style="color: #000000"> subject </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Rx.AsyncSubject();
+
+    Microsoft.Translator.translate(
+        text,
+        from,
+        to,
+        </span><span style="color: #0000FF">function</span><span style="color: #000000">(translation) {
+            subject.OnNext(translation);
+            subject.OnCompleted();
+    });
+
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> subject.AsObservable();
+}</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now, let’s compose these together in such a way that we first detect the language of the text and then translate.&#160; To make that happen, we’ll use the SelectMany method which projects each value of our observable sequence to an observable sequence and flattens the resulting observable sequences into one observable sequence.&#160; In this case, we’re only projecting one value to the next observable sequence.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">var</span><span style="color: #000000"> translator </span><span style="color: #000000">=</span><span style="color: #000000"> detect(translateText)
+    .SelectMany(</span><span style="color: #0000FF">function</span><span style="color: #000000">(detected) {
+        </span><span style="color: #0000FF">return</span><span style="color: #000000"> translate(translateText, detected, </span><span style="color: #000000">"</span><span style="color: #000000">nl</span><span style="color: #000000">"</span><span style="color: #000000">);
+    });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Of course we could do more like filter, scan, etc with this, but it’s a good start.&#160; Now bringing it all together in a jQuery and RxJS way, we can now complete our example by wiring up our HTML to take the input from a textbox once a button has been clicked, translate it, and display the result. </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">$(document).ready(</span><span style="color: #0000FF">function</span><span style="color: #000000">() {
+    $(</span><span style="color: #000000">"</span><span style="color: #000000">#translateCommand</span><span style="color: #000000">"</span><span style="color: #000000">)
+        .ToObservable(</span><span style="color: #000000">"</span><span style="color: #000000">click</span><span style="color: #000000">"</span><span style="color: #000000">)
+        .Subscribe(</span><span style="color: #0000FF">function</span><span style="color: #000000">(event) {
+
+        </span><span style="color: #0000FF">var</span><span style="color: #000000"> translateText </span><span style="color: #000000">=</span><span style="color: #000000"> $(</span><span style="color: #000000">"</span><span style="color: #000000">#translateText</span><span style="color: #000000">"</span><span style="color: #000000">).val();
+        </span><span style="color: #0000FF">var</span><span style="color: #000000"> translator </span><span style="color: #000000">=</span><span style="color: #000000"> detect(translateText)
+            .SelectMany(</span><span style="color: #0000FF">function</span><span style="color: #000000">(detected) {
+                </span><span style="color: #0000FF">return</span><span style="color: #000000"> translate(translateText, detected, </span><span style="color: #000000">"</span><span style="color: #000000">nl</span><span style="color: #000000">"</span><span style="color: #000000">);
+            });
+
+        translator.Subscribe(</span><span style="color: #0000FF">function</span><span style="color: #000000">(translated) {
+            $(</span><span style="color: #000000">"</span><span style="color: #000000">#translatedText</span><span style="color: #000000">"</span><span style="color: #000000">).html(translated);
+        });
+    });
+});</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p> And now we can see it in action by entering a sentence and sure enough it detects it as English properly.</p>
+<p><a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/matthew.podwysocki/image_5F00_26DF35FC.png"><img style="border-right-width: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px" border="0" alt="image" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/matthew/podwysocki/image_thumb_06D03B0D.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919787602&amp;Signature=eb6M39bSHoCqX%2fPEY3LOW%2fFrBTw%3d" width="314" height="125" /></a> </p>
+<p>How can I be sure of that?&#160; What if I want to perform a side effect during the process, such as displaying our detected language?&#160; To do that, we can use the Do method which invokes some sort of action for its side effect for each item in the sequence.&#160; We could then change our translator Observable to the following to enable that behavior.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">var</span><span style="color: #000000"> translator </span><span style="color: #000000">=</span><span style="color: #000000"> detect(translatedText)
+    .Do(</span><span style="color: #0000FF">function</span><span style="color: #000000">(detected) {
+        $(</span><span style="color: #000000">"</span><span style="color: #000000">#detectedText</span><span style="color: #000000">"</span><span style="color: #000000">).html(</span><span style="color: #000000">"</span><span style="color: #000000">Detected </span><span style="color: #000000">"</span><span style="color: #000000"> </span><span style="color: #000000">+</span><span style="color: #000000"> detected);
+    })
+    .SelectMany(</span><span style="color: #0000FF">function</span><span style="color: #000000">(detected) {
+        </span><span style="color: #0000FF">return</span><span style="color: #000000"> translate(translatedText, detected, </span><span style="color: #000000">"</span><span style="color: #000000">nl</span><span style="color: #000000">"</span><span style="color: #000000">);
+    });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now we have a nice compositional and quite fluent chain which deals with asynchronous behavior.&#160; Invoking it this time in Spanish, we get the following result.</p>
+<p><a href="http://codebetter.com/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/matthew.podwysocki/image_5F00_74F72E04.png"><img style="border-bottom: 0px;border-left: 0px;border-top: 0px;border-right: 0px" border="0" alt="image" src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Blogs.Components.WeblogFiles/matthew/podwysocki/image_thumb_220C1AD3.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919787602&amp;Signature=7oe0l%2faO5tX82H2zq1ygRkqJjm0%3d" width="309" height="163" /></a> </p>
+<p>We could go even further to aggregate counts of which language was detected over time by using the Scan function, but that’s for another time.</p>
+<h2>Conclusion</h2>
+<p>Through the use of the Reactive Extensions for JavaScript, we’re able to bring compositional behavior to that which had been harder to do, such as asynchronous callbacks.&#160; We’re able to get code in a nice fluent manner that makes sense and let’s us focus on the core problem domain instead of scattering code within a bunch of callbacks which can lead to any number of race conditions.</p>
+<p>This of course is only scratching the surface of what capabilities this library has and there is much more yet left to cover.&#160; The question you’re probably asking now is where can I get it?&#160; Well, for that you’ll have to stay tuned.&#160; I hope to have more announcements soon about its general availability.</p>
+<p>What can I say?&#160; I love JavaScript and very much looking forward to the upcoming <a href="http://jsconf.us/2010">JSConf 2010</a> here in Washington, DC where the Reactive Extensions for JavaScript will be shown in its full glory with <a href="http://twitter.com/jvgogh">Jeffrey Van Gogh</a> (who you can now follow on Twitter).&#160; For too many times, we’ve looked for the abstractions over the natural language of the web (HTML, CSS and JavaScript) and created monstrosities instead of embracing the web for what it is.&#160; With libraries such as jQuery and indeed the Reactive Extensions for JavaScript gives us better tools for dealing with the troubled child that is DOM manipulation and especially events.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/event-based-porgramming/" title="View all posts in Event-based Porgramming" rel="category tag">Event-based Porgramming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/javascript/" title="View all posts in JavaScript" rel="category tag">JavaScript</a>, <a href="http://codebetter.com/matthewpodwysocki/category/jsconf/" title="View all posts in JSConf" rel="category tag">JSConf</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks/" title="Permalink to Introduction to the Reactive Extensions for JavaScript – Composing Callbacks" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks/feed/" title="Comments RSS to Introduction to the Reactive Extensions for JavaScript – Composing Callbacks" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-207 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/03/05/introduction-to-the-reactive-extensions-for-javascript-jquery-integration/" rel="prev"><span class="meta-nav">&larr;</span> Introduction to the Reactive Extensions for JavaScript – jQuery Integration</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/03/12/introduction-to-the-reactive-extensions-for-javascript-from-blocking-to-async/" rel="next">Introduction to the Reactive Extensions for JavaScript – From Blocking to Async <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-492">
+					<div id="dsq-comment-header-492" class="dsq-comment-header">
+						<cite id="dsq-cite-492">
+	http://www.javascriptbank.com/							<span id="dsq-author-user-492">JavascriptBank.com</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-492" class="dsq-comment-body">
+						<div id="dsq-comment-message-492" class="dsq-comment-message"><p>very cool &#038; good tip, thank you very much for sharing</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-493">
+					<div id="dsq-comment-header-493" class="dsq-comment-header">
+						<cite id="dsq-cite-493">
+	http://www.servicestack.net/mythz_blog/							<span id="dsq-author-user-493">Demis Bellot</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-493" class="dsq-comment-body">
+						<div id="dsq-comment-message-493" class="dsq-comment-message"><p>&#8220;To make that happen, we’ll use the SelectMany method which projects each value of our observable sequence to an observable sequence and flattens the resulting observable sequences into one observable sequence.  In this case, we’re only projecting one value to the next observable sequence.&#8221;</p>
+<p>I think its sentences like the above that is hindering readability of an otherwise good series. Rx is a very nice succinct API but in order to take advantage of it I&#8217;m going to need a better idea of &#8216;why&#8217; I need to do something.</p>
+<p>With the above example I&#8217;m still not sure why we have to use &#8216;SelectMany&#8217; since as far as I can tell where only producing 1-click => 1 detect language => 1 translate text. Given the previous assumption what would the effect be if we didn&#8217;t use &#8216;SelectMany&#8217;?</p>
+<p>Also I&#8217;m lost as to why you need a separate &#8216;Do&#8217; method chain when it looks like you could quite easily merge the:</p>
+<p>>$(&#8220;#detectedText&#8221;).html(&#8220;Detected &#8221; + detected);</p>
+<p>In the &#8216;SelectMany&#8217; method body? Again its more code to write and not obvious why we have to write it. I think having more code examples is definitely going to help.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-494">
+					<div id="dsq-comment-header-494" class="dsq-comment-header">
+						<cite id="dsq-cite-494">
+	http://codebetter.com/members/Matthew.Podwysocki/default.aspx							<span id="dsq-author-user-494">Matthew.Podwysocki</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-494" class="dsq-comment-body">
+						<div id="dsq-comment-message-494" class="dsq-comment-message"><p>@Demis,</p>
+<p>Ok, let&#8217;s look at your questions each one at a time.</p>
+<p>To think about why we&#8217;d use a SelectMany over Select is the following:</p>
+<p>Remember, the signature of each, IObservable<t> and IObservable<u>.  To do that by default, you use a SelectMany, even if the observable sequence only yields a single value, else you use a Select and Switch which I&#8217;ve covered before.  </p>
+<p>Now think your solution of using Select through here.  If I want to transform one observable sequence to another, using Select&#8230;</p>
+<p>// IObservable<t> -> (T -> IObservable<u>) -> IObservable<iobservable <U>><br />
+someOperation.Select(x => someOtherOperation(x))</p>
+<p>The problem with that approach is that unless you have a Switch statement to return that single value, you now took a IObservable<t> and turned it into an IObservable<iobservable <U>>.  The Select and Switch is the same intent of the SelectMany with a single value.</p>
+<p>The reason why I broke the Do into a separate step is the separation of concerns that I have.  I want my Do to only do one thing and I want my SelectMany to have the same intent, one thing.  To think about programming in Rx, we think about small composable steps.</p>
+<p>Matt</iobservable></t></iobservable></u></t></u></t></p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks/ ';
+	var disqus_identifier = '207 /blogs/matthew.podwysocki/archive/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Introduction to the Reactive Extensions for JavaScript – Composing Callbacks";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=207');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/03\/11\/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.248 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 10:57:57 -->
+<!-- super cache -->

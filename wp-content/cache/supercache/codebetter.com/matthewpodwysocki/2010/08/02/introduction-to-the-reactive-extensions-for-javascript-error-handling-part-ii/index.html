@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Introduction to the Reactive Extensions for JavaScript – Error Handling Part II | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/matthewpodwysocki/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/matthewpodwysocki/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Matthew Podwysocki' href='http://codebetter.com/matthewpodwysocki/' />
+<link rel='start' title='let Matt = CodeBetter + 1' href='http://codebetter.com/matthewpodwysocki/2008/04/24/let-matt-codebetter-1/' />
+<link rel='prev' title='Introduction to the Reactive Extensions for JavaScript – Error Handling Part I' href='http://codebetter.com/matthewpodwysocki/2010/07/20/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-i/' />
+<link rel='next' title='IronRuby and the Reactive Extensions for .NET Together at Last' href='http://codebetter.com/matthewpodwysocki/2010/08/05/ironruby-and-the-reactive-extensions-for-net-together-at-last/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/matthewpodwysocki/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii/' />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=234' />
+<link rel="stylesheet" href="http://codebetter.com/matthewpodwysocki/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/matthewpodwysocki/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/matthewpodwysocki/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-234" class="post-234 post type-post status-publish format-standard hentry category-event-based-porgramming category-javascript category-jsconf category-reactive-framework">
+					<h1 class="entry-title">Introduction to the Reactive Extensions for JavaScript – Error Handling Part II</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by matthewpodwysocki">matthewpodwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii/" title="7:16 pm" rel="bookmark"><span class="entry-date">August 2, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/matthewpodwysocki/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>We’ve covered a bit recently with conditional and looping operators on the <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">Reactive Extensions for JavaScript</a>, but I want to step back just a minute and cover exception handling.&#160; This post will cover how we can compensate for errors as they happen in several ways and will largely follow <a href="http://bartdesmet.net/blogs/bart/archive/2009/12/27/more-linq-with-system-interactive-exceptional-exception-handling.aspx">Bart de Smet’s post on the same topic</a>, but instead of covering the Interactive Extensions, we’ll stick primarily in JavaScript.&#160; Last time, we covered the basics of error handling including Catch and Finally.</p>
+<p>Before we get started, let’s get caught up to where we are today:</p>
+<ul>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/16/introduction-to-the-reactive-extensions-to-javascript.aspx">Introduction</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/23/introduction-to-the-reactive-extensions-for-javascript-creating-observables.aspx">Creating Observables</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/02/27/introduction-to-the-reactive-extensions-for-javascript-creating-observers.aspx">Creating Observers</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/05/introduction-to-the-reactive-extensions-for-javascript-jquery-integration.aspx">jQuery Integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/11/introduction-to-the-reactive-extensions-for-javascript-composing-callbacks.aspx">Composing Callbacks</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/12/introduction-to-the-reactive-extensions-for-javascript-from-blocking-to-async.aspx">From Blocking to Async</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/15/introduction-to-the-reactive-extensions-for-javascript-wikipedia-lookup.aspx">Wikipedia Lookup</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/16/introduction-to-the-reactive-extensions-for-javascript-composing-deeper.aspx">Composing Deeper</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/17/the-reactive-extensions-for-javascript-released.aspx">Bing Maps and Twitter Mashup</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/19/introduction-to-the-reactive-extensions-for-javascript-drag-and-drop.aspx">Drag and Drop</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/03/21/introduction-to-the-reactive-extensions-for-javascript-jquery-live-event-integration.aspx">jQuery Live Event integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/02/introduction-to-the-reactive-extensions-for-javascript-extending-jquery-ajax.aspx">jQuery AJAX integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/09/introduction-to-the-reactive-extensions-for-javascript-a-separation-of-concerns.aspx">A Separation of Concerns</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/14/introduction-to-the-reactive-extensions-for-javascript-aggregation-part-1.aspx">Aggregates – Part 1</a> and <a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/14/introduction-to-the-reactive-extensions-for-javascript-aggregation-part-2.aspx">Part 2</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/19/introduction-to-the-reactive-extensions-for-javascript-new-release-and-joins.aspx">Join Operators</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/04/23/introduction-to-the-reactive-extensions-for-javascript-going-parallel-with-forkjoin.aspx">Going “Parallel” with ForkJoin</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/04/introduction-to-the-reactive-extensions-for-javascript-refactoring-a-game.aspx">Refactoring a Game</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/10/introduction-to-the-reactive-extensions-for-javascript-async-method-chaining.aspx">Async Method Chaining</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/12/introduction-to-the-reactive-extensions-for-javascript-custom-schedulers.aspx">Custom Schedulers</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/17/introduction-to-the-reactive-extensions-for-javascript-the-final-countdown-timer.aspx">Countdown Timers</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/05/28/introduction-to-the-reactive-extensions-for-javascript-wrapping-the-dojo-api.aspx">Wrapping the Dojo Toolkit</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/06/04/introduction-to-the-reactive-extensions-for-javascript-mootools-integration.aspx">MooTools Integration</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/06/16/introduction-to-the-reactive-extensions-for-javascript-conditionals.aspx">Conditional Operators</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/06/24/introduction-to-the-reactive-extensions-for-javascript-looping-operators.aspx">Looping Operators</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2010/07/20/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-i.aspx">Error Handling Part 1</a> </li>
+</ul>
+<h2>OnErrorResumeNext VB Style</h2>
+<p>The next error handling feature in the Reactive Extensions for JavaScript is one that should be familiar with those in the Visual Basic world, called OnErrorResumeNext (<a href="http://msdn.microsoft.com/en-us/library/5hsw66as(VS.80).aspx">On Error Resume Next</a>).&#160;&#160; In Visual Basic parlance, this meant you specify that when a run-time error occurs, control goes to the statement immediately following the statement where the error occurred, and execution continues from that point.&#160; The functionality is similar to the Concat operator which allows you append Observable sequences onto each other to create a single sequence, except that should an error occur, it is not bubbled up and instead continues to the next.&#160; This operator comes in two flavors, one as a static method and one as an instance method:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> items : Observable[]</span><span style="color: #008000">
+//</span><span style="color: #008000"> scheduler : optional custom scheduler</span><span style="color: #008000">
+//</span><span style="color: #008000"> returns : Observable</span><span style="color: #008000">
+</span><span style="color: #000000">
+Rx.Observable.prototype.OnErrorResumeNext(
+    items,
+    scheduler);
+
+</span><span style="color: #008000">//</span><span style="color: #008000"> items : Observable[]</span><span style="color: #008000">
+//</span><span style="color: #008000"> returns : Observable</span><span style="color: #008000">
+</span><span style="color: #000000">Rx.Observable.OnErrorResumeNext(
+    items);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Let’s create a simple example where we want to output the numbers 1 through 9, even if an exception occurs along the way.&#160; In this case, we yield two arrays and the third then has an exception concatenated to the end before then yielding the final array.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Rx.Observable.OnErrorResumeNext([
+    Rx.Observable.FromArray([</span><span style="color: #000000">1</span><span style="color: #000000">, </span><span style="color: #000000">2</span><span style="color: #000000">]),
+    Rx.Observable.FromArray([</span><span style="color: #000000">3</span><span style="color: #000000">, </span><span style="color: #000000">4</span><span style="color: #000000">, </span><span style="color: #000000">5</span><span style="color: #000000">]),
+    Rx.Observable.FromArray([</span><span style="color: #000000">6</span><span style="color: #000000">, </span><span style="color: #000000">7</span><span style="color: #000000">]).Concat(Rx.Observable.Throw(</span><span style="color: #000000">"</span><span style="color: #000000">woops!</span><span style="color: #000000">"</span><span style="color: #000000">)),
+    Rx.Observable.FromArray([</span><span style="color: #000000">8</span><span style="color: #000000">, </span><span style="color: #000000">9</span><span style="color: #000000">])])
+    .Subscribe(
+        </span><span style="color: #0000FF">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">"</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">"</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">"</span><span style="color: #000000">#results</span><span style="color: #000000">"</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>This is great for handling data that may be potentially bad and is ok to drop the exception should it occur.</p>
+<h2>Cleaning Up With Using</h2>
+<p>Just as in .NET there is the using keyword to denote a try/finally with a call to Dispose, we need a similar capability in the JavaScript world for resource cleanup in the asynchronous world.&#160; Let’s look at the signature of the function which takes a resource selector which returns the Disposable object, and then the usage which takes the Disposable object and you return an Observable sequence.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> resourceSelector : () -&gt; Disposable,</span><span style="color: #008000">
+//</span><span style="color: #008000"> resourceUsage : Disposable -&gt; Observable</span><span style="color: #008000">
+//</span><span style="color: #008000"> returns : Observable</span><span style="color: #008000">
+</span><span style="color: #000000">
+Rx.Observable.Using </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">function</span><span style="color: #000000">(
+    resourceSelector,
+    resourceUsage);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>A Disposable object is nothing more than an object with a Dispose method which takes no arguments and returns nothing.&#160; For example, we could create a Disposable object to encompass the jQuery data API which allows us to store arbitrary data associated with a given element.&#160; This object would allow us to both get and set the value, and in our Dispose, we would remove the data.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: white;overflow: auto"><span style="color: #000000">DataDisposable </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000"> (element, key) {
+
+    </span><span style="color: #0000ff">this</span><span style="color: #000000">.data </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000"> (value) {
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> element.data(key, value);
+    };
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Dispose method</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">this</span><span style="color: #000000">.Dispose </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">function</span><span style="color: #000000"> () {
+        element.removeData(key);
+    };
+};</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Using this, we can write two samples, the first of which sets the data and then retrieves the data without an exceptional condition whereas the second example does.&#160; let’s take a look at the first example which yields to us the answer of 56088.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: #ffffff;overflow: auto"><span style="color: #000000">Rx.Observable.Using(
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> resourceSelector</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">function</span><span style="color: #000000"> () {
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> DataDisposable($(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">), </span><span style="color: #000000">&quot;</span><span style="color: #000000">key1</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+    },
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> resourceUsage</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">function</span><span style="color: #000000"> (disposable) {
+        disposable.data(</span><span style="color: #000000">123</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> Rx.Observable.Return(</span><span style="color: #000000">456</span><span style="color: #000000"> </span><span style="color: #000000">*</span><span style="color: #000000"> disposable.data());
+    })
+    .Subscribe(
+        </span><span style="color: #0000ff">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">&quot;</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">&quot;</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The second example below is the exact same, except that we throw an exception and then resume the next sequence which returns 789 instead of the answer above.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterSmartContent">
+<pre style="background-color: white;overflow: auto"><span style="color: #000000">Rx.Observable.Using(
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> resourceSelector</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">function</span><span style="color: #000000"> () {
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> DataDisposable($(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">), </span><span style="color: #000000">&quot;</span><span style="color: #000000">key1</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+    },
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> resourceUsage</span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">function</span><span style="color: #000000"> (disposable) {
+        disposable.data(</span><span style="color: #000000">123</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> Rx.Observable.Return(</span><span style="color: #000000">456</span><span style="color: #000000"> </span><span style="color: #000000">*</span><span style="color: #000000"> disposable.data())
+            .Concat(Rx.Observable.Throw(</span><span style="color: #000000">&quot;</span><span style="color: #000000">woops</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+    })
+    .Catch(Rx.Observable.Return(</span><span style="color: #000000">789</span><span style="color: #000000">))
+    .Subscribe(
+        </span><span style="color: #0000ff">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">&quot;</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">&quot;</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">&quot;</span><span style="color: #000000">#content</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In both cases here, we ensure that the underlying data is properly disposed when we leave the scope of our Using operator.</p>
+<h2>If At First You Fail, Retry</h2>
+<p>Let’s move onto the last operator for this section on error handling, Retry.&#160; The idea behind this operator is that we can retry the observable sequence until it succeeds (meaning no exception) or hits the maximum try count.&#160; Let’s look at the method signatures below:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> returns : Observable</span><span style="color: #008000">
+</span><span style="color: #000000">
+Rx.Observable.prototype.Retry();
+
+</span><span style="color: #008000">//</span><span style="color: #008000"> count : int</span><span style="color: #008000">
+//</span><span style="color: #008000"> scheduler : optional scheduler</span><span style="color: #008000">
+//</span><span style="color: #008000"> returns : Observable</span><span style="color: #008000">
+</span><span style="color: #000000">
+Rx.Observable.prototype.Retry(
+    count,
+    scheduler);</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now if we have a sequence that doesn’t throw an exception, then it should be a standard no-op, which means it does nothing for example, the following simply prints the numbers 1 through 3.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Rx.Observable.FromArray([</span><span style="color: #000000">1</span><span style="color: #000000">, </span><span style="color: #000000">2</span><span style="color: #000000">, </span><span style="color: #000000">3</span><span style="color: #000000">])
+    .Retry()
+    .Subscribe(
+        </span><span style="color: #0000FF">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">"</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">"</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">"</span><span style="color: #000000">#results</span><span style="color: #000000">"</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>However, if we indeed had a collection that did throw an exception each and every time, we could run into a big issue such as the following, where it would blow out the JavaScript stack as it would try to go on forever:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">Rx.Observable.FromArray([</span><span style="color: #000000">1</span><span style="color: #000000">, </span><span style="color: #000000">2</span><span style="color: #000000">, </span><span style="color: #000000">3</span><span style="color: #000000">])
+    .Concat(Rx.Observable.Throw(</span><span style="color: #000000">"</span><span style="color: #000000">woah nellie!</span><span style="color: #000000">"</span><span style="color: #000000">))
+    .Retry()
+    .Subscribe(
+        </span><span style="color: #0000FF">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">"</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">"</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">"</span><span style="color: #000000">#results</span><span style="color: #000000">"</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Luckily, we have ways around this where we can specify the maximum number of retries that are allowed with the provided overload.&#160; Next, let’s show a case where Retry is really used.&#160; For example, let’s say we have a loop which could produce three values, but will fail at different points for the first two iterations.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">var</span><span style="color: #000000"> count </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #000000">0</span><span style="color: #000000">;
+
+Rx.Observable.Return(</span><span style="color: #000000">4</span><span style="color: #000000">)
+    .Concat(
+        Rx.Observable.If(
+            </span><span style="color: #0000FF">function</span><span style="color: #000000">() { </span><span style="color: #0000FF">return</span><span style="color: #000000"> count </span><span style="color: #000000">==</span><span style="color: #000000"> </span><span style="color: #000000">0</span><span style="color: #000000">; },
+            Rx.Observable.Throw(</span><span style="color: #000000">"</span><span style="color: #000000">nope!</span><span style="color: #000000">"</span><span style="color: #000000">),
+            Rx.Observable.Return(</span><span style="color: #000000">5</span><span style="color: #000000">)))
+    .Concat(
+        Rx.Observable.If(
+            </span><span style="color: #0000FF">function</span><span style="color: #000000"> () { </span><span style="color: #0000FF">return</span><span style="color: #000000"> count </span><span style="color: #000000">==</span><span style="color: #000000"> </span><span style="color: #000000">1</span><span style="color: #000000">; },
+            Rx.Observable.Throw(</span><span style="color: #000000">"</span><span style="color: #000000">nope!</span><span style="color: #000000">"</span><span style="color: #000000">),
+            Rx.Observable.Return(</span><span style="color: #000000">6</span><span style="color: #000000">)))
+    .Finally(</span><span style="color: #0000FF">function</span><span style="color: #000000">() { count</span><span style="color: #000000">++</span><span style="color: #000000">; })
+    .Retry()
+    .Subscribe(
+        </span><span style="color: #0000FF">function</span><span style="color: #000000"> (next) {
+            $(</span><span style="color: #000000">"</span><span style="color: #000000">&lt;p/&gt;</span><span style="color: #000000">"</span><span style="color: #000000">).html(next).appendTo(</span><span style="color: #000000">"</span><span style="color: #000000">#results</span><span style="color: #000000">"</span><span style="color: #000000">);
+        });</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In this situation, we will render the following result, since we hit two different exceptions:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">4</span><span style="color: #000000"> </span><span style="color: #008000">//</span><span style="color: #008000"> Hits exception</span><span style="color: #008000">
+</span><span style="color: #000000">4</span><span style="color: #000000">
+</span><span style="color: #000000">5</span><span style="color: #000000"> </span><span style="color: #008000">//</span><span style="color: #008000"> Hits exception</span><span style="color: #008000">
+</span><span style="color: #000000">4</span><span style="color: #000000">
+</span><span style="color: #000000">5</span><span style="color: #000000">
+</span><span style="color: #000000">6</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>And there you have it, we have composable ways around potential failures in our asynchronous push based operations that give us the flexibility that our synchronous imperative ones do.</p>
+<h2>Conclusion</h2>
+</p>
+</p>
+</p>
+</p>
+</p>
+</p>
+</p>
+</p>
+<p>Dealing with asynchronous programming has been in the forefront of many minds in the JavaScript community.&#160; At <a href="http://jsconf.us/2010">JSConf</a>, there were several examples of frameworks trying to get around the idea of callbacks and instead lean more towards composition.&#160; By utilizing the Reactive Extensions for JavaScript, we’re able to compose together asynchronous and event-based operations together and transform the results in interesting ways. </p>
+<p>When we start creating more advanced workflows through the Reactive Extensions, we also need ways of handling errors as well.&#160; We have the ability do handle errors and compensate as they happen through a rich set of operators including Catch, Finally, Using, OnErrorResumeNext, Retry and more. </p>
+<p>So with that, <a href="http://msdn.microsoft.com/en-us/devlabs/ee794896.aspx">download it</a>, and <a href="http://social.msdn.microsoft.com/Forums/en-US/rx/threads">give the team feedback!</a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/event-based-porgramming/" title="View all posts in Event-based Porgramming" rel="category tag">Event-based Porgramming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/javascript/" title="View all posts in JavaScript" rel="category tag">JavaScript</a>, <a href="http://codebetter.com/matthewpodwysocki/category/jsconf/" title="View all posts in JSConf" rel="category tag">JSConf</a>, <a href="http://codebetter.com/matthewpodwysocki/category/reactive-framework/" title="View all posts in Reactive Framework" rel="category tag">Reactive Framework</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii/" title="Permalink to Introduction to the Reactive Extensions for JavaScript – Error Handling Part II" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii/feed/" title="Comments RSS to Introduction to the Reactive Extensions for JavaScript – Error Handling Part II" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-234 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2010/07/20/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-i/" rel="prev"><span class="meta-nav">&larr;</span> Introduction to the Reactive Extensions for JavaScript – Error Handling Part I</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/08/05/ironruby-and-the-reactive-extensions-for-net-together-at-last/" rel="next">IronRuby and the Reactive Extensions for .NET Together at Last <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii/ ';
+	var disqus_identifier = '234 /blogs/matthew.podwysocki/archive/2010/08/02/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'matthewpodwysocki';
+	var disqus_title = "Introduction to the Reactive Extensions for JavaScript – Error Handling Part II";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=234');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/matthewpodwysocki/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/08\/02\/introduction-to-the-reactive-extensions-for-javascript-error-handling-part-ii\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.481 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 11:26:02 -->
+<!-- super cache -->

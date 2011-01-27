@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Many-to-many relationships with data attached in NHibernate | Kyle Baley</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/kylebaley/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/kylebaley/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/kylebaley/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/kylebaley/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/kylebaley/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Kyle Baley' href='http://codebetter.com/kylebaley/' />
+<link rel='start' title='The CodeBetter Hillbilly, or &quot;How to build a better banjo&quot;' href='http://codebetter.com/kylebaley/2007/12/13/the-codebetter-hillbilly-or-quot-how-to-build-a-better-banjo-quot/' />
+<link rel='prev' title='An investigation into routes' href='http://codebetter.com/kylebaley/2008/12/18/an-investigation-into-routes/' />
+<link rel='next' title='Change the world. Start at home' href='http://codebetter.com/kylebaley/2008/12/30/change-the-world-start-at-home/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/kylebaley/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate/' />
+<link rel='shortlink' href='http://codebetter.com/kylebaley/?p=118' />
+<link rel="stylesheet" href="http://codebetter.com/kylebaley/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/kylebaleycb/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/kylebaley/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-118" class="post-118 post type-post status-publish format-standard hentry category-nhibernate">
+					<h1 class="entry-title">Many-to-many relationships with data attached in NHibernate</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/kylebaley/author/kylebaley/" title="View all posts by Kyle Baley">Kyle Baley</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/kylebaley/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate/" title="8:56 pm" rel="bookmark"><span class="entry-date">December 24, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/kylebaley/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/kylebaley/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/kylebaley/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>I&#8217;m such a nice brother. For Christmas this year, I got my older brother an MVC application to help him with some of his community work for his land surveying responsibilities. In return, I&#8217;ve got a nice little app that&#8217;s got at least two more posts in it and probably just as many <a href="http://www.dimecasts.net" target="_blank">Dimecasts</a>.</p>
+<p>I&#8217;ll describe the domain that led to this post so&#8217;s I don&#8217;t have to change any of the sample code I&#8217;ll inevitably paste in here.</p>
+<p>We have land surveyors. Each one, over the course of his or her career, will use &quot;monuments&quot;. Which as far as I can tell are those big sticks with orange paint on the end you often see stuck into the ground. Why are they called something as grandiose as monuments? My brother likes to say it&#8217;s the second oldest profession in the world (and given what some of them charge, they aren&#8217;t far removed from the first). So in ye olde dayes, instead of using sticks, they&#8217;d erect monuments. See, the Pyramids and the Eiffel Tower aren&#8217;t actually the grand constructions you think they are. They&#8217;re just the result of diligent land surveyors trying to find the property line.</p>
+<p>Anyway, I&#8217;m getting off track (though to my credit, I took longer than usual to do so this time). A surveyor will use monuments/sticks and they each one has an official label. These days, the label appears to be related to the company you work for. So all surveyors currently working for Tango &amp; Cash Geomatics will use monuments labelled TC. If a surveyor jumps ship over to Rowan &amp; Martin Land Surveyors, he&#8217;ll then use a monument labelled RM. And so on and so forth.</p>
+<p>Here are the tables involved:</p>
+<p><a href="http://codebetter.com/blogs/kyle.baley/WindowsLiveWriter/22191e300de0_D3F4/image_2.png"><img style="border-top-width: 0px;border-left-width: 0px;border-bottom-width: 0px;border-right-width: 0px" height="167" alt="image" src="http://codebetter.com/blogs/kyle.baley/WindowsLiveWriter/22191e300de0_D3F4/image_thumb.png" width="644" border="0" /></a> </p>
+<p>A pretty standard many-to-many relationship. But where this differs from almost all of the NHibernate examples you see is that there is data attached to the relationship. I.e. it&#8217;s not enough that we know Sandy McLean used monument TH, we want to know the period in which he and/or she used it.</p>
+<p>Now, I&#8217;m using Fluent NHibernate here because, well, it&#8217;s my app. I don&#8217;t to answer to you people. And the question arose, how do I map this to my domain?</p>
+<p>I&#8217;ve skipped an obvious precursor question though. Namely: what does the domain look like. This may not be crazy obvious at first glance. Of course, there is a Surveyor object and a Monument object (sparse as it is at the moment). And you might think that a surveyor has a collection of Monuments but that&#8217;s not the case.</p>
+<p><img style="border-top-width: 0px;border-left-width: 0px;border-bottom-width: 0px;margin: 5px;border-right-width: 0px" height="219" alt="image" src="http://codebetter.com/blogs/kyle.baley/WindowsLiveWriter/22191e300de0_D3F4/image_thumb_1.png" width="244" align="left" border="0" />In fact, as was pointed out to me by a few people (acknowledgements are at the end), the relationship &#8216;twixt Surveyors and Monuments is a domain concept in its own right. That is, we need another object to represent that relationship. A MonumentAssignment, for example, which contains the properties you might expect: Monument, Surveyor, YearStarted, and YearEnded.</p>
+<p>Mapping the MonumentAssignment with Fluent NHibernate was relatively easy (&quot;relatively&quot; being the key word; this *is* NHibernate we&#8217;re dealing with):</p>
+<pre>public class MonumentAssignmentMap : ClassMap
+{
+    public MonumentAssignmentMap( )
+    {
+        WithTable( &quot;SurveyorMonument&quot; );
+        Id( x =&gt; x.ID, &quot;SurveyorMonumentID&quot; );
+        References( x =&gt; x.Surveyor, &quot;SurveyorID&quot; )
+            .WithForeignKey( &quot;SurveyorID&quot; )
+            .FetchType.Join( );
+        References( x =&gt; x.Monument, &quot;MonumentID&quot; )
+            .WithForeignKey( &quot;MonumentID&quot; )
+            .FetchType.Join( );
+        Map( x =&gt; x.YearStarted );
+        Map( x =&gt; x.YearEnded );
+    }
+}</pre>
+<p>The References calls required some Googling. They basically allow you to map a class to multiple tables.</p>
+<p>Now to the Surveyor map. At first, I thought this required the use of HasManyToMany because, y&#8217;know, this is a many-to-many relationship. That&#8217;s not quite true. Yes, in one sense, a Surveyor has many Monuments and a Monument can have many Surveyors but in fact, a Surveyor isn&#8217;t directly related to Monument. It is related to MonumentAssignments. In a many-to-many relationship, this intermediate object is usually left out because it doesn&#8217;t have any meaning other than to relate two objects. In our case, it has a temporal meaning outside of just the relationship itself.</p>
+<p>So now, our Surveyor has a many-to-one relationship with MonumentAssignment. Monument, in turn, also has a many-to-one relationship with MonumentAssignment. With that in mind, we can map our Surveyor class thusly:</p>
+<pre>public class SurveyorMap : ClassMap
+{
+    public SurveyorMap() {
+        WithTable(&quot;Surveyor&quot;);
+        Id(x =&gt; x.ID, &quot;SurveyorID&quot;);
+
+        Map(x =&gt; x.CommissionNumber);
+        Map(x =&gt; x.Surname);
+        Map(x =&gt; x.GivenNames);
+        Map(x =&gt; x.YearCommissionGranted);
+
+        HasMany( x =&gt; x.Monuments )
+            .Cascade.AllDeleteOrphan( )
+            .WithKeyColumn( &quot;SurveyorID&quot; );
+    }
+}</pre>
+<p>That&#8217;s it. In the end, it wasn&#8217;t nearly as complicated as it first seemed. Of course, two key ideas led to this (again, relative) simplicity:</p>
+<ul>
+<li>MonumentAssignment is a domain concept in its own right</li>
+<li>Surveyor has a many-to-one relationship with MonumentAssignment, *not* a many-to-many relationship with Monument</li>
+</ul>
+<p>This post was brought to you by <a href="http://colinjack.blogspot.com/" target="_blank">Colin Jack</a>, <a href="http://chadmyers.lostechies.com/" target="_blank">Chad Myers</a>, <a href="http://shane.jscconsulting.ca/" target="_blank">Shane Courtrille</a>, <a href="http://blog.jagregory.com/" target="_blank">James Gregory</a> and the number 12.</p>
+<p>Merry Christmas!</p>
+<p>Kyle the Monumental</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/kylebaley/category/nhibernate/" title="View all posts in NHibernate" rel="category tag">NHibernate</a>. Bookmark the <a href="http://codebetter.com/kylebaley/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate/" title="Permalink to Many-to-many relationships with data attached in NHibernate" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/kylebaley/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate/feed/" title="Comments RSS to Many-to-many relationships with data attached in NHibernate" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-118 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/kylebaley/2008/12/18/an-investigation-into-routes/" rel="prev"><span class="meta-nav">&larr;</span> An investigation into routes</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/kylebaley/2008/12/30/change-the-world-start-at-home/" rel="next">Change the world. Start at home <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-657">
+					<div id="dsq-comment-header-657" class="dsq-comment-header">
+						<cite id="dsq-cite-657">
+	http://weblogs.asp.net/fbouma							<span id="dsq-author-user-657">Frans Bouma</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-657" class="dsq-comment-body">
+						<div id="dsq-comment-message-657" class="dsq-comment-message"><p>&#8220;A pretty standard many-to-many relationship. But where this differs from almost all of the NHibernate examples you see is that there is data attached to the relationship. I.e. it&#8217;s not enough that we know Sandy McLean used monument TH, we want to know the period in which he and/or she used it.&#8221;<br />
+It&#8217;s called an &#8216;objectified relationship&#8217; (ref: <a href="http://www.orm.net)" rel="nofollow">http://www.orm.net)</a> and in NIAM/ORM it&#8217;s typically defined as a relationship which is on itself an entity with attributes. An objectified relationship is always forming at least one m:n relationship. </p>
+<p>Sometimes it can be a bit hard to recognize them. For example &#8216;Order&#8217; in Northwind could be seen as an objectified relationship for the Customer m:n Employee relationship. <img src='http://codebetter.com/kylebaley/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-658">
+					<div id="dsq-comment-header-658" class="dsq-comment-header">
+						<cite id="dsq-cite-658">
+	http://devlicio.us/blogs/mike_nichols							<span id="dsq-author-user-658">Mike</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-658" class="dsq-comment-body">
+						<div id="dsq-comment-message-658" class="dsq-comment-message"><p>Kyle, Thanks for sharing this.<br />
+How would you do this if you had multiple implementations of Monument and were not able to use the table-per-hierarchy or joined-subclass strategy?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-659">
+					<div id="dsq-comment-header-659" class="dsq-comment-header">
+						<cite id="dsq-cite-659">
+								<span id="dsq-author-user-659">David Mc.</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-659" class="dsq-comment-body">
+						<div id="dsq-comment-message-659" class="dsq-comment-message"><p>Kyle &#8211; for those of us who are Fluent NHibernate challenged (aka &#8220;handicapped&#8221;), could you post the XML mapping that this generates?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-660">
+					<div id="dsq-comment-header-660" class="dsq-comment-header">
+						<cite id="dsq-cite-660">
+								<span id="dsq-author-user-660">Kyle Baley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-660" class="dsq-comment-body">
+						<div id="dsq-comment-message-660" class="dsq-comment-message"><p>@Mike: That sounds like something I encountered with another surveyor-related application. Details are here: <a href="http://codebetter.com/blogs/kyle.baley/archive/2008/03/20/table-per-concrete-class-in-nhibernate.aspx" rel="nofollow">http://codebetter.com/blogs/kyle.baley/archive/2008/03/20/table-per-concrete-class-in-nhibernate.aspx</a></p>
+<p>@David:<br />
+Apologies for the formatting. What I&#8217;m about to paste was generated by Fluent NHibernate.</p>
+<p>Here is the XML for Surveyors:<br />
+< ?xml version="1.0" encoding="utf-8"?><hibernate -mapping xmlns="urn:nhibernate-mapping-2.2" default-lazy="false" assembly="Adonis.Core" namespace="Adonis.Core"><class name="Surveyor" table="Surveyor" xmlns="urn:nhibernate-mapping-2.2"><id name="ID" column="SurveyorID" type="Int32" unsaved-value="0"><generator class="identity" /></id>
+<property name="Phone" column="Phone" length="100" type="String">
+<column name="Phone" /></property>
+<property name="PostalCode" column="PostalCode" length="100" type="String">
+<column name="PostalCode" /></property>
+<property name="Province" column="Province" length="100" type="String">
+<column name="Province" /></property>
+<property name="IsRetired" column="IsRetired" type="Boolean">
+<column name="IsRetired" /></property>
+<property name="Fax" column="Fax" length="100" type="String">
+<column name="Fax" /></property>
+<property name="Email" column="Email" length="100" type="String">
+<column name="Email" /></property>
+<property name="City" column="City" length="100" type="String">
+<column name="City" /></property>
+<property name="GivenNames" column="GivenNames" length="100" type="String">
+<column name="GivenNames" /></property>
+<property name="Surname" column="Surname" length="100" type="String">
+<column name="Surname" /></property>
+<property name="CommissionNumber" column="CommissionNumber" type="Int32">
+<column name="CommissionNumber" /></property>
+<property name="OtherDesignations" column="OtherDesignations" length="100" type="String">
+<column name="OtherDesignations" /></property>
+<property name="YearStoppedPracticing" column="YearStoppedPracticing" type="Int32">
+<column name="YearStoppedPracticing" /></property>
+<property name="YearCommissionGranted" column="YearCommissionGranted" type="Int32">
+<column name="YearCommissionGranted" /></property><bag name="Monuments" cascade="all-delete-orphan"><key column="SurveyorID" /><one -to-many class="Adonis.Core.MonumentAssignment, Adonis.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" /></bag></class></hibernate></p>
+<p>And here it is for MonumentAssignment:</p>
+<p>< ?xml version="1.0" encoding="utf-8"?><hibernate -mapping xmlns="urn:nhibernate-mapping-2.2" default-lazy="false" assembly="Adonis.Core" namespace="Adonis.Core"><class name="MonumentAssignment" table="SurveyorMonument" xmlns="urn:nhibernate-mapping-2.2"><id name="ID" column="SurveyorMonumentID" type="Int32"><generator class="identity" /></id>
+<property name="YearStarted" column="YearStarted" type="Int32">
+<column name="YearStarted" /></property>
+<property name="YearEnded" column="YearEnded" type="Int32">
+<column name="YearEnded" /></property><many -to-one foreign-key="MonumentID" fetch="join" name="Monument" column="MonumentID" /><many -to-one foreign-key="SurveyorID" fetch="join" name="Surveyor" column="SurveyorID" /></class></hibernate></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-661">
+					<div id="dsq-comment-header-661" class="dsq-comment-header">
+						<cite id="dsq-cite-661">
+	http://creedcultcode.blogspot.com							<span id="dsq-author-user-661">Dale Smith</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-661" class="dsq-comment-body">
+						<div id="dsq-comment-message-661" class="dsq-comment-message"><p>&#8220;My brother likes to say it&#8217;s the second oldest profession in the world&#8221;</p>
+<p>Your brother&#8217;s a farmer?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-662">
+					<div id="dsq-comment-header-662" class="dsq-comment-header">
+						<cite id="dsq-cite-662">
+								<span id="dsq-author-user-662">Levin</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-662" class="dsq-comment-body">
+						<div id="dsq-comment-message-662" class="dsq-comment-message"><p>Hi,I followed your blog on my demo app,but got some questions:<br />
+1,In the practical use,when i wanna assign a monument to a surveyor,should i use  surveyor.Monuments.Add(mAssignment),then invoke session.Save(surveyor)?Or directly do session.Save(mAssignment)?<br />
+2,If i take the session.Save(surveyor) choice,my unit test always complains &#8220;Don&#8217;t dereference a collection with cascade=&#8221;all-delete-orphan&#8221;"</p>
+<p>Am i missing sth?Please help.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-663">
+					<div id="dsq-comment-header-663" class="dsq-comment-header">
+						<cite id="dsq-cite-663">
+	http://blog.timtyrrell.net							<span id="dsq-author-user-663">Tim</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-663" class="dsq-comment-body">
+						<div id="dsq-comment-message-663" class="dsq-comment-message"><p>Thank you, you are a freaking life saver.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-664">
+					<div id="dsq-comment-header-664" class="dsq-comment-header">
+						<cite id="dsq-cite-664">
+								<span id="dsq-author-user-664">Matt</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-664" class="dsq-comment-body">
+						<div id="dsq-comment-message-664" class="dsq-comment-message"><p>images broken, plz fix</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-665">
+					<div id="dsq-comment-header-665" class="dsq-comment-header">
+						<cite id="dsq-cite-665">
+	http://codebetter.com/members/kylebaley/default.aspx							<span id="dsq-author-user-665">Kyle Baley</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-665" class="dsq-comment-body">
+						<div id="dsq-comment-message-665" class="dsq-comment-message"><p>No can do. Afraid I don&#8217;t have them anymore.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/kylebaley/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate/ ';
+	var disqus_identifier = '118 /blogs/kyle.baley/archive/2008/12/24/many-to-many-relationships-with-data-attached-in-nhibernate.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'kylebaleycb';
+	var disqus_title = "Many-to-many relationships with data attached in NHibernate";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=118');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/kylebaley/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/kylebaley\/2008\/12\/24\/many-to-many-relationships-with-data-attached-in-nhibernate\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.233 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 04:25:24 -->
+<!-- super cache -->

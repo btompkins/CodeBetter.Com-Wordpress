@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Rambling on Cyclomatic Complexity | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/patricksmacchia/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/patricksmacchia/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='Reporting Progress though a Circle Diagram' href='http://codebetter.com/patricksmacchia/2009/09/21/reporting-progress-though-a-circle-diagram/' />
+<link rel='next' title='Interesting findings in the diff between .NET Fx v4 Beta1 and Beta2' href='http://codebetter.com/patricksmacchia/2009/10/21/interesting-findings-in-the-diff-between-net-fx-v4-beta1-and-beta2/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2009/10/06/rambling-on-cyclomatic-complexity/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=142' />
+<link rel="stylesheet" href="http://codebetter.com/patricksmacchia/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/patricksmacchia/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-142" class="post-142 post type-post status-publish format-standard hentry category-branch-coverage category-cc category-code-metrics category-conditional-complexity category-conditional-statement category-coverage category-cyclomatic-complexity category-linearly-independent-paths category-lines-of-code category-loc category-mccabe category-measurement category-software-metric category-testability category-threshold">
+					<h1 class="entry-title">Rambling on Cyclomatic Complexity</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2009/10/06/rambling-on-cyclomatic-complexity/" title="2:34 pm" rel="bookmark"><span class="entry-date">October 6, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/patricksmacchia/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><!--[if gte mso 9]&gt;--></p>
+<p><!--[if gte mso 9]&gt;--></p>
+<p>  Normal</p>
+<p>  0</p>
+<p>  21</p>
+<p>  false</p>
+<p>  false</p>
+<p>  false</p>
+<p>  FR</p>
+<p>  X-NONE</p>
+<p>  X-NONE</p>
+<p><!--[if gte mso 9]&gt;--></p>
+<p><!--[if gte mso 10]&gt;--></p>
+<p><!--[endif]-->
+</p>
+<p><a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" alt="Share/Bookmark" width="171" border="0" height="16" /></a></p>
+<p class="MsoNormal"><span lang="EN-US">After the<br />
+<a target="_blank" href="/blogs/patricksmacchia/archive/2007/10/03/how-do-you-count-your-number-of-lines-of-code-loc.aspx">number of Lines of Code</a>,<br />
+the <a href="http://www.ndepend.com/Metrics.aspx">Cyclomatic Complexity</a> (CC) is certainly the second most widely used code<br />
+metric. Here is its <a target="_blank" href="http://en.wikipedia.org/wiki/Cyclomatic_complexity">definition from Wikipedia</a><br />
+:</span></p>
+<p style="margin: 1pt 0cm;padding-left: 30px"><i><span lang="EN-US">Cyclomatic complexity (or conditional<br />
+complexity) is a software metric (measurement). It was developed by Thomas J.<br />
+McCabe Sr. in 1976 and is used to measure the complexity of a program.<b> It directly measures the number of<br />
+linearly independent paths through a program&#8217;s source code.</b></span></i><b><span style="font-size: 14pt;color: red" lang="EN-US"> <br /></span></b></p>
+<p class="MsoNormal"><span lang="EN-US">Despite its<br />
+formal definition <i>number of linearly<br />
+independent paths</i>, <a href="http://www.ndepend.com/Metrics.aspx">CC is a practical code metric</a>. Indeed there is an intuitive<br />
+way to compute CC : The CC value of a method is 1 +{the number of <i>conditional statements</i> contained in the<br />
+method body}. A <i>conditional statement</i><br />
+is something very intuitive, in C# a conditional statement is a statement in<br />
+the group&hellip;</span></p>
+<p style="padding-left: 30px" class="MsoNormal"><span style="font-size: 10pt;font-family: 'Arial','sans-serif';color: #597cb0" lang="EN-US">if | while | for | foreach | case |<br />
+default | continue | goto | &amp;&amp; | || | catch | ternary operator ?: | ??</span><span lang="EN-US"> <br /></span></p>
+<p class="MsoNormal"><span lang="EN-US">&hellip; while<br />
+following statements are not counted for CC:</span></p>
+<p style="padding-left: 30px" class="MsoNormal"><span style="font-size: 10pt;font-family: 'Arial','sans-serif';color: #597cb0" lang="EN-US">else | do | switch | try | using | throw<br />
+| finally | return | object creation | method call | field access</span><span lang="EN-US"></span></p>
+<p class="MsoNormal"><span lang="EN-US">These 2<br />
+lists come from the <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#CC">CC definition in the NDepend documentation</a><a target="_blank" href="http://www.ndepend.com/Metrics.aspx#CC"></a>.<br />
+The implication is that a C# method with a high CC is certainly complex and<br />
+hard to understand. How high should be the CC to consider that a method is complex?<br />
+Here is a method with a CC of 12, clearly it is not an easy method:</span></p>
+<p class="MsoNormal"><span lang="EN-US"></span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">///</span><span style="font-size: 9pt;font-family: 'Courier New';color: green" lang="EN-US"> </span><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">&lt;summary&gt;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">///</span><span style="font-size: 9pt;font-family: 'Courier New';color: green" lang="EN-US"> Returns the<br />
+relative path from a base directory to another</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">///</span><span style="font-size: 9pt;font-family: 'Courier New';color: green" lang="EN-US"> directory<br />
+or file.</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">///</span><span style="font-size: 9pt;font-family: 'Courier New';color: green" lang="EN-US"> </span><span style="font-size: 9pt;font-family: 'Courier New';color: gray" lang="EN-US">&lt;/summary&gt;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New';color: blue" lang="EN-US">public</span><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"> <span style="color: blue">static</span> <span style="color: blue">string</span><br />
+RelativePath( <span style="color: blue">string</span> from, <span style="color: blue">string</span> to ) {</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (from == <span style="color: blue">null</span>)</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">throw</span> <span style="color: blue">new</span> <span style="color: #2b91af">ArgumentNullException</span> (from);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (to == <span style="color: blue">null</span>)</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">throw</span> <span style="color: blue">new</span> <span style="color: #2b91af">ArgumentNullException</span> (to);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (!<span style="color: #2b91af">Path</span>.IsPathRooted (to))</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span> to;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (<span style="color: #2b91af">Path</span>.GetPathRoot (from) != <span style="color: #2b91af">Path</span>.GetPathRoot (to))</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span> <span style="color: blue">null</span>;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="color: blue">string</span>[] _from = from.Split<br />
+(PathUtils.DirectorySeparatorChar, </span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>PathUtils.AltDirectorySeparatorChar);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="color: blue">string</span>[] _to = to.Split<br />
+(PathUtils.DirectorySeparatorChar, </span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>PathUtils.AltDirectorySeparatorChar);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="color: #2b91af">StringBuilder</span> sb = <span style="color: blue">new</span><br />
+<span style="color: #2b91af">StringBuilder</span> (<span style="color: #2b91af">Math</span>.Max<br />
+(from.Length, to.Length));</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="color: blue">int</span> last_common, min = <span style="color: #2b91af">Math</span>.Min<br />
+(_from.Length, _to.Length);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">for</span> (last_common =<br />
+0; last_common &lt; min;<span>&nbsp; </span>++last_common) {</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (!_from<br />
+[last_common].Equals (_to [last_common]))</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">break</span>;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (last_common &lt;<br />
+_from.Length)</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sb.Append (<span style="color: #a31515">&#8220;..&#8221;</span>);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">for</span> (<span style="color: blue">int</span> i = last_common + 1; i &lt; _from.Length; ++i) {</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sb.Append (PathUtils.DirectorySeparatorChar).Append<br />
+(<span style="color: #a31515">&#8220;..&#8221;</span>);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (sb.Length &gt;<br />
+0)</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sb.Append<br />
+(PathUtils.DirectorySeparatorChar);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">if</span> (last_common &lt;<br />
+_to.Length)</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sb.Append (_to<br />
+[last_common]);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="background: red none repeat scroll 0% 0%;color: blue">for</span> (<span style="color: blue">int</span> i = last_common + 1; i &lt; _to.Length; ++i) {</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>sb.Append<br />
+(PathUtils.DirectorySeparatorChar).Append (_to [i]);</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US"><span>&nbsp;&nbsp; </span><span style="color: blue">return</span> sb.ToString ();</span></p>
+<p class="MsoNormal"><span style="font-size: 9pt;font-family: 'Courier New'" lang="EN-US">}</span><span style="font-size: 9pt" lang="EN-US"></span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">The lower<br />
+the CC the better ! IMHO a reasonable and practical CC upper threshold is in<br />
+the range 8 to 15.</span></p>
+<p class="MsoNormal"><span lang="EN-US">But if your<br />
+goal is to achieve <a href="http://www.ndepend.com/Metrics.aspx">quality through code metrics</a>, CC is one of the many metrics<br />
+you should care for. A method can be complex even if it has a lower CC. This is<br />
+why, by default NDepend comes with a <a target="_blank" href="/blogs/patricksmacchia/archive/2008/05/11/write-active-conventions-on-your-code-base.aspx">CQL rule</a><br />
+that mixes several common code metrics: <br /></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// &lt;Name&gt;</span><span style="background: lime none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">Quick summary of methods to<br />
+refactor</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">&lt;/Name&gt;</span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">WARN</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">IF</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">Count</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">0</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">IN</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">SELECT</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">METHODS</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">WHERE</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// Metrics&#8217; definitions</span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp; </span>( </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">NbLinesOfCode</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">30</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbLinesOfCode">http://www.ndepend.com/Metrics.aspx#NbLinesOfCode</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">NbILInstructions</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">200</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">//<br />
+<a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbILInstructions">http://www.ndepend.com/Metrics.aspx#NbILInstructions</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">CyclomaticComplexity</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">15</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#CC">http://www.ndepend.com/Metrics.aspx#CC</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">ILCyclomaticComplexity</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">20</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">//<br />
+<a target="_self" href="http://www.ndepend.com/Metrics.aspx#ILCC">http://www.ndepend.com/Metrics.aspx#ILCC</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">ILNestingDepth</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">4</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#ILNestingDepth">http://www.ndepend.com/Metrics.aspx#ILNestingDepth</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">NbParameters</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">5</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbParameters">http://www.ndepend.com/Metrics.aspx#NbParameters</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064">NbVariables</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black">8</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black"><br />
+</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue">OR</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green">//<br />
+<a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbVariables">http://www.ndepend.com/Metrics.aspx#NbVariables</a></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">NbOverloads</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">6</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> )<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">//<br />
+<a target="_blank" href="http://www.ndepend.com/Metrics.aspx#NbOverloads">http://www.ndepend.com/Metrics.aspx#NbOverloads</a></span><span lang="EN-US"></span></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt;color: red" lang="EN-US">&nbsp;</span></b></p>
+<p style="margin: 1pt 0cm"><b><span style="font-size: 14pt;color: red" lang="EN-US">&nbsp;</span></b></p>
+<h2><span lang="EN-US">A fundamental way to asses<br />
+CC in the .NET world</span></h2>
+<p class="MsoNormal"><span lang="EN-US">Formally, the<br />
+way to compute CC depends on the underlying language. Practically, when it<br />
+comes to <i>conditional statements </i>C#, VB.NET,<br />
+Java and C++ syntaxes are pretty similar with just a few peculiarities for each<br />
+language. But still, CC is a metric defined on source code. </span></p>
+<p class="MsoNormal"><span lang="EN-US">At the<br />
+early stage of NDepend, the tool wasn&rsquo;t able to parse source code. The only<br />
+data analyzed by NDepend was IL code. Hopefully now NDepend can parse IL code +<br />
+data in PDB files + C# source code + code coverage by tests files, as explained <a target="_blank" href="/blogs/patricksmacchia/archive/2009/01/26/ndepend-analysis-inputs.aspx">here</a>.</span></p>
+<p class="MsoNormal"><span lang="EN-US">However at<br />
+that time, for a quality oriented tool, CC was a must-have metrics. Thus we<br />
+invented a way to asses CC from the IL code itself. Here is the definition of<br />
+the <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#ILCC"><i>ILCyclomaticComplexity</i> metric as stated<br />
+in the NDepend documentation</a>: <br /></span></p>
+<p style="padding-left: 30px" class="MsoNormal"><i><span style="font-size: 10pt;font-family: 'Arial','sans-serif';color: #597cb0" lang="EN-US">ILCyclomaticComplexity is computed from<br />
+IL as 1 + {the number of different offsets targeted by a jump/branch IL<br />
+instruction}. Experience shows that NDepend CC is a bit more larger than the CC<br />
+computed in C# or VB.NET. Indeed, a C# &#8216;if&#8217; expression yields one IL jump. A C#<br />
+&#8216;for&#8217; loop yields two different offsets targeted by a branch IL instruction<br />
+while a foreach C# loop yields three.</span></i><span lang="EN-US"></span></p>
+<p class="MsoNormal"><span lang="EN-US">Both CC and ILCC <a href="http://www.ndepend.com/Metrics.aspx">code metrics</a> can be used to detect complex methods in a program.</span></p>
+<p class="MsoNormal"><span style="color: red" lang="EN-US"><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.CyclomaticComplexity/ILCC.png"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/CyclomaticComplexity/ILCC.png-550x0.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992112&amp;Signature=%2fxaDQd%2fyiHi5ybsC4yvdgFPdeiQ%3d" border="0" /></a> </span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">However,<br />
+the ILCC is more fundamental in the sense that it is language independent and<br />
+that it can be computed to analyze the quality from assemblies themselves. For<br />
+example ILCC can detect complex methods contained in some tier code like the<br />
+.NET Framework, even if we don&rsquo;t have the source code:</span></p>
+<p class="MsoNormal"><span style="color: red" lang="EN-US"><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.CyclomaticComplexity/ILCC_5F00_Fx.png"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/CyclomaticComplexity/ILCC_Fx.png-550x0.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992112&amp;Signature=PgcyzFZUnObcO7kGdeNNfJSjKNQ%3d" border="0" /></a></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<h2><span lang="EN-US">CC and testing</span></h2>
+<p class="MsoNormal"><span lang="EN-US">An interesting<br />
+fact about CC is that it helps to evaluate the number of unit tests needed to<br />
+cover a method. The idea is that each logical path through a method requires<br />
+its own unit test. Practically there is a problem:<span>&nbsp; </span>.NET coverage tools are all relying on PDB sequence<br />
+points when it comes to coverage. As shown on the screenshot below, a shortcoming of<br />
+the sequence point artifact (initially used for debugging experience) is that it<br />
+doesn&rsquo;t distinguish between several conditions nested in a <i>if</i> clause:</span></p>
+<p class="MsoNormal"><span style="color: red" lang="EN-US">&nbsp;<a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.CyclomaticComplexity/SeqPoint1.png"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/CyclomaticComplexity/SeqPoint1.png-550x0.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992112&amp;Signature=Mv9f%2fkYF8xRxyzFrfzbmsWAU7ys%3d" border="0" /></a><a href="/controlpanel/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.CyclomaticComplexity/SeqPoint1.png"></a><br />
+</span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">In this<br />
+example you&rsquo;ll get 100% coverage if<i> <b>s</b></i> is a non-empty string that doesn&rsquo;t<br />
+contains a character <b>a</b>. You don&rsquo;t<br />
+need to test the case where <b><i>s</i> </b>is null, the case where<i> <b>s</b></i><br />
+is empty, the case where <b><i>s</i></b> is not empty but contains a character<br />
+<b>a</b>. This is a weakness of the<br />
+coverage metric and this is why personally, I often prefer to refactor my code<br />
+this way:</span></p>
+<p class="MsoNormal"><span style="color: red" lang="EN-US"><a href="/cfs-file.ashx/__key/CommunityServer.Blogs.Components.WeblogFiles/patricksmacchia.CyclomaticComplexity/SeqPoint2.png"><img src="http://s3.amazonaws.com:80/CodeBetter/CommunityServer.Components.ImageFileViewer/CommunityServer/Blogs/Components/WeblogFiles/patricksmacchia/CyclomaticComplexity/SeqPoint2.png-550x0.png?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1919992112&amp;Signature=RBIGG9wMlWM9tZjZTNSzig5GG2Q%3d" border="0" /></a> </span></p>
+<p class="MsoNormal"><span lang="EN-US">&nbsp;</span></p>
+<p class="MsoNormal"><span lang="EN-US">Now I have<br />
+9 sequence points to cover instead of one and I am forced to write more unit<br />
+tests to achieve 100% coverage. In a previous post <a target="_blank" href="/blogs/patricksmacchia/archive/2008/03/07/a-simple-trick-to-code-better-and-to-increase-testability.aspx"><b>A simple trick to code better and to increase testability</b></a>, I rambled on this particular point and I explained how to use the CC metric<br />
+in combination with the <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#ILNestingDepth">ILNestingDepth<br />
+metric</a> to detect such cases.</span></p>
+<p style="margin: 1pt 0cm"><span lang="EN-US">Also, <a target="_blank" href="http://www.ncover.com/">NCover</a> provides a second metrics<br />
+named <i>branch coverage</i> that is more<br />
+precise than the classical coverage: the <i>branch<br />
+coverage</i> computation takes account of nested conditions not covered by<br />
+tests. Also NDepend is able to gather <a target="_blank" href="http://www.ndepend.com/Metrics.aspx#PercentageBranchCoverage">branch coverage</a><br />
+values from NCover execution and you can write CQL rules based on branch<br />
+coverage like. <br /></span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">// &lt;Name&gt;</span><span style="background: lime none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">Namespace XXX.YYY 100% branch<br />
+covered</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: green" lang="EN-US">&lt;/Name&gt;</span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">WARN</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">IF</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">Count</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &gt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">0</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">IN</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">SELECT</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">METHODS</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span></p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">FROM</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">NAMESPACES</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #a31515" lang="EN-US">&#8220;XXX.YYY&#8221;</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span></p>
+<p style="margin: 1pt 0cm"><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"><span>&nbsp; </span></span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: blue" lang="EN-US">WHERE</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> </span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: #000064" lang="EN-US">PercentageBranchCoverage</span><span style="background: white none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"> &lt; </span><span style="background: yellow none repeat scroll 0% 0%;font-size: 9pt;font-family: Consolas;color: black" lang="EN-US">100</span><span style="font-size: 9pt;font-family: Consolas;color: black" lang="EN-US"></span></p>
+<p><a class="a2a_dd" href="http://www.addtoany.com/share_save"><img src="http://static.addtoany.com/buttons/share_save_171_16.png" alt="Share/Bookmark" width="171" border="0" height="16" /></a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/branch-coverage/" title="View all posts in branch coverage" rel="category tag">branch coverage</a>, <a href="http://codebetter.com/patricksmacchia/category/cc/" title="View all posts in CC" rel="category tag">CC</a>, <a href="http://codebetter.com/patricksmacchia/category/code-metrics/" title="View all posts in Code metrics" rel="category tag">Code metrics</a>, <a href="http://codebetter.com/patricksmacchia/category/conditional-complexity/" title="View all posts in conditional complexity" rel="category tag">conditional complexity</a>, <a href="http://codebetter.com/patricksmacchia/category/conditional-statement/" title="View all posts in conditional statement" rel="category tag">conditional statement</a>, <a href="http://codebetter.com/patricksmacchia/category/coverage/" title="View all posts in coverage" rel="category tag">coverage</a>, <a href="http://codebetter.com/patricksmacchia/category/cyclomatic-complexity/" title="View all posts in Cyclomatic complexity" rel="category tag">Cyclomatic complexity</a>, <a href="http://codebetter.com/patricksmacchia/category/linearly-independent-paths/" title="View all posts in linearly independent paths" rel="category tag">linearly independent paths</a>, <a href="http://codebetter.com/patricksmacchia/category/lines-of-code/" title="View all posts in Lines of Code" rel="category tag">Lines of Code</a>, <a href="http://codebetter.com/patricksmacchia/category/loc/" title="View all posts in LoC" rel="category tag">LoC</a>, <a href="http://codebetter.com/patricksmacchia/category/mccabe/" title="View all posts in McCabe" rel="category tag">McCabe</a>, <a href="http://codebetter.com/patricksmacchia/category/measurement/" title="View all posts in measurement" rel="category tag">measurement</a>, <a href="http://codebetter.com/patricksmacchia/category/software-metric/" title="View all posts in software metric" rel="category tag">software metric</a>, <a href="http://codebetter.com/patricksmacchia/category/testability/" title="View all posts in testability" rel="category tag">testability</a>, <a href="http://codebetter.com/patricksmacchia/category/threshold/" title="View all posts in threshold" rel="category tag">threshold</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2009/10/06/rambling-on-cyclomatic-complexity/" title="Permalink to Rambling on Cyclomatic Complexity" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2009/10/06/rambling-on-cyclomatic-complexity/feed/" title="Comments RSS to Rambling on Cyclomatic Complexity" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-142 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2009/09/21/reporting-progress-though-a-circle-diagram/" rel="prev"><span class="meta-nav">&larr;</span> Reporting Progress though a Circle Diagram</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2009/10/21/interesting-findings-in-the-diff-between-net-fx-v4-beta1-and-beta2/" rel="next">Interesting findings in the diff between .NET Fx v4 Beta1 and Beta2 <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-830">
+					<div id="dsq-comment-header-830" class="dsq-comment-header">
+						<cite id="dsq-cite-830">
+	http://javadots.blogspot.com							<span id="dsq-author-user-830">Itay Maman</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-830" class="dsq-comment-body">
+						<div id="dsq-comment-message-830" class="dsq-comment-message"><p>Code metrics are sometimes useful but they are too often just a lame method for estimating code complexity and this is not one of the cases where one the &#8220;this is the best we have&#8221; argument holds. Here&#8217;s why:</p>
+<p>Suppose we work in a language where curly braces induce a closure.  Here are two equivalent fragments of code:</p>
+<p>// Fragment 1<br />
+class SomeClass {<br />
+  void f(int n) {<br />
+    if(n > 0)<br />
+      this.x += n;<br />
+    }<br />
+  }<br />
+}</p>
+<p>// Fragment 2<br />
+class SomeClass {<br />
+  void check(bool b, clousre c) { if(b) c.invoke() }<br />
+  void f(int n) {<br />
+    check(n > 0, {<br />
+      this.x += n;<br />
+    })<br />
+  }<br />
+}</p>
+<p>From a Cyclomatic-complexity standpoint, the f() method in the 2nd fragment is better than the one in the first which doesn&#8217;t make much sense.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-831">
+					<div id="dsq-comment-header-831" class="dsq-comment-header">
+						<cite id="dsq-cite-831">
+	http://codebetter.com/members/Patrick-Smacchia/default.aspx							<span id="dsq-author-user-831">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-831" class="dsq-comment-body">
+						<div id="dsq-comment-message-831" class="dsq-comment-message"><p>>code metrics are just a lame method for estimating code complexity</p>
+<p>Itay, Code metrics are very efficient to pinpoint bad quality. However respecting metrics&#8217; thresholds won&#8217;t necessarily lead you to quality code, because quality is a multi-dimensional measure as I explained here:</p>
+<p><a href="http://codebetter.com/blogs/patricksmacchia/archive/2009/06/28/fighting-fabricated-complexity.aspx" rel="nofollow">http://codebetter.com/blogs/patricksmacchia/archive/2009/06/28/fighting-fabricated-complexity.aspx</a></p>
+<p>Nevertheless respecting metrics&#8217; thresholds is an essential step forward to quality. You can&#8217;t have quality code when you have methods long and complex methods with a CC higher than 15 (except if they are generated code but this is another story I will ramble on later).</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-832">
+					<div id="dsq-comment-header-832" class="dsq-comment-header">
+						<cite id="dsq-cite-832">
+								<span id="dsq-author-user-832">Jim Cooper</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-832" class="dsq-comment-body">
+						<div id="dsq-comment-message-832" class="dsq-comment-message"><p>You&#8217;re a bit generous with your maximum CC rating. Who writes 15 unit tests for one method?</p>
+<p>I think 5 is a better target (and apparently so does Steve McConnell, but not the SEI, which sets a limit of 10) for a method to be considered good code.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-833">
+					<div id="dsq-comment-header-833" class="dsq-comment-header">
+						<cite id="dsq-cite-833">
+	http://codebetter.com/members/Patrick-Smacchia/default.aspx							<span id="dsq-author-user-833">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-833" class="dsq-comment-body">
+						<div id="dsq-comment-message-833" class="dsq-comment-message"><p>Jim there is trade-off between being draconian on quality and realistic.</p>
+<p>If your team can reach a CC threshold of 5 on your whole code base, then sure, it is much better than abiding by a CC threshold of 10.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-834">
+					<div id="dsq-comment-header-834" class="dsq-comment-header">
+						<cite id="dsq-cite-834">
+	http://weblogs.asp.net/fmarguerie							<span id="dsq-author-user-834">Fabrice</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-834" class="dsq-comment-body">
+						<div id="dsq-comment-message-834" class="dsq-comment-message"><p>Quick side note: &#8216;throw new ArgumentNullException(from)&#8217; should be &#8216;throw new ArgumentNullException(&#8220;from&#8221;)&#8217;</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2009/10/06/rambling-on-cyclomatic-complexity/ ';
+	var disqus_identifier = '142 /blogs/patricksmacchia/archive/2009/10/06/rambling-on-cyclomatic-complexity.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Rambling on Cyclomatic Complexity";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=142');
+		});
+					};
+	var facebookXdReceiverPath = 'http://codebetter.com/patricksmacchia/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2009\/10\/06\/rambling-on-cyclomatic-complexity\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.713 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 09:57:30 -->
+<!-- super cache -->

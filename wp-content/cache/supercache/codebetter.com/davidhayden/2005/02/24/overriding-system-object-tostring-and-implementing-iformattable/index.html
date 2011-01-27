@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Overriding System.Object.ToString() and Implementing IFormattable | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Effective C# Book Review &#8211; 50 Specific Ways to Improve Your C#' href='http://codebetter.com/davidhayden/2005/02/23/effective-c-book-review-50-specific-ways-to-improve-your-c/' />
+<link rel='next' title='Boxing &#8211; The Conversion of Value Types to Reference Types &#8211; A Quick Visit' href='http://codebetter.com/davidhayden/2005/02/25/boxing-the-conversion-of-value-types-to-reference-types-a-quick-visit/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=7' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-7" class="post-7 post type-post status-publish format-standard hentry category-c">
+					<h1 class="entry-title">Overriding System.Object.ToString() and Implementing IFormattable</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/" title="7:23 pm" rel="bookmark"><span class="entry-date">February 24, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>A couple of days ago I discussed overriding System.Object.Equals(Object obj) in a post called <A href="http://codebetter.com/blogs/david.hayden/archive/2005/02/22/51364.aspx">Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)</A>.&nbsp; The gist of that post is essentially that when you create new classes that inherit from System.Object,&nbsp;you may want to consider overriding&nbsp;System.Object&#8217;s virtual methods so that they make sense for your class.&nbsp; In that article we had overriden <STRONG>Equals</STRONG> and <STRONG>GetHashCode</STRONG> for the Customer class to suit our needs for equality.</P><br />
+<P>In continuing this idea, System.Object also has a virtual <STRONG>ToString()</STRONG> method that we inherit in our classes.&nbsp; I find this an absolute must to override, because the method provided by System.Object only returns the name of the class.&nbsp; Hence the output of the following code will just be <STRONG>&#8220;Person.&#8221;</STRONG></P><br />
+<FIELDSET><LEGEND>Not Overriding ToString()</LEGEND><PRE><SPAN><br />
+</SPAN><SPAN><PRE><SPAN>using</SPAN><SPAN> System;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Person<br />
+{<br />
+    </SPAN><SPAN>#region</SPAN><SPAN> Private Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _firstname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _lastname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> _age;</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Properties</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Firstname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _firstname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _firstname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Lastname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _lastname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _lastname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> Age<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _age; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _age </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Contructors</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> Person (</SPAN><SPAN>string</SPAN><SPAN> firstname, </SPAN><SPAN>string</SPAN><SPAN> lastname, </SPAN><SPAN>int</SPAN><SPAN> age)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (firstname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> firstname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>firstname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (lastname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> lastname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>lastname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        _firstname </SPAN><SPAN>=</SPAN><SPAN> firstname;<br />
+        _lastname </SPAN><SPAN>=</SPAN><SPAN> lastname;<br />
+        _age </SPAN><SPAN>=</SPAN><SPAN> age;<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN><br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> TestClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        Person p </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> Person(</SPAN><SPAN>&#8220;</SPAN><SPAN>David</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Hayden</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>99</SPAN><SPAN>);<br />
+        Console.WriteLine(p); <SPAN>//</SPAN><SPAN> Outputs &#8220;Person&#8221;</SPAN><br />
+        Console.ReadLine();<br />
+    }<br />
+}</SPAN></PRE></SPAN></PRE></FIELDSET><br />
+<P>That is pretty useless for debugging or anythine else.&nbsp; By simply overriding ToString(), we can get something a bit more useful.&nbsp; When we run the new version of our code shown below, we get the following output: <STRONG>&#8220;David Hayden, Age = 99&#8243;</STRONG>.</P><br />
+<FIELDSET><LEGEND>Overriding ToString()</LEGEND><PRE><SPAN></SPAN></PRE><PRE><SPAN>using</SPAN><SPAN> System;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Person<br />
+{<br />
+    </SPAN><SPAN>#region</SPAN><SPAN> Private Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _firstname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _lastname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> _age;</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Properties</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Firstname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _firstname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _firstname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Lastname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _lastname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _lastname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> Age<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _age; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _age </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Contructors</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> Person (</SPAN><SPAN>string</SPAN><SPAN> firstname, </SPAN><SPAN>string</SPAN><SPAN> lastname, </SPAN><SPAN>int</SPAN><SPAN> age)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (firstname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> firstname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>firstname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (lastname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> lastname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>lastname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        _firstname </SPAN><SPAN>=</SPAN><SPAN> firstname;<br />
+        _lastname </SPAN><SPAN>=</SPAN><SPAN> lastname;<br />
+        _age </SPAN><SPAN>=</SPAN><SPAN> age;<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> String.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0} {1}, Age = {2}</SPAN><SPAN>&#8220;</SPAN><SPAN>, _firstname,</SPAN></PRE><PRE><SPAN>                               </SPAN><SPAN>_lastname, _age.ToString());<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> TestClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        Person p </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> Person(</SPAN><SPAN>&#8220;</SPAN><SPAN>David</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Hayden</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>99</SPAN><SPAN>);<br />
+        Console.WriteLine(p); <SPAN>//</SPAN><SPAN> Outputs &#8220;David Hayden, Age = 99&#8243;</SPAN><br />
+        Console.ReadLine();<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>So now we are cooking.&nbsp; However, in the real world, we need way more flexibility in how we want to display this person.&nbsp; This is where the interface IFormattable comes in.&nbsp; IFormattable is as basic as you can get.&nbsp; It has one method:</P><br />
+<FIELDSET><LEGEND>IFormattable</LEGEND><br />
+<P><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(</SPAN><SPAN>string</SPAN><SPAN> format, IFormatProvider formatProvider);</SPAN></P></FIELDSET><br />
+<P>By having our person class implement IFormattable, we can display this person class in a multitude of formats:</P><br />
+<FIELDSET><LEGEND>Implementing IFormattable</LEGEND><PRE><SPAN>using</SPAN><SPAN> System;</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> Person : IFormattable<br />
+{<br />
+    </SPAN><SPAN>#region</SPAN><SPAN> Private Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _firstname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> _lastname;<br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> _age;</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Properties</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Firstname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _firstname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _firstname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Lastname<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _lastname; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _lastname </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> Age<br />
+    {<br />
+        </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> _age; }<br />
+        </SPAN><SPAN>set</SPAN><SPAN> { _age </SPAN><SPAN>=</SPAN><SPAN> value; }<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> Contructors</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> Person (</SPAN><SPAN>string</SPAN><SPAN> firstname, </SPAN><SPAN>string</SPAN><SPAN> lastname, </SPAN><SPAN>int</SPAN><SPAN> age)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (firstname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> firstname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>firstname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (lastname </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN> </SPAN><SPAN>||</SPAN><SPAN> lastname.Length </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>0</SPAN><SPAN>)<br />
+            </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArgumentNullException(</SPAN><SPAN>&#8220;</SPAN><SPAN>lastname</SPAN><SPAN>&#8220;</SPAN><SPAN>);</p>
+<p>        _firstname </SPAN><SPAN>=</SPAN><SPAN> firstname;<br />
+        _lastname </SPAN><SPAN>=</SPAN><SPAN> lastname;<br />
+        _age </SPAN><SPAN>=</SPAN><SPAN> age;<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>#region</SPAN><SPAN> IFormattable Members</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(</SPAN><SPAN>string</SPAN><SPAN> format, IFormatProvider formatProvider)<br />
+    {<br />
+        </SPAN><SPAN>if</SPAN><SPAN> (format </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>) format </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN> (formatProvider </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+        {<br />
+            ICustomFormatter formatter </SPAN><SPAN>=</SPAN><SPAN> formatProvider.GetFormat(<br />
+                </SPAN><SPAN>this</SPAN><SPAN>.GetType())<br />
+                </SPAN><SPAN>as</SPAN><SPAN> ICustomFormatter;</p>
+<p>            </SPAN><SPAN>if</SPAN><SPAN> (formatter </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+                </SPAN><SPAN>return</SPAN><SPAN> formatter.Format(format, </SPAN><SPAN>this</SPAN><SPAN>, formatProvider);<br />
+        }</p>
+<p>        </SPAN><SPAN>switch</SPAN><SPAN>(format)<br />
+        {<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>f</SPAN><SPAN>&#8220;</SPAN><SPAN> : </SPAN><SPAN>return</SPAN><SPAN> _firstname;<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>l</SPAN><SPAN>&#8220;</SPAN><SPAN> : </SPAN><SPAN>return</SPAN><SPAN> _lastname;<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>na</SPAN><SPAN>&#8220;</SPAN><SPAN> : </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0} {1} Age= {2}</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN></PRE><PRE><SPAN>                        _firstname, </SPAN><SPAN>_lastname, _age.ToString());<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>n</SPAN><SPAN>&#8220;</SPAN><SPAN> :<br />
+            </SPAN><SPAN>case</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN> :<br />
+            </SPAN><SPAN>default</SPAN><SPAN> : </SPAN><SPAN>return</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0} {1}</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN></PRE><PRE><SPAN>                              _firstname, _lastname);<br />
+        }<br />
+    }</p>
+<p>    </SPAN><SPAN>#endregion</SPAN><SPAN></p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> ToString(</SPAN><SPAN>&#8220;</SPAN><SPAN>G</SPAN><SPAN>&#8220;</SPAN><SPAN>, </SPAN><SPAN>null</SPAN><SPAN>);<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(</SPAN><SPAN>string</SPAN><SPAN> format)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> ToString(format, </SPAN><SPAN>null</SPAN><SPAN>);<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> ToString(IFormatProvider formatProvider)<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> ToString(</SPAN><SPAN>null</SPAN><SPAN>, formatProvider);<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> TestClass<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Main()<br />
+    {<br />
+        Person p </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> Person(</SPAN><SPAN>&#8220;</SPAN><SPAN>David</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>&#8220;</SPAN><SPAN>Hayden</SPAN><SPAN>&#8220;</SPAN><SPAN>,</SPAN><SPAN>99</SPAN><SPAN>);<br />
+        Console.WriteLine(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0}</SPAN><SPAN>&#8220;</SPAN><SPAN>, p);    </SPAN><SPAN>//</SPAN><SPAN> Outputs &#8220;David Hayden&#8221;</SPAN><SPAN><br />
+</SPAN><SPAN>        Console.WriteLine(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0:f}</SPAN><SPAN>&#8220;</SPAN><SPAN>, p);  </SPAN><SPAN>//</SPAN><SPAN> Outputs &#8220;David&#8221;</SPAN><SPAN><br />
+</SPAN><SPAN>        Console.WriteLine(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0:l}</SPAN><SPAN>&#8220;</SPAN><SPAN>, p);  </SPAN><SPAN>//</SPAN><SPAN> Outputs &#8220;Hayden&#8221;</SPAN><SPAN><br />
+</SPAN><SPAN>        Console.WriteLine(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0:n}</SPAN><SPAN>&#8220;</SPAN><SPAN>, p);  </SPAN><SPAN>//</SPAN><SPAN> Outputs &#8220;David Hayden&#8221;</SPAN><SPAN><br />
+</SPAN><SPAN>        Console.WriteLine(</SPAN><SPAN>&#8220;</SPAN><SPAN>{0:na}</SPAN><SPAN>&#8220;</SPAN><SPAN>, p); </SPAN><SPAN>//</SPAN><SPAN> Outputs &#8220;David Hayden, Age=99&#8243;</SPAN><SPAN><br />
+</SPAN><SPAN>        Console.ReadLine();<br />
+    }<br />
+}</SPAN></PRE></FIELDSET><br />
+<P>The code is fairly straight forward.&nbsp; Let&#8217;s forget about formatProvider for&nbsp;this post&nbsp;and just focus on the switch(format) statement.&nbsp; The statment essentially just returns a different result based on the value of format.&nbsp; Format &#8220;G&#8221; is used by the .NET framework, so just include it for completeness.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/c/" title="View all posts in C#" rel="category tag">C#</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/" title="Permalink to Overriding System.Object.ToString() and Implementing IFormattable" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/feed/" title="Comments RSS to Overriding System.Object.ToString() and Implementing IFormattable" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-7 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/02/23/effective-c-book-review-50-specific-ways-to-improve-your-c/" rel="prev"><span class="meta-nav">&larr;</span> Effective C# Book Review &#8211; 50 Specific Ways to Improve Your C#</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/02/25/boxing-the-conversion-of-value-types-to-reference-types-a-quick-visit/" rel="next">Boxing &#8211; The Conversion of Value Types to Reference Types &#8211; A Quick Visit <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">7 Responses to <em>Overriding System.Object.ToString() and Implementing IFormattable</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-11">
+		<div id="comment-11">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.davidhayden.com/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-11">March 17, 2005 at 10:16 pm</a></div>
+
+		<div class="comment-body"><p>You&#8217;re absolutely right, Jeremy.  In this case, the code would never execute.</p>
+<p>However, for some of your classes, you may implement ICustomFormatter, which is why I always have the check in there.  Basically I am just future proofing that method so that if later on I do implement ICustomFormatter it will work as expected and pass control to the ICustomFormatter interface.</p>
+<p>Great question!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-10">
+		<div id="comment-10">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Jeremy Griffith</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-10">March 17, 2005 at 9:45 pm</a></div>
+
+		<div class="comment-body"><p>David, thanks for your explanation concerning implementing IFormattable.  I have a question.</p>
+<p>Can you explain the following aspect of your code&#8230;.    </p>
+<p>        ICustomFormatter formatter = formatProvider.GetFormat(<br />
+<br />                this.GetType())<br />
+<br />                as ICustomFormatter;</p>
+<p>this.GetType() would always return a type of Person</p>
+<p>your Person type does not implement ICustomFormatter therefore the formatter variable is always going to equal null&#8230; </p>
+<p>so what is the point of what follows next&#8230;</p>
+<p>          if (formatter != null)<br />
+<br />                return formatter.Format(format, this, formatProvider);</p>
+<p>the above line of code would never execute&#8230;</p>
+<p>am I misunderstanding something?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-9">
+		<div id="comment-9">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.devintelligence.com' rel='external nofollow' class='url'>.Net Adventures</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-9">March 1, 2005 at 8:04 pm</a></div>
+
+		<div class="comment-body"><p>Check out this article &quot;FormattableObject an Aggregating reflection-based ToString() implementation&quot; by Scott Hanselman<br />
+<br /> : <a target="_new" href="http://www.hanselman.com/blog/PermaLink,guid,2a0fdc2c-6b15-4a46-a802-0ebc0b8662d9.aspx">http://www.hanselman.com/blog/PermaLink,guid,2a0fdc2c-6b15-4a46-a802-0ebc0b8662d9.aspx</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-8">
+		<div id="comment-8">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/raymond.lewallen' rel='external nofollow' class='url'>Raymond Lewallen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-8">February 25, 2005 at 3:40 pm</a></div>
+
+		<div class="comment-body"><p>Brendan, this is why in my post about MSIL, I mentioned that when you understand what your code is doing in MSIL, you write better code <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />   If you look at the IL, you&#8217;ll see the boxing instruction for the _age without the ToString().  I am actually working on a post on boxing and unboxing to go up late next week after the final OOP polymorphism post.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-7">
+		<div id="comment-7">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codbetter.com/blogs/brendan.tompkins' rel='external nofollow' class='url'>Brendan Tompkins</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-7">February 25, 2005 at 12:39 pm</a></div>
+
+		<div class="comment-body"><p>I do way too much skimming when I read blogs *blush*</p>
+<p>&quot;If I just pass in &quot;_age&quot;, I have to deal with issues of boxing.&quot;</p>
+<p>I didn&#8217;t know this. I need to learn more about boxing and it&#8217;s preformance issues.  Perhaps a post on boxing would be a good one for a CodeBetter blogger to tackle.. </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-6">
+		<div id="comment-6">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/david.hayden/' rel='external nofollow' class='url'>David Hayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-6">February 24, 2005 at 11:04 pm</a></div>
+
+		<div class="comment-body"><p>Hey Brendan,</p>
+<p>In the example above I overloaded ToString a couple of times for flexibility.  You can use the overloaded method ToString(string format) to format the person using a given format string.</p>
+<p>You could use attributes to help generate documentation. I typically add this type of information in comments so NDoc can add it to the documentation.  If you want something during runtime, a possible solution would be to have the &quot;default&quot; in the switch statement as well as the override of ToString() output a list of possible format strings as well as a description of each. You could certainly just reflect on the attributes at runtime.</p>
+<p>String.Format is expecting an Object and _age is a value type. If I just pass in &quot;_age&quot;, I have to deal with issues of boxing.  Better to pass &quot;_age.ToString()&quot; beforehand and you save the performance hit.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-5">
+		<div id="comment-5">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/brendan.tompkins' rel='external nofollow' class='url'>Brendan Tompkins</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#comment-5">February 24, 2005 at 9:41 pm</a></div>
+
+		<div class="comment-body"><p>This is cool David! Nice explanation.  </p>
+<p>I use format strings all the time and love them&#8230; I would do the extra work of overriding ToString, if I could use them along with a custom format string.  I guess I could just try formatting with the custom string if I don&#8217;t get one of the expected values, or if I find curly braces. Would that be how you would do it?</p>
+<p>Also, I wonder if there would be a clever way, using attributes or something, where you could be more specific about what values you accept in your   ToString. I&#8217;ve always hated this&#8230; I mean, &quot;G&quot;, we use it all the time, but what&#8217;s that all about? How about something more strongly typed?</p>
+<p>Not being nitpicky, but in case you missed this, you don&#8217;t have to ToString() any of your non-string obejcts passed to String.Format, so this works just as well, and less typing:</p>
+<p>string.Format(&quot;{0} {1} Age= {2}&quot;,_firstname,_lastname,_age);<br /></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/02/24/overriding-system-object-tostring-and-implementing-iformattable/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='7' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="6b3ab9a39b" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.293 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 10:43:58 -->
+<!-- super cache -->

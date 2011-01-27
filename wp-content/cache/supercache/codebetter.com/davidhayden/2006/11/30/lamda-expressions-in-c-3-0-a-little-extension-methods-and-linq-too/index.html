@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230; | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://codebetter.com/davidhayden/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/davidhayden/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='David Hayden' href='http://codebetter.com/davidhayden/' />
+<link rel='start' title='Object Identity vs. Object Equality &#8211; Overriding System.Object.Equals(Object obj)' href='http://codebetter.com/davidhayden/2005/02/22/object-identity-vs-object-equality-overriding-system-object-equalsobject-obj/' />
+<link rel='prev' title='Extension Methods in C# 3.0' href='http://codebetter.com/davidhayden/2006/11/28/extension-methods-in-c-3-0/' />
+<link rel='next' title='Beginning ASP.NET 2.0 Databases From Novice to Professional Book Review' href='http://codebetter.com/davidhayden/2006/12/03/beginning-asp-net-2-0-databases-from-novice-to-professional-book-review/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/' />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=146' />
+<link rel="stylesheet" href="http://codebetter.com/davidhayden/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://codebetter.com/davidhayden/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-146" class="post-146 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230;</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/" title="3:38 pm" rel="bookmark"><span class="entry-date">November 30, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/davidhayden/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><h1>Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230;</h1>
+<p>by <a href="http://www.davidhayden.com/">David Hayden</a></p>
+<p>&nbsp;</p>
+<p>I spent some time with <strong>Lambda Expressions</strong> in C# 3.0 last night, and they are extremely cool. I haven&#039;t played with <strong>Expression Trees</strong> yet, which&nbsp;sound like the&nbsp;coolest part of Lambda Expressions, but still,&nbsp;Lambda Expressions&nbsp;are cool just to help ease the burden of writing verbose <strong>Anonymous Methods</strong>.</p>
+<p><strong>Anonymous Methods</strong></p>
+<p>I love Anonymous Methods in C# 2.0. The idea behind anonymous methods it to write methods inline to the code so you don&#039;t have to go through the trouble of declaring a formal named method. They are mainly used for small methods that don&#039;t require any need for reuse.</p>
+<p>Instead of declaring a separate method <strong>IsAbe</strong> to find Abe in a list of strings:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> names </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Barney</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Chuck</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">string</span><span style="color: #000000"> abe </span><span style="color: #000000">=</span><span style="color: #000000"> names.Find(IsAbe);
+        Console.WriteLine(abe);
+    }
+
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">bool</span><span style="color: #000000"> IsAbe(</span><span style="color: #0000ff">string</span><span style="color: #000000"> name)
+    {
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>You can declare an anonymous method inline to save you the trouble:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> names </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Barney</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Chuck</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">string</span><span style="color: #000000"> abe </span><span style="color: #000000">=</span><span style="color: #000000"> names.Find(</span><span style="color: #0000ff">delegate</span><span style="color: #000000">(</span><span style="color: #0000ff">string</span><span style="color: #000000"> name)
+                        {
+                            </span><span style="color: #0000ff">return</span><span style="color: #000000"> name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+                        });
+
+        Console.WriteLine(abe);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>It can get a lot fancier than that, but that is basically the gist. Declare the method inline to the code for easy stuff not needing reuse, because it saves some typing and puts the method closer to where it is being used which helps with maintenance.</p>
+<p><strong>Lambda Expressions</strong></p>
+<p>Lambda Expressions make things even easier by allowing you to&nbsp;avoid the anonymous&nbsp;method and that annoying <strong>statement block</strong>:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> names </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Barney</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Chuck</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">string</span><span style="color: #000000"> abe </span><span style="color: #000000">=</span><span style="color: #000000"> names.Find((</span><span style="color: #0000ff">string</span><span style="color: #000000"> name) </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        Console.WriteLine(abe);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>Because Lambda Expressions are smart enough to infer variable types, I don&#039;t even have to explicity mention that&nbsp;<strong>name</strong> is a string above. I can remove it for even more simplicity and&nbsp;write it as such:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> names </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Barney</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Chuck</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">string</span><span style="color: #000000"> abe </span><span style="color: #000000">=</span><span style="color: #000000"> names.Find(name </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        Console.WriteLine(abe);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>Now there is no particular reason why I have to use <strong>name</strong> as my variable. Often developers will use 1 character variable names in Lambda Expressions just to keep things short. Here we replace <strong>name</strong> with <strong>p</strong> and all works the same.</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000"> names </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #0000ff">string</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Barney</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+        names.Add(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Chuck</span><span style="color: #000000">&quot;</span><span style="color: #000000">);
+
+        </span><span style="color: #0000ff">string</span><span style="color: #000000"> abe </span><span style="color: #000000">=</span><span style="color: #000000"> names.Find(p </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> p.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        Console.WriteLine(abe);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p><strong>Using a Customer Class</strong></p>
+<p>I used a list of strings above, but you can just as easily use a list of objects to do the same thing. I will take an abbreviated form of a <strong>Customer Class</strong>:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">class</span><span style="color: #000000"> Customer
+{
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">int</span><span style="color: #000000"> Id;
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">string</span><span style="color: #000000"> Name;
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">string</span><span style="color: #000000"> City;
+
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> Customer(</span><span style="color: #0000ff">int</span><span style="color: #000000"> id, </span><span style="color: #0000ff">string</span><span style="color: #000000"> name, </span><span style="color: #0000ff">string</span><span style="color: #000000"> city)
+    {
+        Id </span><span style="color: #000000">=</span><span style="color: #000000"> id;
+        Name </span><span style="color: #000000">=</span><span style="color: #000000"> name;
+        City </span><span style="color: #000000">=</span><span style="color: #000000"> city;
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>&nbsp;and now use Lambda Expressions to find a particular <strong>Customer</strong> with a name of &quot;Abe&quot;.</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> customers </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">1</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Sarasota</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">2</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Tampa</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">3</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Miami</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        Customer abe </span><span style="color: #000000">=</span><span style="color: #000000"> customers.Find(c </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> c.Name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>Again, we could make things more obvious by explicity saying that&nbsp;<strong>c</strong> is of type <strong>Customer</strong>, but I wouldn&#039;t bet on many people doing it <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  You could write the above as follows:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> customers </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">1</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Sarasota</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">2</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Tampa</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">3</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Miami</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        Customer abe </span><span style="color: #000000">=</span><span style="color: #000000"> customers.Find((Customer c) </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> c.Name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p><strong>Combining Extension Methods&nbsp;and Lambda Expressions for Help In Finding Our Customer</strong></p>
+<p>Let&#039;s say we have a custom <strong>CustomerCollection Class</strong> not within our control that doesn&#039;t provide us an easy way to&nbsp;find a Customer:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">class</span><span style="color: #000000"> CustomerCollection : IEnumerable</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000">
+{
+    IEnumerable</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> _customers;
+
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> CustomerCollection(IEnumerable</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> customers)
+    {
+        _customers </span><span style="color: #000000">=</span><span style="color: #000000"> customers;
+    }
+
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> IEnumerator</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> GetEnumerator()
+    {
+        </span><span style="color: #0000ff">foreach</span><span style="color: #000000"> (Customer customer </span><span style="color: #0000ff">in</span><span style="color: #000000"> _customers)
+            </span><span style="color: #0000ff">yield</span><span style="color: #000000"> </span><span style="color: #0000ff">return</span><span style="color: #000000"> customer;
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    {
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> _customers.GetEnumerator();
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>Let&#039;s add an&nbsp;<a href="/blogs/david.hayden/archive/2006/11/28/Extension-Methods-in-C_2300_-3.0.aspx">Extension Method</a> to the CustomerCollection Class, called <strong>GetCustomer</strong>:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">class</span><span style="color: #000000"> CustomerExtensions
+{
+    </span><span style="color: #0000ff">public</span><span style="color: #000000"> </span><span style="color: #0000ff">static</span><span style="color: #000000"> Customer GetCustomer(</span><span style="color: #0000ff">this</span><span style="color: #000000"> CustomerCollection customers, Predicate</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> isMatch)
+    {
+        </span><span style="color: #0000ff">foreach</span><span style="color: #000000"> (Customer customer </span><span style="color: #0000ff">in</span><span style="color: #000000"> customers)
+            </span><span style="color: #0000ff">if</span><span style="color: #000000"> (isMatch(customer))
+                </span><span style="color: #0000ff">return</span><span style="color: #000000"> customer;
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">null</span><span style="color: #000000">;
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p>And now, we can use the CustomerCollection Class to easily find Abe like:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        CustomerCollection collection </span><span style="color: #000000">=</span><span style="color: #000000"> GetCustomers();    
+
+        </span><span style="color: #008000">//</span><span style="color: #008000"> Using my GetCustomer Method Extension that accepts my Lamda Expression...</span><span style="color: #008000">
+</span><span style="color: #000000">        Customer abe </span><span style="color: #000000">=</span><span style="color: #000000"> collection.GetCustomer(c </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> c.Name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+    }
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Pretend We Don&#039;t See This <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">static</span><span style="color: #000000"> CustomerCollection GetCustomers()
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> customers </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">1</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Sarasota</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">2</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Tampa</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">3</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Miami</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> CustomerCollection(customers);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p><strong>But This Is LINQ!</strong></p>
+<p>But, of course, since CustomerCollection implements <strong>IEnumerable&lt;T&gt;</strong>, in this case, <strong>IEnumerable&lt;Customer&gt;</strong>, screw the Extension Methods and just use LINQ:</p>
+<p>&nbsp;</p>
+<pre><span style="color: #0000ff">class</span><span style="color: #000000"> Program
+{
+    </span><span style="color: #0000ff">static</span><span style="color: #000000"> </span><span style="color: #0000ff">void</span><span style="color: #000000"> Main(</span><span style="color: #0000ff">string</span><span style="color: #000000">[] args)
+    {
+        CustomerCollection collection </span><span style="color: #000000">=</span><span style="color: #000000"> GetCustomers();    
+
+        </span><span style="color: #008000">//</span><span style="color: #008000"> LINQ</span><span style="color: #008000">
+</span><span style="color: #000000">        var abe </span><span style="color: #000000">=</span><span style="color: #000000"> collection.Single(c </span><span style="color: #000000">=&gt;</span><span style="color: #000000"> c.Name.Equals(</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+    }
+
+    </span><span style="color: #008000">//</span><span style="color: #008000"> Pretend We Don&#039;t See This <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </span><span style="color: #008000">
+</span><span style="color: #000000">    </span><span style="color: #0000ff">static</span><span style="color: #000000"> CustomerCollection GetCustomers()
+    {
+        List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000"> customers </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> List</span><span style="color: #000000">&lt;</span><span style="color: #000000">Customer</span><span style="color: #000000">&gt;</span><span style="color: #000000">();
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">1</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Dave</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Sarasota</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">2</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">John</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Tampa</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+        customers.Add(</span><span style="color: #0000ff">new</span><span style="color: #000000"> Customer(</span><span style="color: #ff0000">3</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Abe</span><span style="color: #000000">&quot;</span><span style="color: #000000">,</span><span style="color: #000000">&quot;</span><span style="color: #008080">Miami</span><span style="color: #000000">&quot;</span><span style="color: #000000">));
+
+        </span><span style="color: #0000ff">return</span><span style="color: #000000"> </span><span style="color: #0000ff">new</span><span style="color: #000000"> CustomerCollection(customers);
+    }
+}</span></pre>
+<p>&nbsp;</p>
+<p><strong>Conclusion</strong></p>
+<p>Nothing to say other than &#8211; Cool!</p>
+<p>by <a href="http://www.davidhayden.com/">David Hayden</a></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/" title="Permalink to Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230;" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/feed/" title="Comments RSS to Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230;" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-146 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2006/11/28/extension-methods-in-c-3-0/" rel="prev"><span class="meta-nav">&larr;</span> Extension Methods in C# 3.0</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2006/12/03/beginning-asp-net-2-0-databases-from-novice-to-professional-book-review/" rel="next">Beginning ASP.NET 2.0 Databases From Novice to Professional Book Review <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">6 Responses to <em>Lambda Expressions in C# 3.0 &#8211; A little Extension Methods and LINQ Too&#8230;</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-405">
+		<div id="comment-405">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-405">December 3, 2006 at 2:14 pm</a></div>
+
+		<div class="comment-body"><p>John,</p>
+<p>I should have you write all my teasers <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-404">
+		<div id="comment-404">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/john.papa' rel='external nofollow' class='url'>johnpapa</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-404">December 1, 2006 at 6:56 pm</a></div>
+
+		<div class="comment-body"><p>Next up &#8230; what do you do with &#8220;var abe&#8221; ? Is it CustomerCollection, is it its own object &#8230; tune in next week to find out <img src='http://codebetter.com/davidhayden/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />     Seriously, nice post &#8230; one of my first concerns with LINQ was how usable the return values are (like abe in your last example). </p>
+<p>LINQ and the C# 3.0 enhancements have come a long way in the past year. They will be welcome additions to everyday coding.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-403">
+		<div id="comment-403">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='https://jostein.kjonigsen.net' rel='external nofollow' class='url'>Jostein Kj&#248;nigsen</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-403">November 30, 2006 at 11:56 pm</a></div>
+
+		<div class="comment-body"><p>Good article indeed.</p>
+<p>Also taught me about the Find-method in the List class which I wasn&#8217;t even aware of. Nice one.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-402">
+		<div id="comment-402">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-402">November 30, 2006 at 4:25 pm</a></div>
+
+		<div class="comment-body"><p>hehe&#8230; yes! Thanks for catching that&#8230;</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-401">
+		<div id="comment-401">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jasonbock.net' rel='external nofollow' class='url'>Jason Bock</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-401">November 30, 2006 at 4:20 pm</a></div>
+
+		<div class="comment-body"><p>Nice post, but isn&#8217;t it spelled &#8220;lambda&#8221;, rather than &#8220;lamda&#8221;?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-400">
+		<div id="comment-400">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Kevin Miller</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#comment-400">November 30, 2006 at 4:12 pm</a></div>
+
+		<div class="comment-body"><p>Thanks for the great intro to c# 3.0 post. I found it very informative.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2006/11/30/lamda-expressions-in-c-3-0-a-little-extension-methods-and-linq-too/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='146' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="7431af9024" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.284 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 09:49:10 -->
+<!-- super cache -->

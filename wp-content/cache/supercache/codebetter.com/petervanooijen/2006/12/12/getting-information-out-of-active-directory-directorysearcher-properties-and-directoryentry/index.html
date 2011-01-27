@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Getting information out of active directory: DirectorySearcher, Properties and DirectoryEntry | Peter van Ooijen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/petervanooijen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/petervanooijen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Peter van Ooijen' href='http://codebetter.com/petervanooijen/' />
+<link rel='start' title='Hello weblog' href='http://codebetter.com/petervanooijen/2003/06/03/hello-weblog/' />
+<link rel='prev' title='Sign of the times giveaway' href='http://codebetter.com/petervanooijen/2006/12/04/sign-of-the-times-giveaway/' />
+<link rel='next' title='AD GetDirectoryEntry on DirectorySearch result &lt;&gt; new DirectoryEntry (Security hits back)' href='http://codebetter.com/petervanooijen/2006/12/14/ad-getdirectoryentry-on-directorysearch-result-new-directoryentry-security-hits-back/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/petervanooijen/2006/12/12/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry/' />
+<link rel='shortlink' href='http://codebetter.com/petervanooijen/?p=490' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetterpetergekkosblog/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-490" class="post-490 post type-post status-publish format-standard hentry category-coding">
+					<h1 class="entry-title">Getting information out of active directory: DirectorySearcher, Properties and DirectoryEntry</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/petervanooijen/author/petervanooijen/" title="View all posts by Peter van Ooijen">Peter van Ooijen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/petervanooijen/2006/12/12/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry/" title="9:58 am" rel="bookmark"><span class="entry-date">December 12, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/petervanooijen/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/petervanooijen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>One of my apps needed to get some information out of ActiveDirectory. The 2.0 framework does contain some very nice classes to help. Getting these to work as intended took some trouble; so I&#039;ll recapitulate in public. </p>
+<p>The scenario: the user can log in from anywhere, not necessarily from within the domain, and provides his username and password credentials (note the security risk of a password travelling over a potentially insecure wire). It&#039;s up to the webapp to check if the user is a valid member of the (Active Directory) domain and which group s/he is a member off. The web server on which the app is running is a member of the domain. </p>
+<p>The <em>DirectorySearcher</em> class provides all AD info. Use it&#039;s <em>Filter</em> property to select the AD entries. The <em>FindOne</em> method will return the first entry matching, the <em>FindAll</em> method returns all entries. After invoking the method the Properties of the search result contain all AD properties. </p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: #2b91af">DirectorySearcher</span><span style="color: black"> ds = </span><span style="color: blue">new</span><span style="color: black"> </span><span style="color: #2b91af">DirectorySearcher</span><span style="color: black">(); </span></span></p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: black">ds.Filter = </span><span style="color: #a31515">&quot;samaccountname=&quot;</span><span style="color: black"> + userName; </span></span></p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: #2b91af">SearchResult</span><span style="color: black"> sr = ds.FindOne(); </span></span></p>
+<p style="background: white">&nbsp; &nbsp;</p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: black">System.Text.</span><span style="color: #2b91af">StringBuilder</span><span style="color: black"> sb = </span><span style="color: blue">new</span><span style="color: black"> System.Text.</span><span style="color: #2b91af">StringBuilder</span><span style="color: black">(); </span></span></p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: blue">foreach</span><span style="color: black"> (</span><span style="color: blue">string</span><span style="color: black"> var </span><span style="color: blue">in</span><span style="color: black"> sr.Properties.PropertyNames) </span></span></p>
+<p style="background: white"><span style="font-size: 10pt;font-family: Courier New"><span style="color: black">&nbsp;&nbsp;&nbsp; sb.AppendLine(</span><span style="color: blue">string</span><span style="color: black">.Format(</span><span style="color: #a31515">&quot;{0} : {1}&quot;</span><span style="color: black">, var, sr.Properties[var][0].ToString())); </span></span></p>
+<p>this first shot returns most AD info. An example of the result in IE </p>
+<p><img height="764" src="/photos/peter.van.ooijen/images/156267/original.aspx" width="753" /></p>
+<p>That are quite a lot of properties. You can restrict the number of properties returned by filling the <em>PropertiesToLoad</em> collection of the <em>DirectorySearcher</em> object. Another thing to watch is that some properties are a collection on itself. Take the <em>memberof</em> property. It&#039;s a list of the groups the user is a member off. Precisely the info I needed. A better shot would be: </p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: #2b91af">DirectorySearcher</span><span style="color: black"> ds = </span><span style="color: blue">new</span><span style="color: black"> </span><span style="color: #2b91af">DirectorySearcher</span><span style="color: black">(); </span></span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: black">ds.Filter = </span><span style="color: #a31515">&quot;samaccountname=&quot;</span><span style="color: black"> + userName; </span></span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: black">ds.PropertiesToLoad.Add(</span><span style="color: #a31515">&quot;memberof&quot;</span><span style="color: black">); </span></span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: #2b91af">SearchResult</span><span style="color: black"> sr = ds.FindOne(); </span></span></p>
+<p style="background: white">&nbsp; &nbsp;</p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: black">System.Text.</span><span style="color: #2b91af">StringBuilder</span><span style="color: black"> sb = </span><span style="color: blue">new</span><span style="color: black"> System.Text.</span><span style="color: #2b91af">StringBuilder</span><span style="color: black">(); </span></span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: blue">foreach</span><span style="color: black"> (</span><span style="color: blue">string</span><span style="color: black"> var </span><span style="color: blue">in</span><span style="color: black"> sr.Properties.PropertyNames) </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">{ </span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: black">&nbsp;&nbsp;&nbsp; </span><span style="color: blue">for</span><span style="color: black"> (</span><span style="color: blue">int</span><span style="color: black"> i=0; i &lt; sr.Properties[var].Count; i++) </span></span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: black">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; sb.AppendLine(</span><span style="color: blue">string</span><span style="color: black">.Format(</span><span style="color: #a31515">&quot;{0}-{1} : {2}&quot;</span><span style="color: black">, var, i, sr.Properties[var][i].ToString())); </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">} </span></p>
+<p>Now the code provides me exactly the info I need. </p>
+<p><img height="308" src="/photos/peter.van.ooijen/images/156268/original.aspx" width="723" /> </p>
+<p>Note that you can read all this information without a valid password for the user. To validate the user password you need a <em>DirectoryEntry</em> object. This can be created straight from the search result. After setting the Password property you have to bind to the native underlying AD Com object to validate the password. </p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: #2b91af">DirectoryEntry</span><span style="color: black"> adsEntry = sr.GetDirectoryEntry(); </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">adsEntry.Password = passWord; </span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: blue">try</span><span style="color: black"> </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">{ </span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: blue">object</span><span style="color: black"> o = adsEntry.NativeObject; </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">} </span></p>
+<p style="background: white"><span style="font-family: Courier New"><span style="color: blue">catch</span><span style="color: black"> (</span><span style="color: #2b91af">DirectoryServicesCOMException</span><span style="color: black"> ex) </span></span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">{ </span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">adError = ex.Message; </span></p>
+<p style="background: white"><span style="color: black;font-family: Courier New">} </span></p>
+<p>In case the password is invalid this will result in a clear message &quot;<em>Logon failure: unknown user name or bad password</em>&quot;. </p>
+<p>In the end this looks quite simple. What really got me on the wrong track is that the internal name of the AD properties does not always match the name as it is displayed in the AD management console. For instance there no <em>Last Name</em> property, only a <em>sn</em> property. I had to find out the property names by enumerating the <em>PropertyNames</em> collection; I could not find any resource which map the display names on the internal names. Another thing is that for a domain user who is not part of any internal domain group, but only of an external group, the <em>member of</em> collection is empty and as a result the <em>memberOf</em> property is not even returned. </p>
+<p>It took some patience&hellip; </p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/5cb0e972c5e405e6bff7e7f2da237c6d?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Peter van Ooijen</h2>
+							Bla di blore, later I'll tell more							<div id="author-link">
+								<a href="http://codebetter.com/petervanooijen/author/petervanooijen/" title="View all posts by Peter van Ooijen">View all posts by Peter van Ooijen &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/petervanooijen/category/coding/" title="View all posts in Coding" rel="category tag">Coding</a>. Bookmark the <a href="http://codebetter.com/petervanooijen/2006/12/12/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry/" title="Permalink to Getting information out of active directory: DirectorySearcher, Properties and DirectoryEntry" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/petervanooijen/2006/12/12/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry/feed/" title="Comments RSS to Getting information out of active directory: DirectorySearcher, Properties and DirectoryEntry" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-490 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/petervanooijen/2006/12/04/sign-of-the-times-giveaway/" rel="prev"><span class="meta-nav">&larr;</span> Sign of the times giveaway</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/petervanooijen/2006/12/14/ad-getdirectoryentry-on-directorysearch-result-new-directoryentry-security-hits-back/" rel="next">AD GetDirectoryEntry on DirectorySearch result &lt;&gt; new DirectoryEntry (Security hits back) <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2302">
+					<div id="dsq-comment-header-2302" class="dsq-comment-header">
+						<cite id="dsq-cite-2302">
+								<span id="dsq-author-user-2302">Jason Rastovski</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2302" class="dsq-comment-body">
+						<div id="dsq-comment-message-2302" class="dsq-comment-message"><p>One thing that you might want to check out is the fact that the &#8220;memberof&#8221; property doesn&#8217;t return the &#8220;primary&#8221; group that a user belongs to.   Do a comparison of which groups a user belongs to, and what the &#8220;memberof&#8221; retunrs.  I remember having to cycle through all the groups to see if the user was a member of the groups&#8230;(basically, I had to do it backwards)</p>
+<p>Check out the link below where they discuss the fact that &#8220;memberof&#8221; doesn&#8217;t return the primary group</p>
+<p><a href="http://groups.google.com/group/microsoft.public.active.directory.interfaces/browse_thread/thread/fd1a9fc5a570c93c/d7e965e7b6fa2960%23d7e965e7b6fa2960" rel="nofollow">http://groups.google.com/group/microsoft.public.active.directory.interfaces/browse_thread/thread/fd1a9fc5a570c93c/d7e965e7b6fa2960%23d7e965e7b6fa2960</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2303">
+					<div id="dsq-comment-header-2303" class="dsq-comment-header">
+						<cite id="dsq-cite-2303">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2303">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2303" class="dsq-comment-body">
+						<div id="dsq-comment-message-2303" class="dsq-comment-message"><p>Thanks for the link.<br />
+There is an interesting article in the MS knowledge base on the primary group here</p>
+<p><a href="http://support.microsoft.com/kb/321360" rel="nofollow">http://support.microsoft.com/kb/321360</a></p>
+<p>The primary group does not have to be a member of the domain, even in a single domain scenario. And will not show up when enumerating the groups</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2304">
+					<div id="dsq-comment-header-2304" class="dsq-comment-header">
+						<cite id="dsq-cite-2304">
+								<span id="dsq-author-user-2304">zullu</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2304" class="dsq-comment-body">
+						<div id="dsq-comment-message-2304" class="dsq-comment-message"><p>Hi Peter,</p>
+<p>Can You guide me to the step by step method to create this AD Lookup Web Service.<br />
+I need to display the User and his Managre&#8217;s detail on a form by connecting to this web service.</p>
+<p>Thanks in advance for your help.<br />
+Zullu</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2305">
+					<div id="dsq-comment-header-2305" class="dsq-comment-header">
+						<cite id="dsq-cite-2305">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2305">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2305" class="dsq-comment-body">
+						<div id="dsq-comment-message-2305" class="dsq-comment-message"><p><a href="http://codebetter.com/blogs/peter.van.ooijen/archive/2007/02/27/A-blog-is-not-a-helpdesk.aspx" rel="nofollow">http://codebetter.com/blogs/peter.van.ooijen/archive/2007/02/27/A-blog-is-not-a-helpdesk.aspx</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2306">
+					<div id="dsq-comment-header-2306" class="dsq-comment-header">
+						<cite id="dsq-cite-2306">
+								<span id="dsq-author-user-2306">Chaz</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2306" class="dsq-comment-body">
+						<div id="dsq-comment-message-2306" class="dsq-comment-message"><p>Is it possible to extract the user&#8217;s password from the directory entry?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2307">
+					<div id="dsq-comment-header-2307" class="dsq-comment-header">
+						<cite id="dsq-cite-2307">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2307">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2307" class="dsq-comment-body">
+						<div id="dsq-comment-message-2307" class="dsq-comment-message"><p> <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>That would be nice, wouldn&#8217;t it ? No, it.s not in the list of properties. Also in the server admin tools an administrator can reset a password but never read it.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2308">
+					<div id="dsq-comment-header-2308" class="dsq-comment-header">
+						<cite id="dsq-cite-2308">
+								<span id="dsq-author-user-2308">Jo&#227;o Mendes</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2308" class="dsq-comment-body">
+						<div id="dsq-comment-message-2308" class="dsq-comment-message"><p>Hi, i&#8217;ve something like that but i&#8217;ve a problem. This works fine at my computer and at staging, but doesn&#8217;t in the server.</p>
+<p>My code is:<br />
+DirectoryEntry rootEntry = new DirectoryEntry(ConfigurationSettings.AppSettings["ActiveDirectoryPath"], ConfigurationSettings.AppSettings["ADUser"], ConfigurationSettings.AppSettings["ADPassword"]);<br />
+DirectorySearcher search = new DirectorySearcher(rootEntry);<br />
+search.PropertiesToLoad.Add(&#8220;numColaborador&#8221;);<br />
+search.Filter = &#8220;(|(cn=&#8221; + tokens[1] + &#8220;)(sAMAccountName=&#8221; + tokens[1] + &#8220;))&#8221;;<br />
+SearchResult result = search.FindOne();<br />
+collaboratorNum = search.FindOne().GetDirectoryEntry().Properties["numColaborador"].Value as string;</p>
+<p>and the error is &#8220;The authentication mechanism is unknown.&#8221;</p>
+<p>I read, that can be resolved changing the file machine.config. The attribute userName of processModel tag, must be &#8220;machine&#8221; and now is &#8220;system&#8221;. But i won&#8217;t change that because that applies to all sites at the server, and i don&#8217;t know how they work with teh changes.</p>
+<p>Any suggestions?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2309">
+					<div id="dsq-comment-header-2309" class="dsq-comment-header">
+						<cite id="dsq-cite-2309">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2309">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2309" class="dsq-comment-body">
+						<div id="dsq-comment-message-2309" class="dsq-comment-message"><p>@Joao<br />
+That&#8217;s hard to say. I would try the overload of the DirectoryEntry which takes an AUthenticateionType and try that.<br />
+But I have no personal experiende with that</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2310">
+					<div id="dsq-comment-header-2310" class="dsq-comment-header">
+						<cite id="dsq-cite-2310">
+	http://gagansawant.com							<span id="dsq-author-user-2310">Gagandeep Sawant</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2310" class="dsq-comment-body">
+						<div id="dsq-comment-message-2310" class="dsq-comment-message"><p>This was the best resolution I encountered for accessing and checking AD. The best part is that it is the fastest of all the availbale solutions.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2311">
+					<div id="dsq-comment-header-2311" class="dsq-comment-header">
+						<cite id="dsq-cite-2311">
+								<span id="dsq-author-user-2311">marcinsvr</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2311" class="dsq-comment-body">
+						<div id="dsq-comment-message-2311" class="dsq-comment-message"><p>Peter &#8211; good job!<br />
+Helped me a lot, thank you.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2312">
+					<div id="dsq-comment-header-2312" class="dsq-comment-header">
+						<cite id="dsq-cite-2312">
+								<span id="dsq-author-user-2312">IbrahimmbI</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2312" class="dsq-comment-body">
+						<div id="dsq-comment-message-2312" class="dsq-comment-message"><p>What if the user i was validating is lockout how can i handle that</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2313">
+					<div id="dsq-comment-header-2313" class="dsq-comment-header">
+						<cite id="dsq-cite-2313">
+	http://petersgekko.codebetter.com							<span id="dsq-author-user-2313">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2313" class="dsq-comment-body">
+						<div id="dsq-comment-message-2313" class="dsq-comment-message"><p>Lockout ? You mean denied access by the admin ?<br />
+That should result in all info returned but a failed login.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2314">
+					<div id="dsq-comment-header-2314" class="dsq-comment-header">
+						<cite id="dsq-cite-2314">
+	http://www.freewebs.com/ravikantsinghkushwaha							<span id="dsq-author-user-2314">Ravi</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2314" class="dsq-comment-body">
+						<div id="dsq-comment-message-2314" class="dsq-comment-message"><p>I was Hungry for this code</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2315">
+					<div id="dsq-comment-header-2315" class="dsq-comment-header">
+						<cite id="dsq-cite-2315">
+								<span id="dsq-author-user-2315">Lizzy</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2315" class="dsq-comment-body">
+						<div id="dsq-comment-message-2315" class="dsq-comment-message"><p>I&#8217;m a beginner.It&#8217;s  difficult for me!</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2316">
+					<div id="dsq-comment-header-2316" class="dsq-comment-header">
+						<cite id="dsq-cite-2316">
+								<span id="dsq-author-user-2316">Juan Carlos</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2316" class="dsq-comment-body">
+						<div id="dsq-comment-message-2316" class="dsq-comment-message"><p>thanks a lot! this post help me improving my code. great job! thanks again</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/petervanooijen/2006/12/12/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry/ ';
+	var disqus_identifier = '490 /blogs/peter.van.ooijen/archive/2006/12/12/Getting-information-out-of-active-directory_3A00_-DirectorySearcher_2C00_-Properties-and-DirectoryEntry.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetterpetergekkosblog';
+	var disqus_title = "Getting information out of active directory: DirectorySearcher, Properties and DirectoryEntry";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=490');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/petervanooijen\/2006\/12\/12\/getting-information-out-of-active-directory-directorysearcher-properties-and-directoryentry\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">Small bio</h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: none;"><img alt='' src='http://1.gravatar.com/avatar/5cb0e972c5e405e6bff7e7f2da237c6d?s=96&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="tag_cloud-3" class="widget-container widget_tag_cloud"><h3 class="widget-title">Post categories</h3><div class="tagcloud"><a href='http://codebetter.com/petervanooijen/category/asp-net/' class='tag-link-1725' title='67 topics' style='font-size: 16.3151515152pt;'>ASP.NET</a>
+<a href='http://codebetter.com/petervanooijen/category/chatter/' class='tag-link-6709' title='69 topics' style='font-size: 16.4848484848pt;'>Chatter</a>
+<a href='http://codebetter.com/petervanooijen/category/coding/' class='tag-link-6706' title='49 topics' style='font-size: 15.2121212121pt;'>Coding</a>
+<a href='http://codebetter.com/petervanooijen/category/data/' class='tag-link-6708' title='45 topics' style='font-size: 14.8727272727pt;'>Data</a>
+<a href='http://codebetter.com/petervanooijen/category/featured/' class='tag-link-1356' title='6 topics' style='font-size: 8pt;'>Featured</a>
+<a href='http://codebetter.com/petervanooijen/category/hardware/' class='tag-link-4927' title='13 topics' style='font-size: 10.5454545455pt;'>Hardware</a>
+<a href='http://codebetter.com/petervanooijen/category/mobile/' class='tag-link-6712' title='13 topics' style='font-size: 10.5454545455pt;'>Mobile</a>
+<a href='http://codebetter.com/petervanooijen/category/outofcontrol/' class='tag-link-6705' title='13 topics' style='font-size: 10.5454545455pt;'>Out+of+control</a>
+<a href='http://codebetter.com/petervanooijen/category/tabletpc/' class='tag-link-6707' title='45 topics' style='font-size: 14.8727272727pt;'>Tablet+PC</a>
+<a href='http://codebetter.com/petervanooijen/category/uncategorized/' class='tag-link-1044' title='317 topics' style='font-size: 22pt;'>Uncategorized</a>
+<a href='http://codebetter.com/petervanooijen/category/usergroupsandmeetings/' class='tag-link-6711' title='25 topics' style='font-size: 12.7515151515pt;'>User+groups+and+meetings</a></div>
+</li>		<li id="recent-posts-3" class="widget-container widget_recent_entries">		<h3 class="widget-title">Recent Posts</h3>		<ul>
+				<li><a href="http://codebetter.com/petervanooijen/2010/12/28/seasons-gifts-from-the-monotouch-iphone-treasure-chest-background-gps-tasks-and-uicontrol/" title="Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl">Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/11/05/kalifescope-and-monotouch-from-idea-to-the-appstore/" title="Kalifescope and Monotouch, from idea to the AppStore">Kalifescope and Monotouch, from idea to the AppStore</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/10/28/monotouch-your-c-app-on-a-real-iphone/" title="Monotouch: your C# app on a real iPhone">Monotouch: your C# app on a real iPhone</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/09/28/monotouch-drawing-an-image-pixel-by-pixel/" title="Monotouch: drawing an image pixel by pixel">Monotouch: drawing an image pixel by pixel</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/08/30/catching-the-iphone-in-the-net/" title="Catching the iPhone in the .net">Catching the iPhone in the .net</a></li>
+				</ul>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://www.Gekko-Software.nl" title="Website Gekko Software">My company</a></li>
+
+	</ul>
+</li>
+<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Post archive</h3>		<ul>
+			<li><a href='http://codebetter.com/petervanooijen/2010/12/' title='December 2010'>December 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/11/' title='November 2010'>November 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/10/' title='October 2010'>October 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/09/' title='September 2010'>September 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/08/' title='August 2010'>August 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/07/' title='July 2010'>July 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/06/' title='June 2010'>June 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/05/' title='May 2010'>May 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/04/' title='April 2010'>April 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/03/' title='March 2010'>March 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/02/' title='February 2010'>February 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/01/' title='January 2010'>January 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/12/' title='December 2009'>December 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/11/' title='November 2009'>November 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/10/' title='October 2009'>October 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/09/' title='September 2009'>September 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/08/' title='August 2009'>August 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/07/' title='July 2009'>July 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/06/' title='June 2009'>June 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/05/' title='May 2009'>May 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/04/' title='April 2009'>April 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/03/' title='March 2009'>March 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/02/' title='February 2009'>February 2009</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/01/' title='January 2009'>January 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/12/' title='December 2008'>December 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/11/' title='November 2008'>November 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/10/' title='October 2008'>October 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/09/' title='September 2008'>September 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/08/' title='August 2008'>August 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/07/' title='July 2008'>July 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/06/' title='June 2008'>June 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/05/' title='May 2008'>May 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/04/' title='April 2008'>April 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/03/' title='March 2008'>March 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/02/' title='February 2008'>February 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/01/' title='January 2008'>January 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/12/' title='December 2007'>December 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/11/' title='November 2007'>November 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/10/' title='October 2007'>October 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/09/' title='September 2007'>September 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/08/' title='August 2007'>August 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/07/' title='July 2007'>July 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/06/' title='June 2007'>June 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/05/' title='May 2007'>May 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/04/' title='April 2007'>April 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/03/' title='March 2007'>March 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/02/' title='February 2007'>February 2007</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/01/' title='January 2007'>January 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/12/' title='December 2006'>December 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/11/' title='November 2006'>November 2006</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/10/' title='October 2006'>October 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/09/' title='September 2006'>September 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/08/' title='August 2006'>August 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/07/' title='July 2006'>July 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/06/' title='June 2006'>June 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/05/' title='May 2006'>May 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/04/' title='April 2006'>April 2006</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/03/' title='March 2006'>March 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/02/' title='February 2006'>February 2006</a>&nbsp;(10)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/01/' title='January 2006'>January 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/12/' title='December 2005'>December 2005</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/11/' title='November 2005'>November 2005</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/10/' title='October 2005'>October 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/09/' title='September 2005'>September 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/08/' title='August 2005'>August 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/07/' title='July 2005'>July 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/06/' title='June 2005'>June 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/05/' title='May 2005'>May 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/04/' title='April 2005'>April 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/03/' title='March 2005'>March 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/02/' title='February 2005'>February 2005</a>&nbsp;(27)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/01/' title='January 2005'>January 2005</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/12/' title='December 2004'>December 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/11/' title='November 2004'>November 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/10/' title='October 2004'>October 2004</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/09/' title='September 2004'>September 2004</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/08/' title='August 2004'>August 2004</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/07/' title='July 2004'>July 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/06/' title='June 2004'>June 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/05/' title='May 2004'>May 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/04/' title='April 2004'>April 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/03/' title='March 2004'>March 2004</a>&nbsp;(21)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/02/' title='February 2004'>February 2004</a>&nbsp;(23)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/01/' title='January 2004'>January 2004</a>&nbsp;(14)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/12/' title='December 2003'>December 2003</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/11/' title='November 2003'>November 2003</a>&nbsp;(20)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/10/' title='October 2003'>October 2003</a>&nbsp;(30)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/09/' title='September 2003'>September 2003</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/08/' title='August 2003'>August 2003</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/07/' title='July 2003'>July 2003</a>&nbsp;(5)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/06/' title='June 2003'>June 2003</a>&nbsp;(4)</li>
+		</ul>
+</li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.313 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-27 14:59:47 -->
+<!-- super cache -->
