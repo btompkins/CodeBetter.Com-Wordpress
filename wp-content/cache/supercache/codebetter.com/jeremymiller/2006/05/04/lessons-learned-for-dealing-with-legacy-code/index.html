@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Lessons Learned for Dealing with Legacy Code | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeremy D. Miller' href='http://codebetter.com/jeremymiller/' />
+<link rel='start' title='Bypass VSTS and get yourself a &quot;Poor Man&#8217;s IntelliJ&quot;' href='http://codebetter.com/jeremymiller/2005/04/12/bypass-vsts-and-get-yourself-a-poor-mans-intellij/' />
+<link rel='prev' title='Need some help with the blog appearance please' href='http://codebetter.com/jeremymiller/2006/05/03/need-some-help-with-the-blog-appearance-please/' />
+<link rel='next' title='Nice articles on Dependency Injection and Smalltalk' href='http://codebetter.com/jeremymiller/2006/05/06/nice-articles-on-dependency-injection-and-smalltalk/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jeremymiller/2006/05/04/lessons-learned-for-dealing-with-legacy-code/' />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=157' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/theshadetreedeveloper/disqus.css?v=2.0" type="text/css" media="screen" />	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-157" class="post-157 post type-post status-publish format-standard hentry category-legacy-code">
+					<h1 class="entry-title">Lessons Learned for Dealing with Legacy Code</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2006/05/04/lessons-learned-for-dealing-with-legacy-code/" title="3:14 pm" rel="bookmark"><span class="entry-date">May 4, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Tip #1 &#8211; Go get a copy of Michael Feather&#8217;s &#8220;<A href="http://www.amazon.com/gp/product/0131177052/sr=8-1/qid=1146747712/ref=pd_bbs_1/002-8826520-4787205?_encoding=UTF8">Working Effectively with Legacy Code</A>&#8221; book.&nbsp; If you take away one thing from this post, that&#8217;s it.&nbsp; The book is full of good ideas for decoupling legacy code and retrofitting tests, but there&#8217;s more to the legacy code story.</P><br />
+<P>For the last year and a half my career has largely revolved around various attempts to deal with legacy code.&nbsp; Last year our organization did a partial rewrite of a large, mission critical legacy application.&nbsp; Two of us built a new rules engine component to replace a big bag of spaghetti code written in VB6 that had simply become too difficult and risky to modify.&nbsp; Not surprisingly, the rewrite effort was rough.&nbsp; Our requirements were more or less the existing code, and it was bad in that peculiar way that only copy and paste VB6 code can be.&nbsp; Last fall my team expanded and took over responsibility for the larger legacy application and once again the code and the application infrastructure as a whole was in bad shape.&nbsp; I thought that our new team was demonstrably productive when we were working with new code, but we slowed to a crawl when we had to work with the legacy code.&nbsp; We&#8217;ve started to turn around that problem.&nbsp; Here are some of the lessons we&#8217;ve learned over the past year and a half about wrangling legacy code into shape.</P><br />
+<H4>The Legacy Code Trap</H4><br />
+<H4><SPAN>Why do I call it a &#8220;legacy&#8221; codebase?&nbsp; It&#8217;s not simply an issue of technology or age.&nbsp; While we do have problems with older VB6 and ASP Classic code, much of the code I&#8217;m labeling as &#8220;legacy&#8221; code here is written in C# and most of it is less than 18 months old, but it&#8217;s definitely legacy code.&nbsp; In his book, Michael Feathers defines legacy code as code without automated tests.&nbsp; I do think that&#8217;s valid, but I&#8217;m going to broaden my personal definition a little bit.&nbsp; </SPAN>Legacy code is code that you&#8217;re afraid of<SPAN>, but is too valuable or big to toss away.&nbsp; </SPAN></H4><br />
+<H4><SPAN>So exactly why are we afraid of the legacy code?</SPAN></H4><br />
+<OL><br />
+<LI>It doesn&#8217;t have adequate automated tests.&nbsp; The lack of tests is a problem in itself, but it probably implies that the system is not testable as well, i.e. tightly coupled, ball of mud, spaghetti code, you name it.</LI><br />
+<LI>We don&#8217;t understand the code.&nbsp; </LI><br />
+<LI>It&#8217;s hard to debug.&nbsp; Why, oh why doesn&#8217;t the code work?</LI><br />
+<LI>It&#8217;s hard to deploy.&nbsp; We don&#8217;t understand all of the environmental dependencies and the application isn&#8217;t easy to troubleshoot.&nbsp; Maybe deploying the application just takes too long. </LI><br />
+<LI>The feedback cycles are too slow.&nbsp; We can&#8217;t even run the code.</LI></OL><br />
+<P><B>Master your fear.</B>&nbsp; I think we&#8217;ve done more harm to ourselves by trying so hard to change certain areas of the code.&nbsp; &#8220;That code is too scary to change, let&#8217;s go around it&#8221; has led us into trouble on a couple of occasions.&nbsp; We&#8217;ve created duplication in the system rather than clean up the existing code that is the natural place for a new feature.&nbsp; The one thing you most certainly don&#8217;t want to do is make things worse than they already are.&nbsp; As an example, instead of doing a full rewrite of an ASP website we did a minimalist approach that makes the legacy ASP pages forward to ASP.Net pages and vice versa.&nbsp; That effort to reduce the amount of change has generated more work and technical debt in overly complex security and state management code.&nbsp; The single best advice I can give is to concentrate on exactly what you&#8217;re afraid of and remove the reason for the fear.&nbsp; Learn about the legacy code, add more automated tests, improve the build scripts, whatever it takes to be able to work with the legacy code with confidence.&nbsp; Things didn&#8217;t turn around for us until we developed an ability to change the legacy code without fear.</P><br />
+<P><B>Cut down the feedback loop.</B>&nbsp; Over the years I&#8217;ve noticed that productivity is often a function of how fast your feedback cycle is.&nbsp; In other words, what is the elapsed time between writing a line of code and knowing that the line of code works, and works completely?&nbsp; Ideally I want to be able to <B>immediately</B> execute a small unit test with a right-click or just hit F5 to see screen changes.&nbsp; Our first problem has been simply getting the legacy code to work on our development workstations.&nbsp; If you can&#8217;t truly test any new code until you&#8217;ve physically deployed that code to a virtual machine or a testing server you&#8217;re going to slow to a crawl.&nbsp; We&#8217;ve mostly tamed this <A HREF="/blogs/jeremy.miller/archive/2005/06/27/129572.aspx">legacy beast with better build automation</A>.</P><br />
+<P>Once we could run the code on our workstations the next hurdle was being able to write small unit tests.&nbsp; It&#8217;s difficult to test code that is tightly coupled with little or no layering.&nbsp; Writing any tests became a marathon of database setup just to exercise a little bit of new code.&nbsp; We have been applying the decoupling techniques from the Feathers book to create <A HREF="/blogs/jeremy.miller/archive/2005/06/30/130091.aspx">new seams to make test writing easier</A>.&nbsp; The important lesson there is that you can improve your productivity with the legacy code by refactoring improvements.&nbsp; Leaving the code alone and coding around the mess doesn&#8217;t fix the problems.&nbsp; Sometimes you will have to make some refactorings before you have an automated test safety net.&nbsp; Lean hard on tools like ReSharper to make that refactoring safer.</P><br />
+<P><B>Automate anything that moves.</B>&nbsp; I took a poll in the office yesterday and we all agreed that <B>the single, most beneficial thing we&#8217;ve done to our legacy code is to streamline our build automation</B>.&nbsp; Time and time again I&#8217;ve struggled just to make legacy code run on my workstation before I could work on the code.&nbsp; It took a *lot* of effort, but we can now walk over to a fresh new machine, download the code tree from Subversion, run the NAnt script to rapidly get the application up and running with a fully comprehensive NAnt build script.&nbsp; Besides the obvious benefit of getting the code running, adding the complete environmental setup to the NAnt build forced us to learn about all of the environmental dependencies and the physical architecture of the application.&nbsp; It&#8217;s my opinion that a complete automated build script is the single best architectural document of a system (it&#8217;s certainly the most accurate).</P><br />
+<P>The other thing we did with the build was to optimize the build times.&nbsp; I spent a not entirely pleasant two weeks reorganizing a VS.Net solution to cut down the number of projects, optimizing slow running tests, and reducing the number of files that needed to be copied around.&nbsp; That investment took the build time from 20 minutes to under 2 minutes.&nbsp; Simply executing a single unit test went from about 4 minutes to 30 seconds.&nbsp; I believe that the time savings has more than paid for itself in the mere four months we&#8217;ve been using the streamlined codebase.&nbsp; CruiseControl.Net has a report to show NAnt timings (I would assume there is an equivalent for MSBuild) that we used to great effect to pinpoint the bottlenecks in the build.</P><br />
+<P><B>Streamline deployment.</B>&nbsp; One of the benefits of Continuous Integration is that it smoothes out system deployment, both by giving you more practice deploying and by exposing deployment difficulties.&nbsp; We&#8217;ve benefited from some minor architectural changes to reduce the number of moving parts in favor of &#8220;XCOPY&#8221; deployment wherever possible.&nbsp; We&#8217;ve eliminated registry keys in favor of configuration files, eliminated ALL dependencies on absolute paths, and pulled some nonvolatile configuration into embedded resource files.&nbsp; Our deployment practice had been to create MSI&#8217;s with WiX, then manually copy the MSI files to both the web and application tiers for deployment.&nbsp; It was taking two hours every single time we made a testing push and we screwed up too many times.&nbsp; We dumped the MSI&#8217;s and went to a much simpler NAnt deployment script.&nbsp; The next step was to put CruiseControl.Net on our development and testing servers to run the NAnt deployment scripts remotely.&nbsp; We cut the two hour code push cycle down to two minutes while cutting down deployment errors by eliminating manual steps.&nbsp; Production rollouts are much easier now.&nbsp; We&#8217;re optimistic that the improved deployment processes will enable us to do more frequent releases to keep up with business demands. </P><br />
+<P><B>Why are you sick?</B>&nbsp; One of the worst things initially with our legacy code is that it <A HREF="/blogs/karlseguin/archive/2006/04/05/142355.aspx">swallowed exceptions</A> and obfuscated environmental issues.&nbsp; The only indication of system failure was a boolean return code that denoted failure or a generic &#8220;system is too busy&#8221; message on the screen.&nbsp; If you had tribal knowledge of the system you could read the tea leaves and start checking registry values or database entries or check whether COM (must die) objects were correctly registered.&nbsp; We&#8217;ve had some success in making the system tell us more useful information by putting in more descriptive exceptions for common failure conditions.&nbsp; I found the places in the code where exceptions were being swallowed and moved that code behind an error processing abstraction that is attached via <A href="http://structuremap.sourceforge.net/">StructureMap</A>.&nbsp; In production it continues to hide the stack trace from users, but on our boxes and the test server it uses a different implementation that simply throws the exception back up for quicker and easier trouble resolution.&nbsp; One of the most useful things we&#8217;ve done is to add comprehensive <A HREF="/blogs/jeremy.miller/archive/2006/04/06/142431.aspx">environment tests</A> to find configuration problems fast at deployment or build time.&nbsp; </P><br />
+<P>Jim Shore in his article <A href="http://www.martinfowler.com/ieeeSoftware/failFast.pdf">Fail Fast</A> describes this as a quality of good design.</P><br />
+<P><B>Characterization tests are a double bladed lightsaber</B> &#8211; If you&#8217;re replacing all or part of an existing system you probably need to know exactly what it does.&nbsp; If you&#8217;re going to extend legacy code without tests you need a way to ensure that you don&#8217;t break any existing functionality.&nbsp; Characterization tests are automated tests you create by &#8220;recording&#8221; the output of existing code from a series of inputs.&nbsp; When you write the new code you simply make sure that the same inputs lead to the same outputs.&nbsp; These tests definitely had value, but we did not fully recoup our very large time investment (we think that the effort comes to about 6 man-months for a team of 4-6 developers over a year&#8217;s time).&nbsp; If you&#8217;re going to sink a substantial effort into characterization tests focus on creating tests that are human readable.&nbsp; The characterization tests we wrote were all thrown away because they were too much effort to maintain (the code stunk and we couldn&#8217;t effectively debug failures), leaving us without an test automation test infrastructure.&nbsp; We are accreting a FitNesse suite of tests now that is human readable, but it would have been nice if we&#8217;d gone down that road to begin with.&nbsp; If we could go back in time I think we would have diverted more of the characterization test effort into fewer, higher quality test automation that would have continued to provide value over time.&nbsp; I would probably recommend not trying to completely automate the characterization request recording.&nbsp; I think some manual test writing might have led to cleaner tests that would have continued to provide value.</P><br />
+<P>Haven&#8217;t you always thought that a lot of Jedi Knights probably ended up amputees from lightsaber accidents, or is that just me?&nbsp; </P><br />
+<P><B>Perfect is the enemy of the good</B>.&nbsp; You aren&#8217;t going to fix all the problems at once.&nbsp; It&#8217;s too much change at one time and you&#8217;ve got new functionality to create anyway.&nbsp; One thing we picked up from the Feathers book is that even partial test coverage is an improvement over no coverage.&nbsp; Just picking an example we&#8217;ve talked about at the Austin Agile meetings, you aren&#8217;t going to be able to rewrite your user interface to incorporate a Model View Presenter architecture to get decoupled unit tests, you might have to live with coarse grained integration tests instead for a while.&nbsp; You certainly won&#8217;t be able to stop new work long enough to do all the refactoring and test creation that you want to do.&nbsp; In my case it means overlooking the fact that some of the code I&#8217;m working with is crap.&nbsp;</P><br />
+<P><B>Queue up ideas for technical debt reduction.&nbsp; </B>You&#8217;ll never reach your destination if you don&#8217;t know what the destination is.&nbsp; Constantly think of ways to improve the codebase to improve your productivity and refine your thinking about the legacy system.&nbsp; Talk over the ideas with the rest of the team to socialize a technical vision so you can at least start moving in a better direction.&nbsp; To me, the hardest problem with improving legacy code is finding ways to do it incrementally.&nbsp; Having some architectural strategies in mind has helped us target small refactorings as we go to nudge us a little closer to the end goals without overextending ourselves at any point.&nbsp; </P><br />
+<P>On most of the XP projects I&#8217;ve been on we&#8217;ve used an &#8220;Idea Wall,&#8221; just a visible place to write down or post technical improvements.&nbsp; Anytime we have some slack time we start pulling down tasks from the idea wall.&nbsp; Occasionally we&#8217;re able to outpace either testing or requirements analysis and we aren&#8217;t really able to push any new code.&nbsp; Whenever that happens we immediately pull things off of the idea wall.&nbsp; One way to judge if your technical debt is piling up is to watch how crowded the idea wall is getting.&nbsp; On the other hand, if something stays on the idea wall for a long time, it might not be that important after all. </P><br />
+<P>Design never stops, not even for an older codebase.&nbsp; </P><br />
+<P><B>Connect technical improvements to new business functionality</B>.&nbsp;&nbsp; Since you can&#8217;t do everything at once, concentrate on making the technical improvements that will help you immediately with new business features.&nbsp; In other words, don&#8217;t run out and create a large automated test suite for code that you aren&#8217;t going to modify in the near future.&nbsp; If you&#8217;ve already have some refactoring ideas, put in play the ideas that will enable the next set of features.&nbsp; Some of the refactoring ideas we have floating around are geared towards enabling some possible changes in product direction that our business partners are considering.&nbsp; These refactorings will be triggered into the active story list almost automatically if we do take these new business directions.&nbsp; It certainly helps if you have a stable project roadmap, but even vague product plans can help you target improvements to the existing code. </P><br />
+<P><B>Communicate the Technical Debt problem to management</B>.&nbsp; Management has to understand the impact of the existing technical debt.&nbsp; Technical debt can dramatically reduce your productivity.&nbsp; On one hand management needs to understand that a team&#8217;s efficiency is negatively impacted by the technical debt (CYA), on the other hand management will probably have to approve any effort to pay down technical debt that will detract from creating new functionality.&nbsp; To get this approval, you have to frame the technical debt problem in terms they can understand.&nbsp; I like to compare technical debt to an <A href="http://en.wikipedia.org/wiki/Opportunity_cost">opportunity cost</A>.&nbsp; Directly connect technical improvements to opportunities to deliver more business value at less cost.&nbsp; Build your case over time by repeatedly communicating the technical debt issue so that it doesn&#8217;t get blown off as an occasional excuse for poor performance.</P><br />
+<P>Protect your credibility with management at all costs.&nbsp; Building tools that don&#8217;t demonstrate any value or architectural &#8220;improvements&#8221; that don&#8217;t improve anything will make management even more reluctant to approve technical debt reduction efforts.&nbsp; I know we&#8217;ve suffered a bit in our relationship with one of our senior managers because of some failed attempts to improve code infrastructure in the past.&nbsp; I walked into a case like that several years ago with a large legacy VB6 application.&nbsp; The system was having massive performance and stability problems.&nbsp; After taking a look at the code, one of my suggestions was to rip out and replace a very poor implementation of CSLA business objects* that I thought (and still do) was adding a lot of overhead and inefficiency to the data access and business logic.&nbsp; As it turned out the very thing I was suggesting be thrown out and rewritten had been the previous tech lead&#8217;s highly visible scheme to fix the performance and stability problems.&nbsp; My suggestions were shot down pretty quickly. </P><br />
+<P>I&#8217;ve wrestled with this issue before in this post:&nbsp; <A HREF="/blogs/jeremy.miller/archive/2005/10/31/134054.aspx">Balancing Technical Improvements versus New Business Features</A>.&nbsp; Since I wrote that post I think our management has become much more responsive to the issue.&nbsp; In the end, I think our credibility on this issue has improved because we have shown increased productivity with some of our efforts to down technical debt (more automated test coverage, refactoring, faster builds, more reliable deployment scripts and procedures).&nbsp; When you can, try to partially link the success of a project to the efforts you made to reduce technical debt.&nbsp; The most important lesson we&#8217;ve learned in regards to negotiating technical improvement with management is&#8230; </P><br />
+<P><B>Just do it</B>.&nbsp; If there is some kind of improvement that you can make that will pay off <B>within a short time frame</B>, just do it.&nbsp; Don&#8217;t agonize over it, don&#8217;t negotiate with skeptical management, just quietly do it.&nbsp; We started taking this attitude in January and we&#8217;ve seen our productivity improve substantially.&nbsp; There are other factors at work too, but the proactive attitude of constant technical improvement has consistently reduced friction in our day to day work.</P><br />
+<H4>Other Things</H4><br />
+<UL><br />
+<LI><A href="http://www.martinfowler.com/bliki/StranglerApplication.html">The Strangler Stategy</A> &#8211; We&#8217;re trying to do this for some of our components.</LI><br />
+<LI>We are retrofitting a whole new <A href="http://www.martinfowler.com/eaaCatalog/domainModel.html">Domain Model</A> approach backed up by NHibernate to replace the <A href="http://www.martinfowler.com/eaaCatalog/transactionScript.html">Transaction Script</A> style coding.&nbsp; I think we&#8217;re going to be able to collapse a disturbing degree of duplicated business rules and data access into the new domain model classes and mappings, not to mention a very great improvement in the testability of the application code.&nbsp; As a first step we&#8217;re using the new domain classes inside the FitNesse fixtures to help generate test data and validate outcomes as a prelude to using the domain classes in the main functions.&nbsp; More on this in a couple of months.</LI></UL><br />
+<P>&nbsp;</P><br />
+<P>*People occasionally ask me my opinion about the CSLA framework.&nbsp; It&#8217;s probably not fair, but I&#8217;m largely dismissive of CSLA because of this experience.</P></p>
+											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/legacy-code/" title="View all posts in Legacy Code" rel="category tag">Legacy Code</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2006/05/04/lessons-learned-for-dealing-with-legacy-code/" title="Permalink to Lessons Learned for Dealing with Legacy Code" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2006/05/04/lessons-learned-for-dealing-with-legacy-code/feed/" title="Comments RSS to Lessons Learned for Dealing with Legacy Code" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-157 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2006/05/03/need-some-help-with-the-blog-appearance-please/" rel="prev"><span class="meta-nav">&larr;</span> Need some help with the blog appearance please</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2006/05/06/nice-articles-on-dependency-injection-and-smalltalk/" rel="next">Nice articles on Dependency Injection and Smalltalk <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-658">
+					<div id="dsq-comment-header-658" class="dsq-comment-header">
+						<cite id="dsq-cite-658">
+	http://www.codingwithconfidence.net/							<span id="dsq-author-user-658">TechQuality</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-658" class="dsq-comment-body">
+						<div id="dsq-comment-message-658" class="dsq-comment-message"><p>Thanks for the excellent post and book recommendation. I&#8217;ll definitely have to check out the Feathers book as I&#8217;m neck-deep in a lot of legacy issues with a client right now.</p>
+<p>- Ken</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-659">
+					<div id="dsq-comment-header-659" class="dsq-comment-header">
+						<cite id="dsq-cite-659">
+	http://archiveddeveloper.blogspot.com/							<span id="dsq-author-user-659">Gary Williams</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-659" class="dsq-comment-body">
+						<div id="dsq-comment-message-659" class="dsq-comment-message"><p>I 100% agree that anyone who is learning or doing TDD should read the Feather&#8217;s book whether or not they are currently working with legacy code.  It gives an excellent overview of the theory behind testing as well as a set of pragmatic tools.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/jeremymiller/2006/05/04/lessons-learned-for-dealing-with-legacy-code/ ';
+	var disqus_identifier = '157 /blogs/jeremy.miller/archive/2006/05/04/144032.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'theshadetreedeveloper';
+	var disqus_title = "Lessons Learned for Dealing with Legacy Code";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=157');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2006\/05\/04\/lessons-learned-for-dealing-with-legacy-code\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://topsy.com/codebetter.com/jeremymiller/2011/01/28/announcing-the-new-atx-code-lunch/?utm_source=pingback&amp;utm_campaign=L2' rel='external nofollow' class='url'>Tweets that mention Announcing the new ATX Code Lunch | Jeremy D. Miller -- Topsy.com</a> on <a href="http://codebetter.com/jeremymiller/2011/01/28/announcing-the-new-atx-code-lunch/#comment-6765">Announcing the new ATX Code Lunch</a></li><li class="recentcomments"><a href='http://weblogs.asp.net/thangchung' rel='external nofollow' class='url'>thangchung</a> on <a href="http://codebetter.com/jeremymiller/2009/01/16/quot-buildup-quot-existing-objects-with-structuremap/#comment-6764">&quot;BuildUp&quot; Existing Objects with StructureMap</a></li><li class="recentcomments">Steven Gentile on <a href="http://codebetter.com/jeremymiller/2011/01/23/if-you-are-using-structuremap-with-mvc3-please-read-this/#comment-6763">If you are using StructureMap with MVC3, please read this:</a></li><li class="recentcomments">jabits on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6761">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li><li class="recentcomments">Michael Meadows on <a href="http://codebetter.com/jeremymiller/2011/01/16/a-train-of-thought-wrapping-up-codemash-2011/#comment-6754">A Train of Thought &ndash; Wrapping up CodeMash 2011</a></li></ul></li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.303 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-31 06:21:08 -->
+<!-- super cache -->

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>A long running SQL batch in asp.net with feedback | Peter van Ooijen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/petervanooijen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/petervanooijen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Peter van Ooijen' href='http://codebetter.com/petervanooijen/' />
+<link rel='start' title='Hello weblog' href='http://codebetter.com/petervanooijen/2003/06/03/hello-weblog/' />
+<link rel='prev' title='Bill gave me wings' href='http://codebetter.com/petervanooijen/2006/06/17/bill-gave-me-wings/' />
+<link rel='next' title='Web.config combinations going bad Incompatible entries and incompatible framework versions' href='http://codebetter.com/petervanooijen/2006/06/21/web-config-combinations-going-bad-incompatible-entries-and-incompatible-framework-versions/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/petervanooijen/2006/06/20/a-long-running-sql-batch-in-asp-net-with-feedback/' />
+<link rel='shortlink' href='http://codebetter.com/petervanooijen/?p=461' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetterpetergekkosblog/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-461" class="post-461 post type-post status-publish format-standard hentry category-asp-net category-data">
+					<h1 class="entry-title">A long running SQL batch in asp.net with feedback</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/petervanooijen/author/petervanooijen/" title="View all posts by Peter van Ooijen">Peter van Ooijen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/petervanooijen/2006/06/20/a-long-running-sql-batch-in-asp-net-with-feedback/" title="8:10 am" rel="bookmark"><span class="entry-date">June 20, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/petervanooijen/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/petervanooijen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P>Another story from the <A HREF="/blogs/peter.van.ooijen/archive/2006/05/29/145697.aspx">app with the sprocs</A>. That was a classical 2-tier CS application which we transformed into an asp.net 1.1 app. Once a year the application has to copy and transform huge amounts of data. This is done by running a batch of stored procedures which run in one huge transaction after which the database is ready for the next year. It takes quite a lot of time, up till now 8 hours was not unusual. The growing usage of the app will only increase the amount of time needed. Some feedback on the progress would be nice. For a windows client all of this is not that difficult to build, to get something likewise in asp.net is a different ballgame. We managed to get something working. It does have a drawback though; more on that in the end.</P><br />
+<P>The outline of our approach:</P><br />
+<UL><br />
+<LI>Create a table with a progress message and a timestamp</LI><br />
+<LI>Start a transaction and enlist all sprocs</LI><br />
+<LI>Start the sprocs one by one</LI><br />
+<LI>In between add progress records to the temp tables</LI><br />
+<LI>Wrap the process up in a method which is started in a new thread</LI><br />
+<LI>Start the thread and navigate to another page which periodically queries the progress table</LI></UL><br />
+<P>Some essential parts of the code</P><br />
+<P>A helper function <I>kopieSproc</I> wraps up an individual stored procedure in a SqlCommand, sets the parameters and <A HREF="/blogs/peter.van.ooijen/archive/2006/03/20/141459.aspx">sets the timeout</A> of the command. Setting up the transaction and enlisting the procs:</P><br />
+<DIV><br />
+<P>SqlCommand cmdPRKOPIEJRBDGAFD = kopieSproc(&#8220;dbo.PRKOPIEJRBDGAFD&#8221;, idFaculteit, vanJaar, naarJaar);</P><br />
+<P><SPAN>// </SPAN><SPAN>More sprocs</SPAN></P><br />
+<P>SqlCommand cmdPRKOPIEROOSTER = kopieSproc(&#8220;dbo.PRKOPIEROOSTER&#8221;, -1, vanJaar, -1);</P><br />
+<P>&nbsp;</P><br />
+<P>sqlConnection1.Open();</P><br />
+<P>SqlTransaction trans = sqlConnection1.BeginTransaction();</P><br />
+<P>&nbsp;</P><br />
+<P><SPAN>// Alle sprocs in 1 transaction</SPAN></P><br />
+<P>cmdPRKOPIEJRBDGAFD.Transaction = trans;</P><br />
+<P><SPAN>// </SPAN><SPAN>More sprocs</SPAN></P><br />
+<P>cmdPRKOPIEROOSTER.Transaction = trans;</P></DIV><!--EndFragment--><br />
+<P>A&nbsp; helper function <I>reportStatus</I> fires a sqlcommand to write a status record to the table. This command should not enlist in the transaction. The transaction is meant to get an all or nothing result, changes are not visible until the transaction is committed. The status row has to be visible the moment it is added to the table.</P><br />
+<P>Running the transaction:</P><br />
+<DIV><br />
+<P><SPAN>try</SPAN></P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Start kopiëren cursusjaar&#8221;);&nbsp;&nbsp;&nbsp; </P><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Start kopieren jaarbudget school&#8221;);</P><br />
+<P>&nbsp;&nbsp;&nbsp; rc = cmdPRKOPIEJRBDGAFD.ExecuteNonQuery();</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, <SPAN>string</SPAN>.Format(&#8220;{0} regels toegevoegd&#8221;, rc));</P><br />
+<P>&nbsp;</P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; // </SPAN><SPAN>More sprocs</SPAN></P><br />
+<P>&nbsp;&nbsp;&nbsp; </P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Start kopieren roostergegevens&#8221;);</P><br />
+<P>&nbsp;&nbsp;&nbsp; rc = cmdPRKOPIEROOSTER.ExecuteNonQuery();</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, <SPAN>string</SPAN>.Format(&#8220;{0} regels toegevoegd&#8221;, rc));</P><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Commit naar database&#8221;);</P><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;&nbsp;&nbsp; trans.Commit();</P><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Kopieren voltooid&#8221;);</P><br />
+<P>}</P><br />
+<P><SPAN>catch</SPAN>(Exception ex)</P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; trans.Rollback();</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, ex.Message);</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, <SPAN>string</SPAN>.Format(ApplicationMessages.CursusJaarKanFaculteitNietKopieren, idFaculteit));</P><br />
+<P>}</P><br />
+<P><SPAN>finally</SPAN></P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; sqlConnection1.Close();</P><br />
+<P>&nbsp;&nbsp;&nbsp; reportStatus(cmdStatus, &#8220;Connectie met DB gesloten&#8221;);</P><br />
+<P>}</P></DIV><!--EndFragment--><br />
+<P>So these&nbsp; lines of code can take hours and hours to complete. After each successful step, or after an exception a row is added to the table. Never mind the Dutch, the idea should be clear.</P><br />
+<P>The whole process is wrapped up in a method <I>KopieerFaculteit</I>, which is a member of a component in the data layer. A web page starts a new thread for the method and navigates away.</P><br />
+<DIV><br />
+<P><SPAN>private</SPAN> <SPAN>void</SPAN> maakKopie()</P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; <SPAN>int</SPAN> idVanJaar = <SPAN>int</SPAN>.Parse(DropDownListVan.SelectedValue);</P><br />
+<P>&nbsp;&nbsp;&nbsp; <SPAN>int</SPAN> idNaarJaar = <SPAN>int</SPAN>.Parse(DropDownListNaar.SelectedValue);</P><br />
+<P>&nbsp;&nbsp;&nbsp; JaarData.KopieerFaculteit(<SPAN>int</SPAN>.Parse(DropDownListFaculteit.SelectedValue), idVanJaar, idNaarJaar);</P><br />
+<P>}</P><br />
+<P>&nbsp;</P><br />
+<P><SPAN>private</SPAN> <SPAN>void</SPAN> Button1_Click(<SPAN>object</SPAN> sender, System.EventArgs e)</P><br />
+<P>{</P><br />
+<P>&nbsp;&nbsp;&nbsp; System.Threading.Thread t = <SPAN>new</SPAN> System.Threading.Thread(<SPAN>new</SPAN> System.Threading.ThreadStart(maakKopie));</P><br />
+<P>&nbsp;&nbsp;&nbsp; t.Start();</P><br />
+<P>&nbsp;&nbsp;&nbsp; Response.Redirect(&#8220;../SysteemBeheer/KopieerStatus.aspx&#8221;);</P><br />
+<P>&nbsp;</P><br />
+<P>}</P></DIV><!--EndFragment--><br />
+<P>The <I>maakKopie </I>method collects the parameters from the form and will keep running for quite some time on its own thread. The user is redirected to the status page. </P><br />
+<P>The follow the status, the status page has to requery the database periodically. Refreshing the page is automated by setting the (browser&#8217;s) requery interval in the head of the page to 30 seconds.</P><br />
+<DIV><br />
+<P>&lt;HEAD&gt;</P><br />
+<P>&nbsp;&nbsp;&nbsp; &lt;title&gt;KopieerStatus&lt;/title&gt;</P><br />
+<P>&nbsp;&nbsp;&nbsp; &lt;meta name=&#8221;GENERATOR&#8221; Content=&#8221;Microsoft Visual Studio .NET 7.1&#8243;&gt;</P><br />
+<P>&nbsp;&nbsp;&nbsp; &lt;meta name=&#8221;CODE_LANGUAGE&#8221; Content=&#8221;C#&#8221;&gt;</P><br />
+<P>&nbsp;&nbsp;&nbsp; &lt;meta name=&#8221;vs_defaultClientScript&#8221; content=&#8221;JavaScript&#8221;&gt;</P><br />
+<P>&nbsp;&nbsp;&nbsp; &lt;meta name=&#8221;vs_targetSchema&#8221; content=&#8221;http://schemas.microsoft.com/intellisense/ie5&#8243;&gt;</P><br />
+<P><B>&nbsp;&nbsp;&nbsp; &lt;meta HTTP-EQUIV=&#8221;REFRESH&#8221; CONTENT=&#8221;30&#8243;&gt;</B></P><br />
+<P>&lt;/HEAD&gt;</P></DIV><!--EndFragment--><br />
+<P>The result is that the application is responsive, none of the responses takes long to generate. The application is also informative, the user will be kept up to date about the status of the process. The application will stay alive, as it has to handle a request every 30 seconds.</P><br />
+<P>A small drawback is debugging. Any exception, however futile (like an error message which is to long to fit in the status field) trashes the thread with a quite non-informative &#8220;system error&#8221; message. So before running the code in a new thread you&#8217;ll have to try it on the main thread. And now you have to <A HREF="/blogs/peter.van.ooijen/archive/2006/06/15/146446.aspx">set the page time-out</A> to something large. Which does have it&#8217;s drawbacks.</P><br />
+<P>But, as said in the beginning of this story, there is a larger drawback. The thread running the sql batch lives in the IIS application. As long as the application is alive the thread will keep running. But there are a lot of ways the application can be restarted. In .net terms the appdomain is recycled and your thread dies.</P><br />
+<UL><br />
+<LI>IIS is restarted</LI><br />
+<LI>A content file of the application, like an aspx page or the web.config, is touched</LI><br />
+<LI>Spontaneously, IIS restarts the application to free up resources.</LI></UL><br />
+<P>You can control the first two, but you cannot (afaik) control the latter one. Googling around on recycling an appdomain will give you a lot of information but no solution. The only one is to limit the amount of work you do in one go. Which does make a lot of sense but in our case that would be a major re-architecting of the application. All the BL is in the sprocs and their interaction. It works and it&#8217;s result are exactly what&#8217;s desired. So better stay away from changing that. </P><br />
+<P>Any suggestions are welcome. For the moment we&#8217;re happy with this.</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/petervanooijen/category/asp-net/" title="View all posts in ASP.NET" rel="category tag">ASP.NET</a>, <a href="http://codebetter.com/petervanooijen/category/data/" title="View all posts in Data" rel="category tag">Data</a>. Bookmark the <a href="http://codebetter.com/petervanooijen/2006/06/20/a-long-running-sql-batch-in-asp-net-with-feedback/" title="Permalink to A long running SQL batch in asp.net with feedback" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/petervanooijen/2006/06/20/a-long-running-sql-batch-in-asp-net-with-feedback/feed/" title="Comments RSS to A long running SQL batch in asp.net with feedback" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-461 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/petervanooijen/2006/06/17/bill-gave-me-wings/" rel="prev"><span class="meta-nav">&larr;</span> Bill gave me wings</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/petervanooijen/2006/06/21/web-config-combinations-going-bad-incompatible-entries-and-incompatible-framework-versions/" rel="next">Web.config combinations going bad Incompatible entries and incompatible framework versions <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-2167">
+					<div id="dsq-comment-header-2167" class="dsq-comment-header">
+						<cite id="dsq-cite-2167">
+	http://todotnet.com							<span id="dsq-author-user-2167">Sander</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2167" class="dsq-comment-body">
+						<div id="dsq-comment-message-2167" class="dsq-comment-message"><p>The &#8216;spontaneous&#8217; restart of the application is not really that unpredictable. Recycling (that&#8217;s what it&#8217;s called) of the application pool is based on settings you can manipulate yourself, such as: every x minutes, at certain specified times, when consumed memory reaches a certain point. Check the settings for the specified application pool for that webapp. </p>
+<p>Nonetheless, it&#8217;s not recommended design to count on whether or not the application pool recycles. I would personally run the longrunning action in a seperate process and have a field in a table somewhere telling me whether it&#8217;s still running. You can then query that status-table anytime. </p>
+<p>Given that it&#8217;s a once-a-year-process, I can imagine not spending too much time perfecting it.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2168">
+					<div id="dsq-comment-header-2168" class="dsq-comment-header">
+						<cite id="dsq-cite-2168">
+								<span id="dsq-author-user-2168">Wyatt Barnett</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2168" class="dsq-comment-body">
+						<div id="dsq-comment-message-2168" class="dsq-comment-message"><p>Is there any particular reason you did not take this huge batch process offline and run it from the command line?</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2169">
+					<div id="dsq-comment-header-2169" class="dsq-comment-header">
+						<cite id="dsq-cite-2169">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2169">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2169" class="dsq-comment-body">
+						<div id="dsq-comment-message-2169" class="dsq-comment-message"><p>@ (hi) sander<br />
+Thanks for the info. No it&#8217;s not a recommended design. The good thing is that the operation is one transaction. When the thread fails the transaction will not commit. No damage, just (a lot of) time lost.</p>
+<p>@Wyatt<br />
+A major requirement was to push the database away. It can only be reached by the web-server. The user can only reach the webserver over HTTP(s). Not much choice..</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2170">
+					<div id="dsq-comment-header-2170" class="dsq-comment-header">
+						<cite id="dsq-cite-2170">
+								<span id="dsq-author-user-2170">btompkins</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2170" class="dsq-comment-body">
+						<div id="dsq-comment-message-2170" class="dsq-comment-message"><p>I have a solution for long running processes using ATLAS to update the UI here:</p>
+<p><a href="http://codebetter.com/blogs/brendan.tompkins/archive/2006/04/18/143041.aspx" rel="nofollow">http://codebetter.com/blogs/brendan.tompkins/archive/2006/04/18/143041.aspx</a></p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2171">
+					<div id="dsq-comment-header-2171" class="dsq-comment-header">
+						<cite id="dsq-cite-2171">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2171">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2171" class="dsq-comment-body">
+						<div id="dsq-comment-message-2171" class="dsq-comment-message"><p>@Brendan, that&#8217;s cool! But my app is an 1.1 app, which would mean to a lot of do it yourself Ajax. The other problem is that I want to be notified several times during the process.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2172">
+					<div id="dsq-comment-header-2172" class="dsq-comment-header">
+						<cite id="dsq-cite-2172">
+								<span id="dsq-author-user-2172">Wyatt Barnett</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2172" class="dsq-comment-body">
+						<div id="dsq-comment-message-2172" class="dsq-comment-message"><p>I understand that requirement, and deal with it all the time. That is what scheduled tasks are for. Or, if it cannot be scheduled, use a fire-and-forget web service to kick off the background process.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2173">
+					<div id="dsq-comment-header-2173" class="dsq-comment-header">
+						<cite id="dsq-cite-2173">
+	http://www.codebetter.com/blogs/eric.wise							<span id="dsq-author-user-2173">ewise</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2173" class="dsq-comment-body">
+						<div id="dsq-comment-message-2173" class="dsq-comment-message"><p>I agree with Wyatt, if your users have time to sit around watching a screen auto-refresh, they need a manager to give them something else to work on.</p>
+<p>You can still use a fire and forget web service that updates the log tables and bring that up in a asp .net page on request without having to have someone sit around and babysit it.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2174">
+					<div id="dsq-comment-header-2174" class="dsq-comment-header">
+						<cite id="dsq-cite-2174">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2174">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2174" class="dsq-comment-body">
+						<div id="dsq-comment-message-2174" class="dsq-comment-message"><p>A webservice, be it fire and forget or one which reports also runs in IIS. So that&#8217;s no difference. As a kick-off could be an option.</p>
+<p>It&#8217;s not a matter of scheduling it, but the user has to start the proces by hand, after doing some preparations. Besides that you need (a lot of) rights to schedule a task on a remote machine.</p>
+<p>The main organisational problem we are facing is permissions. The IT department is very strict (and also short-sighted). They open some ports and that&#8217;s just it. The user does not have the time to baby-sit, to busy battling IT <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  Walking past a machine should give a quick status how the process is doing.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2175">
+					<div id="dsq-comment-header-2175" class="dsq-comment-header">
+						<cite id="dsq-cite-2175">
+								<span id="dsq-author-user-2175">Colin Blair</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2175" class="dsq-comment-body">
+						<div id="dsq-comment-message-2175" class="dsq-comment-message"><p>Assuming this is MS SQL Server, could you let SQL Agent run this as a job instead? If you aren&#8217;t really doing any logic beyond running stored procedures and writing to a log file, you can do that in a job. Your web application then just calls sp_start_job and then monitors your tracking tables using read uncommited.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2176">
+					<div id="dsq-comment-header-2176" class="dsq-comment-header">
+						<cite id="dsq-cite-2176">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2176">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2176" class="dsq-comment-body">
+						<div id="dsq-comment-message-2176" class="dsq-comment-message"><p>I have to admit I&#8217;m blank on SQL Agent. It could be done provided a SQL agent job can be started as fire and forget from asp.net and that should not require openeing an extra port or fiddeling with an user setting.<br />
+Worth investigating, thanks.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2177">
+					<div id="dsq-comment-header-2177" class="dsq-comment-header">
+						<cite id="dsq-cite-2177">
+								<span id="dsq-author-user-2177">Colin Blair</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2177" class="dsq-comment-body">
+						<div id="dsq-comment-message-2177" class="dsq-comment-message"><p>SQL Agent is part of SQL Server, so ports will not be an issue. Any jobs will be running inside the SQL Agent process so it doesn&#8217;t matter what you are calling sp_start_job from. You just need to make sure that the job that you create is &#8220;owned&#8221; by the user who kicks it off. That way they have the correct permissions to run it. To make your life easier, write one stored procedure to own the transaction, run the other stored procedures, and write to the log table. Then just write your job to execute that stored procedure.</p>
+<p>If you wanted to get fancy, you can even have your application create the job, run it, and then delete the job afterwards. Permissions for job creation default to the public role. Read sp_add_job, sp_delete_job, sp_start_job, and sp_stop_job in SQL Server Books Online. However, you are better off creating the job through Enterprise Manager and then scripting it out from there instead of trying to type it out yourself. Just right click on the job, All Tasks-> Generate Sql Script.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2178">
+					<div id="dsq-comment-header-2178" class="dsq-comment-header">
+						<cite id="dsq-cite-2178">
+	http://codebetter.com/blogs/peter.van.ooijen/							<span id="dsq-author-user-2178">pvanooijen</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2178" class="dsq-comment-body">
+						<div id="dsq-comment-message-2178" class="dsq-comment-message"><p>Thanks Colin, that looks quite clear, pretty cool and quite usable.<br />
+The C# method firing all the sprocs can be converted to a sql script.</p>
+<p>In our case I see two problems<br />
+- It requires the sql server agent to be running<br />
+- It&#8217;s harder to update the job as it&#8217;s not a member of the database itself.  </p>
+<p>We&#8217;re using sql-compare to create stup and update scripts and pass the result to the IT-department. Who need monkey proof scripts they can run. And they stiil manage to run those against the wrong (even master) database. So we should go for creating the job on the fly.</p>
+<p>In case the current solution, running in an IIS thread, starts giving trouble this looks like the way to go. Given IT will cooperate <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-2179">
+					<div id="dsq-comment-header-2179" class="dsq-comment-header">
+						<cite id="dsq-cite-2179">
+	http://payday-on-line.biz/							<span id="dsq-author-user-2179">Thea</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-2179" class="dsq-comment-body">
+						<div id="dsq-comment-message-2179" class="dsq-comment-message"><p>Greeting. Whatever you do, do it to the purpose; do it thoroughly, not superficially. Go to the bottom of things. Any thing half done, or half known, is in my mind, neither done nor known at all. Nay, worse, for it often misleads.<br />
+I am from Benin and , too, and now am writing in English, give true I wrote the following sentence: &#8220;Rates on asia hotels, cheap asian airline tickets, vacation packages,last minute asia tickets shows.&#8221;</p>
+<p>With respect <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_sad.gif' alt=':-(' class='wp-smiley' /> , Thea.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/petervanooijen/2006/06/20/a-long-running-sql-batch-in-asp-net-with-feedback/ ';
+	var disqus_identifier = '461 /blogs/peter.van.ooijen/archive/2006/06/20/146582.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetterpetergekkosblog';
+	var disqus_title = "A long running SQL batch in asp.net with feedback";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=461');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/petervanooijen\/2006\/06\/20\/a-long-running-sql-batch-in-asp-net-with-feedback\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">Small bio</h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: none;"><img alt='' src='http://1.gravatar.com/avatar/5cb0e972c5e405e6bff7e7f2da237c6d?s=96&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+					<li id="tag_cloud-3" class="widget-container widget_tag_cloud"><h3 class="widget-title">Post categories</h3><div class="tagcloud"><a href='http://codebetter.com/petervanooijen/category/asp-net/' class='tag-link-1725' title='67 topics' style='font-size: 16.3151515152pt;'>ASP.NET</a>
+<a href='http://codebetter.com/petervanooijen/category/chatter/' class='tag-link-6709' title='69 topics' style='font-size: 16.4848484848pt;'>Chatter</a>
+<a href='http://codebetter.com/petervanooijen/category/coding/' class='tag-link-6706' title='49 topics' style='font-size: 15.2121212121pt;'>Coding</a>
+<a href='http://codebetter.com/petervanooijen/category/data/' class='tag-link-6708' title='45 topics' style='font-size: 14.8727272727pt;'>Data</a>
+<a href='http://codebetter.com/petervanooijen/category/featured/' class='tag-link-1356' title='6 topics' style='font-size: 8pt;'>Featured</a>
+<a href='http://codebetter.com/petervanooijen/category/hardware/' class='tag-link-4927' title='13 topics' style='font-size: 10.5454545455pt;'>Hardware</a>
+<a href='http://codebetter.com/petervanooijen/category/mobile/' class='tag-link-6712' title='13 topics' style='font-size: 10.5454545455pt;'>Mobile</a>
+<a href='http://codebetter.com/petervanooijen/category/outofcontrol/' class='tag-link-6705' title='13 topics' style='font-size: 10.5454545455pt;'>Out+of+control</a>
+<a href='http://codebetter.com/petervanooijen/category/tabletpc/' class='tag-link-6707' title='45 topics' style='font-size: 14.8727272727pt;'>Tablet+PC</a>
+<a href='http://codebetter.com/petervanooijen/category/uncategorized/' class='tag-link-1044' title='318 topics' style='font-size: 22pt;'>Uncategorized</a>
+<a href='http://codebetter.com/petervanooijen/category/usergroupsandmeetings/' class='tag-link-6711' title='25 topics' style='font-size: 12.7515151515pt;'>User+groups+and+meetings</a></div>
+</li>		<li id="recent-posts-3" class="widget-container widget_recent_entries">		<h3 class="widget-title">Recent Posts</h3>		<ul>
+				<li><a href="http://codebetter.com/petervanooijen/2011/01/31/c-for-the-iphone-monotouch-is-here-to-stay/" title="C# for the iPhone: Monotouch is here to stay">C# for the iPhone: Monotouch is here to stay</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/12/28/seasons-gifts-from-the-monotouch-iphone-treasure-chest-background-gps-tasks-and-uicontrol/" title="Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl">Seasons gifts from the MonoTouch (iPhone) treasure chest. Background (GPS) tasks and UIControl</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/11/05/kalifescope-and-monotouch-from-idea-to-the-appstore/" title="Kalifescope and Monotouch, from idea to the AppStore">Kalifescope and Monotouch, from idea to the AppStore</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/10/28/monotouch-your-c-app-on-a-real-iphone/" title="Monotouch: your C# app on a real iPhone">Monotouch: your C# app on a real iPhone</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2010/09/28/monotouch-drawing-an-image-pixel-by-pixel/" title="Monotouch: drawing an image pixel by pixel">Monotouch: drawing an image pixel by pixel</a></li>
+				</ul>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://www.Gekko-Software.nl" title="Website Gekko Software">My company</a></li>
+
+	</ul>
+</li>
+<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Post archive</h3>		<ul>
+			<li><a href='http://codebetter.com/petervanooijen/2011/01/' title='January 2011'>January 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/12/' title='December 2010'>December 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/11/' title='November 2010'>November 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/10/' title='October 2010'>October 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/09/' title='September 2010'>September 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/08/' title='August 2010'>August 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/07/' title='July 2010'>July 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/06/' title='June 2010'>June 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/05/' title='May 2010'>May 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/04/' title='April 2010'>April 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/03/' title='March 2010'>March 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/02/' title='February 2010'>February 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/01/' title='January 2010'>January 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/12/' title='December 2009'>December 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/11/' title='November 2009'>November 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/10/' title='October 2009'>October 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/09/' title='September 2009'>September 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/08/' title='August 2009'>August 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/07/' title='July 2009'>July 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/06/' title='June 2009'>June 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/05/' title='May 2009'>May 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/04/' title='April 2009'>April 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/03/' title='March 2009'>March 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/02/' title='February 2009'>February 2009</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/01/' title='January 2009'>January 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/12/' title='December 2008'>December 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/11/' title='November 2008'>November 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/10/' title='October 2008'>October 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/09/' title='September 2008'>September 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/08/' title='August 2008'>August 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/07/' title='July 2008'>July 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/06/' title='June 2008'>June 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/05/' title='May 2008'>May 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/04/' title='April 2008'>April 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/03/' title='March 2008'>March 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/02/' title='February 2008'>February 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/01/' title='January 2008'>January 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/12/' title='December 2007'>December 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/11/' title='November 2007'>November 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/10/' title='October 2007'>October 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/09/' title='September 2007'>September 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/08/' title='August 2007'>August 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/07/' title='July 2007'>July 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/06/' title='June 2007'>June 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/05/' title='May 2007'>May 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/04/' title='April 2007'>April 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/03/' title='March 2007'>March 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/02/' title='February 2007'>February 2007</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/01/' title='January 2007'>January 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/12/' title='December 2006'>December 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/11/' title='November 2006'>November 2006</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/10/' title='October 2006'>October 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/09/' title='September 2006'>September 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/08/' title='August 2006'>August 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/07/' title='July 2006'>July 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/06/' title='June 2006'>June 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/05/' title='May 2006'>May 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/04/' title='April 2006'>April 2006</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/03/' title='March 2006'>March 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/02/' title='February 2006'>February 2006</a>&nbsp;(10)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/01/' title='January 2006'>January 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/12/' title='December 2005'>December 2005</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/11/' title='November 2005'>November 2005</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/10/' title='October 2005'>October 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/09/' title='September 2005'>September 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/08/' title='August 2005'>August 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/07/' title='July 2005'>July 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/06/' title='June 2005'>June 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/05/' title='May 2005'>May 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/04/' title='April 2005'>April 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/03/' title='March 2005'>March 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/02/' title='February 2005'>February 2005</a>&nbsp;(27)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/01/' title='January 2005'>January 2005</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/12/' title='December 2004'>December 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/11/' title='November 2004'>November 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/10/' title='October 2004'>October 2004</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/09/' title='September 2004'>September 2004</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/08/' title='August 2004'>August 2004</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/07/' title='July 2004'>July 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/06/' title='June 2004'>June 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/05/' title='May 2004'>May 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/04/' title='April 2004'>April 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/03/' title='March 2004'>March 2004</a>&nbsp;(21)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/02/' title='February 2004'>February 2004</a>&nbsp;(23)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/01/' title='January 2004'>January 2004</a>&nbsp;(14)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/12/' title='December 2003'>December 2003</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/11/' title='November 2003'>November 2003</a>&nbsp;(20)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/10/' title='October 2003'>October 2003</a>&nbsp;(30)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/09/' title='September 2003'>September 2003</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/08/' title='August 2003'>August 2003</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/07/' title='July 2003'>July 2003</a>&nbsp;(5)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/06/' title='June 2003'>June 2003</a>&nbsp;(4)</li>
+		</ul>
+</li>				</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.269 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-31 14:06:32 -->
+<!-- super cache -->

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Objects have dependencies.  Methods don&#8217;t | Jeffery Palermo</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jefferypalermo/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jefferypalermo/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Jeffery Palermo' href='http://codebetter.com/jefferypalermo/' />
+<link rel='start' title='ASP.NET 1.1 Request Validation.' href='http://codebetter.com/jefferypalermo/2004/04/16/asp-net-1-1-request-validation/' />
+<link rel='prev' title='Parse IP addresses out of a web server log file' href='http://codebetter.com/jefferypalermo/2008/03/11/parse-ip-addresses-out-of-a-web-server-log-file/' />
+<link rel='next' title='Austin Code Camp &#8217;08 call for speakers and attendees' href='http://codebetter.com/jefferypalermo/2008/03/14/austin-code-camp-08-call-for-speakers-and-attendees/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/' />
+<link rel='shortlink' href='http://codebetter.com/jefferypalermo/?p=623' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-623" class="post-623 post type-post status-publish format-standard hentry category-featured">
+					<h1 class="entry-title">Objects have dependencies.  Methods don&#8217;t</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jefferypalermo/author/jefferypalermo/" title="View all posts by jefferypalermo">jefferypalermo</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/" title="11:04 pm" rel="bookmark"><span class="entry-date">March 11, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jefferypalermo/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jefferypalermo/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>For more counter-intuitive banter, subscribe to my feed:&nbsp; <a href="http://feeds.feedburner.com/jeffreypalermo">http://feeds.feedburner.com/jeffreypalermo</a> </p>
+<p>There is quite a bit of talk lately about unit testing using the extract method and override, or &#8220;inherit &amp; override&#8221; method for stubbing out a method for unit testing.&nbsp; Methods don&#8217;t have dependencies, and methods aren&#8217;t dependencies.</p>
+<p>Objects are dependencies, and object have dependencies.&nbsp; One object will depend on another object.&nbsp; Objects are cohesive and present a contract of behavior so other objects know what behavior they can reliably leverage.&nbsp; Because an object is cohesive, everything necessary to perform all its behavior can be passed into the object&#8217;s constructor at the beginning of the object&#8217;s life.&nbsp; Then, that object can perform all of the operations.</p>
+<p>In order to test a particular object, I might have to pass some fake objects&nbsp;(stubs, mocks, etc)&nbsp;into the constructor, but the object under test doesn&#8217;t care as long as the type is satisfied.&nbsp; If I can&#8217;t test an object by passing in fakes to the constructor (and I can compromise sometimes by using setter injection), then the object is less than cohesive, and I should search the design of the object for an extra concern that is trying to get out.&nbsp; Once I find the extra concern, I would separate the concern (separation of concerns)&nbsp;into its own object and have than as an explicit dependency by requiring it be passed into the constructor (dependency injection).</p>
+<p>Michael Feathers outlines this extract method and override&nbsp;testing technique in his book, &#8220;Working Effectively with Legacy Code&#8221;, and I&#8217;ve used the technique many times to break nasty dependencies on legacy code in order to get it under test.&nbsp; This is necessary because legacy code can&#8217;t be safely refactored until it has a safety net of test coverage.</p>
+<p>If your unit test has to know that another method on the same object is being called, then the unit test knows too much about the implementation of the object.&nbsp; The unit test should be doing black box testing on the object under test.&nbsp; In other words, the unit test shouldn&#8217;t care about what code is written or if 1 method or 10,000 methods inside the object are actually called.&nbsp; The unit test merely sets up explicit object dependencies and test state, interaction or both.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jefferypalermo/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/" title="Permalink to Objects have dependencies.  Methods don&#8217;t" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/feed/" title="Comments RSS to Objects have dependencies.  Methods don&#8217;t" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-623 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jefferypalermo/2008/03/11/parse-ip-addresses-out-of-a-web-server-log-file/" rel="prev"><span class="meta-nav">&larr;</span> Parse IP addresses out of a web server log file</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jefferypalermo/2008/03/14/austin-code-camp-08-call-for-speakers-and-attendees/" rel="next">Austin Code Camp &#8217;08 call for speakers and attendees <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">15 Responses to <em>Objects have dependencies.  Methods don&#8217;t</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-2383">
+		<div id="comment-2383">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://colinjack.blogspot.com/' rel='external nofollow' class='url'>Colin Jack</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2383">March 18, 2008 at 10:42 am</a></div>
+
+		<div class="comment-body"><p>&#8220;If I can&#8217;t test an object by passing in fakes to the constructor (and I can compromise sometimes by using setter injection), then the object is less than cohesive&#8221;</p>
+<p>Not sure I understand this, I think you are saying that a class is not cohesive if all its dependencies are not injected?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2382">
+		<div id="comment-2382">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Tom</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2382">March 13, 2008 at 6:36 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;If a method needs an object in order to function properly, that object should be passed in to a method if it is not  a member of the class.&#8221;</p>
+<p>Now there&#8217;s a revelation!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2381">
+		<div id="comment-2381">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2381">March 13, 2008 at 1:38 pm</a></div>
+
+		<div class="comment-body"><p>Clarifying.  Yes,  method can have dependencies, and these are exposed via method arguments.  If a method needs an object in order to function properly, that object should be passed in to a method if it is not  a member of the class.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2380">
+		<div id="comment-2380">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2380">March 13, 2008 at 4:18 am</a></div>
+
+		<div class="comment-body"><p>weex hit it on the head but &#8230;</p>
+<p>methods don&#8217;t have dependencies? functional code I think changes this&#8230; </p>
+<p>Somebody has already mentioned the Strategy pattern but the first one that came to my mind was specification &#8230;</p>
+<p>object.Validate(IEnumerable<specification <whatever>>)</specification></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2379">
+		<div id="comment-2379">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://agilology.blogspot.com/' rel='external nofollow' class='url'>Jeff Tucker</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2379">March 12, 2008 at 6:51 pm</a></div>
+
+		<div class="comment-body"><p>I agree with you in principle and from a testing perspective, but what about a situation like Strategy?  In strategy, I would (usually) invoke the strategy through a method, and typically this is only one method on my object.  I may still inject the strategy interface through the constructor, but it&#8217;s still a dependency of the method itself as the rest of the object will function correctly without it.  I can test that the strategy is called by using a mock and I probably won&#8217;t use a mock to test the strategy itself (which I will test separately).  However, I still see this as being a dependency on a method in many cases (although I can think of several exceptions).  Your thoughts?  Also, could methods be dependencies in the case of delegates?  I think that the same argument could be made here.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2378">
+		<div id="comment-2378">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2378">March 12, 2008 at 11:14 am</a></div>
+
+		<div class="comment-body"><p>Tom,<br />
+In C#, Java, yes, &#8220;Type&#8221; is more correct here.  I was trying to be general because I think this applies to other OO languages as well.  Some other OO languages are not statically typed.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2377">
+		<div id="comment-2377">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Tom</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2377">March 12, 2008 at 3:55 am</a></div>
+
+		<div class="comment-body"><p>I&#8217;ll bite&#8230;</p>
+<p>&#8220;Methods don&#8217;t have dependencies, and methods aren&#8217;t dependencies.  Objects are dependencies, and object have dependencies.&#8221;<br />
+If object X has a dependency on object Y, what constitutes this dependency?  Is it not the method calls that object X makes on object Y?  Objects don&#8217;t have dependencies &#8212; TYPES have dependencies and they&#8217;re expressed through methods.</p>
+<p>&#8220;Objects are cohesive and present a contract of behavior so other objects know what behavior they can reliably leverage.&#8221;<br />
+Objects most certainly do NOT present a contract of behavior &#8212; types do.  Moreover, behavior is expressed through methods, not objects.</p>
+<p>&#8220;Because an object is cohesive, everything necessary to perform all its behavior can be passed into the object&#8217;s constructor at the beginning of the object&#8217;s life.  Then, that object can perform all of the operations&#8221;<br />
+This line of thought seems to make method parameters sort of unnecessary, no?</p>
+<p>&#8220;In order to test a particular object, I might have to pass some fake objects (stubs, mocks, etc) into the constructor, but the object under test doesn&#8217;t care as long as the type is satisfied.&#8221;<br />
+Exactly my point &#8212; a contract is expressed through TYPES not objects.</p>
+<p>&#8220;If I can&#8217;t test an object by passing in fakes to the constructor (and I can compromise sometimes by using setter injection), then the object is less than cohesive, and I should search the design of the object for an extra concern that is trying to get out.  Once I find the extra concern, I would separate the concern (separation of concerns) into its own object and have than as an explicit dependency by requiring it be passed into the constructor (dependency injection).&#8221;<br />
+No. You would separate the concern into its own TYPE.  And most likely, you&#8217;d express that type&#8217;s contract through an interface so that you could mock it out for your tests.</p>
+<p>&#8220;Michael Feathers outlines this extract method and override testing technique in his book&#8230;&#8221;<br />
+Not really sure what any of the above has to do with the extract method and override refactoring?  You were just talking about dependency injection, which is basically a polar opposite of extract and override (with dependency injection, you pass the dependency in, whereas with override and refactor the type itself is responsible for creating an instance of the dependency).</p>
+<p>&#8220;The unit test should be doing black box testing on the object under test&#8230;&#8221;<br />
+Ditto what Weex said.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2376">
+		<div id="comment-2376">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2376">March 12, 2008 at 3:33 am</a></div>
+
+		<div class="comment-body"><p>@hammett,<br />
+Not on this comment thread because MVC frameworks are orthogonal to this post.  I recently posted a controller test for ASP.NET MVC, and I certainly defer to you regarding the Monorail testing given that I&#8217;ve only completed 1 Monorail project and am very ignorant of all the capabilities of the SmartDispatchController class.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2375">
+		<div id="comment-2375">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://hammett.castleproject.org' rel='external nofollow' class='url'>hammett</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2375">March 12, 2008 at 3:27 am</a></div>
+
+		<div class="comment-body"><p>Can you show a code snippet of what, in your opinion, is a clean controller test?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2374">
+		<div id="comment-2374">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2374">March 12, 2008 at 1:32 am</a></div>
+
+		<div class="comment-body"><p>@Jimmy,<br />
+I think a lot of classes should be infrastructure ignorant, but I don&#8217;t think MVC controllers will be, at least not if you are leveraging an infrastructure base class like Controller or SmartDispatchController in Monorail.  The testing method shouldn&#8217;t change based on what infrastructure you use.  The infrastructure should not stand in the way of clean testability.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2373">
+		<div id="comment-2373">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2373">March 12, 2008 at 1:31 am</a></div>
+
+		<div class="comment-body"><p>@robkitson,<br />
+My remarks don&#8217;t affect whether you are using a mock framework or not.</p>
+<p>The tests should set up expectations on the observable behavior.  Observable from the outside.  After the test is failing because the production code isn&#8217;t there yet, you can write whatever code satisfies the test.  You will obviously know about the implementation, but your unit test should know.  The unit test should only be concerned with observable behavior.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2372">
+		<div id="comment-2372">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffreypalermo.com' rel='external nofollow' class='url'>Jeffrey Palermo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2372">March 12, 2008 at 1:29 am</a></div>
+
+		<div class="comment-body"><p>@Weex,<br />
+In a  good unit test, I ought to be able to rewrite class code in many ways as long as to the caller it has the same observable behavior.  That&#8217;s black box.  Only observable behavior is tested.  Inside the class, I shouldn&#8217;t have to mess with what methods an object calls on itself.</p>
+<p>You are correct in saying that you should not couple tests with the object implementation, only observable behavior.  In other words, black box.  Now, the black box is VERY small.  Just an object.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2371">
+		<div id="comment-2371">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jimmybogard.lostechies.com' rel='external nofollow' class='url'>Jimmy Bogard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2371">March 12, 2008 at 12:40 am</a></div>
+
+		<div class="comment-body"><p>This would lead me to think that MVC controllers should be POCOs, infrastructure ignorant.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-2370">
+		<div id="comment-2370">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://robkitson.net' rel='external nofollow' class='url'>Rob Kitson</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2370">March 12, 2008 at 12:02 am</a></div>
+
+		<div class="comment-body"><p>Quick question&#8230; if you&#8217;re using a mock object framework and you are setting up your expectations in your tests, don&#8217;t your tests know a lot about the implementation?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-2369">
+		<div id="comment-2369">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Weex</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#comment-2369">March 12, 2008 at 12:02 am</a></div>
+
+		<div class="comment-body"><p>The unit test should be doing black box testing on the object under test. &#8211; That&#8217;s something new <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  You should not couple tests with implementation, is that what you wanted to say? To test method&#8217;s contact, not it&#8217;s implementation.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/jefferypalermo/2008/03/11/objects-have-dependencies-methods-don-t/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/jefferypalermo/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fjefferypalermo%2F2008%2F03%2F11%2Fobjects-have-dependencies-methods-don-t%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.249 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-31 14:25:27 -->
+<!-- super cache -->

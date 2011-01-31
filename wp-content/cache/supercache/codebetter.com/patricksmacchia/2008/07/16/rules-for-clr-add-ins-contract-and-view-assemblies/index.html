@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Rules for CLR Add-Ins Contract and View Assemblies | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='Are you sure added and refactored code is covered by tests?' href='http://codebetter.com/patricksmacchia/2008/07/10/are-you-sure-added-and-refactored-code-is-covered-by-tests/' />
+<link rel='next' title='Dealing with Code Un-Coverable by Tests' href='http://codebetter.com/patricksmacchia/2008/07/22/dealing-with-code-un-coverable-by-tests/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=63' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-63" class="post-63 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Rules for CLR Add-Ins Contract and View Assemblies</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies/" title="9:13 am" rel="bookmark"><span class="entry-date">July 16, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p style="margin: 0cm 0cm 0.0001pt">&nbsp;<br />
+<br />The <a href="http://blogs.msdn.com/clraddins" target="_blank">CLR Add-In team</a><br />
+recently released on CodePlex a set of <a href="http://blogs.msdn.com/clraddins/archive/2008/07/08/addin-fxcop-rules-released.aspx" target="_blank">49 FxCop rules</a><br />
+to verify <i>View</i> and <i>Contract</i> assemblies. If you don’t don’t<br />
+know what is <i>View</i> and <i>Contract</i> assemblies, I suggest reading<br />
+this excellent <a href="http://msdn.microsoft.com/msdnmag/issues/07/03/CLRInsideOut/default.aspx" target="_blank">CLR Inside-Out MSDN Magazine</a> article<br />
+by <i>Jack Gudenkauf</i> and <i>Jesse Kaplan</i>. It is about how to harness <a href="http://msdn.microsoft.com/en-us/library/system.addin.aspx" target="_blank">System.AddIn</a> facilities.</p>
+<p style="margin: 0cm 0cm 0.0001pt">&nbsp;</p>
+<p style="margin: 0cm 0cm 0.0001pt">I spent an hour implementing these<br />
+rules with <a href="http://www.ndepend.com/Features.aspx#CQL" target="_blank">CQL</a><a href="http://www.ndepend.com/Features.aspx#CQL"></a><br />
+and came to the following result. Notice that these rules can be readily adapted<br />
+if you have sereval contract or view assemblies.</p>
+<p style="margin: 0cm 0cm 0.0001pt">&nbsp;</p>
+<p style="margin: 0cm 0cm 0.0001pt">&nbsp;</p>
+<p style="margin: 0cm 0cm 0.0001pt"><b><span style="font-size: 16pt">Rules on Contract assemblies</span></b></p>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;have&nbsp;references&nbsp;to&nbsp;non-framework&nbsp;assemblies</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#008000">//&nbsp;Framework&nbsp;assemblies&nbsp;are&nbsp;mscorlib&nbsp;and&nbsp;thos&nbsp;whose&nbsp;names&nbsp;begin&nbsp;with&nbsp;System.</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000000">!</font><font color="#000064">NameIs</font>&nbsp;<font color="#a31515">"mscorlib"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">NameLike</font>&nbsp;<font color="#a31515">"^System."</font><font color="#000000">)</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Don't&nbsp;reference&nbsp;non-framework&nbsp;assemblies&nbsp;from&nbsp;the&nbsp;contract&nbsp;assembly&nbsp;unless&nbsp;you&nbsp;can&nbsp;</font><font color="#008000">//&nbsp;be&nbsp;sure&nbsp;that&nbsp;the&nbsp;assembly&nbsp;can&nbsp;be&nbsp;loaded&nbsp;on&nbsp;both&nbsp;sides&nbsp;of&nbsp;the&nbsp;contract&nbsp;boundary.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;types&nbsp;that&nbsp;represent&nbsp;add-ins&nbsp;should&nbsp;be&nbsp;marked&nbsp;with&nbsp;the&nbsp;AddInContractAttribute</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">AND</font>&nbsp;<font color="#008000">//&nbsp;Limiting&nbsp;search&nbsp;to&nbsp;interfaces&nbsp;only.</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">HasAttribute</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Pipeline.AddInContractAttribute"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Contracts&nbsp;that&nbsp;represent&nbsp;add-ins&nbsp;and&nbsp;are&nbsp;intended&nbsp;to&nbsp;be&nbsp;activated&nbsp;should&nbsp;be&nbsp;marked&nbsp;</font><font color="#008000">//&nbsp;with&nbsp;the&nbsp;AddInContractAttribute.&nbsp;Contracts&nbsp;that&nbsp;only&nbsp;represent&nbsp;objects&nbsp;passed&nbsp;between&nbsp;</font><font color="#008000">//&nbsp;hosts&nbsp;and&nbsp;add-ins&nbsp;do&nbsp;not&nbsp;need&nbsp;this&nbsp;attribute;&nbsp;if&nbsp;all&nbsp;of&nbsp;the&nbsp;types&nbsp;in&nbsp;this&nbsp;assembly&nbsp;</font><font color="#008000">//&nbsp;fall&nbsp;under&nbsp;this&nbsp;category&nbsp;then&nbsp;this&nbsp;rule&nbsp;can&nbsp;be&nbsp;ignored.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Value&nbsp;types&nbsp;defined&nbsp;in&nbsp;a&nbsp;contract&nbsp;assembly&nbsp;should&nbsp;be&nbsp;serializable</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsStructure</font>&nbsp;<font color="#0000ff">AND</font>&nbsp;<font color="#000000">!</font><font color="#000064">IsSerializable</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Value&nbsp;types&nbsp;(structs)&nbsp;are&nbsp;only&nbsp;useful&nbsp;in&nbsp;the&nbsp;contract&nbsp;assembly&nbsp;if&nbsp;</font><font color="#008000">//&nbsp;they&nbsp;can&nbsp;be&nbsp;serialized&nbsp;across&nbsp;the&nbsp;boundary.</font></pre>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;interfaces&nbsp;must&nbsp;implement&nbsp;IContract</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.IContract"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;All&nbsp;interfaces&nbsp;defined&nbsp;in&nbsp;the&nbsp;contract&nbsp;assembly&nbsp;must&nbsp;implement&nbsp;IContract,&nbsp;</font><font color="#008000">//&nbsp;or&nbsp;another&nbsp;interface&nbsp;that&nbsp;implements&nbsp;IContract.&nbsp;Using&nbsp;an&nbsp;interface&nbsp;that&nbsp;</font><font color="#008000">//&nbsp;doesn’t&nbsp;implement&nbsp;IContract&nbsp;can&nbsp;cause&nbsp;problems&nbsp;with&nbsp;lifetime&nbsp;management.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;define&nbsp;types&nbsp;that&nbsp;derive&nbsp;from&nbsp;MarshalByRefObject</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.MarshalByRefObject"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;MarshalByRefObjects&nbsp;can&nbsp;cause&nbsp;problems&nbsp;with&nbsp;lifetime&nbsp;management.&nbsp;If&nbsp;this&nbsp;type&nbsp;</font><font color="#008000">//&nbsp;represents&nbsp;an&nbsp;object&nbsp;you&nbsp;want&nbsp;to&nbsp;marshal&nbsp;by&nbsp;reference,&nbsp;you&nbsp;should&nbsp;define&nbsp;an&nbsp;</font><font color="#008000">//&nbsp;interface&nbsp;implementing&nbsp;IContract&nbsp;to&nbsp;represent&nbsp;it.&nbsp;If&nbsp;it&nbsp;is&nbsp;intended&nbsp;to&nbsp;be&nbsp;copied&nbsp;</font><font color="#008000">//&nbsp;(and&nbsp;thus&nbsp;passed&nbsp;by&nbsp;value),&nbsp;then&nbsp;you&nbsp;should&nbsp;define&nbsp;a&nbsp;simple&nbsp;serializable&nbsp;value&nbsp;</font><font color="#008000">//&nbsp;type&nbsp;(struct)&nbsp;to&nbsp;represent&nbsp;it.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Exception&nbsp;types&nbsp;must&nbsp;implement&nbsp;ISerializable&nbsp;and&nbsp;be&nbsp;marked&nbsp;with&nbsp;the&nbsp;Serializable&nbsp;attribute</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Exception"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000000">!</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Runtime.Serialization.ISerializable"</font>&nbsp;<font color="#0000ff">OR</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">HasAttribute</font>&nbsp;<font color="#a31515">"OPTIONAL:System.SerializableAttribute"</font><font color="#000000">)</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Exception&nbsp;must&nbsp;implement&nbsp;ISerializable&nbsp;and&nbsp;be&nbsp;marked&nbsp;with&nbsp;the&nbsp;SerializableAttribute&nbsp;</font><font color="#008000">//&nbsp;in&nbsp;order&nbsp;to&nbsp;function&nbsp;well&nbsp;across&nbsp;AppDomain&nbsp;boundaries.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;define&nbsp;static&nbsp;types</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font>&nbsp;<font color="#000064">IsStatic</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;The&nbsp;state&nbsp;of&nbsp;static&nbsp;types&nbsp;is&nbsp;stored&nbsp;per&nbsp;AppDomain&nbsp;and&nbsp;changes&nbsp;to&nbsp;state&nbsp;</font><font color="#008000">//&nbsp;in&nbsp;one&nbsp;AppDomain&nbsp;are&nbsp;not&nbsp;reflected&nbsp;in&nbsp;others.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;define&nbsp;reference&nbsp;types&nbsp;other&nbsp;than&nbsp;exception&nbsp;types</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsClass</font>&nbsp;<font color="#0000ff">AND</font>&nbsp;<font color="#000000">!</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Exception"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;The&nbsp;only&nbsp;valid&nbsp;reference&nbsp;type&nbsp;is&nbsp;an&nbsp;Exception&nbsp;type.&nbsp;If&nbsp;this&nbsp;type&nbsp;represents&nbsp;an&nbsp;</font><font color="#008000">//&nbsp;object&nbsp;you&nbsp;want&nbsp;to&nbsp;marshal&nbsp;by&nbsp;reference,&nbsp;you&nbsp;should&nbsp;define&nbsp;an&nbsp;interface&nbsp;implementing&nbsp;</font><font color="#008000">//&nbsp;IContract&nbsp;to&nbsp;represent&nbsp;it.&nbsp;If&nbsp;it&nbsp;is&nbsp;intended&nbsp;to&nbsp;be&nbsp;copied&nbsp;(and&nbsp;thus&nbsp;passed&nbsp;by&nbsp;value),</font><font color="#008000">//&nbsp;then&nbsp;you&nbsp;should&nbsp;define&nbsp;a&nbsp;simple&nbsp;serializable&nbsp;value&nbsp;type&nbsp;(struct)&nbsp;to&nbsp;represent&nbsp;it.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;define&nbsp;delegate&nbsp;types</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font>&nbsp;<font color="#000064">IsDelegate</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Delegates&nbsp;do&nbsp;no&nbsp;marshal&nbsp;well&nbsp;across&nbsp;AppDomain&nbsp;or&nbsp;Process&nbsp;boundaries&nbsp;</font><font color="#008000">//&nbsp;and&nbsp;so&nbsp;should&nbsp;not&nbsp;be&nbsp;used&nbsp;in&nbsp;contracts.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;define&nbsp;exception&nbsp;types</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Exception"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;If&nbsp;possible,&nbsp;you&nbsp;should&nbsp;use&nbsp;one&nbsp;of&nbsp;the&nbsp;framework&nbsp;defined&nbsp;exceptions&nbsp;rather&nbsp;</font><font color="#008000">//&nbsp;than&nbsp;defining&nbsp;your&nbsp;own.&nbsp;If&nbsp;you&nbsp;decide&nbsp;to&nbsp;define&nbsp;your&nbsp;own&nbsp;exceptions,&nbsp;</font><font color="#008000">//&nbsp;they&nbsp;become&nbsp;part&nbsp;of&nbsp;your&nbsp;object&nbsp;model&nbsp;and&nbsp;you&nbsp;will&nbsp;need&nbsp;to&nbsp;define&nbsp;corresponding&nbsp;</font><font color="#008000">//&nbsp;Exception&nbsp;types&nbsp;in&nbsp;the&nbsp;views&nbsp;and&nbsp;perform&nbsp;the&nbsp;conversion&nbsp;in&nbsp;your&nbsp;adapters.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Non-exception&nbsp;types&nbsp;should&nbsp;prefer&nbsp;[Serializable]&nbsp;attribute&nbsp;over&nbsp;ISerializable</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Exception"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Runtime.Serialization.ISerializable"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Implementing&nbsp;ISerializable&nbsp;adds&nbsp;a&nbsp;significant&nbsp;performance&nbsp;overhead&nbsp;compared&nbsp;</font><font color="#008000">//&nbsp;to&nbsp;standard&nbsp;serialization.&nbsp;If&nbsp;possible,&nbsp;use&nbsp;the&nbsp;built&nbsp;in&nbsp;serialization&nbsp;</font><font color="#008000">//&nbsp;engine&nbsp;instead&nbsp;of&nbsp;customizing&nbsp;it&nbsp;with&nbsp;ISerializable.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>All&nbsp;interfaces&nbsp;used&nbsp;in&nbsp;contract&nbsp;assemblies&nbsp;should&nbsp;implement&nbsp;IContract</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.IContract"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;All&nbsp;interfaces&nbsp;used&nbsp;in&nbsp;the&nbsp;contract&nbsp;assembly&nbsp;should&nbsp;implement&nbsp;IContract,&nbsp;or&nbsp;</font><font color="#008000">//&nbsp;another&nbsp;interface&nbsp;that&nbsp;implements&nbsp;IContract.&nbsp;Using&nbsp;an&nbsp;interface&nbsp;that&nbsp;doesn’t&nbsp;</font><font color="#008000">//&nbsp;implement&nbsp;IContract&nbsp;can&nbsp;cause&nbsp;problems&nbsp;with&nbsp;lifetime&nbsp;management.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;types&nbsp;that&nbsp;derive&nbsp;from&nbsp;MarshalByRefObject</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.MarshalByRefObject"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;MarshalByRefObjects&nbsp;can&nbsp;cause&nbsp;problems&nbsp;with&nbsp;lifetime&nbsp;management.&nbsp;If&nbsp;this</font><font color="#008000">//&nbsp;type&nbsp;represents&nbsp;an&nbsp;object&nbsp;you&nbsp;want&nbsp;to&nbsp;marshal&nbsp;by&nbsp;reference,&nbsp;you&nbsp;should&nbsp;define</font><font color="#008000">//&nbsp;an&nbsp;interface&nbsp;implementing&nbsp;IContract&nbsp;to&nbsp;represent&nbsp;it.&nbsp;If&nbsp;it&nbsp;is&nbsp;intended&nbsp;to&nbsp;be</font><font color="#008000">//&nbsp;copied&nbsp;(and&nbsp;thus&nbsp;passed&nbsp;by&nbsp;value),&nbsp;then&nbsp;you&nbsp;should&nbsp;define&nbsp;a&nbsp;simple&nbsp;serializable</font><font color="#008000">//&nbsp;value&nbsp;type&nbsp;(struct)&nbsp;to&nbsp;represent&nbsp;it.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;only&nbsp;use&nbsp;types&nbsp;that&nbsp;are&nbsp;either&nbsp;serializable&nbsp;or&nbsp;are&nbsp;interfaces&nbsp;implementing&nbsp;IContract</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000000">!</font><font color="#000064">IsSerializable</font>&nbsp;<font color="#0000ff">OR</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">AND</font>&nbsp;<font color="#000000">!</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.IContract"</font><font color="#000000">)</font><font color="#000000">)</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;This&nbsp;type&nbsp;is&nbsp;neither&nbsp;serializable&nbsp;nor&nbsp;is&nbsp;it&nbsp;an&nbsp;interface&nbsp;implementing&nbsp;IContract.&nbsp;</font><font color="#008000">//&nbsp;If&nbsp;it&nbsp;represents&nbsp;an&nbsp;object&nbsp;you&nbsp;want&nbsp;to&nbsp;marshal&nbsp;by&nbsp;reference,&nbsp;you&nbsp;should&nbsp;define&nbsp;an&nbsp;</font><font color="#008000">//&nbsp;interface&nbsp;implementing&nbsp;IContract&nbsp;to&nbsp;represent&nbsp;it.&nbsp;If&nbsp;it&nbsp;is&nbsp;intended&nbsp;to&nbsp;be&nbsp;copied&nbsp;</font><font color="#008000">//&nbsp;(and&nbsp;thus&nbsp;passed&nbsp;by&nbsp;value),&nbsp;then&nbsp;you&nbsp;should&nbsp;define&nbsp;a&nbsp;simple&nbsp;serializable&nbsp;value&nbsp;</font><font color="#008000">//&nbsp;type&nbsp;(struct)&nbsp;to&nbsp;represent&nbsp;it.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;contain&nbsp;any&nbsp;static&nbsp;members</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">FIELDS</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font>&nbsp;<font color="#000064">IsStatic</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Static&nbsp;state&nbsp;is&nbsp;stored&nbsp;per&nbsp;AppDomain,&nbsp;and&nbsp;changes&nbsp;to&nbsp;state&nbsp;in&nbsp;one&nbsp;</font><font color="#008000">//&nbsp;AppDomain&nbsp;are&nbsp;not&nbsp;reflected&nbsp;in&nbsp;others.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;delegates</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDelegate</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Delegates&nbsp;do&nbsp;not&nbsp;marshal&nbsp;well&nbsp;across&nbsp;AppDomain&nbsp;or&nbsp;Process&nbsp;boundaries,&nbsp;</font><font color="#008000">//&nbsp;and&nbsp;so&nbsp;should&nbsp;not&nbsp;be&nbsp;used&nbsp;in&nbsp;contracts.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;arbitrary&nbsp;types&nbsp;that&nbsp;implement&nbsp;ICollection&lt;T&gt;&nbsp;or&nbsp;ICollection</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Collections.Generic.ICollection&lt;T&gt;"</font>&nbsp;<font color="#0000ff">OR</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Collections.ICollection"</font><font color="#000000">)</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;a&nbsp;type&nbsp;defined&nbsp;simply&nbsp;as&nbsp;System.Object</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">FullNameIs</font>&nbsp;<font color="#a31515">"System.Object"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Using&nbsp;the&nbsp;System.Object&nbsp;type&nbsp;makes&nbsp;it&nbsp;very&nbsp;difficult&nbsp;to&nbsp;ensure&nbsp;that&nbsp;this</font><font color="#008000">//&nbsp;will&nbsp;version&nbsp;well&nbsp;over&nbsp;time.&nbsp;If&nbsp;this&nbsp;is&nbsp;intended&nbsp;to&nbsp;represent&nbsp;an&nbsp;arbitrary</font><font color="#008000">//&nbsp;contract,&nbsp;type&nbsp;you&nbsp;should&nbsp;use&nbsp;IContract&nbsp;instead.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;a&nbsp;type&nbsp;defined&nbsp;simply&nbsp;as&nbsp;System.Type</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">FullNameIs</font>&nbsp;<font color="#a31515">"System.Type"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Passing&nbsp;a&nbsp;System.Type&nbsp;across&nbsp;the&nbsp;boundary&nbsp;causes&nbsp;the&nbsp;assembly&nbsp;containing&nbsp;it&nbsp;</font><font color="#008000">//&nbsp;to&nbsp;be&nbsp;loaded&nbsp;in&nbsp;the&nbsp;other&nbsp;domain&nbsp;as&nbsp;well.&nbsp;This&nbsp;greatly&nbsp;lessens&nbsp;the&nbsp;value&nbsp;of&nbsp;</font><font color="#008000">//&nbsp;the&nbsp;isolation&nbsp;boundary&nbsp;for&nbsp;versioning,&nbsp;security,&nbsp;unloadability,&nbsp;and&nbsp;reliability.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;types&nbsp;from&nbsp;the&nbsp;System.Reflection&nbsp;namespace&nbsp;other&nbsp;than&nbsp;AssemblyName</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">FullNameLike</font>&nbsp;<font color="#a31515">"System.Reflection."</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">NameIs</font>&nbsp;<font color="#a31515">"AssemblyName"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Passing&nbsp;most&nbsp;reflection&nbsp;types&nbsp;across&nbsp;the&nbsp;boundary&nbsp;causes&nbsp;the&nbsp;assembly&nbsp;</font><font color="#008000">//&nbsp;containing&nbsp;it&nbsp;to&nbsp;be&nbsp;loaded&nbsp;in&nbsp;that&nbsp;domain&nbsp;as&nbsp;well.&nbsp;This&nbsp;greatly&nbsp;lessens&nbsp;</font><font color="#008000">//&nbsp;the&nbsp;value&nbsp;of&nbsp;the&nbsp;isolation&nbsp;boundary&nbsp;for&nbsp;versioning,&nbsp;security,&nbsp;unloadability,&nbsp;</font><font color="#008000">//&nbsp;and&nbsp;reliability.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;System.AddIn.Contract.Collections.IListContract&lt;T&gt;</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">FullNameIs</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.Collections.IListContract&lt;C&gt;"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;System.AddIn&nbsp;contains&nbsp;helper&nbsp;methods&nbsp;for&nbsp;using&nbsp;System.AddIn.Contract.IList&lt;T&gt;&nbsp;and&nbsp;</font><font color="#008000">//&nbsp;should&nbsp;be&nbsp;preffered&nbsp;over&nbsp;the&nbsp;version&nbsp;in&nbsp;System.AddIn.Contracts.Collections.&nbsp;</font><font color="#008000">//&nbsp;System.AddIn.Contract.Collections.IList&lt;T&gt;&nbsp;is&nbsp;in&nbsp;place&nbsp;largely&nbsp;for&nbsp;compatibility&nbsp;reasons.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;use&nbsp;System.AddIn.Contract.Collections.*</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">NAMESPACES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">NameIs</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.Collections"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;System.AddIn.Contract.Collections.*&nbsp;should&nbsp;not&nbsp;be&nbsp;used.&nbsp;If&nbsp;you&nbsp;use&nbsp;</font><font color="#008000">//&nbsp;System.AddIn.Contract.Collections,&nbsp;you&nbsp;will&nbsp;need&nbsp;to&nbsp;write&nbsp;your&nbsp;own&nbsp;adapters&nbsp;for&nbsp;them.</font></pre>
+<p></p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Contract&nbsp;assemblies&nbsp;should&nbsp;not&nbsp;declare&nbsp;non-public&nbsp;types</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyContractAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font>&nbsp;<font color="#000000">!</font><font color="#000064">IsPublic</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;The&nbsp;purpose&nbsp;of&nbsp;a&nbsp;contract&nbsp;assembly&nbsp;is&nbsp;to&nbsp;allow&nbsp;adapters&nbsp;to&nbsp;represent&nbsp;the&nbsp;</font><font color="#008000">//&nbsp;types&nbsp;across&nbsp;isolation&nbsp;and&nbsp;versioning&nbsp;boundaries.&nbsp;Making&nbsp;a&nbsp;type&nbsp;in&nbsp;this&nbsp;</font><font color="#008000">//&nbsp;assembly&nbsp;non-public&nbsp;prevents&nbsp;it&nbsp;from&nbsp;being&nbsp;used&nbsp;in&nbsp;this&nbsp;fashion.</font></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><b><span style="font-size: 16pt">Rules on View assemblies</span></b>&nbsp;</p>
+<hr />
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Activatable&nbsp;add-in&nbsp;types&nbsp;should&nbsp;be&nbsp;marked&nbsp;with&nbsp;the&nbsp;AddInBaseAttribute</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">OR</font>&nbsp;<font color="#000064">IsAbstract</font><font color="#000000">)</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">HasAttribute</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Pipeline.AddInBaseAttribute"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;No&nbsp;type&nbsp;in&nbsp;the&nbsp;assembly&nbsp;is&nbsp;marked&nbsp;with&nbsp;the&nbsp;AddInBaseAttribute.&nbsp;For&nbsp;this&nbsp;assembly&nbsp;</font><font color="#008000">//&nbsp;to&nbsp;be&nbsp;used&nbsp;(without&nbsp;modification)&nbsp;as&nbsp;an&nbsp;AddInView,&nbsp;the&nbsp;types&nbsp;that&nbsp;represent&nbsp;</font><font color="#008000">//&nbsp;add-ins&nbsp;need&nbsp;to&nbsp;be&nbsp;marked&nbsp;with&nbsp;the&nbsp;AddInBaseAttribute.&nbsp;Even&nbsp;if&nbsp;the&nbsp;type&nbsp;will&nbsp;not&nbsp;</font><font color="#008000">//&nbsp;be&nbsp;used&nbsp;directly&nbsp;through&nbsp;System.AddIn&nbsp;today,&nbsp;applying&nbsp;this&nbsp;attribute&nbsp;now&nbsp;will&nbsp;</font><font color="#008000">//&nbsp;make&nbsp;it&nbsp;easier&nbsp;to&nbsp;migrate&nbsp;while&nbsp;still&nbsp;maintaining&nbsp;compatibility.</font></pre>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;implement&nbsp;IContract&nbsp;or&nbsp;an&nbsp;interface&nbsp;that&nbsp;implements&nbsp;IContract</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.IContract"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Exposing&nbsp;a&nbsp;contract&nbsp;directly&nbsp;in&nbsp;the&nbsp;view&nbsp;can&nbsp;cause&nbsp;a&nbsp;variety&nbsp;of&nbsp;problems.&nbsp;It&nbsp;makes&nbsp;it</font><font color="#008000">//&nbsp;very&nbsp;difficult&nbsp;to&nbsp;version&nbsp;over&nbsp;time&nbsp;since&nbsp;it&nbsp;strongly&nbsp;binds&nbsp;the&nbsp;consumer&nbsp;of&nbsp;the&nbsp;view&nbsp;</font><font color="#008000">//&nbsp;to&nbsp;a&nbsp;particular&nbsp;version&nbsp;of&nbsp;the&nbsp;contract&nbsp;assembly.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;be&nbsp;marked&nbsp;serializable</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Runtime.Serialization.ISerializable"</font>&nbsp;<font color="#0000ff">OR</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">HasAttribute</font>&nbsp;<font color="#a31515">"OPTIONAL:System.SerializableAttribute"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Types&nbsp;defined&nbsp;in&nbsp;views&nbsp;should&nbsp;never&nbsp;have&nbsp;to&nbsp;directly&nbsp;cross&nbsp;any&nbsp;isolation&nbsp;</font><font color="#008000">//&nbsp;boundary,&nbsp;and&nbsp;so&nbsp;shouldn’t&nbsp;need&nbsp;to&nbsp;be&nbsp;serializable.&nbsp;You&nbsp;can&nbsp;mark&nbsp;these&nbsp;</font><font color="#008000">//&nbsp;serializable&nbsp;if&nbsp;you&nbsp;need&nbsp;to&nbsp;store&nbsp;them&nbsp;to&nbsp;disk&nbsp;but&nbsp;you&nbsp;shouldn’t&nbsp;do&nbsp;so&nbsp;in</font><font color="#008000">//&nbsp;order&nbsp;to&nbsp;pass&nbsp;them&nbsp;across&nbsp;boundaries.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;derive&nbsp;from&nbsp;MarshalByRefObject</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.MarshalByRefObject"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Types&nbsp;defined&nbsp;in&nbsp;views&nbsp;should&nbsp;never&nbsp;have&nbsp;to&nbsp;directly&nbsp;cross&nbsp;any&nbsp;isolation</font><font color="#008000">//&nbsp;boundary&nbsp;and&nbsp;so&nbsp;shouldn’t&nbsp;need&nbsp;to&nbsp;be&nbsp;a&nbsp;MarshalByRefObject.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;have&nbsp;generic&nbsp;parameters</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsGeneric</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Types&nbsp;with&nbsp;generic&nbsp;parameters&nbsp;are&nbsp;difficult&nbsp;to&nbsp;isolate,&nbsp;since&nbsp;their&nbsp;</font><font color="#008000">//&nbsp;pipeline&nbsp;components&nbsp;cannot&nbsp;be&nbsp;generated&nbsp;automatically.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>There&nbsp;should&nbsp;be&nbsp;no&nbsp;exception&nbsp;types&nbsp;defined&nbsp;in&nbsp;the&nbsp;view&nbsp;assembly</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Exception"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Defining&nbsp;your&nbsp;own&nbsp;exception&nbsp;makes&nbsp;that&nbsp;exception&nbsp;type&nbsp;part&nbsp;of&nbsp;your&nbsp;object&nbsp;model.&nbsp;</font><font color="#008000">//&nbsp;This&nbsp;means&nbsp;it&nbsp;will&nbsp;require&nbsp;a&nbsp;different&nbsp;exception&nbsp;type&nbsp;to&nbsp;cross&nbsp;the&nbsp;isolation&nbsp;</font><font color="#008000">//&nbsp;boundary,&nbsp;and&nbsp;adapting&nbsp;logic&nbsp;on&nbsp;either&nbsp;side&nbsp;to&nbsp;do&nbsp;the&nbsp;conversion.&nbsp;If&nbsp;at&nbsp;all&nbsp;</font><font color="#008000">//&nbsp;possible,&nbsp;you&nbsp;should&nbsp;use&nbsp;one&nbsp;of&nbsp;the&nbsp;existing&nbsp;framework&nbsp;exception&nbsp;types.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;be&nbsp;marked&nbsp;static</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">IsStatic</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;The&nbsp;state&nbsp;of&nbsp;static&nbsp;types&nbsp;is&nbsp;stored&nbsp;per&nbsp;AppDomain,&nbsp;and&nbsp;changes&nbsp;to&nbsp;state&nbsp;</font><font color="#008000">//&nbsp;in&nbsp;one&nbsp;AppDomain&nbsp;are&nbsp;not&nbsp;reflected&nbsp;in&nbsp;others.&nbsp;Static&nbsp;types&nbsp;in&nbsp;the&nbsp;view&nbsp;</font><font color="#008000">//&nbsp;are&nbsp;only&nbsp;OK&nbsp;if&nbsp;they&nbsp;provide&nbsp;simple&nbsp;helper&nbsp;functionality,&nbsp;and&nbsp;are&nbsp;stateless.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;inherit&nbsp;from&nbsp;FrameworkElement</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Windows.FrameworkElement"</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Building&nbsp;adapters&nbsp;for&nbsp;types&nbsp;that&nbsp;inherit&nbsp;from&nbsp;FrameworkElement&nbsp;is&nbsp;difficult,&nbsp;</font><font color="#008000">//&nbsp;since&nbsp;you&nbsp;have&nbsp;to&nbsp;hand-code&nbsp;them..</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;types&nbsp;should&nbsp;not&nbsp;inherit&nbsp;from&nbsp;Control</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">DeriveFrom</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Windows.Forms.Control"</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Building&nbsp;adapters&nbsp;for&nbsp;types&nbsp;that&nbsp;inherit&nbsp;from&nbsp;Control&nbsp;is&nbsp;difficult,&nbsp;</font><font color="#008000">//&nbsp;since&nbsp;you&nbsp;have&nbsp;to&nbsp;hand-code&nbsp;them.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Types&nbsp;used&nbsp;in&nbsp;views&nbsp;should&nbsp;not&nbsp;implement&nbsp;IContract</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.AddIn.Contract.IContract"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Exposing&nbsp;a&nbsp;contract&nbsp;directly&nbsp;in&nbsp;the&nbsp;view&nbsp;can&nbsp;cause&nbsp;a&nbsp;variety&nbsp;of&nbsp;problems.&nbsp;</font><font color="#008000">//&nbsp;It&nbsp;makes&nbsp;it&nbsp;very&nbsp;difficult&nbsp;to&nbsp;version&nbsp;over&nbsp;time&nbsp;since&nbsp;it&nbsp;strongly&nbsp;binds&nbsp;</font><font color="#008000">//&nbsp;the&nbsp;consumer&nbsp;of&nbsp;the&nbsp;view&nbsp;to&nbsp;a&nbsp;particular&nbsp;version&nbsp;of&nbsp;the&nbsp;contract&nbsp;assembly.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Concrete&nbsp;reference&nbsp;types&nbsp;used&nbsp;in&nbsp;views&nbsp;should&nbsp;be&nbsp;serializable</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsClass</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">IsSerializable</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;Concrete&nbsp;types&nbsp;are&nbsp;very&nbsp;difficult&nbsp;isolate&nbsp;down&nbsp;the&nbsp;road.&nbsp;They&nbsp;should&nbsp;only&nbsp;</font><font color="#008000">//&nbsp;be&nbsp;in&nbsp;this&nbsp;assembly&nbsp;if&nbsp;they&nbsp;inherit/implement&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;or&nbsp;interface&nbsp;</font><font color="#008000">//&nbsp;in&nbsp;this&nbsp;assembly.&nbsp;Other&nbsp;types&nbsp;should&nbsp;reference&nbsp;the&nbsp;abstract&nbsp;base&nbsp;class&nbsp;or&nbsp;</font><font color="#008000">//&nbsp;interface,&nbsp;and&nbsp;not&nbsp;the&nbsp;concrete&nbsp;helper&nbsp;type.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Concrete&nbsp;reference&nbsp;types&nbsp;used&nbsp;in&nbsp;views&nbsp;should&nbsp;belong&nbsp;to&nbsp;a&nbsp;framework&nbsp;assembly</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsClass</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">FullNameLike</font>&nbsp;<font color="#a31515">"^System."</font>&nbsp;<font color="#008000">//&nbsp;The&nbsp;namespace&nbsp;name&nbsp;must&nbsp;begin&nbsp;with&nbsp;System.&nbsp;for&nbsp;framework&nbsp;type.</font><font color="#000000"></font><font color="#008000">//&nbsp;Concrete&nbsp;types&nbsp;are&nbsp;very&nbsp;difficult&nbsp;isolate&nbsp;down&nbsp;the&nbsp;road.&nbsp;They&nbsp;should&nbsp;only&nbsp;be&nbsp;in&nbsp;</font><font color="#008000">//&nbsp;this&nbsp;assembly&nbsp;if&nbsp;they&nbsp;inherit/implement&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;or&nbsp;interface&nbsp;in&nbsp;this&nbsp;</font><font color="#008000">//&nbsp;assembly.&nbsp;Other&nbsp;types&nbsp;should&nbsp;reference&nbsp;the&nbsp;abstract&nbsp;base&nbsp;class&nbsp;or&nbsp;interface,&nbsp;and&nbsp;not&nbsp;</font><font color="#008000">//&nbsp;the&nbsp;concrete&nbsp;helper&nbsp;type.&nbsp;You&nbsp;can&nbsp;pass&nbsp;types&nbsp;across&nbsp;the&nbsp;boundary&nbsp;directly&nbsp;only&nbsp;if&nbsp;</font><font color="#008000">//&nbsp;they&nbsp;are&nbsp;serializable&nbsp;and&nbsp;can&nbsp;be&nbsp;loaded&nbsp;in&nbsp;both&nbsp;sides&nbsp;of&nbsp;an&nbsp;isolation&nbsp;boundary.&nbsp;</font><font color="#008000">//&nbsp;This&nbsp;is&nbsp;only&nbsp;true&nbsp;for&nbsp;serializable&nbsp;framework&nbsp;types.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Events&nbsp;should&nbsp;be&nbsp;of&nbsp;the&nbsp;generic&nbsp;type&nbsp;EventHandler&lt;T&gt;</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">FIELDS</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsEventDelegateObject</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">IsOfType</font>&nbsp;<font color="#a31515">"OPTIONAL:System.EventHandler&lt;TEventArgs&gt;"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;There&nbsp;are&nbsp;no&nbsp;tools&nbsp;that&nbsp;automatically&nbsp;generate&nbsp;adapters&nbsp;for&nbsp;events&nbsp;other</font><font color="#008000">//&nbsp;than&nbsp;EventHandler&lt;T&gt;&nbsp;which&nbsp;would&nbsp;make&nbsp;building&nbsp;adapters&nbsp;for&nbsp;this&nbsp;member&nbsp;</font><font color="#008000">//&nbsp;very&nbsp;difficult.</font></pre>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>IList&lt;T&gt;&nbsp;should&nbsp;be&nbsp;used&nbsp;instead&nbsp;of&nbsp;arbitrary&nbsp;ICollections</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Collections.Generic.ICollection&lt;T&gt;"</font>&nbsp;<font color="#0000ff">OR</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000064">Implement</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Collections.ICollection"</font><font color="#000000">)</font><font color="#000000">&nbsp;&nbsp;</font><font color="#0000ff">AND</font>&nbsp;<font color="#000000">!</font><font color="#000064">FullNameIs</font>&nbsp;<font color="#a31515">"OPTIONAL:System.Collections.Generic.IList&lt;T&gt;"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;There&nbsp;are&nbsp;no&nbsp;pre-built&nbsp;contracts&nbsp;or&nbsp;adapters&nbsp;for&nbsp;collections&nbsp;other&nbsp;than&nbsp;IList&lt;T&gt;.&nbsp;</font><font color="#008000">//&nbsp;Thus,&nbsp;if&nbsp;you&nbsp;use&nbsp;these&nbsp;you&nbsp;will&nbsp;have&nbsp;to&nbsp;write&nbsp;your&nbsp;own&nbsp;adapters.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Non-concrete&nbsp;types&nbsp;used&nbsp;in&nbsp;views&nbsp;should&nbsp;be&nbsp;defined&nbsp;in&nbsp;the&nbsp;view&nbsp;assembly</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">OUT</font>&nbsp;<font color="#0000ff">OF</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000000">(</font><font color="#000064">IsInterface</font>&nbsp;<font color="#0000ff">OR</font>&nbsp;<font color="#000064">IsAbstract</font><font color="#000000">)</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;If&nbsp;you&nbsp;are&nbsp;using&nbsp;an&nbsp;interface/abstract&nbsp;base&nbsp;class&nbsp;defined&nbsp;in&nbsp;a&nbsp;different&nbsp;assembly,</font><font color="#008000">//&nbsp;you&nbsp;need&nbsp;to&nbsp;ensure&nbsp;that&nbsp;that&nbsp;type&nbsp;follows&nbsp;the&nbsp;same&nbsp;rules&nbsp;that&nbsp;govern&nbsp;types&nbsp;in&nbsp;this&nbsp;assembly.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Serializable&nbsp;types&nbsp;used&nbsp;by&nbsp;views&nbsp;should&nbsp;be&nbsp;defined&nbsp;in&nbsp;a&nbsp;framework&nbsp;assembly</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsSerializable</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;&nbsp;</font><font color="#000000">!</font><font color="#000064">FullNameLike</font>&nbsp;<font color="#a31515">"^System."</font>&nbsp;<font color="#008000">//&nbsp;The&nbsp;namespace&nbsp;name&nbsp;must&nbsp;begin&nbsp;with&nbsp;System.&nbsp;for&nbsp;framework&nbsp;type.</font><font color="#000000"></font><font color="#008000">//&nbsp;If&nbsp;you&nbsp;intend&nbsp;to&nbsp;serialize&nbsp;this&nbsp;type&nbsp;across&nbsp;an&nbsp;isolation&nbsp;boundary,&nbsp;you&nbsp;need&nbsp;to&nbsp;be&nbsp;</font><font color="#008000">//&nbsp;sure&nbsp;that&nbsp;the&nbsp;type&nbsp;is&nbsp;going&nbsp;to&nbsp;be&nbsp;available&nbsp;to&nbsp;load&nbsp;in&nbsp;both&nbsp;sides&nbsp;of&nbsp;the&nbsp;isolation&nbsp;</font><font color="#008000">//&nbsp;boundary.&nbsp;This&nbsp;is&nbsp;hard&nbsp;to&nbsp;ensure&nbsp;if&nbsp;it&nbsp;is&nbsp;not&nbsp;a&nbsp;framework&nbsp;type.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;members&nbsp;should&nbsp;not&nbsp;have&nbsp;open&nbsp;generic&nbsp;parameters</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">METHODS</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsGeneric</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;There&nbsp;are&nbsp;no&nbsp;tools&nbsp;to&nbsp;automatically&nbsp;generate&nbsp;pipelines&nbsp;for&nbsp;open&nbsp;generic&nbsp;types.&nbsp;</font><font color="#008000">//&nbsp;Thus,&nbsp;if&nbsp;you&nbsp;decide&nbsp;to&nbsp;isolate&nbsp;this&nbsp;type&nbsp;later&nbsp;you&nbsp;will&nbsp;have&nbsp;to&nbsp;do&nbsp;the&nbsp;adapter&nbsp;</font><font color="#008000">//&nbsp;logic&nbsp;by&nbsp;hand.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>Views&nbsp;should&nbsp;not&nbsp;use&nbsp;a&nbsp;type&nbsp;defined&nbsp;simply&nbsp;as&nbsp;System.Object</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">TYPES</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsDirectlyUsedBy</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">AND</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">FullNameIs</font>&nbsp;<font color="#a31515">"System.Object"</font><font color="#000000">
+
+</font><font color="#008000">//&nbsp;Defining&nbsp;the&nbsp;type&nbsp;as&nbsp;System.Object&nbsp;makes&nbsp;it&nbsp;very&nbsp;difficult&nbsp;to&nbsp;ensure&nbsp;that</font><font color="#008000">//&nbsp;it&nbsp;versions&nbsp;well&nbsp;over&nbsp;time.&nbsp;If&nbsp;this&nbsp;is&nbsp;intended&nbsp;to&nbsp;represent&nbsp;an&nbsp;arbitrary&nbsp;</font><font color="#008000">//&nbsp;contract&nbsp;type,&nbsp;you&nbsp;should&nbsp;use&nbsp;a&nbsp;more&nbsp;specific&nbsp;type&nbsp;instead.</font></pre>
+<p></p>
+<hr />
+<div class="cql_warning">
+            </div>
+<pre><font color="#008000">//&nbsp;&lt;Name&gt;</font><b>View&nbsp;members&nbsp;should&nbsp;not&nbsp;be&nbsp;marked&nbsp;static</b><font color="#008000">&lt;/Name&gt;</font><font color="#0000ff">WARN</font>&nbsp;<font color="#0000ff">IF</font>&nbsp;<font color="#000064">Count</font>&nbsp;<font color="#000000">&gt;</font>&nbsp;<b>0</b>&nbsp;<font color="#0000ff">IN</font>&nbsp;<font color="#0000ff">SELECT</font>&nbsp;<font color="#0000ff">FIELDS</font>&nbsp;<font color="#0000ff">FROM</font>&nbsp;<font color="#0000ff">ASSEMBLIES</font>&nbsp;<font color="#a31515">"MyViewAssembly"</font>&nbsp;<font color="#0000ff">WHERE</font><font color="#000000">&nbsp;&nbsp;</font><font color="#000064">IsStatic</font><font color="#000000">&nbsp;
+
+</font><font color="#008000">//&nbsp;The&nbsp;state&nbsp;of&nbsp;static&nbsp;types&nbsp;is&nbsp;stored&nbsp;per&nbsp;AppDomain,&nbsp;and&nbsp;changes&nbsp;to&nbsp;state&nbsp;</font><font color="#008000">//&nbsp;in&nbsp;one&nbsp;AppDomain&nbsp;are&nbsp;not&nbsp;reflected&nbsp;in&nbsp;others.&nbsp;Static&nbsp;types&nbsp;in&nbsp;the&nbsp;view&nbsp;are&nbsp;OK&nbsp;</font><font color="#008000">//&nbsp;as&nbsp;long&nbsp;as&nbsp;they&nbsp;provide&nbsp;simple&nbsp;helper&nbsp;functionality&nbsp;and&nbsp;are&nbsp;stateless.</font></pre>
+<pre>
+</pre>
+<p style="margin: 0cm 0cm 0.0001pt">42 on 49 rules can readily be<br />
+expressed with CQL. Here are the ones that cannot be written with the current<br />
+version of CQL&nbsp;:</p>
+<p style="margin: 0cm 0cm 0.0001pt">&nbsp;</p>
+<p><i>(Contract)Arrays should not contain<br />
+types that implement IContract&nbsp;; (Contract)Arrays should only contain<br />
+serializable types&nbsp;; (View) Arrays should only contain serializable types</i>&nbsp;:<br />
+While you can constraint some methods to use some array or not with some regex<br />
+on method signature and the term [], CQL cannot yet constraint element types of<br />
+an array. </p>
+<p><i>(Contract)Contract interfaces should<br />
+not implement non-IContract interfaces</i>&nbsp;: This rules implies 2 composite<br />
+queries, the first one to get contract interfaces and the second one takes the<br />
+result of the first one and check if it implements non-IContract interfaces. Composing<br />
+queries this way is not yet possible with CQL but it is a major feature for the<br />
+future.</p>
+<p><i>(View) Concrete Reference Types Should<br />
+Derive From A View Type Defined In The Current Assembly</i>&nbsp;: Here also<br />
+this rule need 2 composite queries to be implemented.</p>
+<p><i><span style="font-size: 12pt;font-family: 'Times New Roman','serif'">(Contract)Contract<br />
+assemblies should not define events</span></i><span style="font-size: 12pt;font-family: 'Times New Roman','serif'">&nbsp;; <i>(View) Events should only be declared on<br />
+Interfaces, not AbstractBaseClasses</i>: While you can check if a class or a<br />
+structure define some event by checking fields with the condition<br />
+IsEventDelegateObject, CQL cannot so far check if an interface define some<br />
+events.</span></p>
+<pre>&nbsp;</pre>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies/" title="Permalink to Rules for CLR Add-Ins Contract and View Assemblies" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies/feed/" title="Comments RSS to Rules for CLR Add-Ins Contract and View Assemblies" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-63 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2008/07/10/are-you-sure-added-and-refactored-code-is-covered-by-tests/" rel="prev"><span class="meta-nav">&larr;</span> Are you sure added and refactored code is covered by tests?</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2008/07/22/dealing-with-code-un-coverable-by-tests/" rel="next">Dealing with Code Un-Coverable by Tests <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies/ ';
+	var disqus_identifier = '63 /blogs/patricksmacchia/archive/2008/07/16/rules-for-clr-add-ins-contract-and-view-assemblies.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Rules for CLR Add-Ins Contract and View Assemblies";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=63');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2008\/07\/16\/rules-for-clr-add-ins-contract-and-view-assemblies\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.346 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-31 12:52:49 -->
+<!-- super cache -->

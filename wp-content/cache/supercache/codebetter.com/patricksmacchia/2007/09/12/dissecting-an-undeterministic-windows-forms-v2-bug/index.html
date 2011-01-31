@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Dissecting a non-deterministic Windows Forms v2 bug | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Patrick Smacchia' href='http://codebetter.com/patricksmacchia/' />
+<link rel='start' title='Benefit from the C# and VB.NET compilers perf' href='http://codebetter.com/patricksmacchia/2007/06/20/benefit-from-the-c-and-vb-net-compilers-perf/' />
+<link rel='prev' title='2 talks about Code Quality at PrioConference' href='http://codebetter.com/patricksmacchia/2007/09/06/2-talks-about-code-quality-at-prioconference/' />
+<link rel='next' title='Some VisualStudio featurettes that could save me 15mn a day' href='http://codebetter.com/patricksmacchia/2007/09/24/featurettes/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/patricksmacchia/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug/' />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=15' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/codebetter/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-15" class="post-15 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Dissecting a non-deterministic Windows Forms v2 bug</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by patricksmacchia">patricksmacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug/" title="4:48 pm" rel="bookmark"><span class="entry-date">September 12, 2007</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>&nbsp;</p>
+<p class="MsoNormal"><span>We are glad that we<br />
+have just released NDepend v2.4 with the thoroughly revamped UI that I talked<br />
+about a few weeks ago on this <a href="http://codebetter.com/blogs/patricksmacchia/archive/2007/08/29/ui-matters-revisited-menus-and-toolbars-vs-office-2007-ribbons.aspx">blog entry</a>.<br />
+For those of you that found the <a href="http://www.NDepend.com">NDepend</a> tool for .NET developers too hard to start with, we hope that our<br />
+work on usability will help.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">Bug description</span><span style="font-size: 14pt"></span></span><span style="font-size: 11pt;font-family: 'Calibri','sans-serif'"> </span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>As always while doing<br />
+our final manual tests before releasing, we found a weird bug. We added docking panels </span><span><i>a la VisualStudio</i> </span><span>to the<br />
+VisualNDepend UI.&nbsp; After<br />
+playing around by moving/collapsing/auto hiding all docking panels, the<br />
+following exception popup suddenly, while hovering with the mouse one of our<br />
+DataGridView:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">************** Exception<br />
+Text **************</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">System.ObjectDisposedException:<br />
+Cannot access a disposed object.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">Object name: &#8216;FloatForm&#8217;.</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.Control.CreateHandle()</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at System.Windows.Forms.Form.CreateHandle()</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at System.Windows.Forms.Control.get_Handle()</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.ToolTip.get_CreateParams()</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.ToolTip.CreateHandle()</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.ToolTip.Hide(IWin32Window win)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp; </span><span>&nbsp;</span>at<br />
+System.Windows.Forms.ToolStrip.UpdateToolTip(ToolStripItem item)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.ToolStripItem.OnMouseHover(EventArgs e)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.ToolStripItem.FireEventInteractive(EventArgs e,<br />
+ToolStripItemEventType met)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at System.Windows.Forms.ToolStripItem.FireEvent(EventArgs<br />
+e, ToolStripItemEventType met)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.MouseHoverTimer.OnTick(Object sender, EventArgs e)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.Timer.OnTick(EventArgs e)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.Timer.TimerNativeWindow.WndProc(Message&amp; m)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>at<br />
+System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr<br />
+wparam, IntPtr lparam)</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal">&nbsp;</p>
+<p class="MsoNormal"><span>When you see such a<br />
+stack panel with none of your method inside, you immediately realize that your<br />
+evening at work will be longer than expected (and it was the case uh!). We suspected<br />
+first the framework <a href="http://www.devexpress.com/Products/NET/DXperience/">DXperience</a><br />
+from <a href="http://www.devexpress.com/">DevExpress</a> on which we rely for docking panels and knock them on their forum.<br />
+Hopefully, they knew this problem and immediately answered that it is a Windows<br />
+Forms bug.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">Reproducing the bug</span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>The DevExpress support kindly provided a small C# project that reproduces the problem<br />
+(downloadable from <a href="http://www.devexpress.com/Support/Center/GetSCAttachment.ashx?id=155b3305-b4a6-4ab7-9084-423a628a6f6a">here</a>).<br />
+To reproduce the bug with this project:</span></p>
+<p class="MsoNormal"><span><br /></span></p>
+<ul>
+<li><span>1.&nbsp;&nbsp; Start the<br />
+application.</span></li>
+</ul>
+<ul>
+<li><!--[if !supportLists]--><span><span><span style="font-family: 'Times New Roman';font-style: normal;font-variant: normal;font-weight: normal;font-size: 7pt;line-height: normal"></span></span></span><span>2.&nbsp;&nbsp; Press the<br />
+&#8220;Click&#8221; button (do not hover over the toolstripbutton).</span></li>
+</ul>
+<ul>
+<li><!--[if !supportLists]--><span><span>3.<span style="font-family: 'Times New Roman';font-style: normal;font-variant: normal;font-weight: normal;font-size: 7pt;line-height: normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span></span></span><!--[endif]--><span>Now hover<br />
+over the toolstripbutton to display the tooltip.</span></li>
+</ul>
+<ul>
+<li><!--[if !supportLists]--><span><span>4.<span style="font-family: 'Times New Roman';font-style: normal;font-variant: normal;font-weight: normal;font-size: 7pt;line-height: normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span></span></span><!--[endif]--><span>Close the<br />
+&#8220;test form&#8221;</span></li>
+</ul>
+<ul>
+<li><!--[if !supportLists]--><span><span>5.<span style="font-family: 'Times New Roman';font-style: normal;font-variant: normal;font-weight: normal;font-size: 7pt;line-height: normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span></span></span><!--[endif]--><span>Again,<br />
+hover over the toolstripbutton =&gt; ObjectDisposedException</span></li>
+</ul>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>The bug comes from the<br />
+fact that the docking panel implementation changes the parent window of the underlying<br />
+ToolTip control assigned to the DataGridView. When hovering the DataGridView<br />
+after changing its parent window, if the previous parent window object has been<br />
+disposed, you get the exception.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">An idea for the fix</span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>Hopefully, I found <a href="http://www.actiprosoftware.com/Support/Forums/ViewForumTopic.aspx?ForumTopicID=1665">here</a><br />
+a workaround on the <a href="http://www.actiprosoftware.com/">ActiproSoftware</a><br />
+forum. As DevExpress, ActiproSoftware is a Windows Forms control vendor and,<br />
+without surprise, they also faced the problem. The idea is to obtain the<br />
+private underlying tooltip object with reflection, and then call the method RemoveAll() on<br />
+it when the parent windows is changing. This way you force re-initialization of<br />
+the link to parent window. The code looks like this:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<pre><span>ToolTip</span><span> </span><span style="color: black">t = (</span><span>ToolTip</span><span style="color: black">)toolStrip1.GetType().GetProperty(</span></pre>
+<pre><span style="color: black"><span>&nbsp;&nbsp; </span></span><span style="color: maroon">"ToolTip"</span><span style="color: black">, </span><span>BindingFlags</span><span style="color: black">.Instance |</span><span> BindingFlags</span><span style="color: black">.NonPublic</span></pre>
+<pre><span style="color: black">).GetValue(toolStrip1, </span><span style="color: blue">null</span><span style="color: black">);</span></pre>
+<pre><span style="color: black">&nbsp;</span></pre>
+<pre><span style="color: black">t.RemoveAll();</span></pre>
+<pre>&nbsp;&nbsp;</pre>
+<pre><span class="Titre1Car"><span style="font-size: 14pt" lang="FR"></span></span><span>    </span></pre>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">A fix not that easy to implement<br /></span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>This code works well<br />
+when the problem comes from a ToolStrip control, but, of course, it doesn’t work on<br />
+DataGridView. I wanted to use </span><span><a href="http://www.aisto.com/roeder/dotnet/">Reflector</a> to see where was hidden the underlying ToolTip of a DataGridView </span><span>but unfortunatly I didn&#8217;t find it. Indeed, the DataGridView is a monster class with more than 10.000 lines of code, 1053 methods, 322 fields and 13 nested classes. I then wrote the following </span><span><a href="http://www.ndepend.com/Features.aspx#CQL">CQL</a> query with NDepend to make sure that the class DataGridView is using directly or indirectly the class ToolTip.</span><span> <br /></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal" style="margin-left: 18pt"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>IsUsing</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>&#8220;System.Windows.Forms.ToolTip&#8221;</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>NameIs</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>&#8220;DataGridView&#8221;</span></p>
+<p class="MsoNormal" style="margin-left: 18pt">&nbsp;</p>
+<p class="MsoNormal">The query told me that DataGridView is using a class that uses ToolTip. To find this intermediate class I used the following CQL query: Which class is directly used by DataGridView and uses directly ToolTip:</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">
+<p class="MsoNormal" style="margin-left: 18pt"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"><br /><span></span></span><span>IsDirectlyUsedBy</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span>&#8220;System.Windows.Forms.DataGridView&#8221;</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: blue">AND</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;font-family: 'Courier New';color: black"></span><br /><span>IsDirectlyUsing</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>&#8220;System.Windows.Forms.ToolTip&#8221;</span><span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">The 2 matching classes are the public classes <b>System.Windows.Forms.ContextMenuStrip</b> and the internal nested class <b>System.Windows.Forms.DataGridView+DataGridViewTool</b>. It was then easy to find were the pesky ToolTip object was hidden and we wrote the following code:</p>
+<p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>FieldInfo</span><span style="font-size: 10pt;font-family: 'Courier New'"><br />
+toolTipControlFieldInfo = <span>&nbsp;&nbsp;&nbsp;</span></span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span><span style="color: blue">typeof</span>(<span>DataGridView</span>).GetField(</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>&#8220;toolTipControl&#8221;</span>,<br />
+<span>BindingFlags</span>.Instance | <span>BindingFlags</span>.NonPublic);</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>FieldInfo</span><span style="font-size: 10pt;font-family: 'Courier New'"> toolTipFieldInfo = </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>toolTipControlFieldInfo.FieldType.GetField(</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>&#8220;toolTip&#8221;</span>,<br />
+<span>BindingFlags</span>.Instance | <span>BindingFlags</span>.NonPublic);</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New';color: blue">object</span><span style="font-size: 10pt;font-family: 'Courier New'"> toolTipControlInstance = </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>toolTipControlFieldInfo.GetValue(m_DataGridViewItems);</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>ToolTip</span><span style="font-size: 10pt;font-family: 'Courier New'"> toolTip = </span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>toolTipFieldInfo.GetValue(toolTipControlInstance)<br />
+<span style="color: blue">as</span> <span>ToolTip</span>;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New';color: blue">if</span><span style="font-size: 10pt;font-family: 'Courier New'"> (toolTip != <span style="color: blue">null</span>)<br />
+{<span>&nbsp; </span><span style="color: green">//Can be<br />
+null at init.</span></span></p>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span style="font-size: 10pt;font-family: 'Courier New'"><span>&nbsp;&nbsp; </span>toolTip.RemoveAll();</span></p>
+<p class="MsoNormal"><span style="font-size: 10pt;line-height: 115%;font-family: 'Courier New'">}</span><span style="font-size: 10pt;line-height: 115%"></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>I know how ugly it is to rely on private implementation but, here we have no choice. </span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">Checking that the bug is corrected by .NET3<br /></span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>We found out that the bug was impossible to reproduce on<br />
+our main development machines because it is in fact corrected with .NET3. I<br />
+explained in the post <a href="http://codebetter.com/blogs/patricksmacchia/archive/2007/08/08/new-net-3-5-core-stuff.aspx">.NET<br />
+3.5 Core Stuff</a> that, even though Microsoft made the decision to avoid touching<br />
+the .NET Framework assemblies (such as System.Windows.Forms.dll), they took a<br />
+chance to correct some bug.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>We then used the build<br />
+comparison feature of NDepend to see if one the method in the buggy stack trace<br />
+has been modified (interestingly enough, we figured out that 84 methods of System.Windows.Forms.dll<br />
+were changed, 202 were added and 37 were removed). Here is the <a href="http://www.ndepend.com/Features.aspx#CQL">CQL</a> query that matches the<br />
+changed methods in System.Windows.Forms.ToolTip:</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">SELECT</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">METHODS</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">FROM</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">TYPES</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>&#8220;System.Windows.Forms.ToolTip&#8221;</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: blue">WHERE</span><span style="background: white none repeat scroll 0% 50%;font-size: 10pt;line-height: 115%;font-family: 'Courier New';color: black"> </span><span>CodeWasChanged</span><span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>The result is the<br />
+following…</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<table class="MsoNormalTable" style="border: 1pt outset white" border="1" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>Methods</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>NbILInstructions</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>SetTool(IWin32Window,String,ToolTip+TipInfo+Type,Point)</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>232</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>CreateHandle()</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>201</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>SetToolTipInternal(Control,ToolTip+TipInfo)</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>147</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>WmPop()</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>126</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>Hide(IWin32Window)</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>88</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;line-height: normal"><span>SetToolInfo(Control,String)</span></p>
+</td>
+<td>
+<p class="MsoNormal" style="margin-bottom: 0.0001pt;text-align: right;line-height: normal" align="right"><span>59</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="MsoNormal"><span>&nbsp;</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>…and indeed the method<br />
+ToolTip.Hide(), shown in the buggy trace, has been changed (76 to 88 IL instructions).<br />
+We then used <a href="http://www.aisto.com/roeder/dotnet/">Reflector</a> to<br />
+see the code change and indeed there is a test…</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="font-size: 10pt;line-height: 115%;font-family: 'Courier New'"><span>&nbsp;</span><span>if</span> (<span>this</span>.</span><span style="font-size: 10pt;line-height: 115%;font-family: 'Courier New'" lang="FR"><a href="http://www.aisto.com/roeder/dotnet/Default.aspx?Target=code://System.Windows.Forms:2.0.0.0:b77a5c561934e089/System.Windows.Forms.ToolTip/GetHandleCreated%28%29:Boolean" title="bool System.Windows.Forms.ToolTip.GetHandleCreated();"><span lang="EN-US">GetHandleCreated</span></a></span><span style="font-size: 10pt;line-height: 115%;font-family: 'Courier New'">())</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>… to check the parent<br />
+window when hiding the tooltip.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span class="Titre1Car"><span style="font-size: 14pt" lang="FR">Making sure that our users won&#8217;t be annoyed by the bug</span></span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>With the hack described,<br />
+it seemed that everything worked fine. However, I was not confident since the<br />
+bug is indeterminist and might be still luring around others controls and we<br />
+then decided to not popup exception whose stack trace contains the string<br /></span><span>&#8220;System.Windows.Forms.ToolTip.CreateHandle()&#8221;</span><span>.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span>I know how ugly is<br />
+this last choice but in the real-world you sometime not have the choice.</span></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug/" title="Permalink to Dissecting a non-deterministic Windows Forms v2 bug" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug/feed/" title="Comments RSS to Dissecting a non-deterministic Windows Forms v2 bug" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-15 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2007/09/06/2-talks-about-code-quality-at-prioconference/" rel="prev"><span class="meta-nav">&larr;</span> 2 talks about Code Quality at PrioConference</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2007/09/24/featurettes/" rel="next">Some VisualStudio featurettes that could save me 15mn a day <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-63">
+					<div id="dsq-comment-header-63" class="dsq-comment-header">
+						<cite id="dsq-cite-63">
+	http://lextm.blogspot.com							<span id="dsq-author-user-63">Li Yang</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-63" class="dsq-comment-body">
+						<div id="dsq-comment-message-63" class="dsq-comment-message"><p>Nice to see how to use NDepend and Reflector to locate a fix. Yes, wonderful demo for NDepend. This is a great post.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-64">
+					<div id="dsq-comment-header-64" class="dsq-comment-header">
+						<cite id="dsq-cite-64">
+								<span id="dsq-author-user-64">dama</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-64" class="dsq-comment-body">
+						<div id="dsq-comment-message-64" class="dsq-comment-message"><p>Gr8 post. How did you stop the exception when the stack trace contains the string<br />
+&#8220;System.Windows.Forms.ToolTip.CreateHandle()&#8221;.</p>
+<p>thx</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-65">
+					<div id="dsq-comment-header-65" class="dsq-comment-header">
+						<cite id="dsq-cite-65">
+	http://www.NDepend.com							<span id="dsq-author-user-65">Patrick Smacchia</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-65" class="dsq-comment-body">
+						<div id="dsq-comment-message-65" class="dsq-comment-message"><p>Dama, this is a tricky thing not very well documented.<br />
+I&#8217;ll certainly write a blog post to clarify things but basically you need to handle the event</p>
+<p>System.Windows.Forms.Application.ThreadException += UnhandledExceptionOnUIThread;<br />
+&#8230;<br />
+private void UnhandledExceptionOnUIThread(object sender,<br />
+ThreadExceptionEventArgs e) {<br />
+   // teh exception is reachable in e.Exception<br />
+   // eventually show here you own errorForm dialog<br />
+   if( mustAbort) {<br />
+      m_MainForm.Close();<br />
+   }<br />
+}</p>
+<p>this will remove the WindowsForms default error dialog and let you a chance to swallow the exception / resume the program or abort &#8230;</p>
+<p>This is not obvious at all because the behavior is not the same when debugging your app.<br />
+Hope this help.</p>
+</div>
+					</div>
+				</li>
+					<li id="dsq-comment-66">
+					<div id="dsq-comment-header-66" class="dsq-comment-header">
+						<cite id="dsq-cite-66">
+								<span id="dsq-author-user-66">Johann Holzel</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-66" class="dsq-comment-body">
+						<div id="dsq-comment-message-66" class="dsq-comment-message"><p>You know, this kind of thing is exactly why I don&#8217;t use Microsoft technologies anymore. </p>
+<p>Back in &#8217;97, I had two really nasty bugs in the same product, one on the Windows GUI, and one on the Linux GUI. The first one, we quickly traced down to MFC; the second, to Gtk. </p>
+<p>It only took a day or two to find exactly what was wrong with both libraries. In both cases, there was no easy way to &#8220;hook&#8221; the code to fix it (Gtk is a C API; MFC is all C++, but the relevant function in CView wasn&#8217;t virtual), and a workaround would have been a nasty mess in the MFC case, maybe not even possible in the Gtk case.</p>
+<p>So, what did I do? First I submitted a bug report, along with a patch, to Microsoft, and likewise to the Gimp/Gtk/Gnome/XCF team.</p>
+<p>The Microsoft bug was never closed; about two years later, VC6 came out with a new version of MFC without that bug, but even then our code had to be reworked to build on VC6 and use the new MFC42. In the meantime, we had to recode big chunks of CView and the subclasses we were using, wrap them up in an MFC extension DLL, add 40% to the total size of our install, and hold our release back for two weeks while legal verified that we were actually allowed to ship.</p>
+<p>My Gtk patch was accepted almost immediately. It was in the main 1.0 tree within a few days, and in the Redhat packages within a few weeks. By the time we shipped, most of our customers probably already had it. (Just in case, we put RPMs, raw binaries, the diff, and complete sources on our site, but nobody downloaded any of them.)</p>
+<p>Sure, the VC form designer was more polished than Glade, but in the end, the 3 minutes saved building dialog templates were not worth the huge costs of being tied to their libraries.</p>
+<p>Today, I still write software for Windows, and for .NET. And I use their compilers. But I don&#8217;t use WinForms unless I have to. With Gtk# or Qt#, I can fix problems myself, or get them fixed quickly, and my customers don&#8217;t have to install an entirely new .NET runtime; just one DLL.</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/patricksmacchia/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug/ ';
+	var disqus_identifier = '15 /blogs/patricksmacchia/archive/2007/09/12/dissecting-an-undeterministic-windows-forms-v2-bug.aspx';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'codebetter';
+	var disqus_title = "Dissecting a non-deterministic Windows Forms v2 bug";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=15');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2007\/09\/12\/dissecting-an-undeterministic-windows-forms-v2-bug\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
+				<div id="adzerk1"></div>
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.738 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-01-31 12:48:57 -->
+<!-- super cache -->
