@@ -28,6 +28,8 @@
 				AND post_type = 'post' ";
 	}
 	
+		if(empty($page)) $page = 0;
+
 		$querystr .= " ORDER BY post_date DESC LIMIT ";
 		
 		$querystr .= ($page == "" ? 0 : $page * 5) .", 5";		
