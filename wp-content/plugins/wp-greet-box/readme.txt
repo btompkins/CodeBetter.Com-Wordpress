@@ -4,7 +4,7 @@ Contributors: madeinthayaland
 Donate link: http://omninoggin.com/donate/
 Requires at least: 2.7
 Tested up to: 3.0.4
-Stable Tag: 6.2.2
+Stable Tag: 6.2.3
 
 Display a different greeting message to your visitor depending on which site they are coming from.
 
@@ -120,6 +120,9 @@ Please take a look at more documentation available on the
 to see if any of them can help you.
 
 == Changelog ==
+
+= 6.2.3 =
+* Fixed minor bug
 
 = 6.2.2 =
 * Fixed file_get_contents() errors on some blogs

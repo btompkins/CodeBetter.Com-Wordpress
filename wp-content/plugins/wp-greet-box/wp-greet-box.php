@@ -3,7 +3,7 @@
 Plugin Name: WP Greet Box
 Plugin URI: http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/
 Description: Show a different message to your visitor depending on which site they are coming from.  For example, you can ask Digg visitors to Digg your post, Google visitors to subscribe to your RSS feed, and more!  Best of all, this plugin is compatible with various WordPress cache plugins.
-Version: 6.2.2
+Version: 6.2.3
 Author: Thaya Kareeson
 Author URI: http://omninoggin.com/
 */

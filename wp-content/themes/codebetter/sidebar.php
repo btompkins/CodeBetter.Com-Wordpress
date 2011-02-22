@@ -19,14 +19,15 @@
 		</div><!-- #primary .widget-area -->
 		
 		<div id="secondary" class="widget-area">
-				<script type="text/javascript" src="http://engine.theloungenet.com/z/15/adzerk1_2_5"></script>
-				<div id="adzerk1"></div>
+				<div class="lqm_ad"  lqm_channel="1" lqm_publisher="797" lqm_zone="1" lqm_format="7"></div>
+				<a href="http://lakequincy.com?797" style="text-align:right;font-size:8px;display:block;color:#000;text-decoration:none;font-family:Sans-Serif;margin:0;padding:0;">Ads by Lake Quincy Media</a>
+				
 				
 				<ul class="xoxo">		
 					<?php if ( ! dynamic_sidebar( 'secondary-widget-area' )  ) : // Nothing here by default and design ?>
 					<?php endif; ?>
 				</ul>	
 				
-				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-csharp?utm_source=cb&utm_medium=rectangle&utm_term=4327&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/APP6_Launch_C%23_Jun10_300x250_M1.gif?AWSAccessKeyId=0KMA35HT86EVXB99Z302&amp;Expires=1458095516&amp;Signature=BIBDilUaLnZe1uKfVKyyTBxr%2BvE%3D"></a>
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-memory-profiler/entrypage/amp7-release?utm_source=cb&utm_medium=rectangle&utm_term=6553&utm_content=amp7-release&utm_campaign=antsmemoryprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/AMP7_Launch_Jan11_300x250_M1.gif"></a>
 				
 		</div><!-- #secondary .widget-area -->

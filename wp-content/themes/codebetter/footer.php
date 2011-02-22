@@ -103,6 +103,13 @@
 	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
 	SyntaxHighlighter.all();
 </script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
  
 </body>
 </html>

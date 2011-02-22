@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Running cucumber tests against GWT/AppEngine in TeamCity, or &ldquo;How to CI with UI&rdquo; | Kyle Baley</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/kylebaley/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/l10n.js?ver=20101110'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/kylebaley/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='index' title='Kyle Baley' href='http://codebetter.com/kylebaley/' />
+<link rel='start' title='The CodeBetter Hillbilly, or &quot;How to build a better banjo&quot;' href='http://codebetter.com/kylebaley/2007/12/13/the-codebetter-hillbilly-or-quot-how-to-build-a-better-banjo-quot/' />
+<link rel='prev' title='A reason to UI test, or &ldquo;How to fill in the gaps&rdquo;' href='http://codebetter.com/kylebaley/2011/02/03/a-reason-to-ui-test-or-how-to-fill-in-the-gaps-2/' />
+<link rel='next' title='Thinking about the user, or &ldquo;How to consider the experience&rdquo;' href='http://codebetter.com/kylebaley/2011/02/19/thinking-about-the-user-or-how-to-consider-the-experience/' />
+<meta name="generator" content="WordPress 3.1-beta1-16732" />
+<link rel='canonical' href='http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/' />
+<link rel='shortlink' href='http://codebetter.com/kylebaley/?p=195' />
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.0.7" type="text/css" media="screen" /><link rel="stylesheet" href="http://disqus.com/stylesheets/kylebaleycb/disqus.css?v=2.0" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.1" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/a8046d2f1fc1c08af413701218a11c1d.js">/*Is Cache!*/</script>
+                	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">			</div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-195" class="post-195 post type-post status-publish format-standard hentry category-bdd category-bookedin category-continuous-integration category-google-app-engine category-gwt category-java category-teamcity">
+					<h1 class="entry-title">Running cucumber tests against GWT/AppEngine in TeamCity, or &ldquo;How to CI with UI&rdquo;</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/kylebaley/author/kylebaley/" title="View all posts by Kyle Baley">Kyle Baley</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/" title="4:04 pm" rel="bookmark"><span class="entry-date">February 10, 2011</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/kylebaley/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/kylebaley/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><strong>Executive summary</strong>: Setting up automated UI tests for an GWT/AppEngine application using TeamCity for CI and Cucumber for the tests.</p>
+<p>Settle in folks. I’ma feelin’ verbose…</p>
+<p>Sometimes this “best tool for the job” schtick is a royal pain in the raccoon when it comes to putting them together. We chose Google Web Toolkit because it is designed specifically for the type of app we want to build. Google App Engine made sense because of its integration with GWT. We went with Ruby/Cucumber for the UI tests because we recognized its power in this area and we were lucky enough to have a resource available to help guide us through the learning curve. For our CI server, we have TeamCity because…well, okay, I have no idea if it’s the best. It works well and I know how to use it. There’s only so much time you can spend for R&amp;D (outside of family reunions, at least).</p>
+<p>I’ve been happy with all four pieces. GWT has proved its worth and we’ve been CI’ing for many months, happily compiling and running unit tests. The UI tests have been a bit slower to catch up but they work really well, especially lately since we’ve made a shift towards (what I think is) BDD.</p>
+<p>We’ve been running the UI tests against a deployed version of the app on AppEngine, one specifically set aside for UI tests because from experience, trying to show someone the app while the UI tests are constantly clearing and resetting the data makes for a poor demo experience.</p>
+<p>Recently, I’ve switched the tests over to run against devmode, which is a way of running a GWT/AppEngine app locally. Usually it’s used for debugging as it allows you to step through Java client code in an IDE.</p>
+<h2>Why devmode?</h2>
+<p>Running against a deployed version works reasonably well but has led to a good number of scenarios like:</p>
+<p><em>Given I’m on the user form<br />
+And I wait 2 seconds so the watermark has time to load</em><em><br />
+And I fill in the password<br />
+And I press “Save”<br />
+And I wait 5 seconds so the screen can finish loading<br />
+Then hopefully I’ll see a message at the top. But even if you do, mark the test failed anyway ‘cause the hillbilly has nothing better to do than rerun failing tests and watch them pass locally.</em></p>
+<p>(&lt;Random deity&gt; bless Capybara for allowing me the freedom to write tests to express my *real* intent.)</p>
+<p>That is, the tests needed to be told to pause every once in a while to allow things time to load. This isn’t to say the app is slow, just that computers are fast. And until we find a way to instantaneously populate a cascading dropdown, computers will continue to have an edge.</p>
+<p>Devmode, on the other hand, is crazy fast if you don’t have it configured for debugging (i.e. you don’t add the gwt.codesvr parameter to the URL). It requires you to GWT compile the app first but hey, it’s a CI server; it can wait the extra three minutes to do that.</p>
+<p>Another issue with this: using a deployed version requires the latest code to be deployed first. Granted, we have automated this in the CI server but it still adds fifteen to forty-five minutes to the process depending on how much bandwidth GoDaddy deems appropriate for our server on any given day.</p>
+<p>Finally, there are quotas to consider. Every action on our application is logged and we have to be mindful of how much CPU time we’re using, how much bandwidth, how many emails get sent out, etc. At this stage, it’s unlikely we’ll reach those quotas but an errant test could potentially have costs associated with it.</p>
+<p>So between the slow tests, the deployment time, and the potential cost, an obvious solution was to run the tests in devmode.</p>
+<h2>Hosted mode/devmode</h2>
+<p>If you create a GWT app with the built-in webAppCreator, you get a nice little Ant build file with a target that launches the app in devmode (nee hosted mode). I had to do some finagling to get it to work though. Here’s the final target in Ant (formatted to fit the width):</p>
+<pre class="code"><span style="color: #bb5e00">&lt;target name=</span><span style="color: green">"devmode" </span><span style="color: #bb5e00">depends=</span><span style="color: green">"" </span><span style="color: #bb5e00">description=</span><span style="color: green">"Run development mode"</span><span style="color: #bb5e00">&gt;
+  &lt;java fork=</span><span style="color: green">"true" </span><span style="color: #bb5e00">classname=</span><span style="color: green">"com.google.gwt.dev.DevMode"
+    </span><span style="color: #bb5e00">dir=</span><span style="color: green">"${basedir}/war" </span><span style="color: #bb5e00">spawn=</span><span style="color: green">"true"</span><span style="color: #bb5e00">&gt;
+    &lt;classpath&gt;
+      &lt;pathelement location=</span><span style="color: green">"src" </span><span style="color: #bb5e00">/&gt;
+      &lt;path refid=</span><span style="color: green">"project.class.path" </span><span style="color: #bb5e00">/&gt;
+      &lt;path refid=</span><span style="color: green">"tools.class.path" </span><span style="color: #bb5e00">/&gt;
+    &lt;/classpath&gt;
+    &lt;jvmarg value=</span><span style="color: green">"-Xmx512M" </span><span style="color: #bb5e00">/&gt;
+    &lt;jvmarg value=</span><span style="color: green">"-javaagent:${appengine.folder}/          lib/agent/appengine-agent.jar" </span><span style="color: #bb5e00">/&gt;
+    &lt;jvmarg value=</span><span style="color: green">"-Duser.dir=${basedir}/WAR" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg line=</span><span style="color: green">"-war" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">"${basedir}/war" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg line=</span><span style="color: green">"-logLevel" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">"INFO" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">"-server" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">"com.google.appengine.tools</span></pre>
+<pre class="code"><span style="color: green">        .development.gwt.AppEngineLauncher" </span><span style="color: #bb5e00">/&gt;
+    &lt;arg value=</span><span style="color: green">"net.bookedin.bam.BAM" </span><span style="color: #bb5e00">/&gt;
+  &lt;/java&gt;
+&lt;/target&gt;
+</span></pre>
+<p>Most of this you can glean yourself if you look at the arguments tab of the GWT run <a href="http://kyle.baley.org/ct.ashx?id=3b70dab7-9a3f-45c5-9f90-b9bca5fa53cc&amp;url=http%3a%2f%2fkyle.baley.org%2fcontent%2fbinary%2fWindows-Live-Writer%2f02a3fa52d758_1384C%2fConfig_2.png"><img style="margin-top: 0px;margin-right: 0px;margin-bottom: 24px;margin-left: 0px;padding-left: 0px;padding-right: 0px;padding-top: 0px;border: 0px initial initial" src="http://kyle.baley.org/content/binary/Windows-Live-Writer/02a3fa52d758_1384C/Config_thumb.png" border="0" alt="Config" align="right" /></a>configuration in Eclipse. Some notes on discrepancies ‘twixt this and the default one:</p>
+<h3>AppEngine support</h3>
+<p>The second <span style="font-family: 'Courier New'">&lt;jvmarg&gt;</span> and the second and third last <span style="font-family: 'Courier New'">&lt;arg&gt;</span> values are included to support AppEngine. In some recent upgrade to AppEngine, the javaagent JVM argument was added.</p>
+<h3>Changing the working directory</h3>
+<p>If you leave the working directory as is, you’ll get a warning that the working directory doesn’t match the WAR directory. In most cases, this won’t matter. For us, we have files we wish to access so we need the working directory to match in order to access them.</p>
+<p>To do this, we added the dir attribute to the <span style="font-family: 'Courier New'">&lt;java&gt;</span> task and added the last <span style="font-family: 'Courier New'">&lt;jvmarg&gt;</span> argument. We also updated the argument value for the –war parameter.</p>
+<h3>Logging</h3>
+<p>When you launch the app, the logLevel parameter needs to match what’s in your web.xml file.</p>
+<h3>Spawn=”true”</h3>
+<p>I’ll come back to this.</p>
+<h2>Running the UI tests</h2>
+<p>This wasn’t much of an issue. We run our UI tests with cucumber in Ruby. From what I can tell, it’s a standard implementation. And TeamCity supports it natively. Set Rake as the runner and run your cucumber task like you normally would.</p>
+<h2>Killing dev mode</h2>
+<p>The reason we added <span style="font-family: 'Courier New'">spawn=”true”</span> to the <span style="font-family: 'Courier New'">&lt;java&gt;</span> task above is to allow the Ant task to actually finish once devmode is launched. Without it, the process waits until devmode is finished before allowing you to continue. Which means it won’t go on to the next step in the CI process: running the UI tests.</p>
+<p>Because of this, we needed a way of killing devmode after it had been started:</p>
+<pre class="code"><span style="color: #bb5e00">&lt;target name=</span><span style="color: green">"kill"</span><span style="color: #bb5e00">&gt;
+      &lt;exec executable=</span><span style="color: green">"taskkill"</span><span style="color: #bb5e00">&gt;
+          &lt;arg value=</span><span style="color: green">"/fi"</span><span style="color: #bb5e00">/&gt;
+          &lt;arg value=</span><span style="color: green">'"Windowtitle eq GWT Development Mode"'</span><span style="color: #bb5e00">/&gt;
+      &lt;/exec&gt;
+&lt;/target&gt;
+</span></pre>
+<h2>Putting it together</h2>
+<p>This was harder than one might expect and we still don’t quite have it right. We now have three TeamCity build configurations, one for each step above:</p>
+<ul>
+<li>Launch devmode</li>
+<li>Run tests</li>
+<li>Kill devmode</li>
+</ul>
+<p>“Run tests” is configured to run upon a successful “Launch devmode” build. And “Kill devmode” runs upon any build, successful or otherwise, of “Run tests”.</p>
+<p>Note that as of TeamCity 6, you can have multiple build steps per configuration. And indeed, my first pass at this was one configuration with three build steps. But as per <a href="http://confluence.jetbrains.net/display/TCD6/Configuring+Build+Steps">the documentation</a>: <strong>If a build step fails the rest are not executed.</strong></p>
+<p>This automatically means “Kill devmode” has to be a separate configuration because I don’t want devmode hanging around active if any of the tests fail. (Alternatively, I could configure the build not to fail if any tests fail but…c’mon!)</p>
+<p>The reason we separated the first two steps is that the Java code lives in a separate repository than the UI test scenarios. If we combine the two steps, then we need to pull both repositories. This is fine but I also want to configure the build to launch when code is checked in on only one of them, not both. By separating the steps, the first runs on one repository and the second on another. So I can configure the first to run whenever any Java code is checked in.</p>
+<p>But this doesn’t work either. The UI tests take about forty minutes to run (which, I should note, is half an hour shorter than they did against the deployed version of the app). If any code is checked in during that forty minutes, “Launch devmode” will kick off again and fail miserably.</p>
+<p>That said, I’ve just now thought of a better solution that I will try the minute I click Publish. We already have a build configuration that runs the unit tests. I’m going to combine the first two steps into a single configuration again and make it contingent on a successful build of <em>that</em> configuration. That way, even if someone checks in code while the UI tests are running, it won’t launch devmode until the UI tests are done because they’re both part of the same configuration.</p>
+<p>I’m skipping a whole lot of details here so if you’re interested, ping me in the comments or offline.</p>
+<p>As Joe Jackson says in Happy, Loving Couples: Right, that’s enough.</p>
+<p>Kyle the Configurated</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/kylebaley/category/bdd/" title="View all posts in BDD" rel="category tag">BDD</a>, <a href="http://codebetter.com/kylebaley/category/bookedin/" title="View all posts in BookedIN" rel="category tag">BookedIN</a>, <a href="http://codebetter.com/kylebaley/category/continuous-integration/" title="View all posts in Continuous Integration" rel="category tag">Continuous Integration</a>, <a href="http://codebetter.com/kylebaley/category/google-app-engine/" title="View all posts in Google App Engine" rel="category tag">Google App Engine</a>, <a href="http://codebetter.com/kylebaley/category/gwt/" title="View all posts in GWT" rel="category tag">GWT</a>, <a href="http://codebetter.com/kylebaley/category/java/" title="View all posts in Java" rel="category tag">Java</a>, <a href="http://codebetter.com/kylebaley/category/teamcity/" title="View all posts in TeamCity" rel="category tag">TeamCity</a>. Bookmark the <a href="http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/" title="Permalink to Running cucumber tests against GWT/AppEngine in TeamCity, or &ldquo;How to CI with UI&rdquo;" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/feed/" title="Comments RSS to Running cucumber tests against GWT/AppEngine in TeamCity, or &ldquo;How to CI with UI&rdquo;" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-195 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/kylebaley/2011/02/03/a-reason-to-ui-test-or-how-to-fill-in-the-gaps-2/" rel="prev"><span class="meta-nav">&larr;</span> A reason to UI test, or &ldquo;How to fill in the gaps&rdquo;</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/kylebaley/2011/02/19/thinking-about-the-user-or-how-to-consider-the-experience/" rel="next">Thinking about the user, or &ldquo;How to consider the experience&rdquo; <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+					<div id="dsq-content">
+			<ul id="dsq-comments">
+					<li id="dsq-comment-1134">
+					<div id="dsq-comment-header-1134" class="dsq-comment-header">
+						<cite id="dsq-cite-1134">
+								<span id="dsq-author-user-1134">Mayumi</span>
+							</cite>
+					</div>
+					<div id="dsq-comment-body-1134" class="dsq-comment-body">
+						<div id="dsq-comment-message-1134" class="dsq-comment-message"><p>Great article!</p>
+</div>
+					</div>
+				</li>
+				</ul>
+		</div>
+	</div>
+
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var disqus_url = 'http://codebetter.com/kylebaley/2011/02/10/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui/ ';
+	var disqus_identifier = '195 http://codebetter.com/kylebaley/2011/02/03/a-reason-to-ui-test-or-how-to-fill-in-the-gaps/';
+	var disqus_container_id = 'disqus_thread';
+	var disqus_domain = 'disqus.com';
+	var disqus_shortname = 'kylebaleycb';
+	var disqus_title = "Running cucumber tests against GWT\/AppEngine in TeamCity, or &ldquo;How to CI with UI&rdquo;";
+		var disqus_config = function () {
+	    var config = this; // Access to the config object
+
+	    /* 
+	       All currently supported events:
+	        * preData — fires just before we request for initial data
+	        * preInit - fires after we get initial data but before we load any dependencies
+	        * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+	        * afterRender - fires when template is rendered but before we show it
+	        * onReady - everything is done
+	     */
+
+		config.callbacks.preData.push(function() {
+			// clear out the container (its filled for SEO/legacy purposes)
+			document.getElementById(disqus_container_id).innerHTML = '';
+		});
+				config.callbacks.onReady.push(function() {
+			// sync comments in the background so we don't block the page
+			DISQUS.request.get('?cf_action=sync_comments&post_id=195');
+		});
+					};
+	var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+	var DsqLocal = {
+		'trackbacks': [
+		],
+		'trackback_url': "http:\/\/codebetter.com\/kylebaley\/2011\/02\/10\/running-cucumber-tests-against-gwtappengine-in-teamcity-or-how-to-ci-with-ui\/trackback\/"	};
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+	dsq.async = true;
+	dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.61';
+	(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+					<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-performance-profiler/entrypage/version-6-new-features?utm_source=cb&utm_medium=button&utm_term=4328&utm_content=app6release&utm_campaign=antsperformanceprofiler"><img width="125" height="125" border="0" title="" alt="" src="http://s3.amazonaws.com/CodeBetter/Creative/ANTSPP5_125x125_M1.gif"></a>
+					<embed width="125" height="125" flashvars="clickTARGET=_blank&amp;clickTAG=http%3A%2F%2Fd1.openx.org%2Fck.php%3Foaparams%3D2__bannerid%3D62753__zoneid%3D29419__cb%3Da0471ce5e8__r_id%3Dd42118811971f057012db20aa261c5c1__r_ts%3Dldef6x__oadest%3Dhttp%253A%252F%252Fwww.jetbrains.com%252Fresharper%252F%253Frs4cb125" allowscriptaccess="always" quality="high" name="Advertisement" id="Advertisement" style="" src="http://s3.amazonaws.com/CodeBetter/Creative/tc_125x125_simple2.swf" type="application/x-shockwave-flash">
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				<div class="lqm_ad"  lqm_channel="1" lqm_publisher="797" lqm_zone="1" lqm_format="7"></div>
+				<a href="http://lakequincy.com?797" style="text-align:right;font-size:8px;display:block;color:#000;text-decoration:none;font-family:Sans-Serif;margin:0;padding:0;">Ads by Lake Quincy Media</a>
+				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+				<a target="_blank" href="http://www.red-gate.com/products/dotnet-development/ants-memory-profiler/entrypage/amp7-release?utm_source=cb&utm_medium=rectangle&utm_term=6553&utm_content=amp7-release&utm_campaign=antsmemoryprofiler"><img width="300" height="250" border="0" title="" alt="" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/AMP7_Launch_Jan11_300x250_M1.gif"></a>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/" title="About">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/" title="CodeBetter CI">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/" title="Community">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/" title="Editors">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/" title="Search Results">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
+<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
+<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
+<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
+
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '11<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 1.568 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2011-02-22 14:39:59 -->
