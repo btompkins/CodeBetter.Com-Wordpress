@@ -14,7 +14,7 @@
     <div id="wpgb_message_row_<?php echo $id ?>" class="wpgb_message_row">
 <?php endif; ?>
       <div class="wpgb_column_referrer"><?php echo $this->p->o['messages'][$id]['referrer'] ?></div>
-      <div class="wpgb_column_icon"><img src="<?php echo $this->p->o['messages'][$id]['icon'] ?>" alt="<?php echo $this->p->o['messages'][$id]['referrer'] ?> icon"/>&nbsp;</div>
+	      <div class="wpgb_column_icon"><?php if ($this->p->o['messages'][$id]['icon'] != ''): ?><img src="<?php echo $this->p->o['messages'][$id]['icon'] ?>" alt="<?php echo $this->p->o['messages'][$id]['referrer'] ?> icon"/><?php endif; ?>&nbsp;</div>
       <div class="wpgb_column_message"><?php echo $this->p->o['messages'][$id]['text']?></div>
       <div class="wpgb_column_action">
         <div id="wpgb_loading_<?php echo $id ?>" class="wpgb_loading">

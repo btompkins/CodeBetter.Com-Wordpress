@@ -5,15 +5,12 @@
  * @package WordPress
  * @subpackage List_Table
  * @since 3.1.0
+ * @access private
  */
 class WP_MS_Users_List_Table extends WP_List_Table {
 
-	function check_permissions() {
-		if ( !is_multisite() )
-			wp_die( __( 'Multisite support is not enabled.' ) );
-
-		if ( ! current_user_can( 'manage_network_users' ) )
-			wp_die( __( 'You do not have permission to access this page.' ) );
+	function ajax_user_can() {
+		return current_user_can( 'manage_network_users' );
 	}
 
 	function prepare_items() {
@@ -31,8 +28,12 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 			'number' => $users_per_page,
 			'offset' => ( $paged-1 ) * $users_per_page,
 			'search' => $usersearch,
-			'blog_id' => 0
+			'blog_id' => 0,
+			'fields' => 'all_with_meta'
 		);
+
+		if ( wp_is_large_network( 'users' ) )
+			$args['search'] = ltrim( $args['search'], '*' );
 
 		if ( $role == 'super' ) {
 			$logins = implode( "', '", get_super_admins() );
@@ -41,7 +42,7 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 
 		// If the network is large and a search is not being performed, show only the latest users with no paging in order
 		// to avoid expensive count queries.
-		if ( !$usersearch && ( get_blog_count() >= 10000 ) ) {
+		if ( !$usersearch && wp_is_large_network( 'users' ) ) {
 			if ( !isset($_REQUEST['orderby']) )
 				$_GET['orderby'] = $_REQUEST['orderby'] = 'id';
 			if ( !isset($_REQUEST['order']) )
@@ -160,7 +161,6 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 					$style = ' style="display:none;"';
 
 				$attributes = "$class$style";
-				
 
 				switch ( $column_name ) {
 					case 'cb': ?>
@@ -172,25 +172,29 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 
 					case 'username':
 						$avatar	= get_avatar( $user->user_email, 32 );
-						$edit_link = ( get_current_user_id() == $user->ID ) ? 'profile.php' : 'user-edit.php?user_id=' . $user->ID;
+						if ( get_current_user_id() == $user->ID ) {
+							$edit_link = esc_url( network_admin_url( 'profile.php' ) );
+						} else {
+							$edit_link = esc_url( network_admin_url( add_query_arg( 'wp_http_referer', urlencode( stripslashes( $_SERVER['REQUEST_URI'] ) ), 'user-edit.php?user_id=' . $user->ID ) ) );
+						}
 
 						echo "<td $attributes>"; ?>
-							<?php echo $avatar; ?><strong><a href="<?php echo esc_url( self_admin_url( $edit_link ) ); ?>" class="edit"><?php echo stripslashes( $user->user_login ); ?></a><?php
+							<?php echo $avatar; ?><strong><a href="<?php echo $edit_link; ?>" class="edit"><?php echo stripslashes( $user->user_login ); ?></a><?php
 							if ( in_array( $user->user_login, $super_admins ) )
 								echo ' - ' . __( 'Super Admin' );
 							?></strong>
 							<br/>
 							<?php
 								$actions = array();
-								$actions['edit'] = '<a href="' . esc_url( self_admin_url( $edit_link ) ) . '">' . __( 'Edit' ) . '</a>';
+								$actions['edit'] = '<a href="' . $edit_link . '">' . __( 'Edit' ) . '</a>';
 
-								if ( current_user_can( 'delete_user', $user->ID) && ! in_array( $user->user_login, $super_admins ) ) {
-									$actions['delete'] = '<a href="' . $delete = esc_url( network_admin_url( add_query_arg( '_wp_http_referer', urlencode( stripslashes( $_SERVER['REQUEST_URI'] ) ), wp_nonce_url( 'edit.php', 'deleteuser' ) . '&amp;action=deleteuser&amp;id=' . $user->ID ) ) ) . '" class="delete">' . __( 'Delete' ) . '</a>';
+								if ( current_user_can( 'delete_user', $user->ID ) && ! in_array( $user->user_login, $super_admins ) ) {
+									$actions['delete'] = '<a href="' . $delete = esc_url( network_admin_url( add_query_arg( '_wp_http_referer', urlencode( stripslashes( $_SERVER['REQUEST_URI'] ) ), wp_nonce_url( 'users.php', 'deleteuser' ) . '&amp;action=deleteuser&amp;id=' . $user->ID ) ) ) . '" class="delete">' . __( 'Delete' ) . '</a>';
 								}
 
+								$actions = apply_filters( 'ms_user_row_actions', $actions, $user );
 								echo $this->row_actions( $actions );
 							?>
-							</div>
 						</td>
 					<?php
 					break;
@@ -219,14 +223,14 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 								foreach ( (array) $blogs as $key => $val ) {
 									if ( !can_edit_network( $val->site_id ) )
 										continue;
-									
+
 									$path	= ( $val->path == '/' ) ? '' : $val->path;
 									echo '<span class="site-' . $val->site_id . '" >';
 									echo '<a href="'. esc_url( network_admin_url( 'site-info.php?id=' . $val->userblog_id ) ) .'">' . str_replace( '.' . $current_site->domain, '', $val->domain . $path ) . '</a>';
 									echo ' <small class="row-actions">';
 									$actions = array();
 									$actions['edit'] = '<a href="'. esc_url( network_admin_url( 'site-info.php?id=' . $val->userblog_id ) ) .'">' . __( 'Edit' ) . '</a>';
-									
+
 									$class = '';
 									if ( get_blog_status( $val->userblog_id, 'spam' ) == 1 )
 										$class .= 'site-spammed ';
@@ -236,11 +240,11 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 										$class .= 'site-deleted ';
 									if ( get_blog_status( $val->userblog_id, 'archived' ) == 1 )
 										$class .= 'site-archived ';
-									
-									$actions['view'] = '<a class="' . $class . '" href="' .  esc_url( get_home_url( $val->userblog_id ) )  . '">' . __( 'View' ) . '</a>';
-									
+
+									$actions['view'] = '<a class="' . $class . '" href="' . esc_url( get_home_url( $val->userblog_id ) ) . '">' . __( 'View' ) . '</a>';
+
 									$actions = apply_filters('ms_user_list_site_actions', $actions, $val->userblog_id);
-									
+
 									$i=0;
 									$action_count = count( $actions );
 									foreach ( $actions as $action => $link ) {
@@ -248,7 +252,7 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 										( $i == $action_count ) ? $sep = '' : $sep = ' | ';
 										echo "<span class='$action'>$link$sep</span>";
 									}
-									echo '</span></small><br/>';
+									echo '</small></span><br/>';
 								}
 							}
 							?>
@@ -269,5 +273,3 @@ class WP_MS_Users_List_Table extends WP_List_Table {
 		}
 	}
 }
-
-?>

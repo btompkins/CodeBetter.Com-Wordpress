@@ -126,7 +126,7 @@ if (!class_exists('WPGreetBoxAdmin')) {
             'text'            => __('Hello fellow <strong>Technorati</strong> user! Don\'t forget to <a href="http://technorati.com/faves?add=[[escaped-permalink]]" rel="nofollow"><strong>favorite this blog</strong></a> if you like it!', $this->p->name)
           ),
           array(
-            'referrer'        => 'twitter.com',
+            'referrer'        => 'twitter.com, t.co',
             'disable'         => 0,
             'icon'            => $this->p->c->get_plugin_url().'images/twitter_icon.png',
             'icon_link'       => 'http://twitthis.com/twit?url=[[escaped-permalink]]',

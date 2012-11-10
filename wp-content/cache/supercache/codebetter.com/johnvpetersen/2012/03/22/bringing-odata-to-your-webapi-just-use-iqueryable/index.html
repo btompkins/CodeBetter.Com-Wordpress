@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Bringing oData to your WebAPI &#8211; just use IQueryable | John V. Petersen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/johnvpetersen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/johnvpetersen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/johnpetersen/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='The best remedy for the MPAA and RIAA: Private Contract' href='http://codebetter.com/johnvpetersen/2012/03/22/the-best-remedy-for-the-mpaa-and-riaa-private-contract/' />
+<link rel='next' title='Converting to System.Net.Http' href='http://codebetter.com/johnvpetersen/2012/03/24/converting-to-system-net-http/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/johnvpetersen/?p=332' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,166] -->
+<link rel="canonical" href="http://codebetter.com/johnvpetersen/2012/03/22/bringing-odata-to-your-webapi-just-use-iqueryable/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/johnvpetersen/files/2012/03/figure_1-300x205.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=3981720249">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-332" class="post-332 post type-post status-publish format-standard hentry category-asp-net-mvc-4 category-odata category-webapi">
+					<h1 class="entry-title">Bringing oData to your WebAPI &#8211; just use IQueryable</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">johnvpetersen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/johnvpetersen/2012/03/22/bringing-odata-to-your-webapi-just-use-iqueryable/" title="10:11 pm" rel="bookmark"><span class="entry-date">March 22, 2012</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/johnpetersen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/johnpetersen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/johnpetersen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>In In the <a title="Accessing a ASP.NET WebAPI Rest Service from ASP.NET MVC" href="http://codebetter.com/johnvpetersen/2012/03/22/accessing-a-asp-net-webapi-rest-service-from-asp-net-mvc/">previous post</a>, I discussed how to implement an ASP.NET Web API service with ASP.NET MVC. The cool thing about the Web API is the stuff we get for free. One of the nice things we get for free is oData. Jon Galloway posted a nice how-to video <a href="http://www.asp.net/web-api/videos/getting-started/paging-and-querying">here</a>.</p>
+<p>To illustrate how the concept applies to the examples here, consider this method on our Prouducts API:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+  public IEnumerable GetProducts()
+  {
+   return ProductsRepository.data;
+  }
+</pre>
+<p>Nothing all that special going on here. The method returns a list of products &#8211; in no particular order.</p>
+<p>What if you wanted the list ordered? Or, what if you wanted a subset of the list? You might think you would have to outfit your repository with special logic handle your query parameters. Thanks to the fact that oData is baked into Web API, the work is alredy done for you.</p>
+<p>To take advantage of oData, we have to make one minor tweak to GetProducts() method. We need to make it of the type IQueryable. Here is the revised method:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+  public IQueryable GetProducts()
+  {
+   return ProductsRepository.data.AsQueryable();
+  }
+</pre>
+<p>With IQueryable in place, we can take advantage of oData. If we want our product list, but in descending order of price, the following url will do the trick:</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+http://localhost:18950/api/products?$orderby=price desc
+</pre>
+<p>And here are the results:</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/03/figure_1.png"><img class="alignnone size-medium wp-image-359" src="http://codebetter.com/johnvpetersen/files/2012/03/figure_1-300x205.png" alt="" width="300" height="205" /></a></p>
+<p>If you want the product called Gizmo 3:</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+http://localhost:18950/api/products?$filter=name eq 'Gizmo 3'
+</pre>
+<p>And going back to our order by price descending example, if you wanted the most expensive product:</p>
+<pre class="brush: plain; title: ; notranslate" title="">
+http://localhost:18950/api/products?$orderby=price desc&amp;$top=1
+</pre>
+<p>The complete oData Protocol URI conventions can be found <a href="http://www.odata.org/developers/protocols/uri-conventions" target="_blank">here</a></p>
+<div class="shr-publisher-332"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/545d3ad0823f1fc4431ff9521a8e74f1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About johnvpetersen</h2>
+							I've been developing software for 20 years, starting with dBase, Clipper and FoxBase + thereafter, migrating to FoxPro and Visual FoxPro and Visual Basic. Other areas of concentration include Oracle and SQL Server - versions 6-2008. From 1995 to 2001, I was a Microsoft Visual FoxPro MVP. Today, my emphasis is on ASP MVC .NET applications. I am a current Microsoft ASP .NET MVP. Publishing In 1999, I wrote the definitive whitepaper on ADO for VFP Developers. In 2002, I wrote the Absolute Beginner’s Guide to Databases for Que Publishing. I was a co-author of Visual FoxPro Enterprise Development from Prima Publishing with Rod Paddock, Ron Talmadge and Eric Ranft. I was also a co-author of Visual Basic Web Development from Prima Publishing with Rod Paddock and Richard Campbell. Education - B.S Business Administration – Mansfield University - M.B.A. – Information Systems – Saint Joseph’s University - J.D. – Rutgers University School of Law (Camden) In 2004, I graduated from the Rutgers University School of Law with a Juris Doctor Degree. I passed the Pennsylvania and New Jersey Bar exams and was in private practice for several years – concentrating transactional and general business law (contracts, copyrights, trademarks, independent contractor agreements, NDA’s, intellectual property and mergers and acquisitions.).							<div id="author-link">
+								<a href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">View all posts by johnvpetersen &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/johnvpetersen/category/asp-net-mvc-4/" title="View all posts in ASP.NET MVC 4" rel="category tag">ASP.NET MVC 4</a>, <a href="http://codebetter.com/johnvpetersen/category/odata/" title="View all posts in oData" rel="category tag">oData</a>, <a href="http://codebetter.com/johnvpetersen/category/webapi/" title="View all posts in WebAPI" rel="category tag">WebAPI</a>. Bookmark the <a href="http://codebetter.com/johnvpetersen/2012/03/22/bringing-odata-to-your-webapi-just-use-iqueryable/" title="Permalink to Bringing oData to your WebAPI &#8211; just use IQueryable" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/johnvpetersen/2012/03/22/bringing-odata-to-your-webapi-just-use-iqueryable/feed/" title="Comments RSS to Bringing oData to your WebAPI &#8211; just use IQueryable" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-332 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/johnvpetersen/2012/03/22/the-best-remedy-for-the-mpaa-and-riaa-private-contract/" rel="prev"><span class="meta-nav">&larr;</span> The best remedy for the MPAA and RIAA: Private Contract</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/johnvpetersen/2012/03/24/converting-to-system-net-http/" rel="next">Converting to System.Net.Http <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-235">
+                    <div id="dsq-comment-header-235" class="dsq-comment-header">
+                        <cite id="dsq-cite-235">
+                                <span id="dsq-author-user-235">Radenko Zec</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-235" class="dsq-comment-body">
+                        <div id="dsq-comment-message-235" class="dsq-comment-message"><p>Hi There. Nice post. Where can I find RequestMethod class ?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-236">
+                    <div id="dsq-comment-header-236" class="dsq-comment-header">
+                        <cite id="dsq-cite-236">
+                                <span id="dsq-author-user-236">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-236" class="dsq-comment-body">
+                        <div id="dsq-comment-message-236" class="dsq-comment-message"><p>Glad you like the post. The link to the source code is in the first line of the post.</p>
+<p>Here&#8217;s the link: bit.ly/mvc4essentials_phillydotnet.</p>
+<p>In the meantime, I&#8217;ll ammend the post to include the RequestMethod class listing.</p>
+<p>Thanks for your comment.</p>
+<p>John</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-237">
+                    <div id="dsq-comment-header-237" class="dsq-comment-header">
+                        <cite id="dsq-cite-237">
+                                <span id="dsq-author-user-237">Radenko Zec</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-237" class="dsq-comment-body">
+                        <div id="dsq-comment-message-237" class="dsq-comment-message"><p>Thanks for source code, but I don&#8217;t know how to download or view it&#8230; <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  </p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/johnvpetersen/2012/03/22/bringing-odata-to-your-webapi-just-use-iqueryable/';
+    var disqus_identifier = '332 http://codebetter.com/johnvpetersen/?p=332';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'johnvpetersensblog';
+    var disqus_title = "Bringing oData to your WebAPI &#8211; just use IQueryable";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=332');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://codebetter.com/johnpetersen/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/johnvpetersen\/2012\/03\/22\/bringing-odata-to-your-webapi-just-use-iqueryable\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.843 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 13:09:57 -->
+<!-- super cache -->

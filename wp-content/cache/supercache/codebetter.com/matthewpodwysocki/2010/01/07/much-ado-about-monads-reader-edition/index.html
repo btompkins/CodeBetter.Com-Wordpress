@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Much Ado About Monads – Reader Edition | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Much Ado About Monads – State Edition' href='http://codebetter.com/matthewpodwysocki/2009/12/31/much-ado-about-monads-state-edition/' />
+<link rel='next' title='[ANN] DC ALT.NET – 1/27/2010 &#8211; Clojure' href='http://codebetter.com/matthewpodwysocki/2010/01/14/ann-dc-alt-net-1-27-2010-clojure/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=191' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,151] -->
+<link rel="canonical" href="http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-191" class="post-191 post type-post status-publish format-standard hentry category-f category-functional-programming category-haskell">
+					<h1 class="entry-title">Much Ado About Monads – Reader Edition</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by Matthew Podwysocki">Matthew Podwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/" title="6:29 am" rel="bookmark"><span class="entry-date">January 7, 2010</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2009/12/30/much-ado-about-monads-state-edition.aspx">In the previous post</a>, we talked a bit about the <a href="http://www.haskell.org/all_about_monads/html/statemonad.html">State Monad</a>, what it is and how you could use it today in your F# application.&#160; But, with any new piece of information such as this, it should be taken in context, and there are other patterns as well when dealing with a multi-paradigm language such as F#.&#160; We also talked about how the State Monad might not have been the best choice for modeling our web scripting DSL as our browser state is encapsulated in the Browser class, and once it is set, it doesn’t change.&#160; With that, we could turn our eyes to using the <a href="http://www.haskell.org/all_about_monads/html/readermonad.html">Reader Monad</a> as we read from our environment.</p>
+<h2>Reading From Our Environment</h2>
+<p>If you recall from the previous post, we had a simple example of keeping track of browser state our ultimate goal was to have the state managed for us underneath the covers.&#160; When dealing with the State Monad, each bind call would not only return us our calculated value, but also our new state as well.&#160; In this case, this was wasteful due to the fact that once the state was set, it never changed, as the state was fully encapsulated inside the Browser object.&#160; So, our ultimate goal would be instead to have our environment set once and then read from it implicitly.&#160; We still want to keep what we have here in terms of our script, but change the underlying mechanism for how it happens:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Can find CodeBetter on Bing``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  reader {
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> openPage </span><span style="color: #800000">"</span><span style="color: #800000">http://bing.com</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> enterText </span><span style="color: #800000">"</span><span style="color: #800000">q</span><span style="color: #800000">"</span><span style="color: #000000"> </span><span style="color: #800000">"</span><span style="color: #800000">CodeBetter</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> clickButton </span><span style="color: #800000">"</span><span style="color: #800000">go</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> result </span><span style="color: #000000">=</span><span style="color: #000000"> containsText </span><span style="color: #800000">"</span><span style="color: #800000">CodeBetter</span><span style="color: #800000">"</span><span style="color: #000000">
+    isTrue result
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> closePage } </span><span style="color: #000000">|&gt;</span><span style="color: #000000"> runScript</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>As the State Monad allows us to plumb a piece of mutable state through our code, the Reader Monad helps us pass immutable state around underneath the covers.&#160; This immutable state could be anything, such as configuration data, environment variables and so on.&#160; Instead of relying on a static dependency like the Environment or ConfigurationManager class within .NET, you might imagine having some abstraction passed around implicitly inside the Reader Monad.&#160; This way, our testing scenarios become easier as we don’t have to try and mock static calls.&#160; Just as well, you can abstract other items behind the scenes as well such as locks, transactions and so forth.</p>
+<p>Now that we defined the problem and generally speaking what the Reader Monad is, let’s go ahead and define it.&#160; To do this, we’ll need an overarching container to describe this environment that we’re maintaining.&#160; In this case, we have the Reader&lt;’r,’a&gt; type which the ‘a is our result type and the ‘r is our type of our environment.&#160; This Reader type has a constructor that takes a function which takes our environment parameter and returns our result.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> Reader</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">r,</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #000000">=</span><span style="color: #000000"> Reader of (</span><span style="color: #800000">'</span><span style="color: #800000">r -&gt; </span><span style="color: #800000">'</span><span style="color: #000000">a)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In addition, we’ll need a way to run our Reader so that we can provide it with our environment and return our calculated value.&#160; Let’s create a function called runReader which takes our Reader and our environment, and returns our calculated value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> val runReader : Reader&lt;'a,'b&gt; -&gt; 'a -&gt; 'b</span><span style="color: #008000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> runReader (Reader r) env </span><span style="color: #000000">=</span><span style="color: #000000"> r env</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Before we get to some of our helper functions, let’s get to the monad part.&#160; As you may remember from the previous post, the monad must support three basic rules.&#160; First, a type construction, for each underlying type, we must be able to get the corresponding monadic type.&#160; Second, we must have a function that maps an underlying value to a value in the corresponding monadic type, which is called the return function.&#160; Third, we must have a binding operation where the first argument is a value in a monadic type, its second argument is a function that maps from the underlying type of the first argument to another monadic type, and its result is in that other monadic type.</p>
+<p>Let’s first tackle the return function.&#160; You should recall that our return function must have the following signature, keeping in mind that M defined below is our monadic type.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">val</span><span style="color: #000000"> returnF : </span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; M&lt;</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In the case of the Reader Monad, it should look like this where we take in a value and return a Reader of our environment and return value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">val</span><span style="color: #000000"> returnF : </span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; Reader&lt;</span><span style="color: #800000">'</span><span style="color: #000000">r,</span><span style="color: #800000">'</span><span style="color: #800000">a&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now, let’s look at the implementation.&#160; In the case of return, we simply return a Reader with the constructed function taking in any value and returning our calculated value.&#160; Our return value should be the same no matter what the environment value that is passed in, so we can safely ignore it.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> returnF a </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> _ </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> a)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Next, we need to define the bind operation.&#160; As you may recall, our bind operation must look like the following code, keeping in mind that M defined below is our monadic type.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">val</span><span style="color: #000000"> bind : M</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">a&gt; -&gt; (</span><span style="color: #800000">'</span><span style="color: #000000">a </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> M</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">b&gt;) -&gt; M&lt;</span><span style="color: #800000">'</span><span style="color: #000000">b</span><span style="color: #000000">&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>In the case of our Reader Monad, it should look like this:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">val</span><span style="color: #000000"> bind : Reader</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">r,</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> (</span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; Reader&lt;</span><span style="color: #800000">'</span><span style="color: #000000">r, </span><span style="color: #800000">'</span><span style="color: #800000">b&gt;) -&gt; Reader&lt;</span><span style="color: #800000">'</span><span style="color: #000000">r, </span><span style="color: #800000">'</span><span style="color: #800000">b&gt;</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Let’s break this down a little more to show what is really going on underneath the covers.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">val</span><span style="color: #000000"> bind : (</span><span style="color: #800000">'</span><span style="color: #800000">r -&gt; </span><span style="color: #800000">'</span><span style="color: #000000">a)       </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> 
+           (</span><span style="color: #800000">'</span><span style="color: #800000">a -&gt; </span><span style="color: #800000">'</span><span style="color: #000000">r </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> </span><span style="color: #800000">'</span><span style="color: #800000">b) -&gt; </span><span style="color: #800000">
+</span><span style="color: #000000">           (</span><span style="color: #800000">'</span><span style="color: #800000">r -&gt; </span><span style="color: #800000">'</span><span style="color: #000000">b)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What we see is that the first argument is a function which takes our environment and produces a our calculated value.&#160; Our second argument is a function that takes a value and our environment and then generates our new calculated value.&#160; What our goal is to combine these two functions into a larger function from our environment to our new calculated value.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> bind m k </span><span style="color: #000000">=</span><span style="color: #000000"> 
+  Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> r </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> runReader (k (runReader m r)) r)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What we did above is make our environment available to both the inside execution and outside execution of our runReader.&#160; Taking these two functions together, the bind and return, we can now create a builder which can provide us some syntactic sugar when writing functions using the Reader Monad.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Return(a)  </span><span style="color: #000000">=</span><span style="color: #000000"> 
+    Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> _ </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> a)
+
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.Bind(m, k) </span><span style="color: #000000">=</span><span style="color: #000000"> 
+    Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> r </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> runReader (k (runReader m r)) r)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>By no means are these two the only methods that we could implement, and in fact, there are quite a few more we could do, but that’s for the next post.&#160; Now, we need to revisit some helper functions that are necessary when dealing with the Reader Monad.&#160; For example, how can we get our current environment?&#160; All we have to do is ask:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> val ask : Reader&lt;'r,'r&gt;</span><span style="color: #008000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ask </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (id)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>What this function simply does is return our environment to us by using the id function, which is to say that you return what you are given.&#160; As you recall, our Reader has a constructing function with ‘r –&gt; ‘a and in this case, the ‘a will also be the ‘r.&#160; Also, instead of just returning our environment, what about also providing a function that applies a function over our environment as well?&#160; Let’s implement that as asks:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> val asks : ('r -&gt; 'a) -&gt; Reader&lt;'r,'a&gt;</span><span style="color: #008000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> asks f </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+  </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> r </span><span style="color: #000000">=</span><span style="color: #000000"> ask
+  </span><span style="color: #0000FF">return</span><span style="color: #000000"> (f r) }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>One more function to consider is the local function.&#160; This function allows us to execute a given function on a modified environment.&#160; The local function takes a function which modifies the environment as well as a reader to run, and the returns a reader with the changed environment.&#160; This doesn’t change the environment globally, but gives you a way to locally change the environment and execute a function against it.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> val local : ('r1 -&gt; 'r2) -&gt; Reader&lt;'r1,'a&gt; -&gt; Reader&lt;'r2,'a&gt;</span><span style="color: #008000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> local f m </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (f </span><span style="color: #000000">&gt;&gt;</span><span style="color: #000000"> runReader m)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>The function implementation is fairly straight forward as it returns a Reader with the constructing function that first executes the f function on the environment, and then we run our Reader parameter against this new environment value.&#160; Now that we’ve got some basic ideas, let’s venture into a scenario or two.</p>
+<h2>A Scenario</h2>
+<p>Let’s look at a scenario for how we might use the Reader Monad.&#160; <a href="http://cs.hubfs.net/blogs/hell_is_other_languages/archive/2008/02/17/4892.aspx">One interesting example came from Greg Neverov</a> to handle locks as the environment using this monad.&#160; Let’s look at that a little deeper.&#160; In order to support such a scenario, we’d need a few pieces.&#160; First, we would need the ability to run a particular reader while handling the locking behind the scenes.&#160; Let’s take a look at what that would entail:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">open</span><span style="color: #000000"> System.Threading
+
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> tryRunLock lock m </span><span style="color: #000000">=</span><span style="color: #000000">
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> lock </span><span style="color: #000000">=</span><span style="color: #000000"> box lock
+  </span><span style="color: #0000FF">let</span><span style="color: #000000"> lockTaken </span><span style="color: #000000">=</span><span style="color: #000000"> ref </span><span style="color: #0000FF">false</span><span style="color: #000000">
+  Monitor.Enter(lock, lockTaken)
+
+  </span><span style="color: #0000FF">match</span><span style="color: #000000"> </span><span style="color: #000000">!</span><span style="color: #000000">lockTaken </span><span style="color: #0000FF">with</span><span style="color: #000000">
+  </span><span style="color: #000000">|</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000"> </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">try</span><span style="color: #000000"> Some(runReader m lock)
+            </span><span style="color: #0000FF">finally</span><span style="color: #000000"> Monitor.Exit lock
+  </span><span style="color: #000000">|</span><span style="color: #000000"> _ </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> None</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Our tryRunLock function takes a lock and our reader that we wish to execute.&#160; We call Monitor.Enter with our lock that has been boxed and a flag to determine whether the lock has been taken.&#160; We then check whether the lock has been taken and if so, we return Some of our Reader result, else we return None to indicate a failure.</p>
+<p>Next, we need the ability to notify all waiting threads that there has been a change in our state.&#160; To do that, we must call the Monitor.PulseAll method.&#160; </p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> pulseAll </span><span style="color: #000000">=</span><span style="color: #000000"> Reader Monitor.PulseAll</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Here we partially applied the environment to the Monitor.PulseAll method call so there was no need to specify the argument explicitly.&#160; After this, we need one more function which is to release the lock and block the current thread until we can reacquire it.&#160; To do this, we simply call the Monitor.Wait method.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> wait </span><span style="color: #000000">=</span><span style="color: #000000"> Reader (Monitor.Wait </span><span style="color: #000000">&gt;&gt;</span><span style="color: #000000"> ignore)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Now we can apply these in a scenario such as moving items between two Stacks in which we pop from one and push to another.&#160; Let’s turn our attention first to the pop function which takes our Stack, and then while the Stack count is zero, then it blocks and waits.&#160; When there is something in the Stack, we simply call Pop and return the value.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">open</span><span style="color: #000000"> System.Collections.Generic
+
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> pop (stack:Stack</span><span style="color: #000000">&lt;</span><span style="color: #000000">_</span><span style="color: #000000">&gt;</span><span style="color: #000000">) </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+  </span><span style="color: #0000FF">while</span><span style="color: #000000"> stack.Count </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">0</span><span style="color: #000000"> </span><span style="color: #0000FF">do</span><span style="color: #000000"> </span><span style="color: #0000FF">return</span><span style="color: #000000">!</span><span style="color: #000000"> wait
+  </span><span style="color: #0000FF">return</span><span style="color: #000000"> stack.Pop() }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Note that there is a while loop here which we will work on implementing in the next post.&#160; We can now turn our attention to the push function which takes our Stack and a value to push.&#160;&#160; If our Stack count is zero, then we call pulseAll which indicates there is a state change.&#160; After this we simply push the value onto the Stack.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> push (stack:Stack</span><span style="color: #000000">&lt;</span><span style="color: #000000">_</span><span style="color: #000000">&gt;</span><span style="color: #000000">) x </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+  </span><span style="color: #0000FF">if</span><span style="color: #000000"> stack.Count </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #800080">0</span><span style="color: #000000"> </span><span style="color: #0000FF">then</span><span style="color: #000000"> </span><span style="color: #0000FF">return</span><span style="color: #000000">!</span><span style="color: #000000"> pulseAll
+  </span><span style="color: #0000FF">do</span><span style="color: #000000"> stack.Push(x) }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Moving on, we can now define a function called move which takes a value from one Stack and moves it to another using locks behind the scenes.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #008000">//</span><span style="color: #008000"> Our lock object</span><span style="color: #008000">
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> lockObj </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> obj()
+
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> move s1 s2 </span><span style="color: #000000">=</span><span style="color: #000000"> 
+  reader { 
+    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> x </span><span style="color: #000000">=</span><span style="color: #000000"> pop s1 
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> push s2 x
+    </span><span style="color: #0000FF">return</span><span style="color: #000000"> x } 
+  </span><span style="color: #000000">|&gt;</span><span style="color: #000000"> tryRunLock lockObj</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>We can run this through to verify our behavior such as the following:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">let</span><span style="color: #000000"> s1 </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Stack</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">int</span><span style="color: #000000">&gt;</span><span style="color: #000000">([</span><span style="color: #800080">1</span><span style="color: #000000">..</span><span style="color: #800080">3</span><span style="color: #000000">])
+</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">let</span><span style="color: #000000"> s2 </span><span style="color: #000000">=</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> Stack</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">int</span><span style="color: #000000">&gt;</span><span style="color: #000000">()
+</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">let</span><span style="color: #000000"> moved </span><span style="color: #000000">=</span><span style="color: #000000"> move s1 s2;;
+
+</span><span style="color: #0000FF">val</span><span style="color: #000000"> s1 : Stack</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">int</span><span style="color: #000000">&gt;</span><span style="color: #000000">
+</span><span style="color: #0000FF">val</span><span style="color: #000000"> s2 : Stack</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">int</span><span style="color: #000000">&gt;</span><span style="color: #000000">
+</span><span style="color: #0000FF">val</span><span style="color: #000000"> moved : </span><span style="color: #0000FF">int</span><span style="color: #000000"> option </span><span style="color: #000000">=</span><span style="color: #000000"> Some </span><span style="color: #800080">3</span><span style="color: #000000">
+
+</span><span style="color: #000000">&gt;</span><span style="color: #000000"> s2;;
+</span><span style="color: #0000FF">val</span><span style="color: #000000"> it : Stack</span><span style="color: #000000">&lt;</span><span style="color: #0000FF">int</span><span style="color: #000000">&gt;</span><span style="color: #000000"> </span><span style="color: #000000">=</span><span style="color: #000000"> seq [</span><span style="color: #800080">3</span><span style="color: #000000">]</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>As you can see, it took the last value from our s1 and moved it to the s2 and did so using locks in a composable fashion.&#160; Let’s look at our original example again.</p>
+<h2>Back to the Web Example</h2>
+<p>Revisiting our web example again, we can rewrite much of what we had before using the State Monad as the Reader Monad.&#160; To do this takes very little effort.&#160; First, we must instead of calling getState in the State Monad, we simply ask for the environment and then call the appropriate method on our Browser object.&#160; For example, we can implement the openPage function as follows:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> openPage (url:</span><span style="color: #0000FF">string</span><span style="color: #000000">) </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+  </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> (browser : Browser) </span><span style="color: #000000">=</span><span style="color: #000000"> ask
+  </span><span style="color: #0000FF">return</span><span style="color: #000000"> browser.GoTo url }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>We could have also implemented the openPage using the standard Reader constructor as well:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> openPage (url:</span><span style="color: #0000FF">string</span><span style="color: #000000">) </span><span style="color: #000000">=</span><span style="color: #000000"> 
+  Reader (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> (browser : Browser) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> browser.GoTo url)</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>Just as well, we could utilize the asks function as well to execute a function against our environment.&#160; We could rewrite our openPage such as this to take advantage:</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">let</span><span style="color: #000000"> openPage (url:</span><span style="color: #0000FF">string</span><span style="color: #000000">) </span><span style="color: #000000">=</span><span style="color: #000000"> reader {
+  </span><span style="color: #0000FF">return</span><span style="color: #000000">!</span><span style="color: #000000"> asks (</span><span style="color: #0000FF">fun</span><span style="color: #000000"> (browser : Browser) </span><span style="color: #0000FF">-&gt;</span><span style="color: #000000"> browser.GoTo url) }</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>But, in order to make this happen, we need to implement another method on our ReaderBuilder that we implemented above.&#160; The method required is called ReturnFrom which basically does nothing to our Reader but return it.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #0000FF">type</span><span style="color: #000000"> ReaderBuilder() </span><span style="color: #000000">=</span><span style="color: #000000">
+  ...
+  </span><span style="color: #0000FF">member</span><span style="color: #000000"> this.ReturnFrom((a:Reader</span><span style="color: #000000">&lt;</span><span style="color: #800000">'</span><span style="color: #800000">r,</span><span style="color: #800000">'</span><span style="color: #000000">a</span><span style="color: #000000">&gt;</span><span style="color: #000000">)) </span><span style="color: #000000">=</span><span style="color: #000000"> a
+  ...</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>I’ll cover the rest of the other methods you can introduce to your builders in order to take advantage of such things as try/catch, try/finally, using, for, while, etc in the next post.&#160; Following the same pattern on all the other methods from the previous post, we can now execute our script and it will work much as it did for the State Monad.</p>
+<div style="padding-bottom: 0px;margin: 0px;padding-left: 0px;padding-right: 0px;float: none;padding-top: 0px" class="wlWriterEditableSmartContent">
+<pre style="background-color:#FFFFFF;overflow: auto"><span style="color: #000000">[</span><span style="color: #000000">&lt;</span><span style="color: #000000">Fact</span><span style="color: #000000">&gt;</span><span style="color: #000000">]
+</span><span style="color: #0000FF">let</span><span style="color: #000000"> ``Can find CodeBetter on Bing``() </span><span style="color: #000000">=</span><span style="color: #000000">
+  reader {
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> openPage </span><span style="color: #800000">"</span><span style="color: #800000">http://bing.com</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> enterText </span><span style="color: #800000">"</span><span style="color: #800000">q</span><span style="color: #800000">"</span><span style="color: #000000"> </span><span style="color: #800000">"</span><span style="color: #800000">CodeBetter</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> clickButton </span><span style="color: #800000">"</span><span style="color: #800000">go</span><span style="color: #800000">"</span><span style="color: #000000">
+    </span><span style="color: #0000FF">let</span><span style="color: #000000">!</span><span style="color: #000000"> result </span><span style="color: #000000">=</span><span style="color: #000000"> containsText </span><span style="color: #800000">"</span><span style="color: #800000">CodeBetter</span><span style="color: #800000">"</span><span style="color: #000000">
+    isTrue result
+    </span><span style="color: #0000FF">do</span><span style="color: #000000">!</span><span style="color: #000000"> closePage } </span><span style="color: #000000">|&gt;</span><span style="color: #000000"> runScript</span></pre>
+<p><!-- Code inserted with Steve Dunn's Windows Live Writer Code Formatter Plugin.  http://dunnhq.com --></div>
+<p>By using this design pattern, we have a nice way of abstracting this environment that we can create a very flexible syntax.&#160; But with any pattern, it’s about finding the right applications for it.</p>
+<h2>Conclusion</h2>
+<p>Once again, by looking at Monads, we can discover what abstractions can be accomplished with them, but just as well, <a href="http://www.haskell.org/haskellwiki/What_a_Monad_is_not">what they are not about</a>.&#160; Certainly, functional languages don’t need them, but they certainly can be quite useful.&#160; When we find repeated behavior, such as maintaining state, this abstraction can be quite powerful.&#160; Practically though in languages such as F#, they can be useful, but other patterns and abstractions can as well.&#160; Find the right abstraction and use it.</p>
+<p>In the next post, we’ll cover the additional methods you can add to your builder to enable such things as while loops, for loops, try/catch blocks, and so on before wrapping up this series again.</p>
+<div class="shr-publisher-191"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/" title="Permalink to Much Ado About Monads – Reader Edition" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/feed/" title="Comments RSS to Much Ado About Monads – Reader Edition" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-191 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2009/12/31/much-ado-about-monads-state-edition/" rel="prev"><span class="meta-nav">&larr;</span> Much Ado About Monads – State Edition</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2010/01/14/ann-dc-alt-net-1-27-2010-clojure/" rel="next">[ANN] DC ALT.NET – 1/27/2010 &#8211; Clojure <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-459">
+                    <div id="dsq-comment-header-459" class="dsq-comment-header">
+                        <cite id="dsq-cite-459">
+    http://www.research-service.com/employee/joe                            <span id="dsq-author-user-459">Joe Holt</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-459" class="dsq-comment-body">
+                        <div id="dsq-comment-message-459" class="dsq-comment-message"><p>I cant wait for your next post as Im very much interested on adding such things as while loops, for loops and try/catch blocks.</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/matthewpodwysocki/2010/01/07/much-ado-about-monads-reader-edition/';
+    var disqus_identifier = '191 /blogs/matthew.podwysocki/archive/2010/01/07/much-ado-about-monads-reader-edition.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'matthewpodwysocki';
+    var disqus_title = "Much Ado About Monads – Reader Edition";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=191');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2010\/01\/07\/much-ado-about-monads-reader-edition\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.475 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 21:39:58 -->
+<!-- super cache -->

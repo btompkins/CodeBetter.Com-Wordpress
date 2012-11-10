@@ -5,18 +5,18 @@
  * @package WordPress
  * @subpackage List_Table
  * @since 3.1.0
+ * @access private
  */
 class WP_Links_List_Table extends WP_List_Table {
 
-	function WP_Links_List_Table() {
-		parent::WP_List_Table( array(
+	function __construct() {
+		parent::__construct( array(
 			'plural' => 'bookmarks',
 		) );
 	}
 
-	function check_permissions() {
-		if ( ! current_user_can( 'manage_links' ) )
-			wp_die( __( 'You do not have sufficient permissions to edit the links for this site.' ) );
+	function ajax_user_can() {
+		return current_user_can( 'manage_links' );
 	}
 
 	function prepare_items() {
@@ -68,7 +68,7 @@ class WP_Links_List_Table extends WP_List_Table {
 				'orderby' => 'name',
 			);
 			wp_dropdown_categories( $dropdown_options );
-			submit_button( __( 'Filter' ), 'secondary', 'post-query-submit', false );
+			submit_button( __( 'Filter' ), 'secondary', false, false, array( 'id' => 'post-query-submit' ) );
 ?>
 		</div>
 <?php
@@ -77,7 +77,7 @@ class WP_Links_List_Table extends WP_List_Table {
 	function get_columns() {
 		return array(
 			'cb'         => '<input type="checkbox" />',
-			'name'       => __( 'Name' ),
+			'name'       => _x( 'Name', 'link name' ),
 			'url'        => __( 'URL' ),
 			'categories' => __( 'Categories' ),
 			'rel'        => __( 'Relationship' ),
@@ -143,7 +143,7 @@ class WP_Links_List_Table extends WP_List_Table {
 						echo '</td>';
 						break;
 					case 'url':
-						echo "<td $attributes><a href='$link->link_url' title='".sprintf( __( 'Visit %s' ), $link->link_name )."'>$short_url</a></td>";
+						echo "<td $attributes><a href='$link->link_url' title='". esc_attr( sprintf( __( 'Visit %s' ), $link->link_name ) )."'>$short_url</a></td>";
 						break;
 					case 'categories':
 						?><td <?php echo $attributes ?>><?php
@@ -182,5 +182,3 @@ class WP_Links_List_Table extends WP_List_Table {
 		}
 	}
 }
-
-?>

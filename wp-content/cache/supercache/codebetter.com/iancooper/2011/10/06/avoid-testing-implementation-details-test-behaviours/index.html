@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Avoid Testing Implementation Details, Test Behaviours | Ian Cooper</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/iancooper/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/iancooper/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Why CRUD might be what they want, but may not be what they need' href='http://codebetter.com/iancooper/2011/07/15/why-crud-might-be-what-they-want-but-may-not-be-what-they-need/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/iancooper/?p=222' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,156] -->
+<link rel="canonical" href="http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-222" class="post-222 post type-post status-publish format-standard hentry category-atdd category-bdd category-solid category-stdd category-tdd category-xunit">
+					<h1 class="entry-title">Avoid Testing Implementation Details, Test Behaviours</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/iancooper/author/iancooper/" title="View all posts by Ian Cooper">Ian Cooper</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours/" title="4:06 am" rel="bookmark"><span class="entry-date">October 6, 2011</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/iancooper/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/iancooper/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>Every so often I return to <a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck&#8217;s</a> <a href="http://www.amazon.co.uk/Test-Driven-Development-Addison-Wesley-Signature/dp/0321146530">Test-Driven Development</a>. I honestly believe it to be one of the finest software development books ever written. What I love about the book is its simplicity. There is a sparseness to it that decieves, as though it were a lightweight exploration of the field. But continued reading as you progress with TDD reveals that it is fairly complete in its insights. Where later works have added pages and ideas, they have often lessened the technique, burdening it with complexity, born of misunderstandings of its power. I urge any of you who have practiced TDD for a while to re-read it regularly</p>
+<p>For me one of the key ideas of TDD that is often overlooked is expressed in the cycle or Red, Green, Refactor. First we write a failing test, then we implement as quickly and dirtily as we can, and then we make it elegant. In this blog post I want to talk about some of the insights of the second and third steps that get missed. (Although you should remember the first step: tests don&#8217;t have tests so you need to prove them).</p>
+<p>A lot of folks stall when they come to implement, because they try to implement well, thinking about good OO, SOLID patterns etc. Stop! The goal is to get green as soon as possible. Don&#8217;t try to build a decent solution at this point, just script out the quickest solution to the problem you can get too. Cut and Paste if you can, copy algorithms from CodeProject or StackOverflow if you can.</p>
+<p>From <strong>Test-Driven Development</strong></p>
+<blockquote><p>Stop. Hold on. I can hear the aesthetically inclined among you sneering and spitting. Copy-and-paste reuse? The death of abstraction? The killer of clean design?</p>
+<p>If you&#8217;re upset, take a cleansing breath. In through the nose &#8230; hold it 1, 2, 3 &#8230; out through the mouth. There. Remember, our cycle has different phases (they go by quickly, often in seconds, but they are phases.):</p>
+<p>1 Write a test.</p>
+<p>2. Make it compile.</p>
+<p>3. Run it to see that it fails.</p>
+<p>4. Make it run.</p>
+<p>5. Remove duplication.&#8221;</p></blockquote>
+<p>It&#8217;s that final step (which is our refactoring step) in which we create Clean Code. Not before, but after.</p>
+<blockquote><p>&#8220;Solving “clean code” at the same time that you solve “that works” can be too much to do at once. As soon as it is, go back to solving “that works,” and then “clean code” at leisure.&#8221;</p></blockquote>
+<p>Now there is an important implication here that is often overlooked. We don&#8217;t have to write tests for the classes that we refactor out through that last step. They will be internal to our implementation, and are already covered by the first test. We do not need to add new tests for the next level &#8211; unless we feel we do not know how to navigate to the next step.</p>
+<p>From <strong>Test-Driven Development</strong> again:</p>
+<blockquote><p>&#8220;Because we are using Pairs as keys, we have to implement equals() and hashCode(). I&#8217;m not going to write tests for these, because we are writing this code in the context of a refactoring. If we get to the payoff of the refactoring and all of the tests run, then we expect the code to have been exercised. If I were programming with someone who didn&#8217;t see exactly where we were going with this, or if the logic became the least bit complex, I would begin writing separate tests.&#8221;</p></blockquote>
+<p>Code developed in the context of refactoring does not require new tests! It is already covered, and safe refactoring techniques mean we should not be introducing specualtive change, just cleaning up the rough implementation we used to to green. At this point further tests help you steer (but they come at a cost)</p>
+<p>The outcome of this understanding is that a test-case per class approach fails to capture the ethos for TDD. Adding a new class is not the trigger for writing tests. The trigger is implementing a requirement. So we should test outside-in, (though I would recommend using ports and adapters and making the &#8216;outside&#8217; the port), writing tests to cover then use cases (scenarios, examples, GWTs etc.), but only writing tests to cover the implementation details of that as and when we need to better understand the refactoring of the simple implementation we start with.</p>
+<p>A positive outcome from this will be that much of our implementation will be internal or private, and never exposed outside our assembly. That will lower the coupling of our solution and make it easier for us to effect change.</p>
+<p>From <strong>Test-Driven Development</strong> again:</p>
+<blockquote><p>&#8220;In TDD we use refactoring in an interesting way. Usually, a refactoring cannot change the semantics of the program under any circumstances. In TDD, the circumstances we care about are the tests that are already passing.&#8221;</p></blockquote>
+<p>When we refactor we don&#8217;t want to break tests. If our tests know too much about our implementation, that will be difficult, because changes to our implementation will necessarily result in us re-writing tests &#8211; at which point we are not refactoring. We would say that we have over-specified through our tests. Instead of assisting change, our tests have now begun to hamper it. As someone who has made this mistake, I can vouch for the fact that it is possible to write too many unit tests against details. If we follow TDD as originally envisaged though, the tests will naturally fall mainly on our public interface, not the implementation details, and we will find it far easier to meet the goal of changing the impementation details (safe change) and not the public interface (unsafe change)</p>
+<p>Of course, this observation, that this idea has been overlooked by many TDD practitioners, formed the kernel of <a href="http://dannorth.net/introducing-bdd/">Dan North&#8217;s original BDD missive</a> and is why BDD focused on scenarios and outside-in for TDD</p>
+<div class="shr-publisher-222"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/b033a6c1af4ee8d7a734f3684225ea8a?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=R' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Ian Cooper</h2>
+							Ian Cooper has over 18 years of experience delivering Microsoft platform solutions in government, healthcare, and finance. During that time he has worked for the DTi, Reuters, Sungard, Misys and Beazley delivering everything from bespoke enterpise solutions to 'shrink-wrapped' products to thousands of customers. Ian is a passionate exponent of the benefits of OO and Agile. He is test-infected and contagious. When he is not writing C# code he is also the and founder of the London .NET user group. http://www.dnug.org.uk							<div id="author-link">
+								<a href="http://codebetter.com/iancooper/author/iancooper/" title="View all posts by Ian Cooper">View all posts by Ian Cooper &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/iancooper/category/atdd/" title="View all posts in ATDD" rel="category tag">ATDD</a>, <a href="http://codebetter.com/iancooper/category/bdd/" title="View all posts in BDD" rel="category tag">BDD</a>, <a href="http://codebetter.com/iancooper/category/solid/" title="View all posts in SOLID" rel="category tag">SOLID</a>, <a href="http://codebetter.com/iancooper/category/stdd/" title="View all posts in STDD" rel="category tag">STDD</a>, <a href="http://codebetter.com/iancooper/category/tdd/" title="View all posts in TDD" rel="category tag">TDD</a>, <a href="http://codebetter.com/iancooper/category/xunit/" title="View all posts in xUnit" rel="category tag">xUnit</a>. Bookmark the <a href="http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours/" title="Permalink to Avoid Testing Implementation Details, Test Behaviours" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours/feed/" title="Comments RSS to Avoid Testing Implementation Details, Test Behaviours" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-222 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/iancooper/2011/07/15/why-crud-might-be-what-they-want-but-may-not-be-what-they-need/" rel="prev"><span class="meta-nav">&larr;</span> Why CRUD might be what they want, but may not be what they need</a></div>
+					<div class="nav-next"></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-1048">
+                    <div id="dsq-comment-header-1048" class="dsq-comment-header">
+                        <cite id="dsq-cite-1048">
+    http://www.caffeinatedair.com/                            <span id="dsq-author-user-1048">Matt</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1048" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1048" class="dsq-comment-message"><p>Great points. I think that mastering TDD is challenging, but it is often made more difficult when you jump the gun in the whole red-green-refactor cycle. When you watch people who are proficient at TDD, you quickly notice that they start with writing the simplest thing possible to make the failing test pass. If you are already planning an elaborate OO design at this early stage, you have missed the point.</p>
+<p>Your post also addresses the question that many devs have about testing private methods. If you are testing a feature/requirement, you are by default testing the public surface of your codebase. The private methods are implementation details.</p>
+<p>That said, I still find scenarios where I want to test private methods <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' /> </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1049">
+                    <div id="dsq-comment-header-1049" class="dsq-comment-header">
+                        <cite id="dsq-cite-1049">
+    http://www.daedtech.com                            <span id="dsq-author-user-1049">Erik</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1049" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1049" class="dsq-comment-message"><p>I enjoyed reading your post and thought you made good points about the public interface of your code and its behaviors being what you actually want to test.  One thing did raise an eyebrow, though: </p>
+<p>&#8220;Adding a new class is not the trigger for writing tests. The trigger is implementing a requirement. &#8221;<br />
+I take this to mean that if I had some public method that created a list of employee objects and calculated the average salary of those employees, you&#8217;re saying that extracting a factory for creating the employees and some sort of little class for calculating the average would mean that I had no motivation to test my new &#8220;AverageCalculator&#8221; and &#8220;EmployeeFactory&#8221; classes &#8211; they&#8217;re tested, as I need them in terms of the application by the tests for my original method.</p>
+<p>But aren&#8217;t these now integration tests?  My original tests no longer test the &#8220;unit&#8221; of my original class/method, but the result of my class/methods interactions with other classes.  I&#8217;ve increased the public surface area of my code by refactoring, but I haven&#8217;t increased the test suite.</p>
+<p>Wouldn&#8217;t this place a burden on &#8220;future me&#8221; or someone else if they then want to use my AverageCalculator and EmployeeFactory?  They&#8217;re responsible now for testing their classes and also their class&#8217; path through my non-unit-tested classes.</p>
+<p>Thoughts?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1050">
+                    <div id="dsq-comment-header-1050" class="dsq-comment-header">
+                        <cite id="dsq-cite-1050">
+                                <span id="dsq-author-user-1050">Александр Сидоров</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1050" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1050" class="dsq-comment-message"><p>&gt;&gt;A lot of folks stall when they come to implement, because they try to implement well, thinking about good OO, SOLID patterns etc. Stop! The goal is to get green as soon as possible.<br />
+No, the goal is to implement a task with appropriate quality</p>
+<p>&gt;&gt;When we refactor we don’t want to break tests</p>
+<p>Great point. If you have a lot of mock expectations, your tests often become false-negative during refactoring. That&#8217;s why I prefer classical TDD instead of mockist approach (according to Fowler classification).</p>
+<p>The title is a bit strange. There are two types of tests: state and behaviour tests. But I guess by &#8220;Test Behaviours&#8221; you actually don&#8217;t mean that we should write behaviour tests.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1051">
+                    <div id="dsq-comment-header-1051" class="dsq-comment-header">
+                        <cite id="dsq-cite-1051">
+    http://twitter.com/colin_jack                            <span id="dsq-author-user-1051">Colin Jack</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1051" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1051" class="dsq-comment-message"><p>Good as always. </p>
+<p>This topic has always interested me because its a fundamental choice. You either do what you describe here and use refactoring as a key design tool, or start using unit testing to drive deeper and deeper into your design. Both approaches have their advantages.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1052">
+                    <div id="dsq-comment-header-1052" class="dsq-comment-header">
+                        <cite id="dsq-cite-1052">
+    http://twitter.com/colin_jack                            <span id="dsq-author-user-1052">Colin Jack</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1052" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1052" class="dsq-comment-message"><p>Good as always. </p>
+<p>This topic has always interested me because its a fundamental choice. You either do what you describe here and use refactoring as a key design tool, or start using unit testing to drive deeper and deeper into your design. Both approaches have their advantages.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1054">
+                    <div id="dsq-comment-header-1054" class="dsq-comment-header">
+                        <cite id="dsq-cite-1054">
+    http://davesquared.net                            <span id="dsq-author-user-1054">David Tchepak</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1054" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1054" class="dsq-comment-message"><p>Really enjoyed this post. Thanks.</p>
+<p>I was wondering if all our tests are outside-in and we don&#8217;t test stuff we pull out does that leave us driving almost entirely via acceptance tests? (I&#8217;m not saying that&#8217;s a bad thing; just trying to understand).</p>
+<p>The problem I&#8217;ve faced when trying to follow this style of TDD is I get combinatorial explosions of test cases. If I follow a more mockist/GOOS approach I drive out abstractions as I go and end up testing the messages between dependencies, rather than lots of combinations of test cases. This has its own disadvantages, but I&#8217;ve had more success with that approach to date.</p>
+<p>Interested to get your thoughts on this, as I can see some good advantages to the more traditional TDD approach you&#8217;ve described.</p>
+<p>Cheers,<br />
+David</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1056">
+                    <div id="dsq-comment-header-1056" class="dsq-comment-header">
+                        <cite id="dsq-cite-1056">
+    http://blog.cwa.me.uk/2011/10/07/the-morning-brew-954/                            <span id="dsq-author-user-1056">The Morning Brew &#8211; Chris Alcock &raquo; The Morning Brew #954</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1056" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1056" class="dsq-comment-message"><p>[...] Avoid Testing Implementation Details, Test Behaviours &#8211; Ian Cooper discusses one of the key concepts in Test Driven Development, drawing on sections of Kent Beck&#8217;s Test Driven Development book and discussing the importance of the different states of the Test Driven Development Process. [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1061">
+                    <div id="dsq-comment-header-1061" class="dsq-comment-header">
+                        <cite id="dsq-cite-1061">
+    http://matteo.vaccari.name/blog/                            <span id="dsq-author-user-1061">Matteo Vaccari</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1061" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1061" class="dsq-comment-message"><p>Hi Erik, while I agree with everything that Ian says, having gone through all of the misunderstandings that he lists <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> , there&#8217;s something more to add: when you&#8217;re TDDing you should always be on the lookout for opportunities to abstract.  </p>
+<p>In your average salary example: it might be too big a step to implement directly.  In this case you might want to use the Child Test pattern (also from Beck&#8217;s book).  For instance you might invent an Average object that takes the average of any collection of objects that know how to return a number.  You invent an &#8220;CanBeAveraged&#8221; interface that Employee could implement, and develop your Average object without the need or the burden of working with Employee objects.  </p>
+<p>Once you have test-driven these building blocks you go back to the orginal test, you let Employee implement CanBeAveraged.  A side effect is that the system now has less coupling than it would have if Average needed to know about Employees.</p>
+<p>That is one way you could go about it.  Or maybe you could implement the averaging behaviour in Employee and then factor out the Average later.  If you feel unsure about the behaviour of the classes you extracted, you could put on a tester hat and then write tests to cover its behaviour until you feel confident about it.  It&#8217;s a matter of judgment.  Kent says &#8220;if the logic became the least bit complex, I would begin writing separate tests&#8221; &#8230;</p>
+<p>Matteo</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1060">
+                    <div id="dsq-comment-header-1060" class="dsq-comment-header">
+                        <cite id="dsq-cite-1060">
+    http://matteo.vaccari.name/blog/archives/642                            <span id="dsq-author-user-1060">Extreme Enthusiasm &raquo; Blog Archive &raquo; Clearing some misunderstandings about TDD</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1060" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1060" class="dsq-comment-message"><p>[...] <a href="http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours" rel="nofollow">http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours</a> [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1067">
+                    <div id="dsq-comment-header-1067" class="dsq-comment-header">
+                        <cite id="dsq-cite-1067">
+    http://xpinjection.com/2011/10/10/useful-reading-volume-5/                            <span id="dsq-author-user-1067">Рубрика «Полезное чтиво». Выпуск 5 &laquo; XP Injection</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1067" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1067" class="dsq-comment-message"><p>[...] Avoid Testing Implementation Details, Test Behaviours &#8211; полезные советы по применению TDD [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1068">
+                    <div id="dsq-comment-header-1068" class="dsq-comment-header">
+                        <cite id="dsq-cite-1068">
+    http://xpinjection.com/2011/10/17/useful-reading-volume-6/                            <span id="dsq-author-user-1068">Рубрика «Полезное чтиво». Выпуск 6 &laquo; XP Injection</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1068" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1068" class="dsq-comment-message"><p>[...] Avoid Testing Implementation Details, Test Behaviours &#8211; полезные советы по применению TDD [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1078">
+                    <div id="dsq-comment-header-1078" class="dsq-comment-header">
+                        <cite id="dsq-cite-1078">
+                                <span id="dsq-author-user-1078">RichB</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1078" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1078" class="dsq-comment-message"><p>Up to a point. The danger is that if you refactor, then your test is no longer a unit test but an integration test. So it may be sensible to create unit tests for the new units.</p>
+<p>&gt; Code developed in the context of refactoring does not require new tests! <br />
+Except when you are refactoring a legacy system with zero unit tests. In which case, you have to refactor to make the code unit testable!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1079">
+                    <div id="dsq-comment-header-1079" class="dsq-comment-header">
+                        <cite id="dsq-cite-1079">
+                                <span id="dsq-author-user-1079">RichB</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1079" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1079" class="dsq-comment-message"><p>I&#8217;ve been thinking about this some more. And while I agree you shouldn&#8217;t test every implementation detail, there&#8217;s huge value in testing complex implementation details.</p>
+<p>For example, what if you implemented a feature using a home-grown file format. The format of the file is an implementation detail, but you sure want to have a good test suite for it. Alternatively, lets say you implemented a feature by parsing URLs and you didn&#8217;t have a URL parser to hand, so you wrote one. Then you would need a Fixture for that too. Or, let&#8217;s say you decided to code a feature by executing expressions with a simple expression evaluator DSL.</p>
+<p>Reading this post makes me think your only experience is with glorified CRUD applications, but based on conversations I&#8217;ve had with you in the past, I know that&#8217;s not true.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1084">
+                    <div id="dsq-comment-header-1084" class="dsq-comment-header">
+                        <cite id="dsq-cite-1084">
+    http://cheap-ugg-outlet.net/ugg-5219-30                            <span id="dsq-author-user-1084">UGG 5219</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1084" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1084" class="dsq-comment-message"><p><strong>7&#8230;</strong></p>
+<p>My brother recommended I may like this blog. He used to be totally right. This submit truly made my day. You can not believe just how so much time I had spent for this info! Thank you!jessonlin/comment/2011nov&#8230;</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1114">
+                    <div id="dsq-comment-header-1114" class="dsq-comment-header">
+                        <cite id="dsq-cite-1114">
+    http://matteo.vaccari.name/blog/archives/675                            <span id="dsq-author-user-1114">Extreme Enthusiasm &raquo; Blog Archive &raquo; How I remembered Object Thinking</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1114" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1114" class="dsq-comment-message"><p>[...] Beck&#8217;s brain contains probably the most efficient compression algorithm ever. Kent is able to compress in a couple of lines what others do take volumes to explain. Take Kent Beck&#8217;s four rules of simple design:  The [...]</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/iancooper/2011/10/06/avoid-testing-implementation-details-test-behaviours/';
+    var disqus_identifier = '222 http://codebetter.com/iancooper/?p=222';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'codebetteriancooper';
+    var disqus_title = "Avoid Testing Implementation Details, Test Behaviours";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=222');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+            {
+                'author_name':    "The Morning Brew - Chris Alcock &raquo; The Morning Brew #954",
+                'author_url':    "http:\/\/blog.cwa.me.uk\/2011\/10\/07\/the-morning-brew-954\/",
+                'date':            "10\/07\/2011 07:17 AM",
+                'excerpt':        "[...] Avoid Testing Implementation Details, Test Behaviours - Ian Cooper discusses one of the key concepts in Test Driven Development, ...",
+                'type':            "pingback"            }
+,            {
+                'author_name':    "Extreme Enthusiasm &raquo; Blog Archive &raquo; Clearing some misunderstandings about TDD",
+                'author_url':    "http:\/\/matteo.vaccari.name\/blog\/archives\/642",
+                'date':            "10\/08\/2011 02:32 PM",
+                'excerpt':        "[...] http:\/\/codebetter.com\/iancooper\/2011\/10\/06\/avoid-testing-implementation-details-test-behaviours [...] ",
+                'type':            "pingback"            }
+,            {
+                'author_name':    "Рубрика «Полезное чтиво». Выпуск 5 &laquo; XP Injection",
+                'author_url':    "http:\/\/xpinjection.com\/2011\/10\/10\/useful-reading-volume-5\/",
+                'date':            "10\/17\/2011 08:02 AM",
+                'excerpt':        "[...] Avoid Testing Implementation Details, Test Behaviours &#8211; полезные советы по применению TDD [...] ",
+                'type':            "pingback"            }
+,            {
+                'author_name':    "Рубрика «Полезное чтиво». Выпуск 6 &laquo; XP Injection",
+                'author_url':    "http:\/\/xpinjection.com\/2011\/10\/17\/useful-reading-volume-6\/",
+                'date':            "10\/17\/2011 08:03 AM",
+                'excerpt':        "[...] Avoid Testing Implementation Details, Test Behaviours &#8211; полезные советы по применению TDD [...] ",
+                'type':            "pingback"            }
+,            {
+                'author_name':    "UGG 5219",
+                'author_url':    "http:\/\/cheap-ugg-outlet.net\/ugg-5219-30",
+                'date':            "11\/06\/2011 02:48 AM",
+                'excerpt':        "7...<br \/><br \/>My brother recommended I may like this blog. He used to be totally right. This submit truly made my day. ...",
+                'type':            "trackback"            }
+,            {
+                'author_name':    "Extreme Enthusiasm &raquo; Blog Archive &raquo; How I remembered Object Thinking",
+                'author_url':    "http:\/\/matteo.vaccari.name\/blog\/archives\/675",
+                'date':            "12\/13\/2011 10:05 PM",
+                'excerpt':        "[...] Beck&#8217;s brain contains probably the most efficient compression algorithm ever. Kent is able to compress in a couple of ...",
+                'type':            "pingback"            }
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/iancooper\/2011\/10\/06\/avoid-testing-implementation-details-test-behaviours\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.409 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 19:22:18 -->
+<!-- super cache -->

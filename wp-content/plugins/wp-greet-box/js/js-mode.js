@@ -14,6 +14,7 @@ jQuery(document).ready(function($){
     type: "GET",
     url: "index.php",
     data: "wpgb_public_action=query&visit_delta="+wpgb_get_delta(ref)+"&closed="+wpgb_get_closed(ref)+"&logged_in="+wpgb_get_logged_in()+"&referrer="+encodeURIComponent(document.referrer)+"&url="+encodeURIComponent(document.location)+"&title="+encodeURIComponent(document.title),
+    dataType: "html",
     success: function(resp) {
       if(resp != ''){
         // show greeting message

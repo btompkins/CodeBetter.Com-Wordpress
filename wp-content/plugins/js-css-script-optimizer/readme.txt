@@ -3,7 +3,7 @@ Contributors: evgenniy
 Donate link: http://4coder.info/en/
 Tags: performance, javascript, css, script, js, compress, pack, combine, optimization
 Requires at least: 2.8
-Tested up to: 3.1
+Tested up to: 3.2.1
 Stable tag: trunk
 
 This plugin will help you make your Website more quick. It can grouping and packing Java Scripts and CSS. Also it makes fewer HTTP requests.
@@ -37,6 +37,11 @@ For more info visit <a title="This WordPress plugin home page" href="http://4cod
 1. Ability to include CSS files
 
 == Changelog ==
+= 0.2.2 =
+* Some cache problems
+= 0.2.1 =
+* Some cache issues
+* CSS processing problems
 = 0.1.7 =
 * Bug with options saving
 = 0.1.4 =

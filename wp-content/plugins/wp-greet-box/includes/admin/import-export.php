@@ -24,6 +24,6 @@ function confirm_import() {
   <input type="file" id="wpgb_options_import_file" name="wpgb_options_import_file" size="40" /><br/>
   <?php wp_nonce_field($this->p->name) ?>
   <p class="submit">
-    <input type="submit" id="wpgb_options_import" name="wpgb_options_import" value="<? _e('Import Options', $this->p->name) ?> &#187;" onclick="return confirm_import()" />
+    <input type="submit" id="wpgb_options_import" name="wpgb_options_import" value="<?php _e('Import Options', $this->p->name) ?> &#187;" onclick="return confirm_import()" />
   </p>
 </form>

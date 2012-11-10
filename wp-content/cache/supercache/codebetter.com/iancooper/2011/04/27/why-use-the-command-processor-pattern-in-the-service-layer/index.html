@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Why use the command processor pattern in the service layer | Ian Cooper</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/iancooper/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/iancooper/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Why Repository SaveUpdate is a smell' href='http://codebetter.com/iancooper/2011/04/12/repository-saveupdate-is-a-smell/' />
+<link rel='next' title='Why CRUD might be what they want, but may not be what they need' href='http://codebetter.com/iancooper/2011/07/15/why-crud-might-be-what-they-want-but-may-not-be-what-they-need/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/iancooper/?p=175' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,161] -->
+<link rel="canonical" href="http://codebetter.com/iancooper/2011/04/27/why-use-the-command-processor-pattern-in-the-service-layer/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-175" class="post-175 post type-post status-publish format-standard hentry category-cqrs category-ddd category-events category-object-orientation category-solid category-uncategorized">
+					<h1 class="entry-title">Why use the command processor pattern in the service layer</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/iancooper/author/iancooper/" title="View all posts by Ian Cooper">Ian Cooper</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/iancooper/2011/04/27/why-use-the-command-processor-pattern-in-the-service-layer/" title="5:00 pm" rel="bookmark"><span class="entry-date">April 27, 2011</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/iancooper/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/iancooper/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><h4>Using a Command Processor</h4>
+<p>When we think about a <a href="http://domaindrivendesign.org/node/118">layered </a>or <a href="http://alistair.cockburn.us/Hexagonal+architecture">hexagonal </a>architecture it is common to identify the need for a service layer. The service layer both provides a facade over our domain layer to applications &#8211; acting as an API definition &#8211; and contains the co-ordination and control logic for orchestrating how we respond to requests.</p>
+<p>One option to implement this is the notion of a service as a class:</p>
+<pre><code>
+public class MyFatDomainService
+{
+    public void CreateMyThing(CreateMyThingCommand createMyThingCommand)
+    {
+        /*Stuff*/
+    }
+
+    public void UpdateMyThingForFoo(FooCommand fooHappened)
+    {
+       /*Other Stuff*/
+    }
+
+     public void UpdateMyThingForBar(BarCommand barHappened)
+     {
+        /*Other Stuff*/
+     }
+
+     /*Loads more of these*/
+}
+</code></pre>
+<p>Another option is to use the <a href="wiki.hsr.ch/APF/files/CommandProcessor.pdf">command processor pattern</a>. There are some keys to understanding the choice to use a command processor to implement your service layer.</p>
+<p>The <a href="http://www.objectmentor.com/resources/articles/isp.pdf">Interface Segregation Principle</a> states that clients should not be forced to depend on methods on an interface that they do not use. This is because we do not want to update the client because the interface changes to service other clients in a way that the client itself does not care about. <em>Operation script</em> style domain service classes force consumers (for example MVC controllers) to become dependent on methods on the domain service class that they do not consume.</p>
+<p>Now this can be obviated by having the domain service implement a number of interfaces, and hand to its clients interfaces that only cover the concerns they have. With application service layers this naturally tends towards one method per interface.</p>
+<pre><code>
+public interface ICreateMyThingDomainService
+{
+    void CreateMyThing(CreateMyThingCommand createMyThingCommand);
+}
+
+public interface IUpdateMyThingForFooDomainService
+{
+    void UpdateMyThingForFoo(FooCommand fooHappened);
+}
+
+public interface IUpdateMyThingForBarDomainService
+{
+   void UpdateMyThingForBar(BarCommand barHappened);
+}
+
+public class MyFatDomainService : ICreateMyThingDomainService, IUpdateMyThingForFooDomainService, IUpdateMyThingForBarDomainService
+{
+   public void CreateMyThing(CreateMyThingCommand createMyThingCommand)
+  {
+      /*Stuff*/
+   }
+
+   public void UpdateMyThingForFoo(FooCommand fooHappened)
+  {
+      /*Other Stuff*/
+  }
+
+   public void UpdateMyThingForBar(BarCommand barHappened)
+   {
+      /*Other Stuff*/
+    }
+
+/*Loads more of these*/
+
+}
+</code></pre>
+<p>Now the <a href="http://www.objectmentor.com/resources/articles/srp.pdf">Single Responsibility Principle</a> suggests that a class should have one and only one reason to change. All these separate interfaces begin to suggest that a separate class might be better for each interface, to avoid updating a class for concerns that it does not have.</p>
+<pre><code>
+public interface ICreateMyThingDomainService
+{
+    void CreateMyThing(CreateMyThingCommand createMyThingCommand);
+}
+
+public class CreateMyThingDomainService : ICreateMyThingDomainService
+{
+    public void CreateMyThing(CreateMyThingCommand createMyThingCommand)
+    {
+       /*Stuff */
+    }
+}
+
+public interface IUpdateMyThingForFooDomainService
+{
+    void UpdateMyThingForFoo(FooCommand fooHappened);
+}
+
+public class UpdateMyThingForFooDomainService : IUpdateMyThingForBarDomainService
+{
+    public void UpdateMyThingForBar(BarCommand barHappened)
+   {
+      /*Other Stuff*/
+   }
+}
+
+public interface IUpdateMyThingForFooDomainService
+{
+   void UpdateMyThingForBar(FooCommand barHappened);
+}
+
+public class UpdateMyThingForFooDomainService : IUpdateMyThingForFooDomainService
+{
+   public void UpdateMyThingForFoo(FooCommand barHappened)
+  {
+    /*Other Stuff*/
+  }
+}
+</code></pre>
+<p>Having split these individual classes out we might choose to avoid calling them directly, but instead decide to send a message to them. There are a number of reasons for this.</p>
+<p>The first is that we decouple the caller from the service. This is useful where we might want to change what the service does – for example handle requests asynchronously, without modifying the caller.</p>
+<p>The second is that we might want to handle orthogonal concerns orthogonally such as transactions or logging. Although we could use a technology like PostSharp to weave in aspects, a simpler approach is pipes and filters – create a pipeline with a series of steps, the end of which is our service. We then send a message, the framework instantiates a pipeline with those orthogonal concerns, the message is passed through the filter steps before arriving at the target handler.</p>
+<p>In order to make this work the pipeline steps need to implement a common interface as this allows us to add <a href="http://en.wikipedia.org/wiki/Decorator_pattern">Decorators</a> that implement the same interface, forming a <a href="http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern">Chain of Responsibility</a>.</p>
+<p>&nbsp;</p>
+<pre><code>
+public interface IHandleMessages
+{
+    void Handle(T command);
+}
+
+public class CreateMyThingHandler : IHandleMessages
+{
+    public void Handles(CreateMyThingCommand createMyThingCommand)
+   {
+      /*Stuff */
+  }
+}
+
+public class UpdateMyThingForFooHandler : IHandleMessages
+{
+    [Logging]
+    public void Handles(BarCommand barHappened)
+    {
+      /*Other Stuff*/
+    }
+}
+
+public class Logger : IHandleMessages
+{
+    public void Handles(BarCommand barHappened)
+   {
+       /*Other Stuff*/
+   }
+}
+</code></pre>
+<p>The code is not shown here, but you may want to use attributes to document a handler and show the decorators in the chain of responsibility. You could use these to decide what decorators to put in the chain. However, It&#8217;s worth noting that real implementations that assemble a chain of responsibility often use an Inversion of Control container to resolve the handler and you will often find it easier to implement if you have an IDecorate interface. Some of the pipeline building code involves usually involves dealing with <a href="http://msdn.microsoft.com/en-us/library/system.type.makegenerictype.aspx">Type.MakeGenericType</a> and you might want to be aware of that if you want to use this approach. I might do a separate post on building a chain of responsibility at a future date.</p>
+<p>Note that this also serves to reduce the number of interfaces that we must implement as the generic interface can stand in for most of them.</p>
+<p>Third is the number of dependencies our service has. We might have an action that we need to execute as part of the response to a number of actions by the user. We don’t want to repeat that code in every service. But, we also don’t want to have services calling too many other services, (that in turn may call other services), because we will get an explosion of dependencies for our service, and the service that it depends on. This makes it hard to get our service under test, or makes the tests unintelligible and results in <a href="http://altnetseattle.pbworks.com/w/page/12367942/Why%20We%20Stopped%20Using%20the%20Auto-Mocking%20Container%20and%20What%27s%20Next">anti-patterns like auto-mocking</a>. The need for auto-mocking may be seen as a design smell: you have too many dependencies; resolution might be to use a command processor.</p>
+<p>We gain some dependency advantages from the split into separate handlers, because each handler will have fewer dependencies than a service. But in addition we can separate concerns in our handlers, such that we focus on updating a small part of our domain model or object graph in each handler (in DDD terms we focus on an <a href="http://domaindrivendesign.org/node/88">aggregate</a>).</p>
+<p>So to further limit the number of dependencies we prefer to publish a message (an event) from the service that handles the initial request, handing off any work that is related to handling the command, but applies to a different aggregate (and should potentially be in a different transaction and consistency boundary). This allows the framework to pass the message to those services, removing our dependency on them.</p>
+<pre><code>
+public class CreateMyThingHandler : IHandleMessages
+{
+    IProcessCommands _commandProcessor;
+    IMyThingRepository _myThingRepository;
+
+    public CreateMyThingHandler(IProcessCommands commandProcessor, 
+         IMyThingRepository myThingRepository)
+   {
+      _commandProcessor = commandProcessor;
+      _myThingRepository = myThingRepository;
+   }
+
+   public void Handles(CreateMyThingCommand createMyThingCommand)
+  {
+      /*Use Factory or Factory Method to create a my thing  */
+      /*save my thing to a repository*/
+
+      _commandProcessor.Publish(
+          new MyThingCreated
+              {/* properties that other consumers may care about*/}
+          );
+   }
+}
+</code></pre>
+<p>In addition a command processor, because it is responsible for loading the services, is also the point at which an Inversion of Control (IOC) container is injected into our request handling pipeline, which removes any issues with lack of support for IOC containers in legacy platforms like WebForms.</p>
+<p>Finally switching to a command processor eases our path to handling some requests asynchronously.</p>
+<h4>Disadvantages of using a command processor</h4>
+<p>One common criticism of using a command processor is that it adds a level of indirection. To read the code you have to identify how commands map to handlers. Naming conventions can help ease the burden, especially if used with tools like R#.</p>
+<div class="shr-publisher-175"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/b033a6c1af4ee8d7a734f3684225ea8a?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=R' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Ian Cooper</h2>
+							Ian Cooper has over 18 years of experience delivering Microsoft platform solutions in government, healthcare, and finance. During that time he has worked for the DTi, Reuters, Sungard, Misys and Beazley delivering everything from bespoke enterpise solutions to 'shrink-wrapped' products to thousands of customers. Ian is a passionate exponent of the benefits of OO and Agile. He is test-infected and contagious. When he is not writing C# code he is also the and founder of the London .NET user group. http://www.dnug.org.uk							<div id="author-link">
+								<a href="http://codebetter.com/iancooper/author/iancooper/" title="View all posts by Ian Cooper">View all posts by Ian Cooper &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/iancooper/category/cqrs/" title="View all posts in CQRS" rel="category tag">CQRS</a>, <a href="http://codebetter.com/iancooper/category/ddd/" title="View all posts in DDD" rel="category tag">DDD</a>, <a href="http://codebetter.com/iancooper/category/events/" title="View all posts in Events" rel="category tag">Events</a>, <a href="http://codebetter.com/iancooper/category/object-orientation/" title="View all posts in Object-Orientation" rel="category tag">Object-Orientation</a>, <a href="http://codebetter.com/iancooper/category/solid/" title="View all posts in SOLID" rel="category tag">SOLID</a>, <a href="http://codebetter.com/iancooper/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/iancooper/2011/04/27/why-use-the-command-processor-pattern-in-the-service-layer/" title="Permalink to Why use the command processor pattern in the service layer" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/iancooper/2011/04/27/why-use-the-command-processor-pattern-in-the-service-layer/feed/" title="Comments RSS to Why use the command processor pattern in the service layer" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-175 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/iancooper/2011/04/12/repository-saveupdate-is-a-smell/" rel="prev"><span class="meta-nav">&larr;</span> Why Repository SaveUpdate is a smell</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/iancooper/2011/07/15/why-crud-might-be-what-they-want-but-may-not-be-what-they-need/" rel="next">Why CRUD might be what they want, but may not be what they need <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-988">
+                    <div id="dsq-comment-header-988" class="dsq-comment-header">
+                        <cite id="dsq-cite-988">
+                                <span id="dsq-author-user-988">David</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-988" class="dsq-comment-body">
+                        <div id="dsq-comment-message-988" class="dsq-comment-message"><p>Wonderful pattern for services.   There&#8217;s an awesome request/response framework called Agatha that you should check out  &#8211; <a href="http://code.google.com/p/agatha-rrsl" rel="nofollow">http://code.google.com/p/agatha-rrsl</a>.  It&#8217;s designed for WCF, but works in-process just as well.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-989">
+                    <div id="dsq-comment-header-989" class="dsq-comment-header">
+                        <cite id="dsq-cite-989">
+    http://blog.cwa.me.uk/2011/04/28/the-morning-brew-842/                            <span id="dsq-author-user-989">The Morning Brew &#8211; Chris Alcock &raquo; The Morning Brew #842</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-989" class="dsq-comment-body">
+                        <div id="dsq-comment-message-989" class="dsq-comment-message"><p>[...] Why use the command processor pattern in the service layer &#8211; Ian Cooper discusses the use of Command Processors as a part of your Service Layer in layered or Hexagonal architectures, drawing on the Interface Segregation and Single Responsibility Principles, and discusses the use of Decorators to add in support for orthogonal concerns. [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-990">
+                    <div id="dsq-comment-header-990" class="dsq-comment-header">
+                        <cite id="dsq-cite-990">
+    http://profiles.google.com/strudso                            <span id="dsq-author-user-990">Søren Trudsø Mahon</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-990" class="dsq-comment-body">
+                        <div id="dsq-comment-message-990" class="dsq-comment-message"><p>&#8221; I might do a separate post on building a chain of responsibility at a future date.&#8221;<br />
+PLEASE Do that. I can see how i would build using attributes. I don&#8217;t fully understand the IDecorate interface you are talking about, but would love to see your approach!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-991">
+                    <div id="dsq-comment-header-991" class="dsq-comment-header">
+                        <cite id="dsq-cite-991">
+    http://profiles.google.com/yves.reynhout                            <span id="dsq-author-user-991">Yves Reynhout</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-991" class="dsq-comment-body">
+                        <div id="dsq-comment-message-991" class="dsq-comment-message"><p>I like how you present refactoring after refactoring towards a better model, and each time argue why. I&#8217;ve come to this exact same model on my own but would never have been able to explain it so eloquently. Very well done.<br />
+On a related note, I&#8217;ve recently come to the conclusion that pipeline building is best done explicitly instead of handing it off to an IOC.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-992">
+                    <div id="dsq-comment-header-992" class="dsq-comment-header">
+                        <cite id="dsq-cite-992">
+                                <span id="dsq-author-user-992">Ryan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-992" class="dsq-comment-body">
+                        <div id="dsq-comment-message-992" class="dsq-comment-message"><p>I&#8217;m not so sure this is a great idea. You went from a very simple service to quite a bit of complexity and post-built steps. And probably only for a short term gain. Any future maintenance programmer is going to have to understand what&#8217;s going on here and it&#8217;s likely your approach will change over time causing further confusion.</p>
+<p>Instead of having indirection, I think it would be better to require callers to know a bit more about what&#8217;s going on. For instance, you just don&#8217;t make a method async without having some complications for the consumer. You can wire up logging and transaction support within this framework instead of having it be there by &#8220;magic&#8221;. Future devs will thank you if they can F12 through ALL the code.</p>
+<p>Here&#8217;s a sample of how we handle this in our code.</p>
+<p>Queries:</p>
+<p>using(Pipeline.ReadOnlyQuery())<br />
+{<br />
+return _Service.GetSomeData();<br />
+}</p>
+<p>Commands:</p>
+<p>using(var command = Pipeline.StartTransactionalCommand())<br />
+{<br />
+_Service.UpdateEntity(parameters);<br />
+command.Commit();<br />
+}</p>
+<p>Message publishing:</p>
+<p>Pipeline.Publish(new SomethingImportantHappened());</p>
+<p>Attempting to call into our service layer without declaring a &#8220;scope&#8221; will cause a run-time exception because the context (database, messaging, transactions, logging, etc) are not configured. Also, since everything is IDisposable it is highly composable. We can swap out logging or database contexts very easily and in one spot. I hope this makes a little sense.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-993">
+                    <div id="dsq-comment-header-993" class="dsq-comment-header">
+                        <cite id="dsq-cite-993">
+                                <span id="dsq-author-user-993">Ian Cooper</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-993" class="dsq-comment-body">
+                        <div id="dsq-comment-message-993" class="dsq-comment-message"><p>Ryan, its common to build a pipeline within your command processor, which them handles the command, so the implementation has the same pointer to the maintenance developer. But, there are a number of potential problems with your sample. You are placing knowledge of the pipeline with the caller rather than the target, this breaks down if you want to reuse the same infrastructure to multi-cast, for example if you raise an event. It violates Tell don&#8217;t Ask in this respect, the co-ordination and control is no longer in your service but its caller. Consider that if you were looking to create a ports and adapters architecture, you have your co-ordination and control logic potentially in your adapter, not the port (i.e. in your presentation layer not your service layer) with the consequent issue that if you have two different presentation callers (tests, API, UI etc.) you can&#8217;t reuse the same pipeline for all those callers.</p>
+<p>It is important to consider maintenance programmers, but I originally embraced this approach to alleviate the burden on maintenance  developers. You can see the evolution of thinking if you look a an older post on the Fat Controller <a href="http://codebetter.com/iancooper/2008/12/03/the-fat-controller/" rel="nofollow">http://codebetter.com/iancooper/2008/12/03/the-fat-controller/</a> when I first began to encounter the burden placed on maintenance developers by the service as a class approach.</p>
+<p>The point about asynchronicity is not that you must, but that you can; because you have a loose contract between message and handler and expect no reply you enable that approach. Its all about choices.</p>
+<p>I would also worry about code like UpdateEntity. It&#8217;s implying CRUD based semantics. I have another post in the pipe to talk about why embracing CRUD is failing us and our customers, but I would want to see an approach focused around behavior of the underlying model if you were not using CRUD. I think the number of use cases for CRUD should be smaller, not greater than others.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-994">
+                    <div id="dsq-comment-header-994" class="dsq-comment-header">
+                        <cite id="dsq-cite-994">
+                                <span id="dsq-author-user-994">Ryan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-994" class="dsq-comment-body">
+                        <div id="dsq-comment-message-994" class="dsq-comment-message"><p>I&#8217;ll take a look at that post. I shouldn&#8217;t have said UpdateEntity as I actually do use DDD with behaviors in most scenarios. I guess I don&#8217;t really do any multi-consumer applications, just MVC with NServiceBus and a background service so I haven&#8217;t had to deal with those issues yet. After 18 months of building too many abstractions, I&#8217;m trying to move back to a simpler architecture at my shop because it&#8217;s difficult for some of our newer hires to get up to speed (since they didn&#8217;t see the evolution of our current framework).</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-995">
+                    <div id="dsq-comment-header-995" class="dsq-comment-header">
+                        <cite id="dsq-cite-995">
+    http://fknet.wordpress.com/                            <span id="dsq-author-user-995">Frantisek</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-995" class="dsq-comment-body">
+                        <div id="dsq-comment-message-995" class="dsq-comment-message"><p>Take a look at <a href="http://codecampserver.codeplex.com/" rel="nofollow">http://codecampserver.codeplex.com/</a><br />
+They implement very similar concept. At the begining I didnt understand why they overcomplicated the architecture but &#8230; the solution with the command processors pays back when the project is bigger and more complex. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-997">
+                    <div id="dsq-comment-header-997" class="dsq-comment-header">
+                        <cite id="dsq-cite-997">
+                                <span id="dsq-author-user-997">Simon</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-997" class="dsq-comment-body">
+                        <div id="dsq-comment-message-997" class="dsq-comment-message"><p>Thanks for the article.  The link to the pdf at the top is broken though.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1006">
+                    <div id="dsq-comment-header-1006" class="dsq-comment-header">
+                        <cite id="dsq-cite-1006">
+                                <span id="dsq-author-user-1006">Calebjunn</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1006" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1006" class="dsq-comment-message"><p>Thank you for posting the great content<br />
+hopefully you will keep posting such blogs….Keep sharing</p>
+<p><a href="http://winsomewoodfurniture.com" rel="nofollow">winsomewood furniture</a> <a href="http://allcladcookwareonsale.com" rel="nofollow">cookware</a> <a href="http://pampersdiapersforsale.com" rel="nofollow">pampers diapers</a> <a href="http://invictawatchesforsale.com" rel="nofollow">invicta watches</a> <a href="http://makitascrewdriverforsale.com" rel="nofollow">screw driver</a> <a href="http://mightymulegateopener.net" rel="nofollow">home improvement</a> <a href="http://emersonceilingfanforsale.com" rel="nofollow">emerson ceiling fan</a> <a href="http://cuisinartcoffeemakerforsale.com" rel="nofollow">cuisinart coffeemaker</a> <a href="http://huggieswipesforsale.com" rel="nofollow">huggies wipes</a> <a href="http://kiddesmokedetectorforsale.com" rel="nofollow">kidde smoke detector</a> <a href="http://dewaltsanderforsale.com" rel="nofollow">dewalt sander</a> <a href="http://broanbathroomfanforsale.com" rel="nofollow">broan bathroom fan</a> <a href="http://sealymattressforsale.com" rel="nofollow">sealy mattress</a> <a href="http://lorexsecuritycameraforsale.com" rel="nofollow">lorex security camera</a> <a href="http://conairhairdryerforsale.com" rel="nofollow">conair hairdryer</a> <a href="http://firstalertsafeforsale.com" rel="nofollow">firstalert safe</a> <a href="http://portercablesanderforsale.com" rel="nofollow">portercable sander</a> <a href="http://moenkitchenfaucetforsale.com" rel="nofollow">moen kitchenfaucet</a> <a href="http://bestsaleadessolamp.com" rel="nofollow">adesso lamp</a> <a href="http://bestsalebayouclassicburner.com" rel="nofollow">bayou classic burner</a> <a href="http://bestsaleninewestwomenshoes.com" rel="nofollow">nine west women shoes</a> <a href="http://bestsalesentrysafe.com" rel="nofollow">sentry safe</a> <a href="http://bestsaleboschrouter.com" rel="nofollow">bosch router</a> <a href="http://bestsalekohlertoiletseat.com" rel="nofollow">kohler toilet seat</a> <a href="http://bestpricekenroyhomelighting.com" rel="nofollow">kenroy home lighting</a> <a href="http://bestpricerubbermaidstorage.com" rel="nofollow">rubbermaid storage</a> <a href="http://bestpricenewbalancerunningshoes.com" rel="nofollow">new balance running shoes</a> <a href="http://bestpricedewaltaircompressor.com" rel="nofollow">dewalt air compressor</a> <a href="http://bestpriceboschtablesaw.com" rel="nofollow">bosch table saw</a> <a href="http://bestpricekohlershowerhead.com" rel="nofollow">kohler shower head</a> <a href="http://bestsalelitesourcelamp.com" rel="nofollow">lite source lamp</a> <a href="http://bestsalepetmatekennel.com" rel="nofollow">petmate kennel</a> <a href="http://bestsaleasicrunningshoes.com" rel="nofollow">asic running shoes</a> <a href="http://bestsalebostitchnailer.com" rel="nofollow">bostitch nailer</a> <a href="http://bestsaledremelrotarytool.com" rel="nofollow">dremel rotary tool</a> <a href="http://bestsalewaynepump.com" rel="nofollow">wayne pump</a><br />
+ </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1007">
+                    <div id="dsq-comment-header-1007" class="dsq-comment-header">
+                        <cite id="dsq-cite-1007">
+                                <span id="dsq-author-user-1007">Calebjunn</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1007" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1007" class="dsq-comment-message"><p>Hey, thank you for sharing this useful information</p>
+<p><a href="http://bestpricehoovervacuum.com" rel="nofollow">hoover vacuum</a> <a href="http://bestpricewellnessdogfood.com" rel="nofollow">wellness dog food</a> <a href="http://bestpriceskechersshoes.com" rel="nofollow">skechers shoe</a> <a href="http://bestpricemilwaukeecordlessdrill.com" rel="nofollow">milwaukee cordless drill</a> <a href="http://bestpricemechanixgloves.com" rel="nofollow">mechanix gloves</a> <a href="http://bestpricehardwarehouselighting.com" rel="nofollow">hardware house lighting</a> <a href="http://bestsalebrothersewingmachine.com" rel="nofollow">brother sewing machine</a> <a href="http://bestsaleandisdogclippers.com" rel="nofollow">andis dog clippers</a> <a href="http://bestsalerebeccaminkoffhandbags.com" rel="nofollow">rebecca minkoff handbags</a> <a href="http://bestsaledewaltcordlessdrill.com" rel="nofollow">dewalt cordless drill</a> <a href="http://bestsaleschlagekeypad.com" rel="nofollow">schlage keypad</a> <a href="http://bestsaleinsinkeratorgarbagedisposal.com" rel="nofollow">insinkerator garbage disposal</a> <a href="http://bestpricepanasoniciron.com" rel="nofollow">panasonic iron</a> <a href="http://bestpricecoffeepeoplekcups.com" rel="nofollow">coffee people k cup</a> <a href="http://bestpriceverabradleybackpack.com" rel="nofollow">vera bradley backpack</a> <a href="http://bestpricestanleytoolsset.com" rel="nofollow">stanley tools set</a> <a href="http://bestpricekwiksetsmartkey.com" rel="nofollow">kwikset smartkey</a> <a href="http://bestpricewernerladder.com" rel="nofollow">werner ladder</a> <a href="http://bestsaleschwinnbikes.com" rel="nofollow">schwinn bikes</a> <a href="http://bestsaleoxocontainers.com" rel="nofollow">oxo containers</a> <a href="http://bestsalerockportwomenshoes.com" rel="nofollow">rockport women shoes</a> <a href="http://bestsalebodumcoffeepress.com" rel="nofollow">bodum coffee press</a> <a href="http://bestsalecolehaanshoes.com" rel="nofollow">cole haan shoes</a> <a href="http://bestsalebrevillejuicer.com" rel="nofollow">breville juicer</a> <a href="http://cheapreebokrunningshoes.com" rel="nofollow">reebok running shoes</a> <a href="http://cheaphorizonmilk.com" rel="nofollow">horizon milk</a> <a href="http://cheapphilipssonicaretoothbrush.com" rel="nofollow">philips sonicare toothbrush</a> <a href="http://cheapstaminarecumbentbike.com" rel="nofollow">stamina recumbent bike</a> <a href="http://cheapbodumstorage.com" rel="nofollow">bodum storage</a> <a href="http://cheapdelseyluggage.com" rel="nofollow">delsey luggage</a> <a href="http://cheapnutivacoconutoil.com" rel="nofollow">nutiva coconut oil</a> <a href="http://cheapsmerrellshoes.com" rel="nofollow">merrell shoes</a> <a href="http://cheaphottoolscurlingiron.com" rel="nofollow">hot tools curling iron</a> <a href="http://cheaptopeakbikerack.com" rel="nofollow">topeak bike rack</a> <a href="http://cheaparomaricecooker.com" rel="nofollow">aroma rice cooker</a> <a href="http://cheapmoroccanoilshampoo.com" rel="nofollow">moroccan oil shampoo</a> <a href="http://cheapbabylissflatiron.com" rel="nofollow">babyliss flat iron</a> <a href="http://cheapolayregeneristserum.com" rel="nofollow">olay regenerist serum</a> <a href="http://cheapcolumbiashoes.com" rel="nofollow">columbia shoes</a> <a href="http://cheapscuisinartcookware.com" rel="nofollow">cuisinart cookware</a> <a href="http://cheapplanetbikelight.com" rel="nofollow">planet bike light</a> <a href="http://cheapsamsonitespinnerluggage.com" rel="nofollow">samsonite spinner luggage</a> <a href="http://cheapsstevemaddenshoes.com" rel="nofollow">steve madden shoes</a> <a href="http://cheappolarheartwatch.com" rel="nofollow">polar heart watch</a> <a href="http://cheapwastekinggarbagedisposal.com" rel="nofollow">waste king garbage disposal</a> <a href="http://cheapioliteportablevaporizer.com" rel="nofollow">iolite portable vaporizer</a> <a href="http://cheapequusinnovadiagnostic.com" rel="nofollow">equus innova diagnostic</a><br />
+ </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1008">
+                    <div id="dsq-comment-header-1008" class="dsq-comment-header">
+                        <cite id="dsq-cite-1008">
+                                <span id="dsq-author-user-1008">Calebjunn</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1008" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1008" class="dsq-comment-message"><p>I’m happy I found this useful concept. I do agree with all the good points you have shared. Keep up the good post.</p>
+<p><a href="http://cheapswisslegendwatches.com" rel="nofollow">swiss legend watches</a> <a href="http://cheapfiestawaredinnerware.com" rel="nofollow">fiestaware dinnerware</a> <a href="http://cheaptototoiletseat.com" rel="nofollow">toto toilet seat</a> <a href="http://cheappoulanchainsaw.com" rel="nofollow">poulan chainsaw</a> <a href="http://cheapciscoipphone.com" rel="nofollow">cisco ip phone</a> <a href="http://cheapbrinkmannsmokergrill.com" rel="nofollow">brinkmann smoker grill</a> <a href="http://cheapkohlerkitchensink.com" rel="nofollow">kohler kitchen sink</a> <a href="http://cheaponeidaflatware.com" rel="nofollow">oneida flatware</a> <a href="http://cheapcocalobedding.com" rel="nofollow">cocalo bedding</a> <a href="http://cheaptissotwatchesmen.com" rel="nofollow">tissot watches men</a> <a href="http://cheapnetgearwirelessrouter.com" rel="nofollow">netgear wireless router </a> <a href="http://cheaplittletikescar.com" rel="nofollow">little tikes car</a> <a href="http://cheaporganichoney.com" rel="nofollow">organic honey</a> <a href="http://cheapciscowirelessrouter.com" rel="nofollow">cisco wireless router</a> <a href="http://cheapmovadomenswatches.com" rel="nofollow">movado mens watches</a> <a href="http://cheapcuisinarttoaster.com" rel="nofollow">cuisinart toaster</a> <a href="http://cheapdeltacrib.com" rel="nofollow">delta crib</a> <a href="http://cheapeurekavacuumcleaner.com" rel="nofollow">eureka vacuum cleaner</a> <a href="http://cheapgucciwatcheswomen.com" rel="nofollow">gucci watches women</a> <a href="http://cheapbosespeakers.com" rel="nofollow">bose speakers</a> <a href="http://cheappicnictimepicnicbasket.com" rel="nofollow">picnic time picnic basket</a> <a href="http://cheapargingtoncrib.com" rel="nofollow">argington crib</a> <a href="http://cheapprestopressurecooker.com" rel="nofollow">presto pressure cooker</a> <a href="http://cheaponkyoreceiver.com" rel="nofollow">onkyo receiver</a> <a href="http://cheapsportdogtrainingcollar.com" rel="nofollow">sportdog training collar</a> <a href="http://cheapgerberclothdiapers.com" rel="nofollow">gerber cloth diapers</a> <a href="http://cheapkrupscoffeemaker.com" rel="nofollow">krups coffee maker</a> <a href="http://cheaptimexironmanwatch.com" rel="nofollow">timex ironman watch</a> <a href="http://cheapkitchenaidstandmixer.com" rel="nofollow">kitchenaid stand mixer</a> <a href="http://cheapkuhnrikonpressurecooker.com" rel="nofollow">kuhn rikon pressure cooker</a> <a href="http://cheaplecreusetskillet.com" rel="nofollow">le creuset skillet</a> <a href="http://cheapcitizenecodrive.com" rel="nofollow">citizen eco drive</a> <a href="http://cheapcalphaloncookwareset.com" rel="nofollow">calphalon cookware set</a> <a href="http://cheapomegawatchesmen.com" rel="nofollow">omega watches men</a> <a href="http://cheaphenckelsflatware.com" rel="nofollow">henckels flatware</a><br />
+ </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1094">
+                    <div id="dsq-comment-header-1094" class="dsq-comment-header">
+                        <cite id="dsq-cite-1094">
+                                <span id="dsq-author-user-1094">Dave</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1094" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1094" class="dsq-comment-message"><p>Hi, the link to command processor pattern, just after the 1st code snippet, is broken. Any chance you could fix that? I am trying to get my head around this concept of a command processing pattern.</p>
+<p>Thanks</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1139">
+                    <div id="dsq-comment-header-1139" class="dsq-comment-header">
+                        <cite id="dsq-cite-1139">
+                                <span id="dsq-author-user-1139">Moshfegh</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1139" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1139" class="dsq-comment-message"><p>Excellent post Ian! Thanks for the effort. I read this concept in bits in various sources and eventually implemented. But was still wondering what are the actual benefits. You drew a good picture. Thanks again. </p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/iancooper/2011/04/27/why-use-the-command-processor-pattern-in-the-service-layer/';
+    var disqus_identifier = '175 http://codebetter.com/iancooper/?p=175';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'codebetteriancooper';
+    var disqus_title = "Why use the command processor pattern in the service layer";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=175');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+            {
+                'author_name':    "The Morning Brew - Chris Alcock &raquo; The Morning Brew #842",
+                'author_url':    "http:\/\/blog.cwa.me.uk\/2011\/04\/28\/the-morning-brew-842\/",
+                'date':            "04\/28\/2011 07:38 AM",
+                'excerpt':        "[...] Why use the command processor pattern in the service layer - Ian Cooper discusses the use of Command Processors ...",
+                'type':            "pingback"            }
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/iancooper\/2011\/04\/27\/why-use-the-command-processor-pattern-in-the-service-layer\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 2.431 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:21:44 -->
+<!-- super cache -->

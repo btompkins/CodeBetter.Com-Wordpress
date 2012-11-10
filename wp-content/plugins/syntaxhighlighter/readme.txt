@@ -55,10 +55,22 @@ Make sure your theme's `footer.php` file has `<?php wp_footer(); ?>` somewhere i
 
 == ChangeLog ==
 
+= Version 3.1.3 =
+
+* Hide vertical overflow so that a vertical scrollbar doesn't show up in Chrome. Props Caio Proiete. Bump SH script version to bust browser caches.
+* Allow the plugin's shortcodes to be escaped using double brackets like so: `[[code]Foobar[/code]]`. This is a core feature, but calling `do_shortcode()` on the content as it went into the database caused the extra brackets to be stripped.
+
+= Version 3.1.2 =
+
+* Register some placeholder shortcodes so that `strip_shortcodes()` and such work properly. Previously the shortcodes were only registered during the brief moment that they were processed by one of this plugin's filters.
+* Add a `notranslate` CSS class to the `<pre>` output so that Google won't attempt to translate it. Props [Otto](http://ottopress.com/2011/google-translation-tip/).
+* Run the CSS classes aka SyntaxHighlighter script parameters through a filter.
+
 = Version 3.1.1 =
 
 * Fix default title setting not working.
 * Force `<code>` to be inline. Fixes issues with themes that do `code { display: block; }`.
+* Added Japanese translation thanks to [Makoto](http://projects.makotokw.com/redmine/projects/wp-plugins/wiki/Translation).
 
 = Version 3.1.0 =
 

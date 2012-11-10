@@ -23,13 +23,20 @@ if ( empty($_COOKIE[LOGGED_IN_COOKIE]) && !empty($_REQUEST['logged_in_cookie']) 
 unset($current_user);
 require_once('./admin.php');
 
-header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
+header('Content-Type: text/html; charset=' . get_option('blog_charset'));
 
 if ( !current_user_can('upload_files') )
 	wp_die(__('You do not have permission to upload files.'));
 
 // just fetch the detail form for that attachment
 if ( isset($_REQUEST['attachment_id']) && ($id = intval($_REQUEST['attachment_id'])) && $_REQUEST['fetch'] ) {
+	$post = get_post( $id );
+	if ( 'attachment' != $post->post_type )
+		wp_die( __( 'Unknown post type.' ) );
+	$post_type_object = get_post_type_object( 'attachment' );
+	if ( ! current_user_can( $post_type_object->cap->edit_post, $id ) )
+		wp_die( __( 'You are not allowed to edit this item.' ) );
+
 	if ( 2 == $_REQUEST['fetch'] ) {
 		add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2);
 		echo get_media_item($id, array( 'send' => false, 'delete' => true ));
@@ -59,5 +66,3 @@ if ( $_REQUEST['short'] ) {
 	$type = $_REQUEST['type'];
 	echo apply_filters("async_upload_{$type}", $id);
 }
-
-?>

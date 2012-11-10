@@ -1,6 +1,6 @@
 <?php
 /**
- * Edit Comments Administration Panel.
+ * Edit Comments Administration Screen.
  *
  * @package WordPress
  * @subpackage Administration
@@ -11,8 +11,7 @@ require_once('./admin.php');
 if ( !current_user_can('edit_posts') )
 	wp_die(__('Cheatin&#8217; uh?'));
 
-$wp_list_table = get_list_table('WP_Comments_List_Table');
-$wp_list_table->check_permissions();
+$wp_list_table = _get_list_table('WP_Comments_List_Table');
 $pagenum = $wp_list_table->get_pagenum();
 
 $doaction = $wp_list_table->current_action();
@@ -31,7 +30,7 @@ if ( $doaction ) {
 	} elseif ( isset( $_REQUEST['ids'] ) ) {
 		$comment_ids = array_map( 'absint', explode( ',', $_REQUEST['ids'] ) );
 	} elseif ( wp_get_referer() ) {
-		wp_redirect( wp_get_referer() );
+		wp_safe_redirect( wp_get_referer() );
 		exit;
 	}
 
@@ -93,20 +92,14 @@ if ( $doaction ) {
 	if ( $trashed || $spammed )
 		$redirect_to = add_query_arg( 'ids', join( ',', $comment_ids ), $redirect_to );
 
-	wp_redirect( $redirect_to );
+	wp_safe_redirect( $redirect_to );
 	exit;
-} elseif ( ! empty( $_REQUEST['_wp_http_referer'] ) ) {
+} elseif ( ! empty( $_GET['_wp_http_referer'] ) ) {
 	 wp_redirect( remove_query_arg( array( '_wp_http_referer', '_wpnonce' ), stripslashes( $_SERVER['REQUEST_URI'] ) ) );
 	 exit;
 }
 
 $wp_list_table->prepare_items();
-
-$total_pages = $wp_list_table->get_pagination_arg( 'total_pages' );
-if ( $pagenum > $total_pages && $total_pages > 0 ) {
-	wp_redirect( add_query_arg( 'paged', $total_pages ) );
-	exit;
-}
 
 wp_enqueue_script('admin-comments');
 enqueue_comment_hotkeys_js();
@@ -118,28 +111,41 @@ else
 
 add_screen_option( 'per_page', array('label' => _x( 'Comments', 'comments per page (screen options)' )) );
 
-add_contextual_help( $current_screen, '<p>' . __( 'You can manage comments made on your site similar to the way you manage Posts and other content. This screen is customizable in the same ways as other management screens, and you can act on comments using the on-hover action links or the Bulk Actions.' ) . '</p>' .
-	'<p>' . __( 'A yellow row means the comment is waiting for you to moderate it.' ) . '</p>' .
-	'<p>' . __( 'In the Author column, in addition to the author&#8217;s name, email address, and blog URL, the commenter&#8217;s IP address is shown. Clicking on this link will show you all the comments made from this IP address.' ) . '</p>' .
-	'<p>' . __( 'In the Comment column, above each comment it says &#8220;Submitted on,&#8221; followed by the date and time the comment was left on your site. Clicking on the date/time link will take you to that comment on your live site.' ) . '</p>' .
-	'<p>' . __( 'In the In Response To column, there are three elements. The text is the name of the post that inspired the comment, and links to the post editor for that entry. The &#8220;#&#8221; permalink symbol below leads to that post on your live site. The small bubble with the number in it shows how many comments that post has received. If the bubble is gray, you have moderated all comments for that post. If it is blue, there are pending comments. Clicking the bubble will filter the comments screen to show only comments on that post.' ) . '</p>' .
-	'<p>' . __( 'Many people take advantage of keyboard shortcuts to moderate their comments more quickly. Use the link below to learn more.' ) . '</p>' .
+get_current_screen()->add_help_tab( array(
+'id'		=> 'overview',
+'title'		=> __('Overview'),
+'content'	=>
+	'<p>' . __( 'You can manage comments made on your site similar to the way you manage posts and other content. This screen is customizable in the same ways as other management screens, and you can act on comments using the on-hover action links or the Bulk Actions.' ) . '</p>'
+) );
+get_current_screen()->add_help_tab( array(
+'id'		=> 'moderating-comments',
+'title'		=> __('Moderating Comments'),
+'content'	=>
+		'<p>' . __( 'A yellow row means the comment is waiting for you to moderate it.' ) . '</p>' .
+		'<p>' . __( 'In the <strong>Author</strong> column, in addition to the author&#8217;s name, email address, and blog URL, the commenter&#8217;s IP address is shown. Clicking on this link will show you all the comments made from this IP address.' ) . '</p>' .
+		'<p>' . __( 'In the <strong>Comment</strong> column, above each comment it says &#8220;Submitted on,&#8221; followed by the date and time the comment was left on your site. Clicking on the date/time link will take you to that comment on your live site. Hovering over any comment gives you options to approve, reply (and approve), quick edit, edit, spam mark, or trash that comment.' ) . '</p>' .
+		'<p>' . __( 'In the <strong>In Response To</strong> column, there are three elements. The text is the name of the post that inspired the comment, and links to the post editor for that entry. The View Post link leads to that post on your live site. The small bubble with the number in it shows how many comments that post has received. If the bubble is gray, you have moderated all comments for that post. If it is blue, there are pending comments. Clicking the bubble will filter the comments screen to show only comments on that post.' ) . '</p>' .
+		'<p>' . __( 'Many people take advantage of keyboard shortcuts to moderate their comments more quickly. Use the link to the side to learn more.' ) . '</p>'
+) );
+
+get_current_screen()->set_help_sidebar(
 	'<p><strong>' . __( 'For more information:' ) . '</strong></p>' .
-	'<p>' . __( '<a href="http://codex.wordpress.org/Administration_Panels#Comments" target="_blank">Documentation on Comments</a>' ) . '</p>' .
+	'<p>' . __( '<a href="http://codex.wordpress.org/Administration_Screens#Comments" target="_blank">Documentation on Comments</a>' ) . '</p>' .
 	'<p>' . __( '<a href="http://codex.wordpress.org/Comment_Spam" target="_blank">Documentation on Comment Spam</a>' ) . '</p>' .
 	'<p>' . __( '<a href="http://codex.wordpress.org/Keyboard_Shortcuts" target="_blank">Documentation on Keyboard Shortcuts</a>' ) . '</p>' .
 	'<p>' . __( '<a href="http://wordpress.org/support/" target="_blank">Support Forums</a>' ) . '</p>'
 );
+
 require_once('./admin-header.php');
 ?>
 
 <div class="wrap">
 <?php screen_icon(); ?>
-<h2><?php 
+<h2><?php
 if ( $post_id )
-	echo sprintf(__('Comments on &#8220;%s&#8221;'), 
-		sprintf('<a href="%s">%s</a>', 
-			get_edit_post_link($post_id), 
+	echo sprintf(__('Comments on &#8220;%s&#8221;'),
+		sprintf('<a href="%s">%s</a>',
+			get_edit_post_link($post_id),
 			wp_html_excerpt(_draft_or_post_title($post_id), 50)
 		)
 	);
@@ -219,17 +225,9 @@ if ( isset($_REQUEST['approved']) || isset($_REQUEST['deleted']) || isset($_REQU
 
 <?php $wp_list_table->views(); ?>
 
-<form id="comments-form" action="" method="post">
+<form id="comments-form" action="" method="get">
 
-<?php if ( $wp_list_table->has_items() ) : ?>
-
-<p class="search-box">
-	<label class="screen-reader-text" for="comment-search-input"><?php _e( 'Search Comments' ); ?>:</label>
-	<input type="text" id="comment-search-input" name="s" value="<?php _admin_search_query(); ?>" />
-	<?php submit_button( __( 'Search Comments' ), 'button', 'submit', false ); ?>
-</p>
-
-<?php endif; ?>
+<?php $wp_list_table->search_box( __( 'Search Comments' ), 'comment' ); ?>
 
 <?php if ( $post_id ) : ?>
 <input type="hidden" name="p" value="<?php echo esc_attr( intval( $post_id ) ); ?>" />
@@ -246,8 +244,8 @@ if ( isset($_REQUEST['approved']) || isset($_REQUEST['deleted']) || isset($_REQU
 <?php } ?>
 
 <?php $wp_list_table->display(); ?>
-</div>
 </form>
+</div>
 
 <div id="ajax-response"></div>
 

@@ -149,6 +149,9 @@ function save_mod_rewrite_rules() {
  * @return bool True if web.config was updated successfully
  */
 function iis7_save_url_rewrite_rules(){
+	if ( is_multisite() )
+		return;
+
 	global $wp_rewrite;
 
 	$home_path = get_home_path();
@@ -193,17 +196,15 @@ function update_recently_edited( $file ) {
  *
  * @since 2.1.0
  *
- * @param unknown_type $old_value
- * @param unknown_type $value
+ * @param string $old_value
+ * @param string $value
  */
 function update_home_siteurl( $old_value, $value ) {
-	global $wp_rewrite;
-
 	if ( defined( "WP_INSTALLING" ) )
 		return;
 
 	// If home changed, write rewrite rules to new location.
-	$wp_rewrite->flush_rules();
+	flush_rewrite_rules();
 }
 
 add_action( 'update_option_home', 'update_home_siteurl', 10, 2 );
@@ -220,10 +221,9 @@ add_action( 'update_option_siteurl', 'update_home_siteurl', 10, 2 );
 function url_shorten( $url ) {
 	$short_url = str_replace( 'http://', '', stripslashes( $url ));
 	$short_url = str_replace( 'www.', '', $short_url );
-	if ('/' == substr( $short_url, -1 ))
-		$short_url = substr( $short_url, 0, -1 );
+	$short_url = untrailingslashit( $short_url );
 	if ( strlen( $short_url ) > 35 )
-		$short_url = substr( $short_url, 0, 32 ).'...';
+		$short_url = substr( $short_url, 0, 32 ) . '...';
 	return $short_url;
 }
 
@@ -338,7 +338,6 @@ function set_screen_options() {
 		if ( in_array( $type, get_taxonomies()) )
 			$map_option = 'edit_tags_per_page';
 
-
 		switch ( $map_option ) {
 			case 'edit_per_page':
 			case 'users_per_page':
@@ -365,45 +364,9 @@ function set_screen_options() {
 		}
 
 		update_user_meta($user->ID, $option, $value);
-		wp_redirect( remove_query_arg( array('pagenum', 'apage', 'paged'), wp_get_referer() ) );
+		wp_safe_redirect( remove_query_arg( array('pagenum', 'apage', 'paged'), wp_get_referer() ) );
 		exit;
 	}
-}
-
-function wp_menu_unfold() {
-	if ( isset($_GET['unfoldmenu']) ) {
-		delete_user_setting('mfold');
-		wp_redirect( remove_query_arg( 'unfoldmenu', stripslashes($_SERVER['REQUEST_URI']) ) );
-	 	exit;
-	}
-}
-
-/**
- * Check if IIS 7 supports pretty permalinks
- *
- * @since 2.8.0
- *
- * @return bool
- */
-function iis7_supports_permalinks() {
-	global $is_iis7;
-
-	$supports_permalinks = false;
-	if ( $is_iis7 ) {
-		/* First we check if the DOMDocument class exists. If it does not exist,
-		 * which is the case for PHP 4.X, then we cannot easily update the xml configuration file,
-		 * hence we just bail out and tell user that pretty permalinks cannot be used.
-		 * This is not a big issue because PHP 4.X is going to be depricated and for IIS it
-		 * is recommended to use PHP 5.X NTS.
-		 * Next we check if the URL Rewrite Module 1.1 is loaded and enabled for the web site. When
-		 * URL Rewrite 1.1 is loaded it always sets a server variable called 'IIS_UrlRewriteModule'.
-		 * Lastly we make sure that PHP is running via FastCGI. This is important because if it runs
-		 * via ISAPI then pretty permalinks will not work.
-		 */
-		$supports_permalinks = class_exists('DOMDocument') && isset($_SERVER['IIS_UrlRewriteModule']) && ( php_sapi_name() == 'cgi-fcgi' );
-	}
-
-	return apply_filters('iis7_supports_permalinks', $supports_permalinks);
 }
 
 /**
@@ -618,4 +581,12 @@ foreach ( $_wp_admin_css_colors as $color => $color_info ): ?>
 </fieldset>
 <?php
 }
-?>
+
+function _ipad_meta() {
+	if ( wp_is_mobile() ) {
+		?>
+		<meta name="viewport" id="viewport-meta" content="width=device-width, initial-scale=1">
+		<?php
+	}
+}
+add_action('admin_head', '_ipad_meta');

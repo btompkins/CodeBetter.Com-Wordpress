@@ -1,14 +1,32 @@
 <?php 
-//normal display function
-function dd_button_normal_setup(){
+
+function dd_page_for_normal_display(){
 	
 	global $ddNormalDisplay,$ddNormalButtons;
 	
 	if (isset($_POST[DD_FORM_SAVE])) {
 
+		foreach(array_keys($ddNormalDisplay) as $key){
+	    	
+			foreach(array_keys($ddNormalDisplay[$key]) as $subkey){
+				
+				//echo '<h2>$key : ' . $key . ' - $subkey : ' . $subkey . ' - [' . $_POST[$subkey] . ']</h2>';
+				if(isset($_POST[$subkey])){
+					$ddNormalDisplay[$key][$subkey] = $_POST[$subkey];	
+				}else{
+					$ddNormalDisplay[$key][$subkey] = DD_EMPTY_VALUE;
+				}
+	
+			}
+	    }
+	   	update_option(DD_NORMAL_DISPLAY_CONFIG, $ddNormalDisplay);
+	   	
 		foreach($ddNormalButtons[DD_NORMAL_BUTTON_DISPLAY] as $key => $value){
 			
 			foreach(array_keys($value->wp_options) as $option){
+				
+				//echo '<h2>$option : [' . $option . '] , $_POST[$option] - ['. $_POST[$option] . ']</h2>';
+				
 		    	if(isset($_POST[$option])){
 		    		$value->wp_options[$option] = $_POST[$option];
 		    	}else{
@@ -22,27 +40,7 @@ function dd_button_normal_setup(){
 	    }
 	    
 		update_option(DD_NORMAL_BUTTON, $ddNormalButtons);
-    
-		/****** Normal Display ******/	
-		foreach(array_keys($ddNormalDisplay) as $key){
-	    	
-			foreach(array_keys($ddNormalDisplay[$key]) as $subkey){
-				
-				//echo '<h1>' . $key . '-' . $subkey . '- [' . $_POST[$subkey] . ']</h1>';
-				//echo '<h3>set value</h3>';
-				
-				$ddNormalDisplay[$key][$subkey] = $_POST[$subkey];
-				
-				/*if(isset($_POST[$subkey])){
-					echo 'set value';
-					$ddNormalDisplay[$key][$subkey] = $_POST[$subkey];
-				}*/
-				
-			}
-	    }
 
-	   	update_option(DD_NORMAL_DISPLAY_CONFIG, $ddNormalDisplay);
-	
 		echo "<div id=\"updatemessage\" class=\"updated fade\"><p>Digg Digg settings updated.</p></div>\n";
 		echo "<script type=\"text/javascript\">setTimeout(function(){jQuery('#updatemessage').hide('slow');}, 3000);</script>";	
 		
@@ -52,17 +50,14 @@ function dd_button_normal_setup(){
         
 		echo "<div id=\"errmessage\" class=\"error fade\"><p>Digg Digg settings cleared.</p></div>\n";
 		echo "<script type=\"text/javascript\">setTimeout(function(){jQuery('#errmessage').hide('slow');}, 3000);</script>";	
-		
-			
+	
   	}
 
   	//get back the settings from wordpress options
   	$ddNormalButtons = get_option(DD_NORMAL_BUTTON);
 	$ddNormalDisplay = get_option(DD_NORMAL_DISPLAY_CONFIG);
 	
-	//print_r($ddNormalDisplay);
-	
-  	//sort it
+  	//sorting
 	$dd_sorting_data = array();
 	foreach($ddNormalButtons[DD_NORMAL_BUTTON_DISPLAY] as $obj){
 		$dd_sorting_data[$obj->getOptionButtonWeight().'-'.$obj->name] = $obj;
@@ -120,20 +115,7 @@ function checkCategory(){
 	
 	<div class="dd-block">
 		<div class="dd-title">
-			<h2>Digg Digg</h2>
-		</div>
-		<div class="dd-insider">
-			<p>
-			If you like this plugin and find it useful, 
-			help keep this plugin free and actively developed by a
-			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AWXCPTQXB7YAS" target="_blank">donation</a>. 
-			</p>
-		</div>	
-	</div>
-	
-	<div class="dd-block">
-		<div class="dd-title">
-		<h2>Status : 
+		<h2>1. Status : 
 		<?php if($ddNormalDisplay[DD_STATUS_OPTION][DD_STATUS_OPTION_DISPLAY]==DD_DISPLAY_ON){
 			echo '<span class="dd-enabled">Enabled</span>';
 		}else{
@@ -144,12 +126,14 @@ function checkCategory(){
 		</div>
 		<div class="dd-insider">
 			
-				<INPUT TYPE=CHECKBOX NAME="<?php echo DD_STATUS_OPTION_DISPLAY ?>" 
-				<?php echo ($ddNormalDisplay[DD_STATUS_OPTION][DD_STATUS_OPTION_DISPLAY]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
-				<span>Enable Normal Display</span>
+			<INPUT TYPE=CHECKBOX NAME="<?php echo DD_STATUS_OPTION_DISPLAY ?>" 
+			<?php echo ($ddNormalDisplay[DD_STATUS_OPTION][DD_STATUS_OPTION_DISPLAY]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
 			
+			<span>Enable Normal Display</span>
+	
 			<div class="dd-button">
-					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" value="Save changes" type="submit" style="width:100px;" />
+					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" 
+					value="<?php echo DD_FORM_BUTTON_SAVE; ?>" type="submit" style="width:100px;" />
 			</div>
 			
 			<div style="clear:both"></div>
@@ -158,11 +142,11 @@ function checkCategory(){
 	</div>
 	
 	<div class="dd-block">
-		<div class="dd-title"><h2>1. Display Configuration</h2></div>
+		<div class="dd-title"><h2>2. Display Configuration</h2></div>
 		<div class="dd-insider">
 		
 			<div class="dd-insider-block">
-				<span>i. Buttons are allow to display in horizontal or vertical order?</span>
+				<span>2.1 Buttons are display in horizontal or vertical order?</span>
 				<span>
 				<?php 
 					$dd_lineup_select = $ddNormalDisplay[DD_LINE_UP_OPTION][DD_LINE_UP_OPTION_SELECT];
@@ -184,7 +168,7 @@ function checkCategory(){
 			</div>
 			
 			<div class="dd-insider-block">
-			<p>ii. Buttons are allow to display in...</p>
+			<p>2.2 Buttons are display in...</p>
 			<p>
 			<?php 
 				foreach($ddNormalDisplay[DD_DISPLAY_OPTION] as $key => $value){
@@ -206,7 +190,7 @@ function checkCategory(){
 								
 			<div class="dd-insider-block" id="dd-insider-block-category">
 				<p>
-				Display in "Post" under categories...
+				2.3 Display in "Post" under categories...
 				</p>
 				<?php 
 					$dd_category_option = $ddNormalDisplay[DD_CATEORY_OPTION][DD_CATEORY_OPTION_RADIO];
@@ -233,7 +217,7 @@ function checkCategory(){
 			
 			<div class="dd-insider-block">
 			<p>
-				iii.
+				2.4
 				<INPUT TYPE=CHECKBOX NAME="<?php echo DD_EXCERP_OPTION_DISPLAY ?>" 
 				<?php echo ($ddNormalDisplay[DD_EXCERP_OPTION][DD_EXCERP_OPTION_DISPLAY]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
 				<span> Enable DiggDigg to modify your post excerp.</span>
@@ -242,7 +226,8 @@ function checkCategory(){
 			</div>
 			
 			<div class="dd-button">
-					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" value="Save changes" type="submit" style="width:100px;" />
+					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" 
+					value="<?php echo DD_FORM_BUTTON_SAVE; ?>" type="submit" style="width:100px;" />
 			</div>
 			
 			<div style="clear:both"></div>
@@ -250,16 +235,16 @@ function checkCategory(){
 		</div>
 		
 	</div>
-	
+
 	<div class="dd-block">
-		<div class="dd-title"><h2>2. Buttons Selection</h2></div>
+		<div class="dd-title"><h2>3. Buttons Selection</h2></div>
 		<div class="dd-insider">
-			<p>Choose and customize the button layout to display.</p>
+			<p>Choose and customize button layout to display.</p>
 	
 				<table border="1" width="100%" class="dd-table">
 				<tr>
 				    <th width="3%"></th>
-					<th width="20%" class="left">Website</th>
+					<th width="30%" class="left">Website</th>
 					<th width="10%">Integration Type</th>
 					<th width="10%">Button Design</th>
 					<th width="5%">Weight</th>
@@ -312,7 +297,12 @@ function checkCategory(){
 								<INPUT TYPE=CHECKBOX NAME="<?php echo $obj->option_lazy_load; ?>" <?php echo ($obj->getOptionLazyLoad()==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
 								<?php
 									}else{
-										echo "<span class='dd-not-support'>Not Support</span>";	
+										if($obj->name == "Facebook Like (XFBML)"){
+											echo "<span class='dd-not-support'>Build-in Support</span>";	
+										}
+										else{
+											echo "<span class='dd-not-support'>Not Support</span>";	
+										}
 									}
 								?> 
 							</td>
@@ -324,20 +314,22 @@ function checkCategory(){
 				</table>
 			
 			<div class="dd-button">
-					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" value="Save changes" type="submit" style="width:100px;" />
+					<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" 
+					value="<?php echo DD_FORM_BUTTON_SAVE; ?>" type="submit" style="width:100px;" />
 			</div>
 			<div style="clear:both"></div>
 		</div>
 	</div>
-	
+
 	<div class="dd-block">
-		<div class="dd-title"><h2>Reset All</h2></div>
+		<div class="dd-title"><h2>4. Reset Normal Display Settings</h2></div>
 		<div class="dd-insider">
 		<p>
-		Reset all settings to default value.
+		Reset all "Normal Display" settings to default value.
 		</p>
 		
-		<input class="button-primary" onclick="if (confirm('Are you sure to reset all settings to default value?'))return true;return false" name="<?php echo DD_FORM_CLEAR; ?>" value="Reset" type="submit" style="width:100px;"/>
+		<input class="button-primary" onclick="if (confirm('Are you sure to reset \'Normal Display\' settings to default value?'))return true;return false" 
+		name="<?php echo DD_FORM_CLEAR; ?>" value="Reset Normal Display Settings" type="submit" style="width:200px;"/>
 	
 		</div>
 	</div>

@@ -20,24 +20,11 @@ function dd_print_manual_form($dd_manual_code){
 <div id="dd_admin_left_block">
 	
 	<div class="dd-block">
-		<div class="dd-title">
-			<h2>Support Digg Digg</h2>
-		</div>
-		<div class="dd-insider">
-			<p>
-			If you like this plugin and find it useful, 
-			help keep this plugin free and actively developed by a
-			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AWXCPTQXB7YAS" target="_blank">donation</a>. 
-			</p>
-		</div>	
-	</div>
-	
-	<div class="dd-block">
 		<div class="dd-title"><h2>Advance Usage</h2></div>
 		<div class="dd-insider">
 			<p>
-			For advance user, you can use the following code to generate a particular button and place it anywhere;
-			Or group few buttons with your custom CSS formating layout. Your only limit is your imagination :)  
+			For advance users who do not like DiggDigg pre-defined integration display, 
+			you can use this manual code to display button to everywhere you want. 
 			</p>
 			<h4>Example</h4>
 			<p>
@@ -48,9 +35,7 @@ function dd_print_manual_form($dd_manual_code){
 				2. It's always recommended to rewrite above code with function_exists() checking : <br/>
 				<code>&lt;?php if(function_exists('dd_digg_generate')){dd_digg_generate('Normal');} ?&gt;</code>
 			</p>
-			
-
-
+		
 			<?php 
 				
 			foreach(array_keys($dd_manual_code) as $key){

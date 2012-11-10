@@ -3,6 +3,12 @@
 /***********************************Advance Usage*********************************/
 global $dd_manual_code;
 $dd_manual_code = array(
+	"Google +1" => array(
+		"Normal" => "dd_google1_generate('Normal')",
+		"Compact (15px)" => "dd_google1_generate('Compact (15px)')",
+		"Compact (20px)" => "dd_google1_generate('Compact (20px)')",
+		"Compact (24px)" => "dd_google1_generate('Compact (24px)')"
+	),
 	"Digg" => array(
 		"Normal" => "dd_digg_generate('Normal')",
 		"Compact" => "dd_digg_generate('Compact')",
@@ -56,6 +62,14 @@ $dd_manual_code = array(
 		"Recommend Button Count" => "dd_fblike_generate('Recommend Button Count')",
 		"Recommend Box Count" => "dd_fblike_generate('Recommend Box Count')"
 	),
+	"FaceBook Like (XFBML)" => array(
+		"Like Standard" => "dd_fblike_xfbml_generate('Like Standard')",
+		"Like Button Count" => "dd_fblike_xfbml_generate('Like Button Count')",
+		"Like Box Count" => "dd_fblike_xfbml_generate('Like Box Count')",
+		"Recommend Standard" => "dd_fblike_xfbml_generate('Recommend Standard')",
+		"Recommend Button Count" => "dd_fblike_xfbml_generate('Recommend Button Count')",
+		"Recommend Box Count" => "dd_fblike_xfbml_generate('Recommend Box Count')"
+	),
 	"StumbleUpon" => array(
 		"Normal" => "dd_stumbleupon_generate('Normal')",
 		"Compact" => "dd_stumbleupon_generate('Compact')"
@@ -85,7 +99,10 @@ $dd_manual_code = array(
 		"Normal" => "dd_linkedin_generate('Normal')",
 		"Compact" => "dd_linkedin_generate('Compact')",
 		"NoCount" => "dd_linkedin_generate('NoCount')"
-	)
+	),
+	"Serpd" => array(
+		"Normal" => "dd_serpd_generate('Normal')"
+	),
 );		
 	
 function dd_digg_generate($buttonDesign='Normal'){
@@ -385,4 +402,49 @@ function dd_post_comments_generate($buttonDesign='Normal'){
 			
 	echo $dd_comments->finalURL;
 }	
+
+function dd_serpd_generate($buttonDesign='Normal'){
+
+	global $wp_query; 
+    $post = $wp_query->post; //get post content
+    $id = $post->ID; //get post id
+    $postlink = get_permalink($id); //get post link
+    $title = trim($post->post_title); // get post title
+    $link = split(DD_DASH,$postlink); //split the link with '#', for comment
+    
+    $dd_serpd = new DD_Serpd();
+    $dd_serpd->constructURL($link[0],$title,$buttonDesign,$id,false);
+    
+	echo $dd_serpd->finalURL;
+}
+
+function dd_fblike_xfbml_generate($buttonDesign='Like Standard'){
+
+	global $wp_query; 
+    $post = $wp_query->post; //get post content
+    $id = $post->ID; //get post id
+    $postlink = get_permalink($id); //get post link
+    $title = trim($post->post_title); // get post title
+    $link = split(DD_DASH,$postlink); //split the link with '#', for comment
+    
+    $dd_fblike_xfbml = new DD_FbLike_XFBML();
+    $dd_fblike_xfbml->constructURL($link[0],$title,$buttonDesign,$id,false);
+    
+	echo $dd_fblike_xfbml->finalURL;
+}
+
+function dd_google1_generate($buttonDesign='Normal'){
+
+	global $wp_query; 
+    $post = $wp_query->post; //get post content
+    $id = $post->ID; //get post id
+    $postlink = get_permalink($id); //get post link
+    $title = trim($post->post_title); // get post title
+    $link = split(DD_DASH,$postlink); //split the link with '#', for comment
+    
+    $dd_google1 = new DD_Google1();
+    $dd_google1->constructURL($link[0],$title,$buttonDesign,$id,false);
+    
+	echo $dd_google1->finalURL;
+}
 ?>

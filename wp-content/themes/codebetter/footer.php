@@ -15,11 +15,10 @@
 					<h3>Friends of CodeBetter.Com</h3>
 <ul>
 
-<li><a href="/blogs/products/pages/64386.aspx">Red-Gate Tools For SQL and .NET</a></li>
-<li><a href="/blogs/products/pages/64615.aspx">Telerik</a></li>
-<li><a href="/blogs/products/pages/142174.aspx">JetBrains - ReSharper</a></li>
-<li><a href="/blogs/products/pages/Beyond-Compare.aspx">Beyond Compare</a></li>
-<li><a href="/blogs/products/pages/.NET-Memory-Profiler.aspx">.NET Memory Profiler</a></li>
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
 <li><a href="http://www.ndepend.com/">NDepend</a></li>
 <li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
 <li><a href="http://www.slickedit.com/">SlickEdit</a></li>
@@ -29,8 +28,11 @@
 <li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
 <li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
 <li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
-<li><a href="http://scrumy.com" target="_blank">Scrumy</a> &lt;-- NEW Friend!</li>
-
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
 	</ul>				
 				</div><!-- #third .widget-area -->
 				<div class="grid_4">
@@ -64,6 +66,7 @@
 <script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
 <script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
 <script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
 <script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
 <script type='text/javascript'>
 	(function(){
@@ -99,7 +102,7 @@
 	SyntaxHighlighter.defaults['gutter'] = false;
     SyntaxHighlighter.defaults['tab-size'] = 2;
     SyntaxHighlighter.defaults['toolbar'] = false;
-    SyntaxHighlighter.defaults['wrap-lines'] = false; 
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
 	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
 	SyntaxHighlighter.all();
 </script>

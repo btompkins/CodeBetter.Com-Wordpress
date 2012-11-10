@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>OAuth 2.0 in Web API | Howard Dierking</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/howarddierking/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/howarddierking/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Web API Preview 5 Is Now Available' href='http://codebetter.com/howarddierking/2011/09/15/web-api-preview-5-is-now-available/' />
+<link rel='next' title='Getting Inherited Config Settings' href='http://codebetter.com/howarddierking/2011/10/18/getting-inherited-config-settings/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/howarddierking/?p=156' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,128] -->
+<meta name="keywords" content="oauth,uncategorized,web api" />
+<link rel="canonical" href="http://codebetter.com/howarddierking/2011/10/11/oauth-2-0-in-web-api/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/howarddierking/files/2011/10/diagram-1_thumb.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=3981720249">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-156" class="post-156 post type-post status-publish format-standard hentry category-oauth category-uncategorized category-web-api">
+					<h1 class="entry-title">OAuth 2.0 in Web API</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/howarddierking/author/howarddierking/" title="View all posts by Howard Dierking">Howard Dierking</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/howarddierking/2011/10/11/oauth-2-0-in-web-api/" title="11:57 pm" rel="bookmark"><span class="entry-date">October 11, 2011</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/howarddierking/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/howarddierking/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>This week I’ll be pushing a sample to the WebAPI-Prototype branch in our Codeplex repository for doing an OAuth 2.0 dance for Web APIs.&nbsp; Before I get into how the sample works, let’s quickly define some OAuth 2.0 terms (note that these are all defined in the <a href="http://tools.ietf.org/pdf/draft-ietf-oauth-v2-22.pdf">OAuth 2.0 spec</a>, but I’m defining them here so that you don’t need to read the spec as a prerequisite for this blog post).</p>
+<h2>Some Context</h2>
+<p><strong>Resource owner</strong> – represents the entity who actually owns the protected resources.&nbsp; In the case of this sample, the user (e.g. – you) is the resource owner.</p>
+<p><strong>Client</strong> – represents the application which accesses a resource owner’s protected resources after the resource owner has explicitly granted it permission – this last part can also be said, “after the resource owner has <em>authorized</em> the client to his/her protected resources”.</p>
+<p><strong>Resource Server</strong> – represents the application that is responsible for hosting the resource owner’s protected resource.&nbsp; The resource server uses access tokens when processing and responding to requests for protected resources.</p>
+<p><strong>Authorization Server</strong> – represents the application that is responsible for authenticating a resource owner, enabling the resource owner to authorize a client, and ultimately issuing an access token to the client.</p>
+<p>As the OAuth 2.0 spec defines, the abstract flow appears really simple:</p>
+<p><a href="http://codebetter.com/howarddierking/files/2011/10/diagram.png"><img style="border-bottom: 0px;border-left: 0px;padding-left: 0px;padding-right: 0px;border-top: 0px;border-right: 0px;padding-top: 0px" border="0" alt="diagram" src="http://codebetter.com/howarddierking/files/2011/10/diagram_thumb.png" width="484" height="232"></a></p>
+<p>However, in practice, nothing is ever as simple as the abstract flow makes it seems (that’s probably why they call it “abstract”).&nbsp; For each of the stages of this flow, there are multiple ways of accomplishing the stage.&nbsp; In this post, I’m going to discuss one way of implementing the OAuth 2.0 flow, but know that this represents only 1 of several possible options.&nbsp; Moving forward, I plan on adding more flows into the prototype branch (and of course, blogging about them here).</p>
+<h2>A Brief Disclaimer</h2>
+<p>I’m a big believer in the principle of “the right tool for the right job” – and as I’m building out this prototype, one of the thoughts I keep arriving at is that while OAuth gives you authentication as a byproduct of having the resource owner authorize a client to a resource server, the focus of OAuth seems much more on authorization than it does federated identity.&nbsp; I think that what I’m getting at is in the difference between delegated authorization and federated identity, but I’m having a hard time getting to a crisp, non-philosophical articulation of the differences between those 2 terms.&nbsp; <a href="http://www.google.com/search?q=delegated+authorization">Judging from a quick Google search</a>, I’m not the only one having trouble coming up with a clean articulation of the differences (I suspect this is because authN is always required at some point to do authZ).</p>
+<p>At any rate, you may end up asking yourself a similar question as we go through the discussion of the sample, so I wanted to be up front in saying that I feel the same sense of weirdness and am also actively investigating OAuth patterns that use a federated identity system for authN and OAuth for authZ (or patterns to simply make it easier to integrate with federated identity systems, if simply not managing credentials is really the thing you care about).</p>
+<h2>The OAuth 2.0 Sample Workflow</h2>
+<p>For the sample, the goal was to secure a Web API using Facebook’s OAuth 2.0 capabilities so that the Web API didn’t need to maintain any usernames or passwords.&nbsp; The resulting workflow looks like the following:</p>
+<p><a href="http://codebetter.com/howarddierking/files/2011/10/diagram-1.png"><img style="border-right-width: 0px;margin: 0px 0px 24px;padding-left: 0px;padding-right: 0px;border-top-width: 0px;border-bottom-width: 0px;border-left-width: 0px;padding-top: 0px" border="0" alt="diagram (1)" src="http://codebetter.com/howarddierking/files/2011/10/diagram-1_thumb.png" width="557" height="655"></a></p>
+<p>As you can see right off the bat, the concrete example is a good bit more complex than the abstract flow defined by the OAuth 2.0 spec.&nbsp; Why is that?&nbsp; As I see it, there are 2 primary drivers of the added complexity to the end-to-end flow.&nbsp; First, I decided that my Web API represents my OAuth client.&nbsp; This means that once authorized by the resource owner (e.g. user), my Web API can get resources directly from the resource server (e.g. Facebook) without having to expose that data to the resource owner, or any malicious application pretending to be the resource owner.&nbsp; However, because the end user experience is still a browser, and because my browser experience is AJAX-based (meaning that I can’t count on the browser to act directly on 302 status codes), I need a mini-protocol between my Web API and my AJAX code.</p>
+<p>The second reason for the added complexity relates a bit to the “brief disclaimer” above.&nbsp; That is, this workflow takes advantage of the fact that authentication is required for authorization – and my Web API client does call into Facebook (in its resource server role) to get some resource owner data.&nbsp; However, the Facebook access token is used by my Web API only long enough to get a piece of user-identifying data which it then plugs into an existing authorization store – I’ve faked out the ASP.NET membership provider in this case. </p>
+<p>I’ll be writing another post on my general thoughts here, but for now, this workflow works (even with the additional complexity) and should set the stage for showing how AuthN/AuthZ can work for Web API.</p>
+<h2>Plugging into Web API</h2>
+<p>One of the goals I had for the prototype was to enable the auth mechanism to plug into Web API using the standard extensibility points.&nbsp; Additionally, I wanted it to use the standard <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute.aspx">AuthorizeAttribute</a> that MVC uses.&nbsp; As such, I took advantage of 2 Web API extensibility hooks: operation handlers and message handlers.&nbsp; Additionally, there’s some logic behind wiring everything up that I encapsulated into an extension method that works with the HttpConfiguration object.</p>
+<p>First, we have the OAuthFacebookOperationHandler.&nbsp; The responsibility of this operation handler is to examine the incoming request to see whether the operation being called needs to be protected and if so, determine whether the user has been authorized (currently making this determination using a cookie).&nbsp; Based on whether or not the user has been authorized for the operation, the handler will either pass control over to the operation or return a standard Http challenge response containing the Facebook OAuth authorization dialog URL.</p>
+<script src="http://gist.github.com/1279891.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-1279891" class="gist">
+    
+
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'><span class="k">public</span> <span class="k">class</span> <span class="nc">OAuthFacebookOpHandler</span> <span class="p">:</span> <span class="n">HttpOperationHandler</span><span class="p">&lt;</span><span class="n">HttpRequestMessage</span><span class="p">,</span> <span class="n">HttpRequestMessage</span><span class="p">&gt;</span> <span class="p">{</span></div><div class='line' id='LC2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">readonly</span> <span class="n">Uri</span> <span class="n">_facebookBaseAuthUri</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="s">&quot;https://www.facebook.com/dialog/oauth&quot;</span><span class="p">);</span></div><div class='line' id='LC3'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">readonly</span> <span class="n">AuthorizeAttribute</span> <span class="n">_authorizationAttribute</span><span class="p">;</span></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">readonly</span> <span class="kt">string</span> <span class="n">_facebookAppId</span><span class="p">;</span></div><div class='line' id='LC5'><br/></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="nf">OAuthFacebookOpHandler</span><span class="p">()</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="s">&quot;response&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span></div><div class='line' id='LC7'><br/></div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="nf">OAuthFacebookOpHandler</span><span class="p">(</span><span class="n">AuthorizeAttribute</span> <span class="n">authorizeAttribute</span><span class="p">,</span> <span class="kt">string</span> <span class="n">appId</span><span class="p">)</span> <span class="p">:</span> <span class="k">this</span><span class="p">()</span> <span class="p">{</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_authorizationAttribute</span> <span class="p">=</span> <span class="n">authorizeAttribute</span><span class="p">;</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppId</span> <span class="p">=</span> <span class="n">appId</span><span class="p">;</span></div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC12'><br/></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">protected</span> <span class="k">override</span> <span class="n">HttpRequestMessage</span> <span class="nf">OnHandle</span><span class="p">(</span><span class="n">HttpRequestMessage</span> <span class="n">input</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC14'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">identity</span> <span class="p">=</span> <span class="n">GetIdentity</span><span class="p">();</span></div><div class='line' id='LC15'><br/></div><div class='line' id='LC16'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">identity</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span></div><div class='line' id='LC17'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">{</span></div><div class='line' id='LC18'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">challengeMessage</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">Unauthorized</span><span class="p">);</span></div><div class='line' id='LC19'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">challengeMessage</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">WwwAuthenticate</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">AuthenticationHeaderValue</span><span class="p">(</span><span class="s">&quot;oauth&quot;</span><span class="p">,</span> <span class="s">&quot;location=\&quot;&quot;</span> <span class="p">+</span> <span class="n">BuildFacebookAuthUri</span><span class="p">(</span><span class="n">input</span><span class="p">)</span> <span class="p">+</span> <span class="s">&quot;\&quot;&quot;</span><span class="p">));</span></div><div class='line' id='LC20'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpResponseException</span><span class="p">(</span><span class="n">challengeMessage</span><span class="p">);</span></div><div class='line' id='LC21'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC22'><br/></div><div class='line' id='LC23'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">principle</span> <span class="p">=</span> <span class="k">new</span> <span class="n">GenericPrincipal</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[</span><span class="m">0</span><span class="p">]);</span></div><div class='line' id='LC24'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC25'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">//set the thread context</span></div><div class='line' id='LC26'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">Thread</span><span class="p">.</span><span class="n">CurrentPrincipal</span> <span class="p">=</span> <span class="n">principle</span><span class="p">;</span></div><div class='line' id='LC27'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC28'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span><span class="p">(!</span><span class="n">AuthorizeCore</span><span class="p">(</span><span class="n">principle</span><span class="p">))</span></div><div class='line' id='LC29'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpResponseException</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">Forbidden</span><span class="p">);</span>              </div><div class='line' id='LC30'><br/></div><div class='line' id='LC31'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">input</span><span class="p">;</span></div><div class='line' id='LC32'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC33'><br/></div><div class='line' id='LC34'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">// ripped from MVC AuthorizeAttribute (http://aspnet.codeplex.com/SourceControl/changeset/view/70574#266447) </span></div><div class='line' id='LC35'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">// kept the logic but removed dependency on HttpContextBase and use local attribute field (since we&#39;re obviously no longer in the AuthorizeAttribute class </span></div><div class='line' id='LC36'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">// calling local copy (and creating local vars for users/roles</span></div><div class='line' id='LC37'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">// also removed virtual since it doesn&#39;t matter for this sample - may be worthwhile considering if we want a base class for something like AuthorizationOperationHandler</span></div><div class='line' id='LC38'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">protected</span> <span class="kt">bool</span> <span class="nf">AuthorizeCore</span><span class="p">(</span><span class="n">IPrincipal</span> <span class="n">principal</span><span class="p">)</span></div><div class='line' id='LC39'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">{</span></div><div class='line' id='LC40'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(!</span><span class="n">principal</span><span class="p">.</span><span class="n">Identity</span><span class="p">.</span><span class="n">IsAuthenticated</span><span class="p">)</span></div><div class='line' id='LC41'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="k">false</span><span class="p">;</span></div><div class='line' id='LC42'><br/></div><div class='line' id='LC43'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">usersSplit</span> <span class="p">=</span> <span class="n">SplitString</span><span class="p">(</span><span class="n">_authorizationAttribute</span><span class="p">.</span><span class="n">Users</span><span class="p">);</span></div><div class='line' id='LC44'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">usersSplit</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span> <span class="p">&amp;&amp;</span> <span class="p">!</span><span class="n">usersSplit</span><span class="p">.</span><span class="n">Contains</span><span class="p">(</span><span class="n">principal</span><span class="p">.</span><span class="n">Identity</span><span class="p">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">StringComparer</span><span class="p">.</span><span class="n">OrdinalIgnoreCase</span><span class="p">))</span></div><div class='line' id='LC45'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="k">false</span><span class="p">;</span></div><div class='line' id='LC46'><br/></div><div class='line' id='LC47'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">rolesSplit</span> <span class="p">=</span> <span class="n">SplitString</span><span class="p">(</span><span class="n">_authorizationAttribute</span><span class="p">.</span><span class="n">Roles</span><span class="p">);</span></div><div class='line' id='LC48'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">rolesSplit</span><span class="p">.</span><span class="n">Length</span> <span class="p">&lt;=</span> <span class="m">0</span> <span class="p">||</span> <span class="n">rolesSplit</span><span class="p">.</span><span class="n">Any</span><span class="p">(</span><span class="n">principal</span><span class="p">.</span><span class="n">IsInRole</span><span class="p">);</span></div><div class='line' id='LC49'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC50'><br/></div><div class='line' id='LC51'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">// ripped from MVC AuthorizeAttribute (http://aspnet.codeplex.com/SourceControl/changeset/view/70574#266447) </span></div><div class='line' id='LC52'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">static</span> <span class="kt">string</span><span class="p">[]</span> <span class="nf">SplitString</span><span class="p">(</span><span class="kt">string</span> <span class="n">original</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC53'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">String</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">original</span><span class="p">))</span> <span class="p">{</span></div><div class='line' id='LC54'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="k">new</span> <span class="kt">string</span><span class="p">[</span><span class="m">0</span><span class="p">];</span></div><div class='line' id='LC55'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC56'><br/></div><div class='line' id='LC57'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">split</span> <span class="p">=</span> <span class="k">from</span> <span class="n">piece</span> <span class="k">in</span> <span class="n">original</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="sc">&#39;,&#39;</span><span class="p">)</span></div><div class='line' id='LC58'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">let</span> <span class="n">trimmed</span> <span class="p">=</span> <span class="n">piece</span><span class="p">.</span><span class="n">Trim</span><span class="p">()</span></div><div class='line' id='LC59'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">where</span> <span class="p">!</span><span class="n">String</span><span class="p">.</span><span class="n">IsNullOrEmpty</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span></div><div class='line' id='LC60'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">select</span> <span class="n">trimmed</span><span class="p">;</span></div><div class='line' id='LC61'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">split</span><span class="p">.</span><span class="n">ToArray</span><span class="p">();</span></div><div class='line' id='LC62'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC63'><br/></div><div class='line' id='LC64'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">Uri</span> <span class="nf">BuildFacebookAuthUri</span><span class="p">(</span><span class="n">HttpRequestMessage</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC65'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">builder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">UriBuilder</span><span class="p">(</span><span class="n">_facebookBaseAuthUri</span><span class="p">)</span></div><div class='line' id='LC66'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">{</span></div><div class='line' id='LC67'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">Query</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;client_id={0}&amp;redirect_uri={1}&amp;response_type=code&quot;</span><span class="p">,</span> </div><div class='line' id='LC68'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppId</span><span class="p">,</span></div><div class='line' id='LC69'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">new</span> <span class="nf">Uri</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">,</span> <span class="s">&quot;authtoken&quot;</span><span class="p">))</span>             </div><div class='line' id='LC70'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">};</span></div><div class='line' id='LC71'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">builder</span><span class="p">.</span><span class="n">Uri</span><span class="p">;</span></div><div class='line' id='LC72'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC73'><br/></div><div class='line' id='LC74'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">static</span> <span class="n">IIdentity</span> <span class="nf">GetIdentity</span><span class="p">()</span> <span class="p">{</span></div><div class='line' id='LC75'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">ticketCookie</span> <span class="p">=</span> <span class="n">HttpContext</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="n">Request</span><span class="p">.</span><span class="n">Cookies</span><span class="p">[</span><span class="s">&quot;ticket&quot;</span><span class="p">];</span></div><div class='line' id='LC76'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">ticketCookie</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span></div><div class='line' id='LC77'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="k">null</span><span class="p">;</span></div><div class='line' id='LC78'><br/></div><div class='line' id='LC79'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">val</span> <span class="p">=</span> <span class="n">ticketCookie</span><span class="p">.</span><span class="n">Value</span><span class="p">;</span></div><div class='line' id='LC80'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">ticket</span> <span class="p">=</span> <span class="n">FormsAuthentication</span><span class="p">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">val</span><span class="p">);</span></div><div class='line' id='LC81'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">ident</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FormsIdentity</span><span class="p">(</span><span class="n">ticket</span><span class="p">);</span></div><div class='line' id='LC82'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">ident</span><span class="p">;</span></div><div class='line' id='LC83'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC84'><span class="p">}</span></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/1279891/d81bb63aafb0e44dc04d48d6110a43707a682c30/OAuthFacebookOperationHandler.cs" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/1279891#file_o_auth_facebook_operation_handler.cs" style="float:right;margin-right:10px;color:#666">OAuthFacebookOperationHandler.cs</a>
+            <a href="https://gist.github.com/1279891">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p>First, I’m sure you’ll notice that there’s a bunch of todo notes still in the code.&nbsp; I’m actively working on getting this more seamlessly plugged into things like the membership provider, the AuthorizeAttribute, and the forms authentication cookie generator.&nbsp; However, the purpose of this post is to show the mechanics of initiating an OAuth flow, so hopefully those unfinished aspects won’t be too big of a distraction.&nbsp; But that aside, the basic workflow looks like this:</p>
+<ul>
+<li>check to see whether the user has already gone through the OAuth dance, been authenticated, and has authorized the Web API.&nbsp; If this process has happened, there will be a cookie in the request</li>
+<ul>
+<li>If the user has been authenticated, authorize the user based on the AuthorizeAttribute on the service operation</li>
+<li>If the user has not been authenticated, throw a 401 challenge response with a scheme of OAuth and a location parameter of the Facebook auth dialog</li>
+</ul>
+</ul>
+<p>In my sample, I have an AJAX client, so the following jQuery is able to take the challenge response, parse out the location and popup the Facebook auth dialog…</p>
+<script src="http://gist.github.com/1280170.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-1280170" class="gist">
+    
+
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'><span class="kd">function</span> <span class="nx">GetCommentsWithOAuth</span><span class="p">(){</span></div><div class='line' id='LC2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">viewModel</span><span class="p">.</span><span class="nx">comments</span><span class="p">([]);</span></div><div class='line' id='LC3'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">({</span> <span class="nx">url</span><span class="o">:</span> <span class="s2">&quot;/services/comments/oauth&quot;</span><span class="p">,</span></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">accepts</span><span class="o">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span></div><div class='line' id='LC5'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">cache</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">statusCode</span><span class="o">:</span> <span class="p">{</span></div><div class='line' id='LC7'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mi">200</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span></div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">viewModel</span><span class="p">.</span><span class="nx">comments</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">},</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mi">401</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">jqXHR</span><span class="p">,</span> <span class="nx">textStatus</span><span class="p">,</span> <span class="nx">errorThrown</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC12'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kd">var</span> <span class="nx">wwwAuthHeaderValue</span> <span class="o">=</span> <span class="nx">jqXHR</span><span class="p">.</span><span class="nx">getResponseHeader</span><span class="p">(</span><span class="s2">&quot;WWW-Authenticate&quot;</span><span class="p">);</span></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC14'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c1">//get the location paramater and call it in an ajax modal</span></div><div class='line' id='LC15'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kd">var</span> <span class="nx">re</span> <span class="o">=</span> <span class="sr">/\w+\slocation=&quot;([/\.\?\=:&amp;\w]+)&quot;/i</span><span class="p">;</span></div><div class='line' id='LC16'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kd">var</span> <span class="nx">results</span> <span class="o">=</span> <span class="nx">re</span><span class="p">.</span><span class="nx">exec</span><span class="p">(</span><span class="nx">wwwAuthHeaderValue</span><span class="p">);</span></div><div class='line' id='LC17'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kd">var</span> <span class="nx">authZServerUrl</span> <span class="o">=</span> <span class="nx">results</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span></div><div class='line' id='LC18'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC19'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">alert</span><span class="p">(</span><span class="s2">&quot;navigating to: &quot;</span> <span class="o">+</span> <span class="nx">authZServerUrl</span><span class="p">);</span></div><div class='line' id='LC20'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kd">var</span> <span class="nx">w</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="nx">authZServerUrl</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s1">&#39;width=900,height=600,toolbar=no,menubar=no&#39;</span><span class="p">);</span></div><div class='line' id='LC21'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">},</span></div><div class='line' id='LC22'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC23'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="mi">403</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></div><div class='line' id='LC24'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Sorry, are not authorized&#39;</span><span class="p">);</span></div><div class='line' id='LC25'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC26'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC27'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">});</span></div><div class='line' id='LC28'><span class="p">}</span></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/1280170/30f243b313d9b6debee01cdcad430cba38c8993e/get-oauth.js" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/1280170#file_get_oauth.js" style="float:right;margin-right:10px;color:#666">get-oauth.js</a>
+            <a href="https://gist.github.com/1280170">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p>Like I said, this jQuery uses a regex to get the value of the location parameter in the response.&nbsp; It then uses that to open the Facebook auth dialog.&nbsp; The user will then interact with Facebook to authenticate and then authorize my Web API to a Facebook application that I created (note: you’ll need to create register an application with Facebook to use its OAuth authorization server endpoints).&nbsp; If you look back at the URL that’s passed to the location header (line 45 of the operation handler), you’ll notice that one of the query values is the redirect URI.&nbsp; My operation handler will always generate a value that is the address of the originally requested resource with an additional path segment called “authtoken”.&nbsp; Therefore, if my resource is localhost/comments, the redirect URL will be localhost/comments/authtoken (this isn’t a requirement of any kind – it was just how I put this code together).&nbsp; The thing is, I don’t have a resource or service named authtoken.&nbsp; So how does this get picked up?&nbsp; Enter the OAuthFacebookMessageHandler.</p>
+<p>If you remember from <a href="http://codebetter.com/glennblock/2011/05/17/message-handlers-vs-operation-handlers-which-one-to-use-2/">Glenn’s post about Web API extensibility</a>, message handlers give you an opportunity to plug in down in the channel stack and work directly with HttpRequestMessage and HttpResponseMessage.&nbsp; And while this isn’t terribly helpful if you need details about the operation (parameters, return values, etc.), it’s great if you need only work at the Http level – and it’s very fast!&nbsp; In my case, I need to basically capture all requests that have authtoken as the last path segment, get some information about the user from Facebook so that I can correlate that with my local authorization store (e.g. membership provider) and then drop a cookie that can be used in subsequent requests.</p>
+<script src="http://gist.github.com/1280196.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-1280196" class="gist">
+    
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'><span class="k">public</span> <span class="k">class</span> <span class="nc">OAuthFacebookMessageHandler</span> <span class="p">:</span> <span class="n">DelegatingHandler</span></div><div class='line' id='LC2'><span class="p">{</span></div><div class='line' id='LC3'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">static</span> <span class="k">readonly</span> <span class="n">Uri</span> <span class="n">FacebookBaseGraphUri</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="s">&quot;https://graph.facebook.com/me&quot;</span><span class="p">);</span></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">static</span> <span class="k">readonly</span> <span class="n">Uri</span> <span class="n">FacebookAccessTokenBaseUri</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="s">&quot;https://graph.facebook.com/oauth/access_token&quot;</span><span class="p">);</span></div><div class='line' id='LC5'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">readonly</span> <span class="kt">string</span> <span class="n">_facebookAppId</span><span class="p">;</span></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">readonly</span> <span class="kt">string</span> <span class="n">_facebookAppSecret</span><span class="p">;</span></div><div class='line' id='LC7'><br/></div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="nf">OAuthFacebookMessageHandler</span><span class="p">(</span><span class="kt">string</span> <span class="n">appId</span><span class="p">,</span> <span class="kt">string</span> <span class="n">secret</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppId</span> <span class="p">=</span> <span class="n">appId</span><span class="p">;</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppSecret</span> <span class="p">=</span> <span class="n">secret</span><span class="p">;</span></div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC12'><br/></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">protected</span> <span class="k">override</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">HttpResponseMessage</span><span class="p">&gt;</span> <span class="n">SendAsync</span><span class="p">(</span><span class="n">HttpRequestMessage</span> <span class="n">request</span><span class="p">,</span></div><div class='line' id='LC14'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">CancellationToken</span> <span class="n">cancellationToken</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC15'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">Method</span> <span class="p">==</span> <span class="n">HttpMethod</span><span class="p">.</span><span class="n">Get</span> <span class="p">&amp;&amp;</span> <span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">.</span><span class="n">Segments</span><span class="p">.</span><span class="n">Last</span><span class="p">()</span> <span class="p">==</span> <span class="s">&quot;authtoken&quot;</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC16'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">querystring</span> <span class="p">=</span> <span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">.</span><span class="n">Query</span><span class="p">.</span><span class="n">Substring</span><span class="p">(</span><span class="m">1</span><span class="p">);</span></div><div class='line' id='LC17'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">queryParams</span> <span class="p">=</span> <span class="n">querystring</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="sc">&#39;&amp;&#39;</span><span class="p">});</span></div><div class='line' id='LC18'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">queryParams</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC19'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">code</span> <span class="p">=</span> <span class="n">queryParams</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">StartsWith</span><span class="p">(</span><span class="s">&quot;code&quot;</span><span class="p">)).</span><span class="n">First</span><span class="p">().</span><span class="n">Split</span><span class="p">(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="sc">&#39;=&#39;</span><span class="p">})[</span><span class="m">1</span><span class="p">];</span></div><div class='line' id='LC20'><br/></div><div class='line' id='LC21'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">Task</span><span class="p">.</span><span class="n">Factory</span><span class="p">.</span><span class="n">StartNew</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span></div><div class='line' id='LC22'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">accessToken</span> <span class="p">=</span> <span class="n">GetFacebookAccessToken</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">request</span><span class="p">);</span></div><div class='line' id='LC23'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">username</span> <span class="p">=</span> <span class="n">GetFacebookUsername</span><span class="p">(</span><span class="n">accessToken</span><span class="p">);</span></div><div class='line' id='LC24'><br/></div><div class='line' id='LC25'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">ticket</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FormsAuthenticationTicket</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="k">false</span><span class="p">,</span> <span class="m">60</span><span class="p">);</span></div><div class='line' id='LC26'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">s</span> <span class="p">=</span> <span class="n">FormsAuthentication</span><span class="p">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="n">ticket</span><span class="p">);</span></div><div class='line' id='LC27'><br/></div><div class='line' id='LC28'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="p">();</span></div><div class='line' id='LC29'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="s">&quot;Set-Cookie&quot;</span><span class="p">,</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;ticket={0}; path=/&quot;</span><span class="p">,</span> <span class="n">s</span><span class="p">));</span></div><div class='line' id='LC30'><br/></div><div class='line' id='LC31'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">responseContentBuilder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="p">();</span></div><div class='line' id='LC32'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;&lt;html&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC33'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;   &lt;head&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC34'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;      &lt;title&gt;temp&lt;/title&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC35'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;   &lt;/head&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC36'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;   &lt;body&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC37'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;      &lt;script type=\&quot;text/javascript\&quot;&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC38'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;         if(window.opener &amp;&amp; window.opener.GetCommentsWithOAuth){&quot;</span><span class="p">);</span></div><div class='line' id='LC39'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;            window.opener.GetCommentsWithOAuth();&quot;</span><span class="p">);</span></div><div class='line' id='LC40'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;            window.close()&quot;</span><span class="p">);</span></div><div class='line' id='LC41'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;         }&quot;</span><span class="p">);</span></div><div class='line' id='LC42'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;      &lt;/script&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC43'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;   &lt;/body&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC44'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">AppendLine</span><span class="p">(</span><span class="s">&quot;&lt;/html&gt;&quot;</span><span class="p">);</span></div><div class='line' id='LC45'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC46'><br/></div><div class='line' id='LC47'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">response</span><span class="p">.</span><span class="n">Content</span> <span class="p">=</span> <span class="k">new</span> <span class="n">StringContent</span><span class="p">(</span><span class="n">responseContentBuilder</span><span class="p">.</span><span class="n">ToString</span><span class="p">());</span></div><div class='line' id='LC48'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">response</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">ContentType</span> <span class="p">=</span> <span class="k">new</span> <span class="n">MediaTypeHeaderValue</span><span class="p">(</span><span class="s">&quot;text/html&quot;</span><span class="p">);</span></div><div class='line' id='LC49'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">CacheControl</span> <span class="p">=</span> <span class="k">new</span> <span class="n">CacheControlHeaderValue</span> <span class="p">{</span><span class="n">NoCache</span> <span class="p">=</span> <span class="k">true</span><span class="p">};</span></div><div class='line' id='LC50'><br/></div><div class='line' id='LC51'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">response</span><span class="p">;</span></div><div class='line' id='LC52'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">});</span></div><div class='line' id='LC53'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC54'><br/></div><div class='line' id='LC55'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">Task</span><span class="p">.</span><span class="n">Factory</span><span class="p">.</span><span class="n">StartNew</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">InternalServerError</span><span class="p">));</span></div><div class='line' id='LC56'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC57'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="k">base</span><span class="p">.</span><span class="n">SendAsync</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">cancellationToken</span><span class="p">);</span></div><div class='line' id='LC58'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC59'><br/></div><div class='line' id='LC60'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">string</span> <span class="nf">GetFacebookAccessToken</span><span class="p">(</span><span class="kt">string</span> <span class="n">code</span><span class="p">,</span> <span class="n">HttpRequestMessage</span> <span class="n">request</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC61'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">uriBuilder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">UriBuilder</span><span class="p">(</span><span class="n">FacebookAccessTokenBaseUri</span><span class="p">)</span></div><div class='line' id='LC62'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">{</span></div><div class='line' id='LC63'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">Query</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;client_id={0}&amp;redirect_uri={1}://{2}{3}&amp;client_secret={4}&amp;code={5}&quot;</span><span class="p">,</span></div><div class='line' id='LC64'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppId</span><span class="p">,</span></div><div class='line' id='LC65'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">.</span><span class="n">Scheme</span><span class="p">,</span></div><div class='line' id='LC66'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">.</span><span class="n">Authority</span><span class="p">,</span></div><div class='line' id='LC67'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">.</span><span class="n">LocalPath</span><span class="p">,</span></div><div class='line' id='LC68'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">_facebookAppSecret</span><span class="p">,</span></div><div class='line' id='LC69'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">code</span><span class="p">)</span></div><div class='line' id='LC70'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">};</span></div><div class='line' id='LC71'><br/></div><div class='line' id='LC72'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">accessTokenClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpClient</span><span class="p">();</span></div><div class='line' id='LC73'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">accessTokenResponse</span> <span class="p">=</span> <span class="n">accessTokenClient</span><span class="p">.</span><span class="n">Get</span><span class="p">(</span><span class="n">uriBuilder</span><span class="p">.</span><span class="n">Uri</span><span class="p">);</span></div><div class='line' id='LC74'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">responseBody</span> <span class="p">=</span> <span class="n">accessTokenResponse</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadAsString</span><span class="p">();</span></div><div class='line' id='LC75'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">responseBody</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC76'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">accessToken</span> <span class="p">=</span> <span class="n">responseBody</span><span class="p">.</span><span class="n">Split</span><span class="p">(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="sc">&#39;&amp;&#39;</span><span class="p">}).</span><span class="n">First</span><span class="p">().</span><span class="n">Split</span><span class="p">(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="sc">&#39;=&#39;</span><span class="p">})[</span><span class="m">1</span><span class="p">];</span></div><div class='line' id='LC77'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">accessToken</span><span class="p">;</span></div><div class='line' id='LC78'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC79'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">throw</span> <span class="k">new</span> <span class="nf">Exception</span><span class="p">(</span><span class="s">&quot;access token response body should not be null&quot;</span><span class="p">);</span></div><div class='line' id='LC80'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC81'><br/></div><div class='line' id='LC82'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">static</span> <span class="kt">string</span> <span class="nf">GetFacebookUsername</span><span class="p">(</span><span class="kt">string</span> <span class="n">accessToken</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC83'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">builder</span> <span class="p">=</span> <span class="k">new</span> <span class="n">UriBuilder</span><span class="p">(</span><span class="n">FacebookBaseGraphUri</span><span class="p">)</span></div><div class='line' id='LC84'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">{</span></div><div class='line' id='LC85'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">Query</span> <span class="p">=</span> <span class="kt">string</span><span class="p">.</span><span class="n">Format</span><span class="p">(</span><span class="s">&quot;access_token={0}&quot;</span><span class="p">,</span> <span class="n">accessToken</span><span class="p">)</span></div><div class='line' id='LC86'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">};</span></div><div class='line' id='LC87'><br/></div><div class='line' id='LC88'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">profileClient</span> <span class="p">=</span> <span class="k">new</span> <span class="n">HttpClient</span><span class="p">();</span></div><div class='line' id='LC89'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">profileResponse</span> <span class="p">=</span> <span class="n">profileClient</span><span class="p">.</span><span class="n">Get</span><span class="p">(</span><span class="n">builder</span><span class="p">.</span><span class="n">Uri</span><span class="p">);</span></div><div class='line' id='LC90'><br/></div><div class='line' id='LC91'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">formatter</span> <span class="p">=</span> <span class="k">new</span> <span class="n">JsonValueMediaTypeFormatter</span><span class="p">();</span></div><div class='line' id='LC92'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">formatter</span><span class="p">.</span><span class="n">SupportedMediaTypes</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">MediaTypeHeaderValue</span><span class="p">(</span><span class="s">&quot;text/javascript&quot;</span><span class="p">));</span></div><div class='line' id='LC93'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">v</span> <span class="p">=</span> <span class="n">profileResponse</span><span class="p">.</span><span class="n">Content</span><span class="p">.</span><span class="n">ReadAs</span><span class="p">&lt;</span><span class="n">JsonValue</span><span class="p">&gt;(</span><span class="k">new</span><span class="p">[]</span> <span class="p">{</span><span class="n">formatter</span><span class="p">});</span></div><div class='line' id='LC94'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">].</span><span class="n">ReadAs</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span></div><div class='line' id='LC95'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC96'><span class="p">}</span></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/1280196/4032a40277c5350f5114c6438fa52337d6df7c6c/OAuthFacebookMessageHandler.cs" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/1280196#file_o_auth_facebook_message_handler.cs" style="float:right;margin-right:10px;color:#666">OAuthFacebookMessageHandler.cs</a>
+            <a href="https://gist.github.com/1280196">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p>As you would expect, this code takes in an HttpRequestMessage.&nbsp; However, because it’s task-based, it needs to return a Task&lt;HttpResponseMessage&gt; rather than just an HttpResponseMessage.&nbsp; With async operation handlers, the basic principles are as follows:</p>
+<ul>
+<li>To continue the flow of execution to the inner message handler and ultimately up through the service operation, call base.SendAsync(..) .&nbsp; If you want to do some processing on the response side only, after the operation has been called, call base.SendAsync, but then add a ContinueWith(..) call.</li>
+<li>To short circuit all further processing of the request and simply return a response, return your own Task&lt;HttpResponseMessage&gt; using Task.Factory.StartNew(..)</li>
+</ul>
+<p>Because there is no actual service operation for /authtoken, I’m really dealing purely at the Http layer, so I’ll just be returning a new task rather than allowing the incoming message to propagate – and within my request processing I’m doing the following things:</p>
+<ul>
+<li>Exchange the auth code returned to me from Facebook for an access token – this is the thing that is actually used to access Facebook data</li>
+<li>Use the access token to get my username</li>
+<li>Drop my username to a cookie so that my operation handler can pick it up on subsequent calls (note: don’t EVER, EVER, EVER actually do this in production – I’m trying to show you the mechanics of the OAuth dance, and only that)</li>
+<li>Emit some script to close the popup window</li>
+</ul>
+<p>If all is successful, this handler will set future calls up for success, then signal the parent window to both close the popup and retry the newly-authorized request, so that while there’s a lot of moving parts here, it feels pretty seamless for the end user.</p>
+<p>Finally, there’s the question around how all of this gets wired up.&nbsp; I extracted the configuration code into a single, more simple extension method:</p>
+<script src="http://gist.github.com/1280213.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-1280213" class="gist">
+    
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'><span class="k">public</span> <span class="k">static</span> <span class="k">void</span> <span class="nf">RegisterOAuth</span><span class="p">(</span><span class="k">this</span> <span class="n">HttpConfiguration</span> <span class="n">config</span><span class="p">,</span> <span class="n">FacebookOAuthClient</span> <span class="n">client</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">existingFactory</span> <span class="p">=</span> <span class="n">config</span><span class="p">.</span><span class="n">RequestHandlers</span><span class="p">;</span></div><div class='line' id='LC3'><br/></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">config</span><span class="p">.</span><span class="n">RequestHandlers</span> <span class="p">=</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">od</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span></div><div class='line' id='LC5'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">existingFactory</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">existingFactory</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">od</span><span class="p">);</span></div><div class='line' id='LC7'><br/></div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">authorizeAttribute</span> <span class="p">=</span> <span class="n">od</span><span class="p">.</span><span class="n">Attributes</span><span class="p">.</span><span class="n">OfType</span><span class="p">&lt;</span><span class="n">AuthorizeAttribute</span><span class="p">&gt;().</span><span class="n">FirstOrDefault</span><span class="p">();</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">authorizeAttribute</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">od</span><span class="p">.</span><span class="n">Name</span> <span class="p">==</span> <span class="s">&quot;GetCommentsOauth&quot;</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">c</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">OAuthFacebookOpHandler</span><span class="p">(</span><span class="n">authorizeAttribute</span><span class="p">,</span> <span class="n">client</span><span class="p">.</span><span class="n">AppId</span><span class="p">));</span></div><div class='line' id='LC12'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">};</span></div><div class='line' id='LC14'><br/></div><div class='line' id='LC15'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">handlers</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">DelegatingHandler</span><span class="p">&gt;();</span></div><div class='line' id='LC16'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">MessageHandlerFactory</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span></div><div class='line' id='LC17'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">handlers</span><span class="p">.</span><span class="n">AddRange</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">MessageHandlerFactory</span><span class="p">());</span></div><div class='line' id='LC18'><br/></div><div class='line' id='LC19'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">config</span><span class="p">.</span><span class="n">MessageHandlerFactory</span> <span class="p">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span></div><div class='line' id='LC20'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">handlers</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="k">new</span> <span class="n">OAuthFacebookMessageHandler</span><span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">AppId</span><span class="p">,</span> <span class="n">client</span><span class="p">.</span><span class="n">Secret</span><span class="p">));</span></div><div class='line' id='LC21'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">handlers</span><span class="p">;</span></div><div class='line' id='LC22'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">};</span></div><div class='line' id='LC23'><span class="p">}</span></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/1280213/722a11e1b3a2b8a3f1c5ea29a583b607a4dea683/RegistrationHelpers.cs" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/1280213#file_registration_helpers.cs" style="float:right;margin-right:10px;color:#666">RegistrationHelpers.cs</a>
+            <a href="https://gist.github.com/1280213">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p>This means that I can register for OAuth with code similar to:</p>
+<p>config.RegisterOAuth(new FacebookOAuthClient(FB_APP_ID, FB_SECRET)); </p>
+<h2>Where To Next?</h2>
+<p>There are a bunch of identity and auth related scenarios that I’m currently prototyping, in addition to cleaning up some of the hard-coded stuff in this one.&nbsp; Here’s how I’ve currently prioritized security-related scenario investigations:</p>
+<ul>
+<li>Ensure that Http basic over SSL works without any issues</li>
+<li>Web API as an AuthN + AuthZ + Resource server – this would make the Web API equivalent to a service like Twitter where you could enable users to authorize 3<sup>rd</sup> party applications to your Web API (along with manage the permissions of those applications) – the key here is that Web API would have manage its own credential store.</li>
+<li>Web API as an AuthZ + Resource server – this is similar to the previous with the notable exception that Web API would rely on a federated identity provider for AuthN.&nbsp; In this scenario, we would integrate with an STS (or broker like ACS).</li>
+</ul>
+<p>Do these look like the right scenarios?&nbsp; The right ordering?&nbsp; As with everything else, I welcome your feedback!</p>
+<div class="shr-publisher-156"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://0.gravatar.com/avatar/859e318f8403226ff4b912edf77fba2a?s=60&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Howard Dierking</h2>
+							I like technology...a lot...							<div id="author-link">
+								<a href="http://codebetter.com/howarddierking/author/howarddierking/" title="View all posts by Howard Dierking">View all posts by Howard Dierking &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/howarddierking/category/oauth/" title="View all posts in OAuth" rel="category tag">OAuth</a>, <a href="http://codebetter.com/howarddierking/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>, <a href="http://codebetter.com/howarddierking/category/web-api/" title="View all posts in Web API" rel="category tag">Web API</a>. Bookmark the <a href="http://codebetter.com/howarddierking/2011/10/11/oauth-2-0-in-web-api/" title="Permalink to OAuth 2.0 in Web API" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/howarddierking/2011/10/11/oauth-2-0-in-web-api/feed/" title="Comments RSS to OAuth 2.0 in Web API" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-156 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/howarddierking/2011/09/15/web-api-preview-5-is-now-available/" rel="prev"><span class="meta-nav">&larr;</span> Web API Preview 5 Is Now Available</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/howarddierking/2011/10/18/getting-inherited-config-settings/" rel="next">Getting Inherited Config Settings <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-206">
+                    <div id="dsq-comment-header-206" class="dsq-comment-header">
+                        <cite id="dsq-cite-206">
+                                <span id="dsq-author-user-206">Ineedadip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-206" class="dsq-comment-body">
+                        <div id="dsq-comment-message-206" class="dsq-comment-message"><p>Exciting, I&#8217;ve had great success with the WCF Web API.  We&#8217;ve provided a great RESTful API for our clients using API Keys (GUIDs) that are passed as a header, querystring, or using Basic Authentication.  But now third parties want to build applications and nobody likes the idea of generating more API Keys to cut and paste&#8230; Everyone is asking if/when we can have some kind of OAuth Implementation.  I hope your second bullet point at the bottom provides some guidance. </p>
+<p>Great article.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-208">
+                    <div id="dsq-comment-header-208" class="dsq-comment-header">
+                        <cite id="dsq-cite-208">
+                                <span id="dsq-author-user-208">John Waters</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-208" class="dsq-comment-body">
+                        <div id="dsq-comment-message-208" class="dsq-comment-message"><p>Cool, I am also looking to do Basic Auth using a MessageHandler, do you have any code examples for that?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-209">
+                    <div id="dsq-comment-header-209" class="dsq-comment-header">
+                        <cite id="dsq-cite-209">
+                                <span id="dsq-author-user-209">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-209" class="dsq-comment-body">
+                        <div id="dsq-comment-message-209" class="dsq-comment-message"><p>At the moment, this scenario works if you&#8217;re using Windows credentials.  There some ways to get around this (they are different between IIS hosted and self-hosted) but we&#8217;re working on making it much more straightforward.  More to come on that topic.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-211">
+                    <div id="dsq-comment-header-211" class="dsq-comment-header">
+                        <cite id="dsq-cite-211">
+                                <span id="dsq-author-user-211">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-211" class="dsq-comment-body">
+                        <div id="dsq-comment-message-211" class="dsq-comment-message"><p>Just so that I&#8217;m clear on your scenario, are you imagining that your clients would authenticate using their existing keys and then authorize 3rd party applications to access their protected resources in your RESTful API?  I think that&#8217;s what I&#8217;m reading, but just want to make sure I&#8217;m not missing anything.</p>
+<p>I&#8217;m planning to approach this using the ASP.NET membership provider as a baseline credential store &#8211; do you see any issues with this approach for your scenario?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-212">
+                    <div id="dsq-comment-header-212" class="dsq-comment-header">
+                        <cite id="dsq-cite-212">
+                                <span id="dsq-author-user-212">Ineedadip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-212" class="dsq-comment-body">
+                        <div id="dsq-comment-message-212" class="dsq-comment-message"><p>We are not using ASP.NET Membership, but as long as that is abstracted away as much as possible I&#8217;m sure we&#8217;ll find it useful.  </p>
+<p>API Keys (GUIDS) that our clients can generate is how the API is currently used.  We would like to provide another option for third parties so that they can do some fancy &#8220;OAuth stuff&#8221; and provide our clients with an option to put in their credentials (Username and Password) to grant authority.</p>
+<p>Just to reiterate, right now third parties have to say &#8220;Go into your account, generate an API Key, then paste it here so we can access your account&#8221;.  We&#8217;d like to go the OAuth route so that clients don&#8217;t have to know about/generate/paste API Keys.</p>
+<p>Hopefully some of that makes sense.  Great posts by the way.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-217">
+                    <div id="dsq-comment-header-217" class="dsq-comment-header">
+                        <cite id="dsq-cite-217">
+                                <span id="dsq-author-user-217">John Waters</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-217" class="dsq-comment-body">
+                        <div id="dsq-comment-message-217" class="dsq-comment-message"><p>Actually, I have a scenario which I believe is quite common. I have a variety of mobile devices connecting to the REST api I am building on WebAPI, including iOS, Android and Windows Phone. I want to use Basic Auth for the initial log in, but then I want to send back some token that is stored on the device and used for subsequent calls. I have a prototype working but it feels pretty clunky, I would love to see some strong support for this scenario in the API. I would like to be able to just plug in code that does the login check for both the username/password and the token, and that returns the initial token, and have the rest be boilerplate. I would also like access to the current caller in my operations. If you want to discuss my current code base I would be happy to share.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-218">
+                    <div id="dsq-comment-header-218" class="dsq-comment-header">
+                        <cite id="dsq-cite-218">
+                                <span id="dsq-author-user-218">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-218" class="dsq-comment-body">
+                        <div id="dsq-comment-message-218" class="dsq-comment-message"><p>this actually sounds like a great example of bullet #2.  In this scenario, your mobile client would ask the user to authorize it to the his/her protected resources in your REST api.  Your Web API would support (via plugin) the OAuth auth server role which would enable your end users to authenticate to it using Http basic and then authorize the mobile app &#8211; at which point, the mobile app would get an access token which it would pass to the Web API on subsequent calls.  Because the Web API implements both the auth server and resource server roles, the token can be cracked open and the IPrincipal can be attached to the thread context, so that you can use it just like any other principal-based scenario.</p>
+<p>Does this sound about right?  As we&#8217;re prototyping this scenario out, I would love to keep in touch so that you can verify if the work we&#8217;re doing will work for your scenario.  Send me an email at howard at microsoft dot com.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-219">
+                    <div id="dsq-comment-header-219" class="dsq-comment-header">
+                        <cite id="dsq-cite-219">
+                                <span id="dsq-author-user-219">Ineedadip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-219" class="dsq-comment-body">
+                        <div id="dsq-comment-message-219" class="dsq-comment-message"><p>You guys are describing my exact scenario, just more eloquently.  This is something we have been kicking around internally.  Let me know if you need any beta testers.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-222">
+                    <div id="dsq-comment-header-222" class="dsq-comment-header">
+                        <cite id="dsq-cite-222">
+    http://netcave.org                            <span id="dsq-author-user-222">Alan Stevens</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-222" class="dsq-comment-body">
+                        <div id="dsq-comment-message-222" class="dsq-comment-message"><p>Hi Howard,</p>
+<p>What&#8217;s the ETA of getting this sample in the Prototype branch? I want to pick this apart.</p>
+<p>The first two of your bullet points are very high priority for me. I&#8217;m glad that you are working on it. Please reach out to me if you want some early feedback.</p>
+<p>Cheers,</p>
+<p>++Alan</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-223">
+                    <div id="dsq-comment-header-223" class="dsq-comment-header">
+                        <cite id="dsq-cite-223">
+                                <span id="dsq-author-user-223">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-223" class="dsq-comment-body">
+                        <div id="dsq-comment-message-223" class="dsq-comment-message"><p> <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p><a href="http://wcf.codeplex.com/SourceControl/changeset/changes/07fc26c0b7c9" rel="nofollow">http://wcf.codeplex.com/SourceControl/changeset/changes/07fc26c0b7c9</a></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-224">
+                    <div id="dsq-comment-header-224" class="dsq-comment-header">
+                        <cite id="dsq-cite-224">
+    http://netcave.org                            <span id="dsq-author-user-224">Alan Stevens</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-224" class="dsq-comment-body">
+                        <div id="dsq-comment-message-224" class="dsq-comment-message"><p>Hmmm&#8230; I thought there would be a complete sample leveraging the MessageHandler, OperationHandler and Helpers.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-225">
+                    <div id="dsq-comment-header-225" class="dsq-comment-header">
+                        <cite id="dsq-cite-225">
+                                <span id="dsq-author-user-225">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-225" class="dsq-comment-body">
+                        <div id="dsq-comment-message-225" class="dsq-comment-message"><p>I see &#8211; let me wire it into part of contact manager to show how it wires up.  In the meantime, the RegisterOAuth extension method will wire up the op handler and message handler.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-231">
+                    <div id="dsq-comment-header-231" class="dsq-comment-header">
+                        <cite id="dsq-cite-231">
+    http://twitter.com/RobGibbens                            <span id="dsq-author-user-231">RobGibbens</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-231" class="dsq-comment-body">
+                        <div id="dsq-comment-message-231" class="dsq-comment-message"><p>This is exactly what I was looking for.  Like Alan, I was looking for a more complete end to end example, as I&#8217;m just getting started using the Web Api.  Do you happen to have an estimate of when that might be wired up?  Thanks for this code and post; it&#8217;s very helpful.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-232">
+                    <div id="dsq-comment-header-232" class="dsq-comment-header">
+                        <cite id="dsq-cite-232">
+                                <span id="dsq-author-user-232">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-232" class="dsq-comment-body">
+                        <div id="dsq-comment-message-232" class="dsq-comment-message"><p>Will do within a week &#8211; was planning to do this week but we had a baby on Wednesday, so that&#8217;s set me back a few days <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-244">
+                    <div id="dsq-comment-header-244" class="dsq-comment-header">
+                        <cite id="dsq-cite-244">
+                                <span id="dsq-author-user-244">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-244" class="dsq-comment-body">
+                        <div id="dsq-comment-message-244" class="dsq-comment-message"><p>ok &#8211; just updated Codeplex to move the OAuth sample out of HttpEnhancements and into its very own end-to-end sample project called SecureServices (<a href="http://wcf.codeplex.com/SourceControl/changeset/changes/9f94d015f305" rel="nofollow">http://wcf.codeplex.com/SourceControl/changeset/changes/9f94d015f305</a>).  It&#8217;s on the WebAPI-Prototype branch, under the samples folder.  Please let me know if you have any questions or run into any issues.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-268">
+                    <div id="dsq-comment-header-268" class="dsq-comment-header">
+                        <cite id="dsq-cite-268">
+                                <span id="dsq-author-user-268">&#8211; &#8211;</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-268" class="dsq-comment-body">
+                        <div id="dsq-comment-message-268" class="dsq-comment-message"><p>At the moment I have a webapp which offers username/password login or<br />
+login via Twitter OAuth. I want to add a REST API for this<br />
+application. Users can login via HTTP authentication AND/OR OAuth:Inspired by your great post I created a sample flow: <a href="http://i.stack.imgur.com/EM446.png" rel="nofollow">http://i.stack.imgur.com/EM446.png</a><br />
+Can this work?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-269">
+                    <div id="dsq-comment-header-269" class="dsq-comment-header">
+                        <cite id="dsq-cite-269">
+    http://www.facebook.com/people/Kevin-Davie/1353257071                            <span id="dsq-author-user-269">Kevin Davie</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-269" class="dsq-comment-body">
+                        <div id="dsq-comment-message-269" class="dsq-comment-message"><p>congratulations!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-283">
+                    <div id="dsq-comment-header-283" class="dsq-comment-header">
+                        <cite id="dsq-cite-283">
+                                <span id="dsq-author-user-283">Luís Carlos Calado Lameirão Go</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-283" class="dsq-comment-body">
+                        <div id="dsq-comment-message-283" class="dsq-comment-message"><p>Hi Howard,</p>
+<p>I would like to use OAuth 2.0 with Google Prediction API. I have it in PHP but since I want to use Chrome Extensions, I have to do it in Javascript. Can you help me with this?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-284">
+                    <div id="dsq-comment-header-284" class="dsq-comment-header">
+                        <cite id="dsq-cite-284">
+                                <span id="dsq-author-user-284">Radenko</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-284" class="dsq-comment-body">
+                        <div id="dsq-comment-message-284" class="dsq-comment-message"><p>Hi this is very interesting post. I am trying to make WCF Web API service<br />
+that accept Facebook, Twitter and custom login.<br />
+Custom login also need to works by generating token . (I think I cannot use here OAuth but need to build custom Authorization server) I have planned to use<br />
+FormsAuthenticationTicket for this.I will also have ASP.NET MVC3 web site that will call WCF Web API service.Can you point me to source code from this blog post and comment my approach ?Thanks very much for your help.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-285">
+                    <div id="dsq-comment-header-285" class="dsq-comment-header">
+                        <cite id="dsq-cite-285">
+                                <span id="dsq-author-user-285">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-285" class="dsq-comment-body">
+                        <div id="dsq-comment-message-285" class="dsq-comment-message"><p>looks like there may be something here?</p>
+<p><a href="http://oauth.googlecode.com/svn/code/javascript/" rel="nofollow">http://oauth.googlecode.com/svn/code/javascript/</a></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-286">
+                    <div id="dsq-comment-header-286" class="dsq-comment-header">
+                        <cite id="dsq-cite-286">
+                                <span id="dsq-author-user-286">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-286" class="dsq-comment-body">
+                        <div id="dsq-comment-message-286" class="dsq-comment-message"><p>the multi-provider problem is interesting &#8211; will need to think a bit more about that one.  In the meantime, the source code can be found at <a href="http://wcf.codeplex.com/SourceControl/changeset/view/66aa503c963c" rel="nofollow">http://wcf.codeplex.com/SourceControl/changeset/view/66aa503c963c</a></p>
+<p>look at the path: /WCFWebApi/Samples/Scenario/SecureServices</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-287">
+                    <div id="dsq-comment-header-287" class="dsq-comment-header">
+                        <cite id="dsq-cite-287">
+                                <span id="dsq-author-user-287">Radenko</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-287" class="dsq-comment-body">
+                        <div id="dsq-comment-message-287" class="dsq-comment-message"><p>Hi Howard. Thanks for your response . After long investigation I have decided to implement my own OAuth 2.0 server to protect my WCF Web Api and to build fb and twitter login using your approach.</p>
+<p>It would be nice to extend your example to support multi-providers .<br />
+I have found open source project OAuth 1.0a server in ASP.Net MVC   which will be good starting point for me.</p>
+<p>Security is very important part of WCF Web api for me and I hope Microsoft will invest more effort and publish more samples about this subject.</p>
+<p>Again thanks for advices and links.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-290">
+                    <div id="dsq-comment-header-290" class="dsq-comment-header">
+                        <cite id="dsq-cite-290">
+                                <span id="dsq-author-user-290">JD</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-290" class="dsq-comment-body">
+                        <div id="dsq-comment-message-290" class="dsq-comment-message"><p>Hi great post &#8211; just wondered whether this could now be simplified using EasyOAuth Framework now on Codeplex: <br />
+<a href="http://easyoauth.codeplex.com" rel="nofollow">http://easyoauth.codeplex.com</a></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-310">
+                    <div id="dsq-comment-header-310" class="dsq-comment-header">
+                        <cite id="dsq-cite-310">
+                                <span id="dsq-author-user-310">Jeremy</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-310" class="dsq-comment-body">
+                        <div id="dsq-comment-message-310" class="dsq-comment-message"><p>Howard,  This discribes a scenario that we are trying to accomplish as well.  We have a similar implementation in strait WCF services, but we would like to move towards the Web API with OAuth approach.  Please let us know if you&#8217;ve made any progress prototyping this since it was posted a number of months ago.  We would be happy to provide feedback on any solutions.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-311">
+                    <div id="dsq-comment-header-311" class="dsq-comment-header">
+                        <cite id="dsq-cite-311">
+                                <span id="dsq-author-user-311">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-311" class="dsq-comment-body">
+                        <div id="dsq-comment-message-311" class="dsq-comment-message"><p>Hi Jeremy &#8211; yea &#8211; it wasn&#8217;t too long after writing this post that I moved on to a different team and stopped prototyping the OAuth scenarios. I know that the team is still investigating this scenario &#8211; follow <br />
+<a href="http://blogs.msdn.com/b/henrikn/ for" rel="nofollow">http://blogs.msdn.com/b/henrikn/ for</a> updates as they emerge.</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/howarddierking/2011/10/11/oauth-2-0-in-web-api/';
+    var disqus_identifier = '156 http://codebetter.com/howarddierking/?p=156';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'howarddierkingoncodebetter';
+    var disqus_title = "OAuth 2.0 in Web API";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=156');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/howarddierking\/2011\/10\/11\/oauth-2-0-in-web-api\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: none;"><img alt='' src='http://0.gravatar.com/avatar/859e318f8403226ff4b912edf77fba2a?s=96&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>I like technology...a lot...
+</li><li id="tag_cloud-4" class="widget-container widget_tag_cloud"><h3 class="widget-title">Categories</h3><div class="tagcloud"><a href='http://codebetter.com/howarddierking/category/ado-net-data-services/' class='tag-link-4922' title='6 topics' style='font-size: 18.405405405405pt;'>ADO.NET Data Services</a>
+<a href='http://codebetter.com/howarddierking/category/alt-net/' class='tag-link-1362' title='1 topic' style='font-size: 8pt;'>ALT.NET</a>
+<a href='http://codebetter.com/howarddierking/category/appfabric/' class='tag-link-9202' title='1 topic' style='font-size: 8pt;'>AppFabric</a>
+<a href='http://codebetter.com/howarddierking/category/architecture/' class='tag-link-2588' title='6 topics' style='font-size: 18.405405405405pt;'>architecture</a>
+<a href='http://codebetter.com/howarddierking/category/async/' class='tag-link-9207' title='1 topic' style='font-size: 8pt;'>Async</a>
+<a href='http://codebetter.com/howarddierking/category/auto-tagging/' class='tag-link-4908' title='1 topic' style='font-size: 8pt;'>auto tagging</a>
+<a href='http://codebetter.com/howarddierking/category/bdd/' class='tag-link-2123' title='5 topics' style='font-size: 17.081081081081pt;'>BDD</a>
+<a href='http://codebetter.com/howarddierking/category/ddd/' class='tag-link-1717' title='1 topic' style='font-size: 8pt;'>DDD</a>
+<a href='http://codebetter.com/howarddierking/category/fiddler/' class='tag-link-9204' title='1 topic' style='font-size: 8pt;'>Fiddler</a>
+<a href='http://codebetter.com/howarddierking/category/fluent-nhibernate/' class='tag-link-4911' title='1 topic' style='font-size: 8pt;'>Fluent NHibernate</a>
+<a href='http://codebetter.com/howarddierking/category/hardware/' class='tag-link-4927' title='1 topic' style='font-size: 8pt;'>hardware</a>
+<a href='http://codebetter.com/howarddierking/category/heroku/' class='tag-link-9209' title='1 topic' style='font-size: 8pt;'>Heroku</a>
+<a href='http://codebetter.com/howarddierking/category/home-network/' class='tag-link-4909' title='1 topic' style='font-size: 8pt;'>Home Network</a>
+<a href='http://codebetter.com/howarddierking/category/http/' class='tag-link-8127' title='5 topics' style='font-size: 17.081081081081pt;'>HTTP</a>
+<a href='http://codebetter.com/howarddierking/category/international/' class='tag-link-9201' title='1 topic' style='font-size: 8pt;'>International</a>
+<a href='http://codebetter.com/howarddierking/category/ioc/' class='tag-link-1361' title='1 topic' style='font-size: 8pt;'>IoC</a>
+<a href='http://codebetter.com/howarddierking/category/msdn-magazine/' class='tag-link-4919' title='8 topics' style='font-size: 20.297297297297pt;'>MSDN Magazine</a>
+<a href='http://codebetter.com/howarddierking/category/mspec/' class='tag-link-2130' title='2 topics' style='font-size: 11.405405405405pt;'>MSpec</a>
+<a href='http://codebetter.com/howarddierking/category/my-setup/' class='tag-link-4926' title='2 topics' style='font-size: 11.405405405405pt;'>my setup</a>
+<a href='http://codebetter.com/howarddierking/category/nhibernate/' class='tag-link-2527' title='1 topic' style='font-size: 8pt;'>NHibernate</a>
+<a href='http://codebetter.com/howarddierking/category/oauth/' class='tag-link-9206' title='2 topics' style='font-size: 11.405405405405pt;'>OAuth</a>
+<a href='http://codebetter.com/howarddierking/category/performance/' class='tag-link-4925' title='3 topics' style='font-size: 13.675675675676pt;'>performance</a>
+<a href='http://codebetter.com/howarddierking/category/pivot/' class='tag-link-4931' title='7 topics' style='font-size: 19.351351351351pt;'>Pivot</a>
+<a href='http://codebetter.com/howarddierking/category/r/' class='tag-link-4916' title='3 topics' style='font-size: 13.675675675676pt;'>R#</a>
+<a href='http://codebetter.com/howarddierking/category/refactoring/' class='tag-link-4737' title='1 topic' style='font-size: 8pt;'>Refactoring</a>
+<a href='http://codebetter.com/howarddierking/category/ruby/' class='tag-link-1723' title='1 topic' style='font-size: 8pt;'>Ruby</a>
+<a href='http://codebetter.com/howarddierking/category/sinatra/' class='tag-link-9210' title='1 topic' style='font-size: 8pt;'>Sinatra</a>
+<a href='http://codebetter.com/howarddierking/category/ssis/' class='tag-link-4921' title='6 topics' style='font-size: 18.405405405405pt;'>SSIS</a>
+<a href='http://codebetter.com/howarddierking/category/tortoisesvn/' class='tag-link-4923' title='1 topic' style='font-size: 8pt;'>TortoiseSVN</a>
+<a href='http://codebetter.com/howarddierking/category/uncategorized/' class='tag-link-1044' title='10 topics' style='font-size: 22pt;'>Uncategorized</a>
+<a href='http://codebetter.com/howarddierking/category/virtualization/' class='tag-link-4918' title='1 topic' style='font-size: 8pt;'>virtualization</a>
+<a href='http://codebetter.com/howarddierking/category/wcf/' class='tag-link-4928' title='7 topics' style='font-size: 19.351351351351pt;'>WCF</a>
+<a href='http://codebetter.com/howarddierking/category/web/' class='tag-link-5485' title='9 topics' style='font-size: 21.243243243243pt;'>Web</a>
+<a href='http://codebetter.com/howarddierking/category/web-api/' class='tag-link-9205' title='6 topics' style='font-size: 18.405405405405pt;'>Web API</a>
+<a href='http://codebetter.com/howarddierking/category/windows-7/' class='tag-link-4917' title='1 topic' style='font-size: 8pt;'>Windows 7</a>
+<a href='http://codebetter.com/howarddierking/category/windsor/' class='tag-link-4930' title='1 topic' style='font-size: 8pt;'>Windsor</a></div>
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/howarddierking/2012/11/' title='November 2012'>November 2012</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2012/10/' title='October 2012'>October 2012</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2012/08/' title='August 2012'>August 2012</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2012/06/' title='June 2012'>June 2012</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2012/03/' title='March 2012'>March 2012</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/11/' title='November 2011'>November 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/10/' title='October 2011'>October 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/09/' title='September 2011'>September 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/07/' title='July 2011'>July 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/05/' title='May 2011'>May 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/03/' title='March 2011'>March 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/02/' title='February 2011'>February 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/10/' title='October 2010'>October 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/howarddierking/2009/03/' title='March 2009'>March 2009</a></li>
+		</ul>
+</li>				</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 2.005 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:50:20 -->
+<!-- super cache -->

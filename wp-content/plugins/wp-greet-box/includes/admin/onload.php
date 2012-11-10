@@ -94,6 +94,7 @@ jQuery(document).ready(function($){
                     success : function(resp){
                       $("#wpgb_message_view_" + id).slideUp("fast");
                       $("#wpgb_message_row_" + id).html(resp).fadeTo("fast", 1);
+                      $(a).html("Edit").attr("action", "get_edit_form");
                     },
                     error   : function(resp){
                       alert("Error:" + resp);

@@ -8,7 +8,7 @@
   </label></p>
 
   <p><label for="show_post">
-    <? _e('Treat each line as a regular expression', $this->p->name) ?>
+    <?php _e('Treat each line as a regular expression', $this->p->name) ?>
     &nbsp;<input name="wpgb_options_exclusion[regex_rules]" type="checkbox" <?php checked(true, $this->p->o['regex_rules']) ?>/>
   </label></p>
 

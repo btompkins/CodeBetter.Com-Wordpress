@@ -1,11 +1,30 @@
 <?php 
-//floating display function
-function dd_button_floating_setup(){
+function dd_page_for_floating_display(){
 	
 	global $ddFloatDisplay,$ddFloatButtons;
 	
 	if (isset($_POST[DD_FORM_SAVE])) {
 
+		foreach(array_keys($ddFloatDisplay) as $key){
+	    	
+			foreach(array_keys($ddFloatDisplay[$key]) as $subkey){
+				
+				//echo '<h2>$key : ' . $key . ' - $subkey : ' . $subkey . ' - [' . $_POST[$subkey] . ']</h2>';
+				if(isset($_POST[$subkey])){
+					
+					if($subkey==DD_FLOAT_OPTION_INITIAL_POSITION || $subkey==DD_FLOAT_OPTION_SCROLLING_POSITION){
+						$ddFloatDisplay[$key][$subkey] = dd_filter_weird_characters($_POST[$subkey]);
+					}else{
+						$ddFloatDisplay[$key][$subkey] = $_POST[$subkey];
+					}
+					
+				}
+				
+			}
+	    }
+
+	   	update_option(DD_FLOAT_DISPLAY_CONFIG, $ddFloatDisplay);
+	   	
 		foreach($ddFloatButtons[DD_FLOAT_BUTTON_DISPLAY] as $key => $value){
 			
 			foreach(array_keys($value->wp_options) as $option){
@@ -23,37 +42,7 @@ function dd_button_floating_setup(){
 	    }
 	    
 		update_option(DD_FLOAT_BUTTON, $ddFloatButtons);
-    
-		/****** float display ******/	
-		foreach(array_keys($ddFloatDisplay) as $key){
-	    	
-			foreach(array_keys($ddFloatDisplay[$key]) as $subkey){
-				
-				//echo '<h1>' . $key . '-' . $subkey . '</h1>';
-				if(isset($_POST[$subkey])){
-					if($subkey==DD_FLOAT_OPTION_INITIAL_POSITION || $subkey==DD_FLOAT_OPTION_SCROLLING_POSITION){
-						$ddFloatDisplay[$key][$subkey] = dd_filter_weird_characters($_POST[$subkey]);
-					}else{
-						$ddFloatDisplay[$key][$subkey] = $_POST[$subkey];
-					}
-					
-					//replace addthis username
-					if($subkey==DD_EXTRA_OPTION_ADDTHIS_USERNAME){
-						
-						if(isset($_POST[$subkey])){
-							$js = $ddFloatDisplay[DD_EXTRA_OPTION_ADDTHIS][DD_EXTRA_OPTION_ADDTHIS_JS];
-							$js = str_replace(DD_ADDHIS_USERNAME,$_POST[$subkey],$js);
-							$ddFloatDisplay[DD_EXTRA_OPTION_ADDTHIS][DD_EXTRA_OPTION_ADDTHIS_JS] = $js;
-						}
-						
-					}
-				}
-				
-			}
-	    }
 
-	   	update_option(DD_FLOAT_DISPLAY_CONFIG, $ddFloatDisplay);
-	
 		echo "<div id=\"updatemessage\" class=\"updated fade\"><p>Digg Digg settings updated.</p></div>\n";
 		echo "<script type=\"text/javascript\">setTimeout(function(){jQuery('#updatemessage').hide('slow');}, 3000);</script>";	
 		
@@ -67,7 +56,6 @@ function dd_button_floating_setup(){
 			
   	}
 
-  	//get back the settings from wordpress options
   	$ddFloatButtons = get_option(DD_FLOAT_BUTTON);
 	$ddFloatDisplay = get_option(DD_FLOAT_DISPLAY_CONFIG);
 	
@@ -78,7 +66,6 @@ function dd_button_floating_setup(){
 	}	
 	krsort($dd_sorting_data,SORT_NUMERIC);
 	
-  	// display admin screen
   	dd_print_float_form($dd_sorting_data, $ddFloatDisplay);
 }
 
@@ -112,7 +99,6 @@ function checkCategory(){
 	});
 	
 }
-
 </script>
 
 <div id=msg></div>
@@ -130,32 +116,7 @@ function checkCategory(){
 	
 	<div class="dd-block">
 		<div class="dd-title">
-			<h2>Support Digg Digg</h2>
-		</div>
-		<div class="dd-insider">
-			<p>
-			If you like this plugin and find it useful, 
-			help keep this plugin free and actively developed by a
-			<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AWXCPTQXB7YAS" target="_blank">donation</a>. 
-			</p>
-		</div>	
-	</div>
-	
-	<div class="dd-block">
-		<div class="dd-title"><h2>Floating bar is not display?</h2></div>
-		<div class="dd-insider">
-		<p>
-		If the floating bar is not display, try click on this "reset" button to reset all floating settings to default values.
-		</p>
-		
-		<input class="button-primary" onclick="if (confirm('Are you sure to reset all settings to default value?'))return true;return false" name="<?php echo DD_FORM_CLEAR; ?>" value="Reset" type="submit" style="width:100px;"/>
-	
-		</div>
-	</div>
-	
-	<div class="dd-block">
-		<div class="dd-title">
-		<h2>Status : 
+		<h2>1. Status : 
 		<?php if($ddFloatDisplay[DD_STATUS_OPTION][DD_STATUS_OPTION_DISPLAY]==DD_DISPLAY_ON){
 			echo '<span class="dd-enabled">Enabled</span>';
 		}else{
@@ -179,15 +140,15 @@ function checkCategory(){
 	</div>
 	
 	<div class="dd-block">
-		<div class="dd-title"><h2>1. Display Configuration</h2></div>
+		<div class="dd-title"><h2>2. Display Configuration</h2></div>
 		<div class="dd-insider">
 		
 			<div class="dd-insider-block">
-				<span>i. Buttons are display in vertical order.</span>
+				<span>2.1. Buttons are display in vertical order.</span>
 			</div>
 			
 			<div class="dd-insider-block">
-			<p>ii. Buttons are allow to display in...</p>
+			<p>2.2 Buttons are allow to display in...</p>
 			<p>
 			<?php 
 				foreach($ddFloatDisplay[DD_DISPLAY_OPTION] as $key => $value){
@@ -209,7 +170,7 @@ function checkCategory(){
 								
 			<div class="dd-insider-block" id="dd-insider-block-category">
 				<p>
-				Display in "Post" under categories...
+				2.3 Display in "Post" under categories...
 				</p>
 				<?php 
 					$dd_category_option = $ddFloatDisplay[DD_CATEORY_OPTION][DD_CATEORY_OPTION_RADIO];
@@ -239,7 +200,7 @@ function checkCategory(){
 					$dd_extra_option_default_width = $ddFloatDisplay[DD_EXTRA_OPTION][DD_EXTRA_OPTION_SCREEN_WIDTH];
 				?>
 				<p>
-				iii Hide buttons if browser's width &lt; 
+				2.4 Hide buttons if browser's width &lt; 
 				<input type="text" size="10" value="<?php echo $dd_extra_option_default_width; ?>" 
 				name="<?php echo DD_EXTRA_OPTION_SCREEN_WIDTH;?>" /> px
 				</p>
@@ -256,20 +217,20 @@ function checkCategory(){
 	</div>
 	
 	<div class="dd-block">
-		<div class="dd-title"><h2>2. Buttons Selection</h2></div>
+		<div class="dd-title"><h2>3. Buttons Selection</h2></div>
 		<div class="dd-insider">
 			<p>Choose and customize the button layout to display.</p>
 	
 				<table border="1" width="100%" class="dd-table">
 				<tr>
 				    <th width="3%"></th>
-					<th width="20%" class="left">Website</th>
+					<th width="30%" class="left">Website</th>
 					<th width="5%">Weight</th>
-					<th width="15%">Lazy Loading</th>
 					<th width="15%">Ajax Floating</th>
+					<th width="15%">Lazy Loading</th>
 				</tr>
 				
-				<?php 
+				<?php
 					$count=1;
 					foreach($ddFloatButtons as $obj){	
 				?>	
@@ -283,6 +244,11 @@ function checkCategory(){
 							<td>
 								<input name=<?php echo $obj->option_button_weight; ?> type="text" value="<?php echo ($obj->getOptionButtonWeight()==DD_EMPTY_VALUE) ? 0 : $obj->getOptionButtonWeight(); ?>"  size="3" maxlength="3"/>
 							</td>
+							
+							<td>
+								<INPUT TYPE=CHECKBOX NAME="<?php echo $obj->option_ajax_left_float; ?>" 
+								<?php echo ($obj->getOptionAjaxLeftFloat()==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
+							</td>
 							<td>
 								<?php
 									if($obj->islazyLoadAvailable){
@@ -291,13 +257,14 @@ function checkCategory(){
 								<?php echo ($obj->getOptionLazyLoad()==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
 								<?php
 									}else{
-										echo "<span class='dd-not-support'>Not Support</span>";	
+										if($obj->name == "Facebook Like (XFBML)"){
+											echo "<span class='dd-not-support'>Build-in Support</span>";	
+										}
+										else{
+											echo "<span class='dd-not-support'>Not Support</span>";	
+										}
 									}
 								?> 
-							</td>
-							<td>
-								<INPUT TYPE=CHECKBOX NAME="<?php echo $obj->option_ajax_left_float; ?>" 
-								<?php echo ($obj->getOptionAjaxLeftFloat()==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>>
 							</td>
 						</tr>
 				<?php 
@@ -313,12 +280,13 @@ function checkCategory(){
 	</div>
 	
 	<div class="dd-block">
-		<div class="dd-title"><h2>3. Extra Integration</h2></div>
+		<div class="dd-title"><h2>4. Extra Integration</h2></div>
 		<div class="dd-insider">
-			<p>Append extra service at the end of the floating buttons.</p>
+			<p>Append extra services at the end of the floating buttons.</p>
+			
 			<h3>
-				1. <a href="http://www.addthis.com" target="_blank">AddThis</a> - 
-				<span><?php if($ddFloatDisplay[DD_EXTRA_OPTION_ADDTHIS][DD_EXTRA_OPTION_ADDTHIS_STATUS]==DD_DISPLAY_ON){
+				4.1. Email Button - 
+				<span><?php if($ddFloatDisplay[DD_EXTRA_OPTION_EMAIL][DD_EXTRA_OPTION_EMAIL_STATUS]==DD_DISPLAY_ON){
 				echo '<span class="dd-enabled">Enabled</span>';
 				}else{
 					echo '<span class="dd-disabled">Disabled</span>';	
@@ -326,16 +294,38 @@ function checkCategory(){
 				?>
 				</span>
 			</h3>
-			<ul>
-			<li>
-			<INPUT TYPE=CHECKBOX NAME="<?php echo DD_EXTRA_OPTION_ADDTHIS_STATUS; ?>" 
-			<?php echo ($ddFloatDisplay[DD_EXTRA_OPTION_ADDTHIS][DD_EXTRA_OPTION_ADDTHIS_STATUS]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>> Enable AddThis sharing toolbar, 
+			<div>
+			<INPUT TYPE=CHECKBOX NAME="<?php echo DD_EXTRA_OPTION_EMAIL_STATUS; ?>" 
+			<?php echo ($ddFloatDisplay[DD_EXTRA_OPTION_EMAIL][DD_EXTRA_OPTION_EMAIL_STATUS]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>> Enable email button.
+			</div>
 			
-			put username here : <input name=<?php echo DD_EXTRA_OPTION_ADDTHIS_USERNAME; ?> type="text" 
-			value="<?php echo $ddFloatDisplay[DD_EXTRA_OPTION_ADDTHIS][DD_EXTRA_OPTION_ADDTHIS_USERNAME] ?>"  size="20" maxlength="15"/>
 			
-			</li>
-			</ul>				
+			<div>
+			<br/>
+			*ShareThis Publisher ID is required : <input name=<?php echo DD_EXTRA_OPTION_EMAIL_SHARETHIS_PUB_ID; ?> type="text" 
+				value="<?php echo $ddFloatDisplay[DD_EXTRA_OPTION_EMAIL][DD_EXTRA_OPTION_EMAIL_SHARETHIS_PUB_ID] ?>"  size="50" maxlength="40"/>
+			</div>
+			
+			<div>
+			<br/>
+			<i>P.S You will need to <a href="http://sharethis.com/register" target="_blank">register at ShareThis.com</a> (it's free!) to obtain your ShareThis Publisher ID.</i>
+			</div>
+			
+			<h3>
+				4.2 Print Button - 
+				<span><?php if($ddFloatDisplay[DD_EXTRA_OPTION_PRINT][DD_EXTRA_OPTION_PRINT_STATUS]==DD_DISPLAY_ON){
+				echo '<span class="dd-enabled">Enabled</span>';
+				}else{
+					echo '<span class="dd-disabled">Disabled</span>';	
+				}
+				?>
+				</span>
+			</h3>
+			<div>
+			<INPUT TYPE=CHECKBOX NAME="<?php echo DD_EXTRA_OPTION_PRINT_STATUS; ?>" 
+			<?php echo ($ddFloatDisplay[DD_EXTRA_OPTION_PRINT][DD_EXTRA_OPTION_PRINT_STATUS]==DD_DISPLAY_ON) ? DD_CHECK_BOX_ON : DD_CHECK_BOX_OFF ?>> Enable print button.
+			</div>
+			
 			<div class="dd-button">
 				<input class="button-primary" name="<?php echo DD_FORM_SAVE; ?>" value="Save changes" type="submit" style="width:100px;" />
 			</div>
@@ -345,7 +335,7 @@ function checkCategory(){
 	
 	<div class="dd-block">
 		<div class="dd-title">
-		<h2>4. Ajax Floating Configuration</h2>
+		<h2>5. Ajax Floating Configuration</h2>
 		</div>
 		<div class="dd-insider">
 
@@ -353,21 +343,21 @@ function checkCategory(){
 			Due to different theme layout design, high chance the pre-defined settings are not suitable. So, you may need to configure the <strong>initial position</strong> and <strong>scolling position</strong> below. 
 			</p>
 			
-			<h4>i. Initial Position</h4> 
+			<h4>5.1 Initial Position</h4> 
 			
 			<p>
 				This is the position where buttons initial display, try change the default "<span class="dd-note">margin-left:-120</span>" value to suit your theme.
 			</p>
-			<p class="dd-note dd-note-blue">Note : Edit the initial value in the below box directly and save the changes, not in the css file</p>
+			<p class="dd-note dd-note-blue">Note : Edit the initial value in below box directly and save the changes, not in the css file</p>
 			<p>
 				<textarea name="<?php echo DD_FLOAT_OPTION_INITIAL_POSITION;?>" rows="10" cols="88" style="background-color:#F9F9F9;"><?php echo $ddFloatDisplay[DD_FLOAT_OPTION][DD_FLOAT_OPTION_INITIAL_POSITION]; ?></textarea>
 			</p>
 			
-			<h4>ii. Scrolling Position</h4> 
+			<h4>5.2 Scrolling Position</h4> 
 			<p>
 			This is the position where buttons display while you scrolling the page, try change the default "<span class="dd-note">top:16</span>" value to suit your theme.
 			</p>
-			<p class="dd-note dd-note-blue">Note : Edit the scrolling value in the below box directly and save the changes, not in the css file</p>
+			<p class="dd-note dd-note-blue">Note : Edit the scrolling value in below box directly and save the changes, not in the css file</p>
 			<p>
 			<textarea name="<?php echo DD_FLOAT_OPTION_SCROLLING_POSITION;?>" rows="38" cols="88" style="background-color:#F9F9F9;"><?php echo 	$ddFloatDisplay[DD_FLOAT_OPTION][DD_FLOAT_OPTION_SCROLLING_POSITION]; ?></textarea>
 			</p>
@@ -382,7 +372,7 @@ function checkCategory(){
 	</div>
 
 	<div class="dd-block">
-		<div class="dd-title"><h2>5. Credit Link</h2></div>
+		<div class="dd-title"><h2>6. Credit Link</h2></div>
 		<div class="dd-insider">
 			<p>Status : 
 			<span><?php if($ddFloatDisplay[DD_FLOAT_OPTION][DD_FLOAT_OPTION_CREDIT]==DD_DISPLAY_ON){
@@ -413,14 +403,12 @@ function checkCategory(){
 	</div>
 	
 	<div class="dd-block">
-		<div class="dd-title"><h2>Reset All</h2></div>
+		<div class="dd-title"><h2>7. Reset Floating Display Settings</h2></div>
 		<div class="dd-insider">
 		<p>
-		Reset all settings to default value.
+		Reset "Floating Display" settings to default value.
 		</p>
-		
-		<input class="button-primary" onclick="if (confirm('Are you sure to reset all settings to default value?'))return true;return false" name="<?php echo DD_FORM_CLEAR; ?>" value="Reset" type="submit" style="width:100px;"/>
-	
+		<input class="button-primary" onclick="if (confirm('Are you sure to reset \'Floating Display\' settings to default value?'))return true;return false" name="<?php echo DD_FORM_CLEAR; ?>" value="Reset Floating Display Settings" type="submit" style="width:200px;"/>
 		</div>
 	</div>
 	

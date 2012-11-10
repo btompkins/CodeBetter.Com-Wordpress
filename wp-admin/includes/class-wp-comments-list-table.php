@@ -13,6 +13,7 @@
  * @package WordPress
  * @subpackage List_Table
  * @since 3.1.0
+ * @access private
  */
 class WP_Comments_List_Table extends WP_List_Table {
 
@@ -20,7 +21,7 @@ class WP_Comments_List_Table extends WP_List_Table {
 
 	var $pending_count = array();
 
-	function WP_Comments_List_Table() {
+	function __construct() {
 		global $post_id;
 
 		$post_id = isset( $_REQUEST['p'] ) ? absint( $_REQUEST['p'] ) : 0;
@@ -28,18 +29,19 @@ class WP_Comments_List_Table extends WP_List_Table {
 		if ( get_option('show_avatars') )
 			add_filter( 'comment_author', 'floated_admin_avatar' );
 
-		parent::WP_List_Table( array(
-			'plural' => 'comments'
+		parent::__construct( array(
+			'plural' => 'comments',
+			'singular' => 'comment',
+			'ajax' => true,
 		) );
 	}
 
-	function check_permissions() {
-		if ( !current_user_can('edit_posts') )
-			wp_die(__('Cheatin&#8217; uh?'));
+	function ajax_user_can() {
+		return current_user_can('edit_posts');
 	}
 
 	function prepare_items() {
-		global $post_id, $comment_status, $search;
+		global $post_id, $comment_status, $search, $comment_type;
 
 		$comment_status = isset( $_REQUEST['comment_status'] ) ? $_REQUEST['comment_status'] : 'all';
 		if ( !in_array( $comment_status, array( 'all', 'moderated', 'approved', 'spam', 'trash' ) ) )
@@ -53,24 +55,35 @@ class WP_Comments_List_Table extends WP_List_Table {
 
 		$orderby = ( isset( $_REQUEST['orderby'] ) ) ? $_REQUEST['orderby'] : '';
 		$order = ( isset( $_REQUEST['order'] ) ) ? $_REQUEST['order'] : '';
-		
-		$comments_per_page = $this->get_items_per_page( 'edit_comments_per_page' );
-		$comments_per_page = apply_filters( 'comments_per_page', $comments_per_page, $comment_status );
 
-		if ( isset( $_POST['number'] ) )
-			$number = (int) $_POST['number'];
-		else
+		$comments_per_page = $this->get_per_page( $comment_status );
+
+		$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
+
+		if ( isset( $_REQUEST['number'] ) ) {
+			$number = (int) $_REQUEST['number'];
+		}
+		else {
 			$number = $comments_per_page + min( 8, $comments_per_page ); // Grab a few extra
+		}
 
 		$page = $this->get_pagenum();
 
-		$start = $offset = ( $page - 1 ) * $comments_per_page;
+		if ( isset( $_REQUEST['start'] ) ) {
+			$start = $_REQUEST['start'];
+		} else {
+			$start = ( $page - 1 ) * $comments_per_page;
+		}
+
+		if ( $doing_ajax && isset( $_REQUEST['offset'] ) ) {
+			$start += $_REQUEST['offset'];
+		}
 
 		$status_map = array(
 			'moderated' => 'hold',
 			'approved' => 'approve'
 		);
-		
+
 		$args = array(
 			'status' => isset( $status_map[$comment_status] ) ? $status_map[$comment_status] : $comment_status,
 			'search' => $search,
@@ -97,6 +110,8 @@ class WP_Comments_List_Table extends WP_List_Table {
 			$_comment_post_ids[] = $_c->comment_post_ID;
 		}
 
+		$_comment_post_ids = array_unique( $_comment_post_ids );
+
 		$this->pending_count = get_pending_comments_num( $_comment_post_ids );
 
 		$this->set_pagination_args( array(
@@ -105,17 +120,23 @@ class WP_Comments_List_Table extends WP_List_Table {
 		) );
 	}
 
+	function get_per_page( $comment_status = 'all' ) {
+		$comments_per_page = $this->get_items_per_page( 'edit_comments_per_page' );
+		$comments_per_page = apply_filters( 'comments_per_page', $comments_per_page, $comment_status );
+		return $comments_per_page;
+	}
+
 	function no_items() {
 		global $comment_status;
 
 		if ( 'moderated' == $comment_status )
-			_e( 'No comments awaiting moderation&hellip; yet.' );
+			_e( 'No comments awaiting moderation.' );
 		else
 			_e( 'No comments found.' );
 	}
 
 	function get_views() {
-		global $post_id, $comment_status;
+		global $post_id, $comment_status, $comment_type;
 
 		$status_links = array();
 		$num_comments = ( $post_id ) ? wp_count_comments( $post_id ) : wp_count_comments();
@@ -165,7 +186,7 @@ class WP_Comments_List_Table extends WP_List_Table {
 		$actions = array();
 		if ( in_array( $comment_status, array( 'all', 'approved' ) ) )
 			$actions['unapprove'] = __( 'Unapprove' );
-		if ( in_array( $comment_status, array( 'all', 'moderated', 'spam' ) ) )
+		if ( in_array( $comment_status, array( 'all', 'moderated' ) ) )
 			$actions['approve'] = __( 'Approve' );
 		if ( in_array( $comment_status, array( 'all', 'moderated', 'approved' ) ) )
 			$actions['spam'] = _x( 'Mark as Spam', 'comment' );
@@ -203,7 +224,7 @@ class WP_Comments_List_Table extends WP_List_Table {
 			?>
 			</select>
 <?php
-			submit_button( __( 'Filter' ), 'secondary', 'post-query-submit', false );
+			submit_button( __( 'Filter' ), 'secondary', false, false, array( 'id' => 'post-query-submit' ) );
 		}
 
 		if ( ( 'spam' == $comment_status || 'trash' == $comment_status ) && current_user_can( 'moderate_comments' ) ) {
@@ -246,8 +267,10 @@ class WP_Comments_List_Table extends WP_List_Table {
 		);
 	}
 
-	function display_table() {
+	function display() {
 		extract( $this->_args );
+
+		wp_nonce_field( "fetch-list-" . get_class( $this ), '_ajax_fetch_list_nonce' );
 
 		$this->display_tablenav( 'top' );
 
@@ -266,7 +289,7 @@ class WP_Comments_List_Table extends WP_List_Table {
 	</tfoot>
 
 	<tbody id="the-comment-list" class="list:comment">
-		<?php $this->display_rows(); ?>
+		<?php $this->display_rows_or_placeholder(); ?>
 	</tbody>
 
 	<tbody id="the-extra-comment-list" class="list:comment" style="display: none;">
@@ -279,18 +302,18 @@ class WP_Comments_List_Table extends WP_List_Table {
 	}
 
 	function single_row( $a_comment ) {
-		global $post, $comment, $the_comment_status;
+		global $post, $comment;
 
 		$comment = $a_comment;
-		$the_comment_status = wp_get_comment_status( $comment->comment_ID );
+		$the_comment_class = join( ' ', get_comment_class( wp_get_comment_status( $comment->comment_ID ) ) );
 
 		$post = get_post( $comment->comment_post_ID );
 
 		$this->user_can = current_user_can( 'edit_comment', $comment->comment_ID );
 
-		echo "<tr id='comment-$comment->comment_ID' class='$the_comment_status'>";
+		echo "<tr id='comment-$comment->comment_ID' class='$the_comment_class'>";
 		echo $this->single_row_columns( $comment );
-		echo "</tr>";
+		echo "</tr>\n";
 	}
 
 	function column_cb( $comment ) {
@@ -299,11 +322,12 @@ class WP_Comments_List_Table extends WP_List_Table {
 	}
 
 	function column_comment( $comment ) {
-		global $post, $comment_status, $the_comment_status;
+		global $post, $comment_status;
 
 		$user_can = $this->user_can;
 
 		$comment_url = esc_url( get_comment_link( $comment->comment_ID ) );
+		$the_comment_status = wp_get_comment_status( $comment->comment_ID );
 
 		$ptime = date( 'G', strtotime( $comment->comment_date ) );
 		if ( ( abs( time() - $ptime ) ) < 86400 )
@@ -387,11 +411,10 @@ class WP_Comments_List_Table extends WP_List_Table {
 				$actions['trash'] = "<a href='$trash_url' class='delete:the-comment-list:comment-$comment->comment_ID::trash=1 delete vim-d vim-destructive' title='" . esc_attr__( 'Move this comment to the trash' ) . "'>" . _x( 'Trash', 'verb' ) . '</a>';
 			}
 
-			if ( 'trash' != $the_comment_status ) {
+			if ( 'spam' != $the_comment_status && 'trash' != $the_comment_status ) {
 				$actions['edit'] = "<a href='comment.php?action=editcomment&amp;c={$comment->comment_ID}' title='" . esc_attr__( 'Edit comment' ) . "'>". __( 'Edit' ) . '</a>';
 				$actions['quickedit'] = '<a onclick="commentReply.open( \''.$comment->comment_ID.'\',\''.$post->ID.'\',\'edit\' );return false;" class="vim-q" title="'.esc_attr__( 'Quick Edit' ).'" href="#">' . __( 'Quick&nbsp;Edit' ) . '</a>';
-				if ( 'spam' != $the_comment_status )
-					$actions['reply'] = '<a onclick="commentReply.open( \''.$comment->comment_ID.'\',\''.$post->ID.'\' );return false;" class="vim-r" title="'.esc_attr__( 'Reply to this comment' ).'" href="#">' . __( 'Reply' ) . '</a>';
+				$actions['reply'] = '<a onclick="commentReply.open( \''.$comment->comment_ID.'\',\''.$post->ID.'\' );return false;" class="vim-r" title="'.esc_attr__( 'Reply to this comment' ).'" href="#">' . __( 'Reply' ) . '</a>';
 			}
 
 			$actions = apply_filters( 'comment_row_actions', array_filter( $actions ), $comment );
@@ -473,7 +496,8 @@ class WP_Comments_List_Table extends WP_List_Table {
 		echo $post_link . '<br />';
 		$this->comments_bubble( $post->ID, $pending_comments );
 		echo '</span> ';
-		echo "<a href='" . get_permalink( $post->ID ) . "'>#</a>";
+		$post_type_object = get_post_type_object( $post->post_type );
+		echo "<a href='" . get_permalink( $post->ID ) . "'>" . $post_type_object->labels->view_item . '</a>';
 		echo '</div>';
 		if ( 'attachment' == $post->post_type && ( $thumb = wp_get_attachment_image( $post->ID, array( 80, 60 ), true ) ) )
 			echo $thumb;
@@ -490,21 +514,45 @@ class WP_Comments_List_Table extends WP_List_Table {
  * @package WordPress
  * @subpackage List_Table
  * @since 3.1.0
+ * @access private
  *
  * @see WP_Comments_Table
  */
 class WP_Post_Comments_List_Table extends WP_Comments_List_Table {
 
-	function get_columns() {
-		return array(
+	function get_column_info() {
+		$this->_column_headers = array(
+			array(
 			'author'   => __( 'Author' ),
 			'comment'  => _x( 'Comment', 'column name' ),
+			),
+			array(),
+			array(),
 		);
+
+		return $this->_column_headers;
 	}
 
-	function get_sortable_columns() {
-		return array();
+	function get_table_classes() {
+		$classes = parent::get_table_classes();
+		$classes[] = 'comments-box';
+		return $classes;
+	}
+
+	function display( $output_empty = false ) {
+		extract( $this->_args );
+
+		wp_nonce_field( "fetch-list-" . get_class( $this ), '_ajax_fetch_list_nonce' );
+?>
+<table class="<?php echo implode( ' ', $this->get_table_classes() ); ?>" cellspacing="0" style="display:none;">
+	<tbody id="the-comment-list"<?php if ( $singular ) echo " class='list:$singular'"; ?>>
+		<?php if ( ! $output_empty ) $this->display_rows_or_placeholder(); ?>
+	</tbody>
+</table>
+<?php
+	}
+
+	function get_per_page( $comment_status = false ) {
+		return 10;
 	}
 }
-
-?>

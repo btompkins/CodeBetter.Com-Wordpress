@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Functional Programming Unit Testing &#8211; Part 4 | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Functional Programming Unit Testing &#8211; Part 3' href='http://codebetter.com/matthewpodwysocki/2008/12/15/functional-programming-unit-testing-part-3/' />
+<link rel='next' title='Functional Programming Unit Testing &#8211; Part 5' href='http://codebetter.com/matthewpodwysocki/2009/01/02/functional-programming-unit-testing-part-5/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=96' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,161] -->
+<link rel="canonical" href="http://codebetter.com/matthewpodwysocki/2008/12/21/functional-programming-unit-testing-part-4/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/ncover_success_thumb_1.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-96" class="post-96 post type-post status-publish format-standard hentry category-f category-functional-programming category-haskell category-tddbdd">
+					<h1 class="entry-title">Functional Programming Unit Testing &#8211; Part 4</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by Matthew Podwysocki">Matthew Podwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/12/21/functional-programming-unit-testing-part-4/" title="7:16 pm" rel="bookmark"><span class="entry-date">December 21, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>In our previous installment, we talked about bringing together the traditional xUnit tests and QuickCheck property-based tests together in a single cohesive step.&#160; For this installment, let&#8217;s talk about test coverage.</p>
+<p>But, before we continue, let&#8217;s get caught up to where we are today:</p>
+<ul>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/12/05/functional-programming-unit-testing.aspx">Part 1 &#8211; xUnit Frameworks &#8211; HUnit</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/12/11/functional-programming-unit-testing-part-2.aspx">Part 2 &#8211; Property-Based Tests &#8211; QuickCheck</a> </li>
+<li><a href="http://codebetter.com/blogs/matthew.podwysocki/archive/2008/12/15/functional-programming-unit-testing-part-3.aspx">Part 3 &#8211; QuickCheck + xUnit Tests Together</a> </li>
+</ul>
+<p>&#160;</p>
+<h2>Code Coverage</h2>
+<p>Code coverage is an important metric used as part of our design process to describe to what degree our source code has been tested.&#160; The code coverage tools inspect the code directly as a form of white box testing of your code.&#160; I believe having a high code coverage percentage is important, although such hard-line stances of 100% path code coverage required is most often unnecessary and is evil.&#160; However, for some applications, such as safety-critical, some form of 100% coverage should be considered.</p>
+<p>What do we consider as part of the criteria when we&#8217;re calculating code coverage?</p>
+<ul>
+<li><b>Function coverage</b>       <br />All functions in the program called?       </li>
+<li><b>Statement coverage</b>       <br />All lines in the program called?       </li>
+<li><b>Branch coverage</b>       <br />All control structures such as if/then/else evaluated to true and false?       </li>
+<li><b>Condition coverage</b>       <br />All boolean sub-expressions evaluated to true and false?       </li>
+<li><b>Path coverage</b>       <br />All possible routes through the program called?       </li>
+<li><b>Entry/exit coverage</b>       <br />All possible call and return of the function executed?       </li>
+</ul>
+<p>Of course some of these are connected in some way such as the following:</p>
+<ul>
+<li>Decision coverage includes statement coverage since exercising every branch must lead to exercising every statement. </li>
+<li>Path coverage includes branch coverage. </li>
+</ul>
+<p>Where should we focus?&#160; Using such things as statement coverage, decision coverage, and/or condition/branch coverage, around 80-90% of code coverage would suffice.&#160; Getting to 100% test code coverage is unrealistic and doesn&#8217;t always ensure quality, and the amount of energy required for this is wasteful. The number we&#8217;re looking for is somewhere greater than 80%.</p>
+<p>We can use above metrics to determine how well we&#8217;re writing our tests for our applications.&#160; For many algorithms, it&#8217;s important to ensure that we have our edge cases covered, especially those in safety-critical systems.&#160; Let&#8217;s walk through an example in Haskell for code coverage.</p>
+<p>&#160;</p>
+<h2>Code Coverage with Haskell Program Coverage (HPC)</h2>
+<p>The <a href="http://projects.unsafeperformio.com/hpc/">Haskell Program Coverage (HPC)</a> tool is a built-in extension to the Haskell compiler used to record and display the parts of the code that were executed during a run of your program.&#160; With the criteria given above, we are able to record which functions, branches, expressions among other things were evaluated.</p>
+<p>The HPC tool is designed to give you the following metrics:</p>
+<ul>
+<li>Expressions used (Function coverage) </li>
+<li>Boolean coverage
+<ul>
+<li>Guard coverage </li>
+<li>if confitions </li>
+<li>Qualifiers </li>
+</ul>
+</li>
+<li>Alternatives used </li>
+<li>Local declarations used </li>
+<li>Top-level declarations used </li>
+</ul>
+<p>Let&#8217;s walk through an example of how to use this tool to your advantage.&#160; In the previous post, I&#8217;ve shown some QuickCheck code that doesn&#8217;t give 100% code coverage so that I can show you how to better achieve it.&#160; Let&#8217;s look at the example again.</p>
+<p>First, let&#8217;s look at the implementation of the ROT13 algorithm again:</p>
+<div style="font-family: courier new"><font color="#008000">&#8211;file Encryption.hs</font></div>
+<div style="font-family: courier new"><font size="+0">module</font> Encryption(rot13) <font color="#0000ff">where</font>     </p>
+<p><font color="#0000ff">import</font> Data.Char     </p>
+<p><b><font color="#000080">rot13</font> :: <font color="#800000">String</font> -&gt; <font color="#800000">String</font>&#160; <br /></b>rot13 =&#160; <br />&#160; map mapRot     <br />&#160; <font color="#0000ff">where</font> <font color="#000080">mapRot</font> :: <font color="#800000">Char</font> -&gt; <font color="#800000">Char</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; mapRot c | c &gt;= <font color="#008000">&#8216;A&#8217;</font> &amp;&amp; c &lt;= <font color="#008000">&#8216;Z&#8217;</font> = rot <font color="#008000">&#8216;A&#8217;</font> c     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; | c &gt;= <font color="#008000">&#8216;a&#8217;</font> &amp;&amp; c &lt;= <font color="#008000">&#8216;z&#8217;</font> = rot <font color="#008000">&#8216;a&#8217;</font> c     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; | <font color="#0000ff">otherwise</font>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; = c     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <b><font color="#000080">rot</font> :: <font color="#800000">Char</font> -&gt; <font color="#800000">Char</font> -&gt; <font color="#800000">Char</font>&#160; <br /></b>&#160;&#160;&#160;&#160;&#160;&#160;&#160; rot b c = chr $ (ord c &#8211; ord b + 13) `mod` 26 + ord b</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now, let&#8217;s look at our QuickCheck property-based tests to perform to ensure the correctness of our algorithm.&#160; </p>
+<div style="font-family: courier new"><font color="#008000">&#8211; file EncryptionTests.hs</font></div>
+<div style="font-family: courier new"><font size="+0">import</font> Data.Char     <br /><font color="#0000ff">import</font> Data.List     <br /><font color="#0000ff">import</font> Encryption     <br /><font color="#0000ff">import</font> Test.Framework     <br /><font color="#0000ff">import</font> Test.Framework.Providers.QuickCheck     <br /><font color="#0000ff">import</font> Test.QuickCheck     </p>
+<p><font color="#0000ff">instance</font>&#160;<font color="#800000">Arbitrary Char</font>&#160;<font color="#0000ff">where</font>     <br />&#160; arbitrary&#160;&#160; = elements ([<font color="#008000">'A'</font>..<font color="#008000">'Z'</font>] ++ [<font color="#008000">'a'</font>..<font color="#008000">'z'</font>])     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> Equal</font>     <br />prop_rot13_equals s =&#160; <br />&#160; rot13 s == rot13 s     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> Single is inequal to original</font>     <br />prop_rot13_single_notEquals s =&#160; <br />&#160; rot13 s /= s     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> Double is equal to original</font>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br />prop_rot13_double_equals s =&#160;&#160;&#160; <br />&#160; (rot13 . rot13) s == s     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> Distribution shapes should be equal</font>&#160;&#160; <br />prop_rot13_group_equals s =&#160; <br />&#160; getDistro s == getDistro (rot13 s)     <br />&#160; where getDistro = sort . map length . group . sort     </p>
+<p>tests = [     <br />&#160; testGroup <font color="#008000">&quot;ROT13 Tests&quot;</font> [     <br />&#160;&#160;&#160; testProperty <font color="#008000">&quot;prop_rot13_equals&quot;</font> prop_rot13_equals,     <br />&#160;&#160;&#160; testProperty <font color="#008000">&quot;prop_rot13_single_notEquals&quot;</font> prop_rot13_single_notEquals,     <br />&#160;&#160;&#160; testProperty <font color="#008000">&quot;prop_rot13_double_equals&quot;</font> prop_rot13_double_equals,     <br />&#160;&#160;&#160; testProperty <font color="#008000">&quot;prop_rot13_group_equals&quot;</font> prop_rot13_group_equals]     <br />]     <br />&#160;&#160;&#160;&#160; <br />main = defaultMain tests</div>
+<div style="font-family: courier new">&#160;</div>
+<p>In order for us to capture the test coverage data from HPC, we need to add the -fhpc flag to the command-line for compiling our tests such as this:</p>
+<div style="font-family: courier new">&gt;ghc -fhpc EncryptionTests.hs <span style="color: green">&#8211;</span>make</div>
+<p>After instrumenting the code, we then run our code in order to capture the results.&#160; You may have noticed that it created a .hpc folder with a .mix file.&#160; When we run our code, we get the following results as usual.</p>
+<div style="font-family: courier new"><b>&gt;EncryptionTests      <br />ROT13 Tests:       <br />&#160; prop_rot13_equals: [OK, passed 100 tests]       <br />&#160; prop_rot13_single_notEquals: [OK, passed 100 tests]       <br />&#160; prop_rot13_double_equals: [OK, passed 100 tests]       <br />&#160; prop_rot13_group_equals: [OK, passed 100 tests]       </p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Properties&#160; Total       <br />Passed&#160; 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4       <br />Failed&#160; 0&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 0       <br />Total&#160;&#160; 4&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; 4</b>     </div>
+<p>&#160;</p>
+<p>You will also note that it created a .tix file which captures the actual code coverage metrics.&#160; Let&#8217;s now analyze the results of our run:</p>
+<div style="font-family: courier new"><b>&gt;hpc report encryptiontests      <br />97% expressions used (95/97)       <br />33% boolean coverage (1/3)       <br />&#160;&#160;&#160;&#160;&#160; 33% guards (1/3), 1 always True, 1 unevaluated       <br />&#160;&#160;&#160;&#160; 100% &#8216;if&#8217; conditions (0/0)       <br />&#160;&#160;&#160;&#160; 100% qualifiers (0/0)       <br />66% alternatives used (2/3)       <br />100% local declarations used (3/3)       <br />100% top-level declarations used (8/8)</b></div>
+<p>Analyzing the results, we realize we&#8217;ve made a mistake.&#160; If you look back at our Arbitrary Char instance, we&#8217;re only using alphabetic characters.&#160; The problem arises is that we&#8217;re not testing a portion of our rot13 function which takes a character that isn&#8217;t alphabetic.&#160; But, when we change this, we have to be mindful that our tests will have to change as well.&#160; Why?&#160; Because the inequality check will not be successful if there are not letters involved.&#160; Let&#8217;s make some changes and then check the results again.</p>
+<div style="font-family: courier new"><font color="#0000ff">instance</font>&#160;<font color="#800000">Arbitrary Char</font>&#160;<font color="#0000ff">where</font>     <br />&#160; arbitrary&#160;&#160; = elements ([<font color="#008000">'A'</font>..<font color="#008000">'Z'</font>] ++ [<font color="#008000">'a'</font>..<font color="#008000">'z'</font>] ++ <font color="#008000">&quot;!@#$%^&amp;*()&quot;</font> )     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> Single is inequal to original</font>     <br />prop_rot13_single_notEquals s =     <br />&#160; any isAlpha s ==&gt; rot13 s /= s</div>
+<p>Now we can recompile our code once again as we did above and do the run once more.</p>
+<div style="font-family: courier new"><b>&gt;hpc report encryptiontests      <br />100% expressions used (99/99)       <br />66% boolean coverage (2/3)       <br />&#160;&#160;&#160;&#160;&#160; 66% guards (2/3), 1 always True       <br />&#160;&#160;&#160;&#160; 100% &#8216;if&#8217; conditions (0/0)       <br />&#160;&#160;&#160;&#160; 100% qualifiers (0/0)       <br />100% alternatives used (3/3)       <br />100% local declarations used (3/3)       <br />100% top-level declarations used (8/8)</b></div>
+<p>Much better!&#160; Now we have 100% coverage on our ROT13 implementation.&#160; We also have the ability to dig deeper into the analysis through the use of the markup command.&#160; This will generate web pages which contain drill-down information about our code metrics.&#160;&#160; Below is a sample screen shot of my final results of my last run.</p>
+<p><a href="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/hpc_markup_4.png"><img style="border-right: 0px;border-top: 0px;border-left: 0px;border-bottom: 0px" height="166" alt="hpc_markup" src="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/hpc_markup_thumb_1.png" width="552" border="0" /></a> </p>
+<p>This tool is quite powerful for the code analysis we need to ensure that we&#8217;re writing the right kind of tests for our specifications and implementations.&#160; Now, let&#8217;s turn our attention to the F# world.&#160; What options do we have?</p>
+<p>&#160;</p>
+<h2>Code Coverage with TestDriven.NET and NCover</h2>
+<p>Once again, the <a href="http://testdriven.net">TestDriven.NET</a> addition to F# saves us once again when it comes to code coverage.&#160; With the integration of <a href="http://www.ncover.com/">NCover</a>, we have the ability to perform rather rich analytics on our code much like above using HPC.&#160; Let&#8217;s take the code from the previous post and look at the relevant parts.</p>
+<div style="font-family: courier new"><span style="color: blue">#light</span>     </p>
+<p><span style="color: blue">namespace</span> CodeBetter<span style="color: blue">.</span>Samples     </p>
+<p><span style="color: blue">module</span> EncryptionTests =     <br />&#160; <span style="color: blue">open</span> System&#160; <br />&#160; <span style="color: blue">open</span> FsCheck     <br />&#160; <span style="color: blue">open</span> FsCheck<span style="color: blue">.</span>Generator     <br />&#160; <span style="color: blue">open</span> Xunit     </p>
+<p>&#160; <span style="color: blue">open</span> Encryption     <br />&#160; <span style="color: blue">open</span> ListExtensions     <br />&#160; <span style="color: blue">open</span> FsCheckExtensions     </p>
+<p>&#160; <span style="color: blue">type</span> CharGenerator =     <br />&#160;&#160;&#160; <span style="color: blue">static</span>&#160;<span style="color: blue">member</span> Chars =&#160; <br />&#160;&#160;&#160;&#160;&#160; elements<span style="color: blue">(</span><span style="color: blue">[</span><span style="color: maroon">'A'</span><span style="color: blue">.</span><span style="color: blue">.</span><span style="color: maroon">'Z'</span><span style="color: blue">]</span> @&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">[</span><span style="color: maroon">'a'</span><span style="color: blue">.</span><span style="color: blue">.</span><span style="color: maroon">'z'</span><span style="color: blue">]</span><span style="color: blue">)</span>     <br />&#160;&#160; <br />&#160; overwriteGenerators <span style="color: blue">(</span>typeof&lt;CharGenerator&gt;<span style="color: blue">)</span>     <br />&#160;&#160; <br />&#160; <span style="color: blue">let</span> prop_rot13_equals s =     <br />&#160;&#160;&#160; propl <span style="color: blue">(</span>rot13 s = rot13 s<span style="color: blue">)</span>     </p>
+<p>&#160; <span style="color: blue">[&lt;</span>Fact<span style="color: blue">&gt;]</span>     <br />&#160; <span style="color: blue">let</span> test_prop_rot13_equals<span style="color: blue">(</span><span style="color: blue">)</span> =&#160;&#160; <br />&#160;&#160;&#160; check config prop_rot13_equals     </p>
+<p>&#160; <span style="color: blue">let</span> prop_rot13_double_equals s =     <br />&#160;&#160;&#160; propl <span style="color: blue">(</span><span style="color: blue">(</span>rot13 &gt;&gt; rot13<span style="color: blue">)</span> s = s<span style="color: blue">)</span>     </p>
+<p>&#160; <span style="color: blue">[&lt;</span>Fact<span style="color: blue">&gt;]</span>     <br />&#160; <span style="color: blue">let</span> test_prop_rot13_double_equals<span style="color: blue">(</span><span style="color: blue">)</span> =&#160;&#160; <br />&#160;&#160;&#160; check config prop_rot13_double_equals     <br />&#160;&#160;&#160;&#160; <br />&#160; <span style="color: blue">let</span> prop_rot13_single_notEquals s =     <br />&#160;&#160;&#160; propl <span style="color: blue">(</span>rot13 s &lt;&gt; s<span style="color: blue">)</span>     <br />&#160;&#160; <br />&#160; <span style="color: blue">[&lt;</span>Fact<span style="color: blue">&gt;]</span>     <br />&#160; <span style="color: blue">let</span> test_prop_rot13_single_notEquals<span style="color: blue">(</span><span style="color: blue">)</span> =&#160;&#160; <br />&#160;&#160;&#160; check config prop_rot13_single_notEquals     <br />&#160;&#160; <br />&#160; <span style="color: blue">let</span> prop_rot13_group_equals s =     <br />&#160;&#160;&#160; <span style="color: blue">let</span> getDistro = ListExtensions<span style="color: blue">.</span>defaultSort &gt;&gt;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ListExtensions<span style="color: blue">.</span>group &gt;&gt;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; List<span style="color: blue">.</span>map List<span style="color: blue">.</span>length &gt;&gt;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ListExtensions<span style="color: blue">.</span>defaultSort     <br />&#160;&#160;&#160; propl <span style="color: blue">(</span>getDistro s = getDistro <span style="color: blue">(</span>rot13 s<span style="color: blue">)</span><span style="color: blue">)</span>     <br />&#160;&#160;&#160;&#160; <br />&#160; <span style="color: blue">[&lt;</span>Fact<span style="color: blue">&gt;]</span>     <br />&#160; <span style="color: blue">let</span> test_prop_rot13_group_equals<span style="color: blue">(</span><span style="color: blue">)</span> =&#160;&#160; <br />&#160;&#160;&#160; check config prop_rot13_group_equals</div>
+<div style="font-family: courier new">&#160;</div>
+<p>In order to get the code metrics we need, simply right-click on the project and click Test With =&gt; Coverage.&#160; This will bring up NCover explorer.&#160; We can then browse our results to once again see our mistake.</p>
+<p><a href="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/ncover_failed_4.png"><img style="border-right: 0px;border-top: 0px;border-left: 0px;border-bottom: 0px" height="338" alt="ncover_failed" src="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/ncover_failed_thumb_1.png" width="542" border="0" /></a> </p>
+<p>Now that we realize our mistake of not including normal characters, let&#8217;s make two changes.&#160; First, let&#8217;s remove the char generator because the default should suffice.&#160; Unlike the Haskell version, FsCheck comes with an arbitrary char instance already created.&#160; Also, let&#8217;s ensure the success of the prop_rot13_single_notEquals function by ensuring that it contains at least one letter such as the following:</p>
+<div style="font-family: courier new">&#160; <span style="color: blue">let</span> prop_rot13_single_notEquals s =     <br />&#160;&#160;&#160; List<span style="color: blue">.</span>exists Char<span style="color: blue">.</span>IsLetter s ==&gt;&#160; <br />&#160;&#160;&#160;&#160;&#160; propl <span style="color: blue">(</span>rot13 s &lt;&gt; s<span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>This ensures that if we have at least one letter, we can ensure that the ROT13 transformation will make sure the two strings are not equal.&#160; We can now prove our success by once again running the Test With =&gt; Coverage option and see the results as below.</p>
+<p><a href="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/ncover_success_4.png"><img style="border-right: 0px;border-top: 0px;border-left: 0px;border-bottom: 0px" height="335" alt="ncover_success" src="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTestingPart4_EAED/ncover_success_thumb_1.png" width="537" border="0" /></a> </p>
+<p>&#160;</p>
+<h2>Conclusion</h2>
+<p>Tools such as NCover and the Haskell Program Coverage tool, it can ensure our honesty when it comes to tests, and we get a glaring reminder when we don&#8217;t.&#160; These tools, when combined with our traditional xUnit and property-based tests with saturation test generation can be a satisfying experience.&#160; We&#8217;ve now covered the creation and combination of traditional xUnit tests with property-based tests and how to leverage code coverage as a tool for refining.&#160; There is still more to be covered in this series which includes refactoring.&#160; </p>
+<div class="shr-publisher-96"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>, <a href="http://codebetter.com/matthewpodwysocki/category/tddbdd/" title="View all posts in TDD/BDD" rel="category tag">TDD/BDD</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/12/21/functional-programming-unit-testing-part-4/" title="Permalink to Functional Programming Unit Testing &#8211; Part 4" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/12/21/functional-programming-unit-testing-part-4/feed/" title="Comments RSS to Functional Programming Unit Testing &#8211; Part 4" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-96 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/12/15/functional-programming-unit-testing-part-3/" rel="prev"><span class="meta-nav">&larr;</span> Functional Programming Unit Testing &#8211; Part 3</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2009/01/02/functional-programming-unit-testing-part-5/" rel="next">Functional Programming Unit Testing &#8211; Part 5 <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-234">
+                    <div id="dsq-comment-header-234" class="dsq-comment-header">
+                        <cite id="dsq-cite-234">
+                                <span id="dsq-author-user-234">Stephan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-234" class="dsq-comment-body">
+                        <div id="dsq-comment-message-234" class="dsq-comment-message"><p>Hey Matthew, A very interesting post, but the screenshots aren&#8217;t displayed.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-235">
+                    <div id="dsq-comment-header-235" class="dsq-comment-header">
+                        <cite id="dsq-cite-235">
+    http://fortysix-and-two.blogspot.com/                            <span id="dsq-author-user-235">Kurt Schelfthout</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-235" class="dsq-comment-body">
+                        <div id="dsq-comment-message-235" class="dsq-comment-message"><p>Hi Matthew,</p>
+<p>Thanks for this series of posts, and thanks for giving FsCheck such a nice place in it. Glad to see the integration works als for xUnit, I&#8217;m an mbUnit user myself.</p>
+<p>Some (minor) remarks:</p>
+<p>-) FsCheck is &#8220;smart&#8221; enough to realize that a function returning bool or Lazy<bool> is a property. So you should be able to omit the &#8220;propl&#8221; combinator for most of your properties (except the one with the ==>)<br />
+-) In your previous post in this series, I see that you copied (I assume.. <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' />  ) the disposing of generated values from the FsCheck docs in your IRunner implementation. Since I recently ran into this myself, I&#8217;d like to add that this is not always what you want (e.g. when using the elements combinator to choose between open files: you want to close these files after _all_ tests, not every single one). Of course, in your example it doesn&#8217;t matter at all as you&#8217;re only generating Chars.<br />
+-) Would you mind if I linked to your posts from the FsCheck codeplex page?</p>
+<p>thanks,</p>
+<p>Kurt</bool></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-236">
+                    <div id="dsq-comment-header-236" class="dsq-comment-header">
+                        <cite id="dsq-cite-236">
+    http://podwysocki.codebetter.com                            <span id="dsq-author-user-236">Matthew.Podwysocki</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-236" class="dsq-comment-body">
+                        <div id="dsq-comment-message-236" class="dsq-comment-message"><p>@Stephen</p>
+<p>Thanks for the heads up, and it is now corrected.</p>
+<p>Matt</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-237">
+                    <div id="dsq-comment-header-237" class="dsq-comment-header">
+                        <cite id="dsq-cite-237">
+    http://podwysocki.codebetter.com                            <span id="dsq-author-user-237">Matthew.Podwysocki</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-237" class="dsq-comment-body">
+                        <div id="dsq-comment-message-237" class="dsq-comment-message"><p>@Kurt</p>
+<p>Yes, it was pretty much a straight copy in order to get it to work.  Glad to see that you see some interest here, and I think it&#8217;s huge for F# to have this technology.</p>
+<p>1) Ok, so noted on the propl properties.  I can fix that</p>
+<p>2) Interesting in regards to the IRunner.  I hadn&#8217;t thought about it that way in regards to the generated data.  Will we see a fix for that then or will you keep it this way?</p>
+<p>Sure, feel free to link these posts.</p>
+<p>Matt</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-238">
+                    <div id="dsq-comment-header-238" class="dsq-comment-header">
+                        <cite id="dsq-cite-238">
+    http://fortysix-and-two.blogspot.com/                            <span id="dsq-author-user-238">Kurt Schelfthout</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-238" class="dsq-comment-body">
+                        <div id="dsq-comment-message-238" class="dsq-comment-message"><p>Matt,</p>
+<p>Yes, I&#8217;ll probably make a change to FsCheck at one point or another to deal with disposable generated values. I need to put my thinking cap on first&#8230;maybe a new generator combinator &#8220;dispose&#8221; would make sense. I&#8217;ll make a note of it on the issues page, so I don&#8217;t forget it&#8230;</p>
+<p>cheers,</p>
+<p>Kurt </p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/12/21/functional-programming-unit-testing-part-4/';
+    var disqus_identifier = '96 /blogs/matthew.podwysocki/archive/2008/12/21/functional-programming-unit-testing-part-4.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'matthewpodwysocki';
+    var disqus_title = "Functional Programming Unit Testing &#8211; Part 4";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=96');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/12\/21\/functional-programming-unit-testing-part-4\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 1.756 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:51:09 -->
+<!-- super cache -->

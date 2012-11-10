@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Method Calls: Part 1 (Normal Call) | Greg Young</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/gregyoung/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/gregyoung/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='ANN: AOP Presentation' href='http://codebetter.com/gregyoung/2006/07/13/ann-aop-presentation/' />
+<link rel='next' title='Performance : String Reverse' href='http://codebetter.com/gregyoung/2006/07/21/performance-string-reverse/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/gregyoung/?p=16' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,137] -->
+<link rel="canonical" href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='/photos/greg_young/images/147056/original.aspx' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-16" class="post-16 post type-post status-publish format-standard hentry category-under-the-covers">
+					<h1 class="entry-title">Method Calls: Part 1 (Normal Call)</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/gregyoung/author/gregyoung/" title="View all posts by gregyoung">gregyoung</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/" title="5:14 am" rel="bookmark"><span class="entry-date">July 20, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/gregyoung/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/gregyoung/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><P class="MsoNormal"><FONT face="Calibri">In the next few “under the covers” posts I am going to put up a bit about something that most people take for granted, how does that method call actually work (note in this article we are looking at a very basic IL &#8220;call&#8221;? While it seems mundane, this is actually very important information as it can greatly affect code performance and offer you a greater understanding of how various items work in the CLR. Let’s start by putting up a small bit of test code.</FONT></P><br />
+<P class="MsoNormal"><br />
+<TABLE class="MsoTableGrid" cellSpacing="0" cellPadding="0" border="1"><br />
+<TBODY><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>class</SPAN> <SPAN>Foo</SPAN> {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Test() {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>for</SPAN> (<SPAN>int</SPAN> i = 0; i &lt; 10; i++) {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>Console</SPAN>.WriteLine(<SPAN>&#8220;Test&#8221;</SPAN>);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>class</SPAN> <SPAN>Program</SPAN> {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>static</SPAN> <SPAN>void</SPAN> Main(<SPAN>string</SPAN>[] args) {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>Foo</SPAN> f = <SPAN>new</SPAN> <SPAN>Foo</SPAN>();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P></TD></TR><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><FONT face="Calibri">Listing 1: A simple example for discussion</FONT></P></TD></TR></TBODY></TABLE></P><br />
+<P class="MsoNormal"><FONT face="Calibri">&nbsp;</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri">The JIT must deal with some huge problems just to run a simple bit of code like this. Let’s step into the process to get a better idea of what happens. Just before control is given to our code the Main method is JIT compiled, control is then passed to the main method to begin execution. We can see the disassembly for this code in Listing 2. </FONT></P><br />
+<P class="MsoNormal"><br />
+<TABLE class="MsoTableGrid" cellSpacing="0" cellPadding="0" border="1"><br />
+<TBODY><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>static void Main(string[] args) {</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Foo f = new Foo();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000000<SPAN>&nbsp; </SPAN>push<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>esi<SPAN>&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000001<SPAN>&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ecx,913080h </SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000006<SPAN>&nbsp; </SPAN>call<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>FFB21FAC </SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000000b<SPAN>&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>esi,eax </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000000d<SPAN>&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ecx,esi </SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000000f</SPAN><SPAN><SPAN>&nbsp; </SPAN>cmp<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr [ecx],ecx </SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000011<SPAN>&nbsp; </SPAN>call<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr ds:[009130B8h] </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000017<SPAN>&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ecx,esi </SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000019<SPAN>&nbsp; </SPAN>cmp<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr [ecx],ecx </SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000001b<SPAN>&nbsp; </SPAN>call<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr ds:[009130B8h] </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>f.Test();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000021<SPAN>&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ecx,esi </SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000023<SPAN>&nbsp; </SPAN>cmp<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr [ecx],ecx </SPAN></P><br />
+<P class="MsoNormal"><SPAN>00000025<SPAN>&nbsp; </SPAN>call<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>dword ptr ds:[009130B8h] </SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000002b<SPAN>&nbsp; </SPAN>pop<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>esi<SPAN>&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>0000002c<SPAN>&nbsp; </SPAN>ret<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P></TD></TR><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><FONT face="Calibri">Listing 2: Disassembly of the main method</FONT></P></TD></TR></TBODY></TABLE></P><br />
+<P class="MsoNormal"><FONT face="Calibri">&nbsp;</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri">From looking at the disassembled code we can see that the generated code is dereferencing a pointer in order to make the call. There are a few reasons for this but before we get into them let’s look a bit at how this works. It’s time to break out our trusty debugger to see what’s going on. If you have not yet read it, now would be a good time to go back and read my first post here at CodeBetter </FONT><A href="/blogs/gregyoung/archive/2006/06/09/146298.aspx"><FONT face="Calibri">Viewing Unmanaged Code in VS.NET</FONT></A><FONT face="Calibri"> as you need this and SOS (Son Of Strike) setup in order to follow along. </FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri"><SPAN>&nbsp;</SPAN><I>I will put all debugger commands in </I></FONT><B><SPAN>bold fixed width</SPAN></B><SPAN> </SPAN><I><SPAN><FONT face="Calibri">and the output in</FONT></SPAN></I><SPAN> normal fixed width.</SPAN></P><br />
+<P class="MsoNormal"><SPAN><FONT face="Calibri">Put a break point on the first line of code and start debugging. All commands for SOS should be typed in your immediate window.</FONT></SPAN></P><br />
+<P class="MsoNormal"><B><SPAN>.load SOS</SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>extension C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\SOS.dll loaded</SPAN><B><SPAN></SPAN></B></P><br />
+<P class="MsoNormal"><FONT face="Calibri">This first command loads the SOS debugging tool making it available for our use.</FONT></P><br />
+<P class="MsoNormal"><B><SPAN>!Name2EE ConsoleApplication29.exe ConsoleApplication29.Foo.Test</SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>PDB symbol for mscorwks.dll not loaded</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Module: 00912c14 (ConsoleApplication29.exe)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Token: 0&#215;06000001</SPAN></P><br />
+<P class="MsoNormal"><SPAN>MethodDesc: <SPAN>00913070</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN>Name: ConsoleApplication29.Foo.Test()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Not JITTED yet. Use !bpmd -md 00913070 to break on run.</SPAN></P><br />
+<P class="MsoNormal"><SPAN><FONT face="Calibri">This command gives us more information on our method. There is a lot of useful information here but the most important bit of informatio is the MethodDesc address. We can use this to find out more information about our method.</FONT></SPAN></P><br />
+<P class="MsoNormal"><B><SPAN>!DumpMD <SPAN>00913070</SPAN></SPAN></B><B><SPAN></SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>Method Name: ConsoleApplication29.Foo.Test()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Class: 009113b8</SPAN></P><br />
+<P class="MsoNormal"><SPAN>MethodTable: <SPAN>00913080</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN>mdToken: 06000001</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Module: 00912c14</SPAN></P><br />
+<P class="MsoNormal"><SPAN>IsJitted: no</SPAN></P><br />
+<P class="MsoNormal"><SPAN>m_CodeOrIL: ffffffffffffffff</SPAN><SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><FONT face="Calibri">Here we can get our method table, we can examine our full method table using this address. </FONT></SPAN></P><br />
+<P class="MsoNormal"><B><SPAN>!DumpMT -md <SPAN>00913080</SPAN></SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>EEClass: 009113b8</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Module: 00912c14</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Name: ConsoleApplication29.Foo</SPAN></P><br />
+<P class="MsoNormal"><SPAN>mdToken: 02000002<SPAN>&nbsp; </SPAN>(C:\Documents and Settings\Greg\My Documents\Visual Studio 2005\Projects\ConsoleApplication29\ConsoleApplication29\bin\Release\ConsoleApplication29.exe)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>BaseSize: 0xc</SPAN></P><br />
+<P class="MsoNormal"><SPAN>ComponentSize: 0&#215;0</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Number of IFaces in IFaceMap: 0</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Slots in VTable: 6</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>MethodDesc Table</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp; </SPAN>Entry MethodDesc<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>JIT Name</SPAN></P><br />
+<P class="MsoNormal"><SPAN>79354bec<SPAN>&nbsp;&nbsp; </SPAN>7913bd48<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.ToString()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>793539c0<SPAN>&nbsp;&nbsp; </SPAN>7913bd50<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.Equals(System.Object)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>793539b0<SPAN>&nbsp;&nbsp; </SPAN>7913bd68<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.GetHashCode()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>7934a4c0<SPAN>&nbsp;&nbsp; </SPAN>7913bd70<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.Finalize()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130c8<SPAN>&nbsp;&nbsp; </SPAN>00913070<SPAN>&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>NONE ConsoleApplication29.Foo.Test()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130d4<SPAN>&nbsp;&nbsp; </SPAN>00913078<SPAN>&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>NONE ConsoleApplication29.Foo..ctor()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><FONT face="Calibri">As I am sure many people have noticed by now (it has been in every one of these listings </FONT></SPAN><SPAN><SPAN>J</SPAN></SPAN><SPAN><FONT face="Calibri">), our method has not yet been JIT’ed. This is one of the reasons why we dereference in order to make the call above, at the time that the main method was compiled it had no idea where it should call.<SPAN>&nbsp; </SPAN>This leads us to an interesting question.</FONT></SPAN></P><br />
+<H1><SPAN><FONT size="4"><FONT color="#17365d"><FONT face="Calibri">How does the JIT know when to compile a method?</FONT></FONT></FONT></SPAN></H1><br />
+<P class="MsoNormal"><FONT face="Calibri">&nbsp;</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri">Essentially the JIT is lazy loading our compilation for us… It uses a concept known as a “thunk” in order to catch the first time we try to call into our method. The thunk is a little piece of unmanaged code that is emitted by the CLR when it first loads the type. The thunk as we will see shortly contains code to call the JIT or code to call the method.</FONT></P><br />
+<P class="MsoNormal"><br />
+<TABLE class="MsoNormalTable" cellSpacing="0" cellPadding="0" border="0"><br />
+<TBODY><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><IMG src="/photos/greg_young/images/147056/original.aspx"><FONT face="Calibri"></FONT><SPAN></SPAN></P></TD></TR><br />
+<TR><br />
+<TD vAlign="top" width="734"><br />
+<P class="MsoNormal"><FONT face="Calibri"><SPAN>Figure 1 : Process of JIT’ing a method</SPAN><SPAN></SPAN></FONT></P></TD></TR></TBODY></TABLE></P><SPAN><FONT face="Calibri"><br />
+<P class="MsoNormal"><SPAN>The process as shown in Figure 1 is almost deceptively simple; in practice this would be far too slow to create functional systems with. The difference between this drawing and how it actually works has to deal with the decision. The picture would lead you to believe that the thunk has branching code; it does not. Instead the JIT uses a concept known as back patching.</SPAN></P><br />
+<P class="MsoNormal"><SPAN>The term back patching may be familiar to you as it is also used in garbage collection, it means to go back and update a pointer to reflect new information. When the method is called for the first time it reads from the method table an address that points to our thunk and calls it. Our thunk forwards us off to the JIT. The key is that when the JIT has completed we go back and change our method table to now directly point to the JIT’ed code (we update the table). <A href="/photos/greg_young/images/147057/original.aspx">Figure 2</A> &amp; <A href="/photos/greg_young/picture147511.aspx">Figure 3</A> illustrate a before and after view of this process. <I>Note that the call moves directly in the pictures while in reality they are actually reading a memory address that changes</I>.</SPAN></P><br />
+<P class="MsoNormal">Now that we have a high level view of what happens, let’s verify it by watching it in the debugger. You can use either your memory window (debug-&gt;windows-&gt;memory and enter the memory address of your call (i.e. 009130B8h from the listing)) or you can use the registers window (debug-&gt;windows-&gt;registers (make sure effective address is enabled)) to view the data we need. </P><br />
+<P class="MsoNormal"><I>Showing stuff like this to your friends in the debugger is also good for asserting your role as </I><A href="http://joaiken.net/blog/index.php?p=64"><I>alpha nerd</I></A><I> in the office.</I></P><br />
+<P class="MsoNormal">Using the debugger step to line 0011 (the first call). We can see in either location that the memory address 009130B8 (the address we are dereferencing for our call) contains 009130C8 just before we make our call. This memory address should look familiar as it was in our method table listing earlier as the entry for our Test method. This is pointing to our thunk, we can even look at our thunk as unmanaged code by disassembling that address with the !u command.</P><br />
+<P class="MsoNormal"><B><SPAN>!u 009130C8</SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>Unmanaged code</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130C8 B870309100<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>eax,913070h</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130CD 89ED<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ebp,ebp</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130CF E938EEA2FF<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>jmp<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>00341F0C</SPAN><SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130D4 B878309100<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>eax,913078h</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130D9 89ED<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>mov<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ebp,ebp</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130DB E92CEEA2FF<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>jmp<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>00341F0C</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130E0 0000<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>add<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>byte ptr [eax],al</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130E2 0000<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>add<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>byte ptr [eax],al</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130E4 0000<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>add<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>byte ptr [eax],al</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130E6 0000<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>add<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>byte ptr [eax],al</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">This listing is a bit confusing because it is actually two thunks followed by nothing. So our call that we were looking at is set to jump to the first instruction here. That 913070 being loaded should also look familiar it is the address of our method desc, it is being pushed onto EAX to be passed as a parameter to the JIT compiler (so the JIT compiler knows what to compile!). Let’s set a break point in our other method hit f5 and take a look at our environment after to see what has changed.</P><br />
+<P class="MsoNormal"><B><SPAN>!DumpMT -md 00913080</SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>EEClass: 009113b8</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Module: 00912c14</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Name: ConsoleApplication29.Foo</SPAN></P><br />
+<P class="MsoNormal"><SPAN>mdToken: 02000002<SPAN>&nbsp; </SPAN>(C:\Documents and Settings\Greg\My Documents\Visual Studio 2005\Projects\ConsoleApplication29\ConsoleApplication29\bin\Release\ConsoleApplication29.exe)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>BaseSize: 0xc</SPAN></P><br />
+<P class="MsoNormal"><SPAN>ComponentSize: 0&#215;0</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Number of IFaces in IFaceMap: 0</SPAN></P><br />
+<P class="MsoNormal"><SPAN>Slots in VTable: 6</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8211;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>MethodDesc Table</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp; </SPAN>Entry MethodDesc<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>JIT Name</SPAN></P><br />
+<P class="MsoNormal"><SPAN>79354bec<SPAN>&nbsp;&nbsp; </SPAN>7913bd48<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.ToString()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>793539c0<SPAN>&nbsp;&nbsp; </SPAN>7913bd50<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.Equals(System.Object)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>793539b0<SPAN>&nbsp;&nbsp; </SPAN>7913bd68<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.GetHashCode()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>7934a4c0<SPAN>&nbsp;&nbsp; </SPAN>7913bd70<SPAN>&nbsp;&nbsp; </SPAN>PreJIT System.Object.Finalize()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>00de00b0</SPAN><SPAN><SPAN>&nbsp;&nbsp; </SPAN>00913070<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>JIT ConsoleApplication29.Foo.Test()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>009130d4<SPAN>&nbsp;&nbsp; </SPAN>00913078<SPAN>&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>NONE ConsoleApplication29.Foo..ctor()</SPAN></P><br />
+<P class="MsoNormal">We can see here that our method has now been JIT’ed (as a normal JIT) and that our&nbsp;<SPAN>&nbsp;method table e</SPAN>ntry has been updated to reflect a new location (00de00b0). This is the location that our unmanaged code has been created by the JIT. We can verify this by looking at our current stack as we are currently in the method.</P><br />
+<P class="MsoNormal"><B><SPAN>!CLRStack</SPAN></B></P><br />
+<P class="MsoNormal"><SPAN>OS Thread Id: 0x8e8 (2280)</SPAN></P><br />
+<P class="MsoNormal"><SPAN>ESP<SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>EIP<SPAN>&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN>0012f47c <SPAN>00de00b0</SPAN> ConsoleApplication29.Foo.Test()</SPAN></P><br />
+<P class="MsoNormal"><SPAN>0012f480 00de0087 ConsoleApplication29.Program.Main(System.String[])</SPAN></P><br />
+<P class="MsoNormal"><SPAN>0012f69c 79e88f63 [GCFrame: 0012f69c]</SPAN></P><br />
+<P class="MsoNormal">Let’s step out of this method and back out to our main method.<SPAN>&nbsp; </SPAN>Our code is again setting up the same call, by stepping to line 1b and re-checking our pointer we can see that our code will now call the newly generated unmanaged code directly as opposed to passing through the thunk. </P><br />
+<P class="MsoNormal">This will all stay just like this, unless our code is pitched which will be the next discussion!</P><br />
+<P class="MsoNormal"></FONT></SPAN></P></p>
+<div class="shr-publisher-16"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/gregyoung/category/under-the-covers/" title="View all posts in Under The Covers" rel="category tag">Under The Covers</a>. Bookmark the <a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/" title="Permalink to Method Calls: Part 1 (Normal Call)" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/feed/" title="Comments RSS to Method Calls: Part 1 (Normal Call)" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-16 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/gregyoung/2006/07/13/ann-aop-presentation/" rel="prev"><span class="meta-nav">&larr;</span> ANN: AOP Presentation</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/gregyoung/2006/07/21/performance-string-reverse/" rel="next">Performance : String Reverse <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">6 Responses to <em>Method Calls: Part 1 (Normal Call)</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-61">
+		<div id="comment-61">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://gotyulsj.com/' rel='external nofollow' class='url'>Jojqbuhg</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-61">July 14, 2009 at 2:51 pm</a></div>
+
+		<div class="comment-body"><p>aCIrm5 </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-60">
+		<div id="comment-60">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://james.walkers88@gmail.com' rel='external nofollow' class='url'>james</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-60">October 27, 2008 at 8:38 am</a></div>
+
+		<div class="comment-body"><p>Subject Line: Beat Long Poll Lines with Absentee Ballots from StateDemocracy.org<br />
+Many state and local election officials are encouraging voters to use Absentee Ballots to avoid the long lines and delays expected at the polls on November 4th due to the record-breaking surge in newly registered voters.<br />
+Voters in most states still have time to obtain an Absentee Ballot by simply downloading an official application form available through <a href="http://www.StateDemocracy.org" rel="nofollow">http://www.StateDemocracy.org</a>, a completely FREE public service from the nonprofit State Democracy Foundation.<br />
+Read More: <a href="http://us-2008-election.blogspot.com/2008/10/beat-long-poll-lines-with-absentee.html" rel="nofollow">http://us-2008-election.blogspot.com/2008/10/beat-long-poll-lines-with-absentee.html</a> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-59">
+		<div id="comment-59">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-59">July 21, 2006 at 2:22 am</a></div>
+
+		<div class="comment-body"><p>No edit .. try it for yourself </p>
+<p>notice the construction code</p>
+<p>00000000  push        esi<br />
+00000001  mov         ecx,913080h<br />
+00000006  call        FFB21FAC<br />
+0000000b  mov         esi,eax </p>
+<p>The address in ECX look familiar? <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>I believe what is happenning here is that the consructor is being inlined (and as such it is not being JIT&#8217;ed). Good catch, I hadn&#8217;t noticed that, that is worth a post on its own!</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-58">
+		<div id="comment-58">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://geekswithblogs.net/akraus1/' rel='external nofollow' class='url'>Alois</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-58">July 20, 2006 at 10:23 pm</a></div>
+
+		<div class="comment-body"><p>Hi Greg,</p>
+<p>you did very nicely explain how the JITer works. I was wondering about this table in your article<br />
+00de00b0   00913070      JIT ConsoleApplication29.Foo.Test()<br />
+009130d4   00913078     NONE ConsoleApplication29.Foo..ctor()</p>
+<p>How can it be that the test method has been jited before the ctor has been run? To get your program compiled you must instantiate the class before you can call a function of it. I assume that the ctor must have been JITed before the Test function or does the JITer know that the default ctor does nothing? Did I miss here something or did you &#8220;patch&#8221; the method table with notepad? <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> .</p>
+<p>Yours,<br />
+   Alois Kraus</p>
+<p>Yours,<br />
+  Alois Kraus</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-57">
+		<div id="comment-57">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Greg</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-57">July 20, 2006 at 6:46 am</a></div>
+
+		<div class="comment-body"><p>Ah good question, I will have to address that &#8230; Of course I can only look at disassembled code in the production JIT (and even doing that to make a comment is well umm against the EULA:)) </p>
+<p>I can however point you to exactly how this works in the SSCLI the method being called is in prestub.cpp -<a href="http://dotnet.di.unipi.it/Content/sscli/docs/doxygen/clr/clr/prestub_8cpp-source.html" target=_new rel=nofollow>http://dotnet.di.unipi.it/Content/sscli/docs/doxygen/clr/clr/prestub_8cpp-source.html</a>, it is MethodDesc::DoPreStub .. it is quite a long and involved method but there are some comments there discussing how thread safety is handled (in fact in the SSCLI this is the method that the thunk calls). There is also a bit of discussion on this in SSCLI Essentials from O&#8217;Reilly</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-56">
+		<div id="comment-56">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dotnetjunkies.com/weblog/johnwood' rel='external nofollow' class='url'>johnwood</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/gregyoung/2006/07/20/method-calls-part-1-normal-call/#comment-56">July 20, 2006 at 6:29 am</a></div>
+
+		<div class="comment-body"><p>Another interesting topic well explored.<br />
+Any thought as to what happens in a multithreaded application when it comes to JIT a method. What if two threads hit that method&#8230; obviously one gets there first, but what does it do with the other call while it JITs? Does it somehow gain a lock on the method before it calls it, blocking the other call? How else would it stop the instructions changing from under its feet, and other race condition issues? </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/gregyoung/2006/07/20/method-calls-part-1-normal-call/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/gregyoung/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='16' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="937e34b8e8" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.481 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 23:16:15 -->
+<!-- super cache -->

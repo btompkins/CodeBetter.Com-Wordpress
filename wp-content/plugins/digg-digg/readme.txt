@@ -1,26 +1,27 @@
 === Plugin Name ===
 Contributors: YONG MOOK KIM
-Donate link: http://www.mkyong.com/
-Tags: mkyong, digg digg, digg, linked, reddit, dzone, yahoo buzz, tweetMeme, twitter, topsy, facebook share, facebook like, stumbleUpon, delicious, sphinn, designbump, thewebblend, blogengage, serpd and AddThis
+Donate link: http://www.diggdigg2u.com/
+Tags: digg digg, digg, google, google+1, linkedin, reddit, dzone, yahoo buzz, tweetMeme, twitter, topsy, facebook share, facebook like, stumbleUpon, delicious, designbump, thewebblend, blogengage and serpd.
 
 Requires at least: 2.3
-Tested up to: 3.0
-Stable tag: 4.5.0.7
+Tested up to: 3.1
+Stable tag: 4.5.3.3
 
-All-in-One social voted count buttons.
+All-in-One Social Vote Buttons.
 
 == Description ==
-Integrate popular social voted count buttons into Wordpress easily.
+Integrate popular social buttons into Wordpress easily.
 
 = Features =
 
-* Button voted count for Digg, LinkedIn, Reddit, dDone, Twitter, TweetMeme, Topsy, Yahoo Buzz,facebook share, facebook like, StumbleUpon, Delicious, Sphinn, Google Buzz, Designbump, WebBlend, BlogEngage, Serpd and AddThis.
-* Facebook Like support multiple languages.
+* Display counts for popular social butons like Digg, LinkedIn, Google +1, Reddit, dDone, Twitter, TweetMeme, Topsy, Yahoo Buzz, facebook share, facebook like, StumbleUpon, Delicious, Sphinn, Google Buzz, Designbump, WebBlend, BlogEngage and Serpd.
+* Facebook Like (Iframe or XFBXM), support thumbnail generation, multiple languages, show faces and send button.
 * Rich button layout customisation.
 * Flexible button display controls.
 * Lazy loading to increase website performance.
-* Left or right scrolling effect like Mashable.com. Supported in Home page.
+* Left or right scrolling effect like Mashable.com.
 * Support in excerpt mode.
+* Support for email and print services.
 * And many many ......
 
 == Installation ==
@@ -34,7 +35,7 @@ Post Installation
 1. Access the setting -> Digg Digg to do the configuration
 
 == Frequently Asked Questions ==
-Refer FAQ Here, <a href="http://www.mkyong.com/blog/digg-digg-wordpress-plugin/#faq" target="_blank">http://www.mkyong.com/blog/digg-digg-wordpress-plugin/#faq</a>
+Refer User Guide and FAQ Here, <a href="http://www.diggdigg2u.com/user-guide/" target="_blank">http://www.diggdigg2u.com/user-guide/</a>
 
 == Screenshots ==
 1. Buttons + Before Content + Normal Mode
@@ -45,6 +46,59 @@ Refer FAQ Here, <a href="http://www.mkyong.com/blog/digg-digg-wordpress-plugin/#
 6. Buttons + Before Content + Compact Mode + Excerpt Mode
 
 == Changelog ==
+
+= Digg Digg v4.5.3.3 - 28/06/2011 =
+* Fixed : Warning in dd-printform.php
+
+= Digg Digg v4.5.3.2 - 28/06/2011 =
+* Fixed : Google+1 manual code always display same button size.
+* Updated : Update heading and some text in configuration page. 
+* Added : Digg Digg facebook page in configuration page.
+* Added : Digg Digg user guide.
+
+= Digg Digg v4.5.3.1 - 07/06/2011 =
+
+* Fixed : Google +1 URL encoding issue, caused, display wrong counts in home page.
+* Added : Add manual code for Google +1 button.
+* Added : Add manual code for fblike (xfbxm) button.
+* Added : Add manual code for serpd button.
+
+= Digg Digg v4.5.3 - 06/06/2011 =
+
+* Fixed : FBLike (XFBML) , send button typo error caused send button failed to display.
+* Added : Add Google +1 button.
+* Added : Add reset everything settings in global config.
+* Fixed : If user compact HTML file, floating buttons are failed to display.
+
+= Digg Digg v4.5.2 - 06/05/2011 =
+
+* Fixed : Update FBLike (iframe) , height from 23 to 24px.
+* Fixed : Chrome/Safari (webkit) auto scrolling when hits symbol "#" in iframe.
+* Fixed : Facebook Like Thumbnail problem , add default images in global config.
+* Update : Update jQuery to 1.6.0 for performance improve.
+* Update : Update lazy load to facebook-like loading icon
+* New : New FB Like using XFBML, to support "send" button and plugin compatible issue.
+
+= Digg Digg v4.5.1.1 - 14/04/2011 =
+
+Fixed : Configuration button on Wordpress not working
+Update : Credit link updated to DiggDigg support forum
+Update : Floating hide value update from 1280px to 790px
+
+= Digg Digg v4.5.1 - 30/03/2011 =
+
+* Fixed : Reddit + LazyLoading caused reddit button failed to function.
+* Fixed : Delicious does not display in IE.
+* Fixed : FaceBook Share display partially in browser, "e" is display in next line.
+* Features : Add "Wide" layout for Digg button.
+* Features : Integrate ShareThis email feature in floating display.
+* Features : Add print button in floating display.
+* Performance : Puts admin css in digg digg admin page only.
+* Performance : Change the way of upgrade digg digg settings.
+* Performance : Code refactor to increase performance.
+* Remove : sphinn button.
+* Remove : AddThis button in Floating mode.
+* Update : FAQ page and admin page.
 
 = Digg Digg v4.5.0.7 - 17/01/2011 =
 
@@ -120,14 +174,14 @@ Refer FAQ Here, <a href="http://www.mkyong.com/blog/digg-digg-wordpress-plugin/#
 * Bug Fixed, ajax float scrolling back, push down images or content issue (major script changed).
 * Update Digg Digg FAQ to explain the new changed.
 
-= Digg Digg v4.1 =
+= Digg Digg v4.1 - 22/7/2010 =
 * Add change log tab
 
-= Digg Digg v4.0.9 =
+= Digg Digg v4.0.9 - 1/7/2010 =
 * Bug fix for tweetmeme, urlshorten and new contructor
 * Add floating issue in FAQ
 
-= Digg Digg v4.0.8 =
+= Digg Digg v4.0.8 - 28/6/2010 =
 * Admin UI Redesign
 * Bug fix for tweetmeme
 * Add URL shorten api for tweetmeme

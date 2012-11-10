@@ -1,6 +1,6 @@
 <?php
 /**
- * Options Management Administration Panel.
+ * Options Management Administration Screen.
  *
  * If accessed directly in a browser this page shows a list of all saved options
  * along with editable fields for their values. Serialized data is not supported
@@ -24,10 +24,14 @@ $parent_file = 'options-general.php';
 
 wp_reset_vars(array('action', 'option_page'));
 
+$capability = 'manage_options';
+
 if ( empty($option_page) ) // This is for back compat and will eventually be removed.
 	$option_page = 'options';
+else
+	$capability = apply_filters( "option_page_capability_{$option_page}", $capability );
 
-if ( !current_user_can('manage_options') )
+if ( !current_user_can( $capability ) )
 	wp_die(__('Cheatin&#8217; uh?'));
 
 // Handle admin email change requests
@@ -60,7 +64,7 @@ $whitelist_options = array(
 	'media' => array( 'thumbnail_size_w', 'thumbnail_size_h', 'thumbnail_crop', 'medium_size_w', 'medium_size_h', 'large_size_w', 'large_size_h', 'image_default_size', 'image_default_align', 'image_default_link_type', 'embed_autourls', 'embed_size_w', 'embed_size_h' ),
 	'privacy' => array( 'blog_public' ),
 	'reading' => array( 'posts_per_page', 'posts_per_rss', 'rss_use_excerpt', 'blog_charset', 'show_on_front', 'page_on_front', 'page_for_posts' ),
-	'writing' => array( 'default_post_edit_rows', 'use_smilies', 'default_category', 'default_email_category', 'use_balanceTags', 'default_link_category', 'enable_app', 'enable_xmlrpc' ),
+	'writing' => array( 'default_post_edit_rows', 'use_smilies', 'default_category', 'default_email_category', 'use_balanceTags', 'default_link_category', 'default_post_format', 'enable_app', 'enable_xmlrpc' ),
 	'options' => array( '' ) );
 
 $mail_options = array('mailserver_url', 'mailserver_port', 'mailserver_login', 'mailserver_pass');
@@ -106,7 +110,7 @@ if ( 'update' == $action ) {
 	}
 
 	if ( !isset( $whitelist_options[ $option_page ] ) )
-		wp_die( __( 'Error: options page not found.' ) );
+		wp_die( __( '<strong>ERROR</strong>: options page not found.' ) );
 
 	if ( 'options' == $option_page ) {
 		if ( is_multisite() && ! is_super_admin() )
@@ -147,7 +151,7 @@ if ( 'update' == $action ) {
 	}
 
 	/**
-	 *  Handle settings errors and return to options page
+	 * Handle settings errors and return to options page
 	 */
 	// If no settings errors were registered add a general 'updated' message.
 	if ( !count( get_settings_errors() ) )
@@ -217,7 +221,5 @@ endforeach;
   </form>
 </div>
 
-
 <?php
 include('./admin-footer.php');
-?>

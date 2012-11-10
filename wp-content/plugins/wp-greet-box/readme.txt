@@ -3,8 +3,8 @@ Tags: referrer, search engine, seo, rss, landing sites, google, yahoo, social ne
 Contributors: madeinthayaland
 Donate link: http://omninoggin.com/donate/
 Requires at least: 2.7
-Tested up to: 3.0.4
-Stable Tag: 6.2.3
+Tested up to: 3.2.1
+Stable Tag: 6.3.3
 
 Display a different greeting message to your visitor depending on which site they are coming from.
 
@@ -120,6 +120,25 @@ Please take a look at more documentation available on the
 to see if any of them can help you.
 
 == Changelog ==
+
+= 6.3.3 =
+* Added li_LT translation (Thanks Nata Strazda!).
+
+= 6.3.2 =
+* Fixed the following bugs that I've neglected for a while:
+  * Greeting message not showing up for front page with static post/page.
+  * Twitter message not showing up for Twitter referrers. (added t.co domain match by default)
+  * Could not re-edit a greeting message without refreshing page.
+
+= 6.3.1 =
+* Fixed a few visual bugs in WP Admin (floating footer, broken image, buttons with bad text)
+
+= 6.3.0 =
+* Allow javascript to be embedded into greeting messages.
+
+= 6.2.4 =
+* Code changes to comply with WordPress plugin repository guidelines.
+* Updating GPL copyright notice to 2008-2011 (only took me 6 months to notice this time!).
 
 = 6.2.3 =
 * Fixed minor bug

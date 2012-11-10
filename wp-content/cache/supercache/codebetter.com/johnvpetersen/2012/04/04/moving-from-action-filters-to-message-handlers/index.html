@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Moving from Action Filters to Message Handlers | John V. Petersen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/johnvpetersen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/johnvpetersen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/johnpetersen/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Making your ASP.NET Web API&#8217;s secure' href='http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/' />
+<link rel='next' title='Why I&#8217;m moving away from Apple, and specifically, the iPhone and going to the store' href='http://codebetter.com/johnvpetersen/2012/04/14/why-im-moving-away-from-apple-and-specifically-the-iphone-and-going-to-the-store/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/johnvpetersen/?p=414' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,155] -->
+<link rel="canonical" href="http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/johnvpetersen/files/2012/04/image11-300x83.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=3981720249">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-414" class="post-414 post type-post status-publish format-standard hentry category-asp-net-mvc-4 category-asp-net-web-api">
+					<h1 class="entry-title">Moving from Action Filters to Message Handlers</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">johnvpetersen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/" title="8:57 am" rel="bookmark"><span class="entry-date">April 4, 2012</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/johnpetersen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/johnpetersen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/johnpetersen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>The updated code for the Web API project can be found <a href="https://docs.google.com/open?id=0B6Zn8tqUVSf1MFBzcElyNVJUdG02NWtjSmMyR1Mydw" target="_blank">here</a> In the last post on <a title="Making your ASP.NET Web API’s secure" href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/" target="_blank">Making Your ASP.NET Web API&#8217;s Secure</a>, I received some very useful comments. Thanks to Pedro Reys for pointing out my non-use of HttpMessageHandlers. Pedro is absolutely correct in his observation that through the use of handlers, we can detect issues BEFORE processing gets into the controller context. If you are concerned about performance (and we all should be!!) &#8211; Http Message Handling is where you want to be. It turned out to be a pretty easier conversion. As you may recall, there were 3 actions filters that enforced:</p>
+<ol>
+<li>HTTPS</li>
+<li>A valid authorization token</li>
+<li>A valid IP Host source</li>
+</ol>
+<p>Here are the 3 new handlers:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace WebAPI
+{
+ public class HttpsHandler : DelegatingHandler
+ {
+  protected override Task SendAsync(HttpRequestMessage request,
+   CancellationToken cancellationToken)
+  {
+   if (!String.Equals(request.RequestUri.Scheme, &quot;https&quot;, StringComparison.OrdinalIgnoreCase))
+   {
+    return Task.Factory.StartNew(() =&gt;
+    {
+     return new HttpResponseMessage(HttpStatusCode.BadRequest)
+     {
+      Content = new StringContent(&quot;HTTPS Required&quot;)
+     };
+    });
+   }
+   return base.SendAsync(request, cancellationToken);
+  }
+ }
+}
+</pre>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using WebAPI.Models;
+
+namespace WebAPI
+{
+ public class TokenValidationHandler : DelegatingHandler
+ {
+  protected override Task SendAsync(HttpRequestMessage request,
+   CancellationToken cancellationToken)
+  {
+   string token;
+
+   try
+   {
+    token = request.Headers.GetValues(&quot;Authorization-Token&quot;).FirstOrDefault();
+   }
+   catch (System.InvalidOperationException)
+   {
+    return Task.Factory.StartNew(() =&gt;
+    {
+     return new HttpResponseMessage(HttpStatusCode.BadRequest)
+     {
+      Content = new StringContent(&quot;Missing Authorization-Token&quot;)
+     };
+    });
+   }
+
+   try
+   {
+    var foundUser = AuthorizedUserRepository.GetUsers().FirstOrDefault(x =&gt; x.Name == RSAClass.Decrypt(token));
+    if (foundUser == null)
+     return Task.Factory.StartNew(() =&gt;
+     {
+      return new HttpResponseMessage(HttpStatusCode.Forbidden)
+      {
+       Content = new StringContent(&quot;Unauthorized User&quot;)
+      };
+     });
+   }
+   catch (RSAClass.RSAException)
+   {
+    return Task.Factory.StartNew(() =&gt;
+    {
+     return new HttpResponseMessage(HttpStatusCode.InternalServerError)
+     {
+      Content = new StringContent(&quot;Error encountered while attempting to process authorization token&quot;)
+     };
+    });
+   }
+   return base.SendAsync(request, cancellationToken);
+  }
+ }
+}
+</pre>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using WebAPI.Models;
+
+namespace WebAPI
+{
+ public class IPHostValidationHandler : DelegatingHandler
+ {
+   protected override Task SendAsync(HttpRequestMessage request,
+   CancellationToken cancellationToken) {
+
+    var context = request.Properties[&quot;MS_HttpContext&quot;] as System.Web.HttpContextBase;
+    string userIP = context.Request.UserHostAddress;
+
+    var foundIP = AuthorizedIPRepository.GetAuthorizedIPs().FirstOrDefault(x =&gt; x == userIP);
+    if (foundIP == null)
+     return Task.Factory.StartNew(() =&gt;
+     {
+      return new HttpResponseMessage(HttpStatusCode.Forbidden)
+      {
+       Content = new StringContent(&quot;Unauthorized IP Address&quot;)
+      };
+     });
+
+    return base.SendAsync(request, cancellationToken);
+
+   }
+ }
+}
+</pre>
+<p>I went ahead and created a specific exception to address situations when the RSA encryption/description process throws the generic bad data exception. Here is the revised RSAClass:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace WebAPI
+{
+ public class RSAClass
+ {
+  private static string _privateKey = &quot;s6lpjspk+3o2GOK5TM7JySARhhxE5gB96e9XLSSRuWY2W9F951MfistKRzVtg0cjJTdSk5mnWAVHLfKOEqp8PszpJx9z4IaRCwQ937KJmn2/2VyjcUsCsor+fdbIHOiJpaxBlsuI9N++4MgF/jb0tOVudiUutDqqDut7rhrB/oc=AQAB&lt;/pre&gt;
+3J2+VWMVWcuLjjnLULe5TmSN7ts0n/TPJqe+bg9avuewu1rDsz+OBfP66/+rpYMs5+JolDceZSiOT+ACW2Neuw==
+&lt;pre&gt;&lt;q&gt;0HogL5BnWjj9BlfpILQt8ajJnBHYrCiPaJ4npghdD5n/JYV8BNOiOP1T7u1xmvtr2U4mMObE17rZjNOTa1rQpQ==&lt;/q&gt;jbXh2dVQlKJznUMwf0PUiy96IDC8R/cnzQu4/ddtEe2fj2lJBe3QG7DRwCA1sJZnFPhQ9svFAXOgnlwlB3D4Gw==evrP6b8BeNONTySkvUoMoDW1WH+elVAH6OsC8IqWexGY1YV8t0wwsfWegZ9IGOifojzbgpVfIPN0SgK1P+r+kQ==LeEoFGI+IOY/J+9SjCPKAKduP280epOTeSKxs115gW1b9CP4glavkUcfQTzkTPe2t21kl1OrnvXEe5Wrzkk8rA==HD0rn0sGtlROPnkcgQsbwmYs+vRki/ZV1DhPboQJ96cuMh5qeLqjAZDUev7V2MWMq6PXceW73OTvfDRcymhLoNvobE4Ekiwc87+TwzS3811mOmt5DJya9SliqU/ro+iEicjO4v3nC+HujdpDh9CVXfUAWebKnd7Vo5p6LwC9nIk=&quot;;
+  private static string _publicKey = &quot;s6lpjspk+3o2GOK5TM7JySARhhxE5gB96e9XLSSRuWY2W9F951MfistKRzVtg0cjJTdSk5mnWAVHLfKOEqp8PszpJx9z4IaRCwQ937KJmn2/2VyjcUsCsor+fdbIHOiJpaxBlsuI9N++4MgF/jb0tOVudiUutDqqDut7rhrB/oc=AQAB&quot;;
+  private static UnicodeEncoding _encoder = new UnicodeEncoding();
+
+  public static string Decrypt(string data)
+  {
+
+   try
+   {
+    var rsa = new RSACryptoServiceProvider();
+    var dataArray = data.Split(new char[] { ',' });
+
+    byte[] dataByte = new byte[dataArray.Length];
+    for (int i = 0; i &lt; dataArray.Length; i++)
+    {
+     dataByte[i] = Convert.ToByte(dataArray[i]);
+    }
+
+    rsa.FromXmlString(_privateKey);
+    var decryptedByte = rsa.Decrypt(dataByte, false);
+    return _encoder.GetString(decryptedByte);
+
+   }
+   catch (Exception)
+   {
+    throw new RSAException();
+   }
+
+  }
+
+  public static string Encrypt(string data)
+  {
+
+   try
+   {
+    var rsa = new RSACryptoServiceProvider();
+    rsa.FromXmlString(_publicKey);
+    var dataToEncrypt = _encoder.GetBytes(data);
+    var encryptedByteArray = rsa.Encrypt(dataToEncrypt, false).ToArray();
+    var length = encryptedByteArray.Count();
+    var item = 0;
+    var sb = new StringBuilder();
+    foreach (var x in encryptedByteArray)
+    {
+     item++;
+     sb.Append(x);
+
+     if (item &lt; length)
+      sb.Append(&quot;,&quot;);
+    }
+
+    return sb.ToString();
+
+   }
+   catch (Exception)
+   {
+    throw new RSAException();
+   }
+  }
+
+  public class RSAException : Exception {
+
+   public RSAException() : base(&quot;RSA Encryption Error&quot;) {}
+
+  }
+ }
+}
+</pre>
+<p>The one difference I did notice between the action filter and handler was in the way unhandled errors were passed back to the client. For example, with an action filter, a missing authorization token would have the following rendered to the client: </p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image11.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image11-300x83.png" alt="" width="300" height="83" /></a></p>
+<p>On the other and, the message handler would render the same error the client this way:</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image11.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image21-300x122.png" alt="" width="300" height="122" /></a></p>
+<p>You may have noticed I changed the linq calls from First to FirstOrDefault. I got flamed a bit for using just First &#8211; and then letting the exception deal with the results in the event a value could not be found. I still contend that using an exception or checking the nullity of a value doesn&#8217;t make that much of a difference. In the case of checking for the existence of a header, it&#8217;s a moot point because if you invoke code like this:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+var token =
+  request.Headers.GetValues(&quot;Authorization-Token&quot;).FirstOrDefault();
+</pre>
+<p>and the Authorization-Token header does not exist, you never get to the FirstOrDefault() Linq Query&#8230;:-) As it turns out, you have to wrap that call in a try catch anyway &#8211; at least if you wish to present to the client a predictable and useful message. Always take with a grain of salt when somebody espouses &#8220;best practice&#8221; or something being a &#8220;bad practice&#8221; or &#8220;bad form&#8221;. No question, there are established good/best practices out there. Those practices however, are quantifiable and verifiable through empirical evidence. Anything else is simply a matter of opinion and preference. AND &#8211; context means everything. What may be a good/best practice in one scenario may not be so in another scenario. And often, technology has little to nothing to do with the equation. For example, Dependency Injection is a good practice and is often, a best practice. BUT &#8211; in a shop where the concept is new, foreign or not understood, if it presents a bar to shipping software, it may not be a best practice for that shop &#8211; at that time. One of the many reasons why I quickly brush off notions of what best practices are and are not when asked.. <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  A bit of a rant on my part. I definitely appreciate the comments &#8211; but rest assured, I&#8217;ll push back a bit when I think conclusions are offered absent a premise. Sorry..that&#8217;s the lawyer in me that is now hard wired!!</p>
+<div class="shr-publisher-414"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/545d3ad0823f1fc4431ff9521a8e74f1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About johnvpetersen</h2>
+							I've been developing software for 20 years, starting with dBase, Clipper and FoxBase + thereafter, migrating to FoxPro and Visual FoxPro and Visual Basic. Other areas of concentration include Oracle and SQL Server - versions 6-2008. From 1995 to 2001, I was a Microsoft Visual FoxPro MVP. Today, my emphasis is on ASP MVC .NET applications. I am a current Microsoft ASP .NET MVP. Publishing In 1999, I wrote the definitive whitepaper on ADO for VFP Developers. In 2002, I wrote the Absolute Beginner’s Guide to Databases for Que Publishing. I was a co-author of Visual FoxPro Enterprise Development from Prima Publishing with Rod Paddock, Ron Talmadge and Eric Ranft. I was also a co-author of Visual Basic Web Development from Prima Publishing with Rod Paddock and Richard Campbell. Education - B.S Business Administration – Mansfield University - M.B.A. – Information Systems – Saint Joseph’s University - J.D. – Rutgers University School of Law (Camden) In 2004, I graduated from the Rutgers University School of Law with a Juris Doctor Degree. I passed the Pennsylvania and New Jersey Bar exams and was in private practice for several years – concentrating transactional and general business law (contracts, copyrights, trademarks, independent contractor agreements, NDA’s, intellectual property and mergers and acquisitions.).							<div id="author-link">
+								<a href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">View all posts by johnvpetersen &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/johnvpetersen/category/asp-net-mvc-4/" title="View all posts in ASP.NET MVC 4" rel="category tag">ASP.NET MVC 4</a>, <a href="http://codebetter.com/johnvpetersen/category/asp-net-web-api/" title="View all posts in ASP.NET Web API" rel="category tag">ASP.NET Web API</a>. Bookmark the <a href="http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/" title="Permalink to Moving from Action Filters to Message Handlers" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/feed/" title="Comments RSS to Moving from Action Filters to Message Handlers" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-414 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/" rel="prev"><span class="meta-nav">&larr;</span> Making your ASP.NET Web API&#8217;s secure</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/johnvpetersen/2012/04/14/why-im-moving-away-from-apple-and-specifically-the-iphone-and-going-to-the-store/" rel="next">Why I&#8217;m moving away from Apple, and specifically, the iPhone and going to the store <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-277">
+                    <div id="dsq-comment-header-277" class="dsq-comment-header">
+                        <cite id="dsq-cite-277">
+    http://pedroreys.com/                            <span id="dsq-author-user-277">Pedro Reys</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-277" class="dsq-comment-body">
+                        <div id="dsq-comment-message-277" class="dsq-comment-message"><p>Nice post, John.</p>
+<p>Do you want to make a pull request to the WebApiContrib project? <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' />  </p>
+<p><a href="https://github.com/WebApiContrib/WebAPIContrib" rel="nofollow">https://github.com/WebApiContrib/WebAPIContrib</a></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-279">
+                    <div id="dsq-comment-header-279" class="dsq-comment-header">
+                        <cite id="dsq-cite-279">
+                                <span id="dsq-author-user-279">Kingcrim</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-279" class="dsq-comment-body">
+                        <div id="dsq-comment-message-279" class="dsq-comment-message"><p>I think James Bach has the definitive comment about &#8216;best practices&#8217;:</p>
+<p><a href="http://www.satisfice.com/blog/archives/27" rel="nofollow">http://www.satisfice.com/blog/archives/27</a></p>
+<p>&#8220;“This practice represents a consensus among industry leaders.”No it doesn’t. You’re just making that up. Industry leaders aren’t able to agree on anything much of substance. I know this because I am an industry leader (based on the fact that some people have said so), and other leaders more often disagree with me instead of obeying my commands&#8221;</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-280">
+                    <div id="dsq-comment-header-280" class="dsq-comment-header">
+                        <cite id="dsq-cite-280">
+    http://blog.cwa.me.uk/2012/04/05/the-morning-brew-1080/                            <span id="dsq-author-user-280">The Morning Brew &#8211; Chris Alcock &raquo; The Morning Brew #1080</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-280" class="dsq-comment-body">
+                        <div id="dsq-comment-message-280" class="dsq-comment-message"><p>[...] Moving from Action Filters to Message Handlers &#8211; John V. Petersen responds to community feedback by taking a look at the use of HttpMessageHandlers for implementing securing of Web API services, looking at how they allow you to intercept before controllers get involved. [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-283">
+                    <div id="dsq-comment-header-283" class="dsq-comment-header">
+                        <cite id="dsq-cite-283">
+                                <span id="dsq-author-user-283">Craig Cavalier</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-283" class="dsq-comment-body">
+                        <div id="dsq-comment-message-283" class="dsq-comment-message"><p>Rather than wrapping in a try catch, you may be better off checking if the header exists before trying access it:</p>
+<p>if(!response.Headers.Contains(&#8220;Authorization-Token&#8221;))</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-284">
+                    <div id="dsq-comment-header-284" class="dsq-comment-header">
+                        <cite id="dsq-cite-284">
+                                <span id="dsq-author-user-284">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-284" class="dsq-comment-body">
+                        <div id="dsq-comment-message-284" class="dsq-comment-message"><p>Nice!! I like that.  Thanks.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-285">
+                    <div id="dsq-comment-header-285" class="dsq-comment-header">
+                        <cite id="dsq-cite-285">
+                                <span id="dsq-author-user-285">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-285" class="dsq-comment-body">
+                        <div id="dsq-comment-message-285" class="dsq-comment-message"><p>Is a contrib project necessary anymore given that the Web API project itself is taking pull requests? </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-286">
+                    <div id="dsq-comment-header-286" class="dsq-comment-header">
+                        <cite id="dsq-cite-286">
+    http://pedroreys.com/                            <span id="dsq-author-user-286">Pedro Reys</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-286" class="dsq-comment-body">
+                        <div id="dsq-comment-message-286" class="dsq-comment-message"><p>I believe so, I don&#8217;t think we will see pull requests being accepted on aspnetwebstack for Media Type formatters using alternative serializers, for example.  Also, there are stuff that might not be in the short term roadmap of the Web API framework but that is really nice to have, like API docs generation. </p>
+<p>But yes, for some stuff that in the past had to be done via a contrib, I expect it to be done via pull requests for the main project. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-287">
+                    <div id="dsq-comment-header-287" class="dsq-comment-header">
+                        <cite id="dsq-cite-287">
+                                <span id="dsq-author-user-287">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-287" class="dsq-comment-body">
+                        <div id="dsq-comment-message-287" class="dsq-comment-message"><p>You are making the case to simply fork the entire stack and go from there.  I am wondering how long it will be before the community simply co-opts the stack in the way the community overtook Hudson and created Jenkins. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-289">
+                    <div id="dsq-comment-header-289" class="dsq-comment-header">
+                        <cite id="dsq-cite-289">
+                                <span id="dsq-author-user-289">Gary Chan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-289" class="dsq-comment-body">
+                        <div id="dsq-comment-message-289" class="dsq-comment-message"><p>I liked the way you were returning more meaningful error messages from within the message handler.  I did find a problem when I was testing.  The message content is only returned to the client if the client is accessing service is on a different computer.  </p>
+<p>For example in your TokenValidatorHandler, I only get the &#8216;Missing Authorization-Token&#8217; message when accessing my service from my development system.  When I make the identical call from another system, all I get is &#8216;Bad Request&#8217;.</p>
+<p>Can you shed any light on this?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-290">
+                    <div id="dsq-comment-header-290" class="dsq-comment-header">
+                        <cite id="dsq-cite-290">
+                                <span id="dsq-author-user-290">Gary Chan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-290" class="dsq-comment-body">
+                        <div id="dsq-comment-message-290" class="dsq-comment-message"><p>Sorry &#8211; just saw my type <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+<p>I meant to say &#8216;The message content is only returned when accessing the service locally&#8217;.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-291">
+                    <div id="dsq-comment-header-291" class="dsq-comment-header">
+                        <cite id="dsq-cite-291">
+                                <span id="dsq-author-user-291">Ward Bell</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-291" class="dsq-comment-body">
+                        <div id="dsq-comment-message-291" class="dsq-comment-message"><p>Nice post, John</p>
+<p>At the risk of another premature optimization, I offer an alternative to your use of Task.Factory.StartNew  as in this extract:</p>
+<p>return Task.Factory.StartNew(() =&gt;<br />
+     {<br />
+      return new HttpResponseMessage(HttpStatusCode.Forbidden)<br />
+      {<br />
+           Content = new StringContent(&#8220;Unauthorized IP Address&#8221;)<br />
+      };<br />
+ });</p>
+<p>Task.Factory.StartNew puts a synchronous task (the return of the exception-bearing message) on a background thread.  I don&#8217;t think you want to do that. I think you want to use TaskCompletionSource. Here is that extract rewritten for TaskCompletionSource</p>
+<p>var msg = new HttpResponseMessage(HttpStatusCode.Forbidden)<br />
+      {<br />
+           Content = new StringContent(&#8220;Unauthorized IP Address&#8221;)<br />
+      };<br />
+var tcs = new TaskCompletionSource();<br />
+tcs.SetResult(msg);<br />
+return tcs.Task;</p>
+<p>I haven&#8217;t tested it so think of it as pseudo-code.</p>
+<p>All the best</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-292">
+                    <div id="dsq-comment-header-292" class="dsq-comment-header">
+                        <cite id="dsq-cite-292">
+                                <span id="dsq-author-user-292">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-292" class="dsq-comment-body">
+                        <div id="dsq-comment-message-292" class="dsq-comment-message"><p>Hi Ward..</p>
+<p>I&#8217;m going to check this out this morning. Thanks for the tip!!</p>
+<p>John</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-293">
+                    <div id="dsq-comment-header-293" class="dsq-comment-header">
+                        <cite id="dsq-cite-293">
+                                <span id="dsq-author-user-293">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-293" class="dsq-comment-body">
+                        <div id="dsq-comment-message-293" class="dsq-comment-message"><p>Yep &#8211; definitely makes sense. When I want to get a status back to the client, why would I want to spin up a background thread? With that, here is an example of modified code:</p>
+<p>   if (String.IsNullOrEmpty(token))<br />
+   {<br />
+    tcs = new TaskCompletionSource();<br />
+    tcs.SetResult(new HttpResponseMessage(HttpStatusCode.Forbidden)<br />
+    {<br />
+     Content = new StringContent(&#8220;Missing Authorization Token&#8221;)<br />
+    });<br />
+    return tcs.Task;<br />
+   }</p>
+<p>Again, thanks for the tip Ward!!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-294">
+                    <div id="dsq-comment-header-294" class="dsq-comment-header">
+                        <cite id="dsq-cite-294">
+                                <span id="dsq-author-user-294">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-294" class="dsq-comment-body">
+                        <div id="dsq-comment-message-294" class="dsq-comment-message"><p>If you are getting bad request, most likely, there is a problem with the token you are sending in. Or, you may be using an invalid host name.  I&#8217;ve tested this on a remote box and it works fine. You have to make sure you are good with the IP address. One suggestion &#8211; try disabling the https and ip address handlers &#8211; and then start working from there.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-295">
+                    <div id="dsq-comment-header-295" class="dsq-comment-header">
+                        <cite id="dsq-cite-295">
+                                <span id="dsq-author-user-295">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-295" class="dsq-comment-body">
+                        <div id="dsq-comment-message-295" class="dsq-comment-message"><p>Indeed&#8230;what is best/good for one may often not be best/good for another. And as youi say, get 10 &#8220;experts&#8221; in the room and you will get 10 different answers. Folks need to understand that while there are cases when there are hard facts to support one approach being better than another, most of what we ecounter in this business are opinions that fall within the spectrum of good/best practice. </p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/';
+    var disqus_identifier = '414 http://codebetter.com/johnvpetersen/?p=414';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'johnvpetersensblog';
+    var disqus_title = "Moving from Action Filters to Message Handlers";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=414');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://codebetter.com/johnpetersen/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+            {
+                'author_name':    "The Morning Brew - Chris Alcock &raquo; The Morning Brew #1080",
+                'author_url':    "http:\/\/blog.cwa.me.uk\/2012\/04\/05\/the-morning-brew-1080\/",
+                'date':            "04\/05\/2012 04:35 AM",
+                'excerpt':        "[...] Moving from Action Filters to Message Handlers - John V. Petersen responds to community feedback by taking a look ...",
+                'type':            "pingback"            }
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/johnvpetersen\/2012\/04\/04\/moving-from-action-filters-to-message-handlers\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 4.729 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 13:07:03 -->
+<!-- super cache -->

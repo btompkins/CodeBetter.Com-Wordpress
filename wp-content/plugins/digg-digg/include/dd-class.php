@@ -7,7 +7,6 @@ class BaseDD {
 	const VOTE_BUTTON_DESIGN = 'VOTE_BUTTON_DESIGN';
 	const SCHEDULER_TIMER = 'SCHEDULER_TIMER';
 	const POST_ID = 'POST_ID';
-	
 	const VOTE_BUTTON_DESIGN_LAZY_WIDTH = 'VOTE_BUTTON_DESIGN_LAZY_WIDTH';
 	const VOTE_BUTTON_DESIGN_LAZY_HEIGHT = 'VOTE_BUTTON_DESIGN_LAZY_HEIGHT';
 	
@@ -34,7 +33,6 @@ class BaseDD {
     var $final_scheduler_lazy_script; //final scheduler, after constructs
     
     var $isEncodeRequired = true; //is URL or title need encode?
-    
     var $islazyLoadAvailable = true; //is lazy load avaliable?
     
     //contains DD option value, in array
@@ -88,7 +86,6 @@ class BaseDD {
     	return $this->buttonLayoutLazyHeight[$button];
     }
     
-    //constructor
     function BaseDD($name, $websiteURL, $apiURL, $baseURL) {
     	$this->name = $name;
     	$this->websiteURL = $websiteURL;
@@ -98,7 +95,6 @@ class BaseDD {
     	$this->initWPOptions();
     }
     
-    //Construct the wordpress options value, save into wp_options
     private function initWPOptions() {
     	$this->wp_options = array();
     	$this->wp_options[$this->option_append_type] = self::DEFAULT_APPEND_TYPE;
@@ -125,9 +121,8 @@ class BaseDD {
     }
     
 	//construct base URL, based on $lazy value
- 	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = '', $commentcount = ''){
+ 	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
     	
- 		//Encode require?
  		//rawurlencode - replace space with %20
     	//urlencode - replace space with + 
  		if($this->isEncodeRequired){
@@ -143,7 +138,6 @@ class BaseDD {
     	
     }
     
-    //normal url
 	public function constructNormalURL($url, $title,$button, $postId){
 		
     	$finalURL = $this->baseURL;
@@ -153,7 +147,6 @@ class BaseDD {
     	$this->finalURL = $finalURL;
     }
     
-    //lazy load url
     public function constructLazyLoadURL($url, $title,$button, $postId){
     	
     	$finalURL_lazy = $this->baseURL_lazy;
@@ -185,7 +178,7 @@ class BaseDD {
     }
 }
 
-//base class for iframe baseURL
+//iframe class has different construct URL for normal and lazy load
 class BaseIFrameDD extends BaseDD{
 	const EXTRA_VALUE = "EXTRA_VALUE";
 	
@@ -209,21 +202,46 @@ class BaseIFrameDD extends BaseDD{
     	$finalURL = str_replace(self::EXTRA_VALUE,$this->getIframeWH($button),$finalURL);
     	$this->finalURL = $finalURL;
     }
+    
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);    	
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_WIDTH,$this->getButtonDesignLazyWidth($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_HEIGHT,$this->getButtonDesignLazyHeight($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_TITLE,$title,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_URL,$url,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 	
 //warning : in baseURL or lazyURL, all text have to enclose by html tag, else it will display pure text in the_excerpt mode
 
-//digg.com
+/******************************************************************************************
+ * 
+ * http://www.digg.com
+ *
+ */
 class DD_Digg extends BaseDD{
 	
 	const NAME = "Digg";
 	const URL_WEBSITE = "http://www.digg.com";
 	const URL_API = "http://about.digg.com/downloads/button/smart";
+	const DEFAULT_BUTTON_WEIGHT = "95";
 	
-	//const BASEURL = "<script src='http://widgets.digg.com/buttons.js' type='text/javascript'></script><a class='DiggThisButton VOTE_BUTTON_DESIGN' href='http://digg.com/submit?url=VOTE_URL&amp;title=VOTE_TITLE'></a>";
-	//new smart digg able to load asynchronously and not block other downloads
 	const BASEURL = "<script type='text/javascript'>(function() {var s = document.createElement('SCRIPT'), s1 = document.getElementsByTagName('SCRIPT')[0];s.type = 'text/javascript';s.async = true;s.src = 'http://widgets.digg.com/buttons.js';s1.parentNode.insertBefore(s, s1);})();</script> <a class='DiggThisButton VOTE_BUTTON_DESIGN' href='http://digg.com/submit?url=VOTE_URL&amp;title=VOTE_TITLE'></a>";
-	
 	const BASEURL_LAZY = "<div class='dd-digg-ajax-load dd-digg-POST_ID'></div><a class='DiggThisButton DD_DIGG_AJAX_POST_ID VOTE_BUTTON_DESIGN'></a>";
 	const BASEURL_LAZY_SCRIPT = " function loadDigg_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-digg-POST_ID').remove();\$('.DD_DIGG_AJAX_POST_ID').attr('href','http://digg.com/submit?url=VOTE_URL&amp;title=VOTE_TITLE');\$.getScript('http://widgets.digg.com/buttons.js'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadDigg_POST_ID()',SCHEDULER_TIMER);";
@@ -235,15 +253,15 @@ class DD_Digg extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_digg_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_digg_lazy_load";
 	
-	const DEFAULT_BUTTON_WEIGHT = "100";
-	
 	var $buttonLayout = array(
+		"Wide" => "DiggWide",
 		"Normal" => "DiggMedium",
 		"Compact" => "DiggCompact",
 		"Icon" => "DiggIcon" 
 	);
     
 	var $buttonLayoutLazy = array(
+		"Wide" => "DiggWide",
 		"Normal" => "DiggMedium",
 		"Compact" => "DiggCompact",
 		"Icon" => "DiggIcon" 
@@ -266,16 +284,123 @@ class DD_Digg extends BaseDD{
 		
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
       
-    } 
+    }
+    
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(parent::VOTE_TITLE,$title,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(parent::VOTE_URL,$url,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(parent::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(parent::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(parent::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 
-//lazying floating is not display in firefox only?
-//linkedin.com
+/******************************************************************************************
+ * 
+ * http://www.google.com/+1/button/
+ * http://www.google.com/webmasters/+1/button/
+ *
+ */
+class DD_Google1 extends BaseDD{
+	
+	const NAME = "Google +1";
+	const URL_WEBSITE = "http://www.google.com/+1/button/";
+	const URL_API = "http://code.google.com/apis/+1button/";
+	const DEFAULT_BUTTON_WEIGHT = "100";
+	
+	var $isEncodeRequired = false;
+	
+	const BASEURL = "<script type='text/javascript' src='https://apis.google.com/js/plusone.js'></script><g:plusone size='VOTE_BUTTON_DESIGN' href='VOTE_URL'></g:plusone>";
+
+	const BASEURL_LAZY = "<div class='dd-google1-ajax-load dd-google1-POST_ID'></div><g:plusone size='VOTE_BUTTON_DESIGN' href='VOTE_URL'></g:plusone>";
+	const BASEURL_LAZY_SCRIPT = " function loadGoogle1_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-google1-POST_ID').remove();\$.getScript('https://apis.google.com/js/plusone.js'); }); }";
+	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadGoogle1_POST_ID()',SCHEDULER_TIMER);";
+	const SCHEDULER_LAZY_TIMER = "1000";
+    
+	const OPTION_APPEND_TYPE = "dd_google1_appendType";
+	const OPTION_BUTTON_DESIGN = "dd_google1_buttonDesign";
+	const OPTION_BUTTON_WEIGHT = "dd_google1_button_weight";
+	const OPTION_AJAX_LEFT_FLOAT = "dd_google1_ajax_left_float";
+	const OPTION_LAZY_LOAD = "dd_google1_lazy_load";
+	
+	var $buttonLayout = array(
+		"Normal" => "tall",
+		"Compact (15px)" => "small",
+		"Compact (20px)" => "medium",
+		"Compact (24px)" => "none"
+	);
+    
+	var $buttonLayoutLazy = array(
+		"Normal" => "tall",
+		"Compact (15px)" => "small",
+		"Compact (20px)" => "medium",
+		"Compact (24px)" => "none"
+	);
+	
+    public function DD_Google1() {
+    	
+		$this->option_append_type = self::OPTION_APPEND_TYPE;
+		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
+		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
+		$this->option_ajax_left_float = self::OPTION_AJAX_LEFT_FLOAT;
+		$this->option_lazy_load = self::OPTION_LAZY_LOAD;
+		
+		$this->baseURL_lazy = self::BASEURL_LAZY;
+    	$this->baseURL_lazy_script = self::BASEURL_LAZY_SCRIPT;
+    	$this->scheduler_lazy_script = self::SCHEDULER_LAZY_SCRIPT;
+    	$this->scheduler_lazy_timer = self::SCHEDULER_LAZY_TIMER;
+    	
+		$this->button_weight_value = self::DEFAULT_BUTTON_WEIGHT;
+		
+        parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
+      
+    }
+    
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(parent::VOTE_URL,$url,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(parent::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(parent::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(parent::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
+}
+
+/******************************************************************************************
+ * 
+ * http://www.linkedin.com
+ *
+ */
 class DD_Linkedin extends BaseDD{
 	
 	const NAME = "Linkedin";
 	const URL_WEBSITE = "http://www.linkedin.com";
 	const URL_API = "http://www.linkedin.com/publishers";
+	const DEFAULT_BUTTON_WEIGHT = "99";
 	
 	const BASEURL = "<script type='text/javascript' src='http://platform.linkedin.com/in.js'></script><script type='in/share' data-url='VOTE_URL' data-counter='VOTE_BUTTON_DESIGN'></script>";
 	
@@ -289,9 +414,7 @@ class DD_Linkedin extends BaseDD{
 	const OPTION_BUTTON_WEIGHT = "dd_linkedin_button_weight";
 	const OPTION_AJAX_LEFT_FLOAT = "dd_linkedin_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_linkedin_lazy_load";
-	
-	const DEFAULT_BUTTON_WEIGHT = "99";
-	
+
 	var $buttonLayout = array(
 		"Normal" => "top",
 		"Compact" => "right",
@@ -304,7 +427,6 @@ class DD_Linkedin extends BaseDD{
 		"NoCount" => "none" 
 	);
 	
-	//url or title encode is not require
 	var $isEncodeRequired = false;
 	
     public function DD_Linkedin() {
@@ -325,20 +447,44 @@ class DD_Linkedin extends BaseDD{
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
       
     } 
+    
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::VOTE_URL,$url,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 
-//reddit.com
+/******************************************************************************************
+ * 
+ * http://www.reddit.com
+ *
+ */
 class DD_Reddit extends BaseIFrameDD{
 	
 	const NAME = "Reddit";
 	const URL_WEBSITE = "http://www.reddit.com";
 	const URL_API = "http://www.reddit.com/buttons/";
+	const DEFAULT_BUTTON_WEIGHT = "99";
 	
-	//const BASEURL = "<script type='text/javascript'>reddit_url = VOTE_URL;reddit_title = VOTE_TITLE;reddit_newwindow='1';</script><script type='text/javascript' src='http://www.reddit.com/static/button/VOTE_BUTTON_DESIGN'></script>";
 	const BASEURL = "<iframe src=\"http://www.reddit.com/static/button/VOTE_BUTTON_DESIGN&url=VOTE_URL&title=VOTE_TITLE&newwindow='1'\" EXTRA_VALUE scrolling='no' frameborder='0'></iframe>";
 	
-	const BASEURL_LAZY = "<div class='dd-reddit-ajax-load dd-reddit-POST_ID'></div><iframe class='DD_REDDIT_AJAX_POST_ID' src='#' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
-	const BASEURL_LAZY_SCRIPT = " function loadReddit_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-reddit-POST_ID').remove();\$('.DD_REDDIT_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_REDDIT_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_REDDIT_AJAX_POST_ID').attr('src','http://www.reddit.com/static/button/VOTE_BUTTON_DESIGN&amp;url=VOTE_URL&amp;title=VOTE_TITLE&amp;newwindow=1'); }); }";
+	const BASEURL_LAZY = "<div class='dd-reddit-ajax-load dd-reddit-POST_ID'></div><iframe class='DD_REDDIT_AJAX_POST_ID' src='' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
+	const BASEURL_LAZY_SCRIPT = " function loadReddit_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-reddit-POST_ID').remove();\$('.DD_REDDIT_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_REDDIT_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_REDDIT_AJAX_POST_ID').attr('src','http://www.reddit.com/static/button/VOTE_BUTTON_DESIGN&url=VOTE_URL&title=VOTE_TITLE&newwindow=1'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadReddit_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
 	
@@ -378,8 +524,6 @@ class DD_Reddit extends BaseIFrameDD{
 		"Icon" => "height=\"52\" width=\"69\""
 	);
 	
-	const DEFAULT_BUTTON_WEIGHT = "99";
-	
 	public function DD_Reddit() {
     	
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
@@ -400,13 +544,19 @@ class DD_Reddit extends BaseIFrameDD{
     
 }
 
-//Google Buzz
+/******************************************************************************************
+ * 
+ * http://www.google.com/buzz
+ *
+ */
 class DD_GBuzz extends BaseDD{
 	
 	const NAME = "Google Buzz";
-	const URL_WEBSITE = "http://www.google.com";
+	const URL_WEBSITE = "http://www.google.com/buzz";
 	const URL_API = "http://www.google.com/buzz/api/admin/configPostWidget";
 	const URL_API2 = "http://code.google.com/apis/buzz/buttons_and_gadgets.html";
+	const DEFAULT_BUTTON_WEIGHT = "98";
+	
 	const BASEURL = "<a title='Post on Google Buzz' class='google-buzz-button' href='http://www.google.com/buzz/post' data-button-style='VOTE_BUTTON_DESIGN' data-url='VOTE_URL'></a><script type='text/javascript' src='http://www.google.com/buzz/api/button.js'></script>";
 
 	const OPTION_APPEND_TYPE = "dd_gbuzz_appendType";
@@ -415,13 +565,10 @@ class DD_GBuzz extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_gbuzz_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_gbuzz_lazy_load";
 	
-	//DD_GBUZZ_AJAX_POST_ID
 	const BASEURL_LAZY = "<div class='dd-gbuzz-ajax-load dd-gbuzz-POST_ID'></div><a title='Post on Google Buzz' class='google-buzz-button' href='http://www.google.com/buzz/post' data-button-style='VOTE_BUTTON_DESIGN' data-url='VOTE_URL'></a>";
 	const BASEURL_LAZY_SCRIPT = " function loadGBuzz_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-gbuzz-POST_ID').remove();\$.getScript('http://www.google.com/buzz/api/button.js'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadGBuzz_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
-	
-	const DEFAULT_BUTTON_WEIGHT = "98";
 	
 	var $buttonLayout = array(
 		"Normal" => "normal-count", 
@@ -433,7 +580,6 @@ class DD_GBuzz extends BaseDD{
 		"Compact" => "small-count"
 	);
 
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
     public function DD_GBuzz() {
@@ -453,11 +599,34 @@ class DD_GBuzz extends BaseDD{
 		
          parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
         
-    }     
-   
+    }
+  
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::VOTE_URL,$url,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 
-//dzone.com
+/******************************************************************************************
+ * 
+ * http://www.dzone.com
+ *
+ */
 class DD_DZone extends BaseDD{
 	
 	const NAME = "DZone";
@@ -465,7 +634,7 @@ class DD_DZone extends BaseDD{
 	const URL_API = "http://www.dzone.com/links/buttons.jsp";
 	const BASEURL = "<iframe src='http://widgets.dzone.com/links/widgets/zoneit.html?url=VOTE_URL&amp;title=VOTE_TITLE&amp;t=VOTE_BUTTON_DESIGN frameborder='0' scrolling='no'></iframe>";
 	
-	const BASEURL_LAZY = "<div class='dd-dzone-ajax-load dd-dzone-POST_ID'></div><iframe class='DD_DZONE_AJAX_POST_ID' src='#' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
+	const BASEURL_LAZY = "<div class='dd-dzone-ajax-load dd-dzone-POST_ID'></div><iframe class='DD_DZONE_AJAX_POST_ID' src='' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
 	const BASEURL_LAZY_SCRIPT = " function loadDzone_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-dzone-POST_ID').remove();\$('.DD_DZONE_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_DZONE_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_DZONE_AJAX_POST_ID').attr('src','http://widgets.dzone.com/links/widgets/zoneit.html?url=VOTE_URL&title=VOTE_TITLE&t=VOTE_BUTTON_DESIGN'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadDzone_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
@@ -515,16 +684,43 @@ class DD_DZone extends BaseDD{
 		
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
     } 
+  
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_WIDTH,$this->getButtonDesignLazyWidth($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_HEIGHT,$this->getButtonDesignLazyHeight($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_TITLE,$title,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_URL,$url,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
     
 }
 
-//facebook.com
+/******************************************************************************************
+ * 
+ * http://www.facebook.com
+ * FB share API is missing from Facebook.com, all redirect to FB Like API?
+ */
 class DD_FbShare extends BaseDD{
 	
 	const NAME = "Facebook Share";
 	const URL_WEBSITE = "http://www.facebook.com";
 	const URL_API = "http://www.facebook.com/share/";
 	const BASEURL = "<a name='fb_share' type='VOTE_BUTTON_DESIGN' share_url='VOTE_URL' href='http://www.facebook.com/sharer.php'></a><script src='http://static.ak.fbcdn.net/connect.php/js/FB.Share' type='text/javascript'></script>";
+	const DEFAULT_BUTTON_WEIGHT = "95";
 	
 	const OPTION_APPEND_TYPE = "dd_fbshare_appendType";
 	const OPTION_BUTTON_DESIGN = "dd_fbshare_buttonDesign";
@@ -537,8 +733,6 @@ class DD_FbShare extends BaseDD{
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadFBShare_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
 	
-	const DEFAULT_BUTTON_WEIGHT = "95";
-	
 	var $buttonLayout = array(
 		"Normal" => "box_count",
 		"Compact" => "button_count"
@@ -549,12 +743,10 @@ class DD_FbShare extends BaseDD{
 		"Compact" => "button_count"
 	);
 	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
     public function DD_FbShare() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
@@ -570,15 +762,41 @@ class DD_FbShare extends BaseDD{
 		
          parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
       
-    } 
+    }
+ 
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::VOTE_URL,$url,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 
-//fbshare.me
+/******************************************************************************************
+ * 
+ * http://www.fbshare.me
+ * 
+ */
 class DD_FbShareMe extends BaseDD{
 	
 	const NAME = "fbShare.me";
 	const URL_WEBSITE = "http://www.fbshare.me";
 	const URL_API = "http://www.fbshare.me";
+	const DEFAULT_BUTTON_WEIGHT = "94";
+	
 	const BASEURL = "<script>var fbShare = {url: 'VOTE_URL',size: 'VOTE_BUTTON_DESIGN',}</script><script src='http://widgets.fbshare.me/files/fbshare.js'></script>";
 
 	const OPTION_APPEND_TYPE = "dd_fbshareme_appendType";
@@ -587,7 +805,7 @@ class DD_FbShareMe extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_fbshareme_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_fbshareme_lazy_load";
 
-	const BASEURL_LAZY = "<div class='dd-fbshareme-ajax-load dd-fbshareme-POST_ID'></div><iframe class=\"DD_FBSHAREME_AJAX_POST_ID\" src='#' height='0' width='0' scrolling='no' frameborder='0' allowtransparency='true'></iframe>";
+	const BASEURL_LAZY = "<div class='dd-fbshareme-ajax-load dd-fbshareme-POST_ID'></div><iframe class=\"DD_FBSHAREME_AJAX_POST_ID\" src='' height='0' width='0' scrolling='no' frameborder='0' allowtransparency='true'></iframe>";
 	const BASEURL_LAZY_SCRIPT = " function loadFBShareMe_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-fbshareme-POST_ID').remove();\$('.DD_FBSHAREME_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_FBSHAREME_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_FBSHAREME_AJAX_POST_ID').attr('src','http://widgets.fbshare.me/files/fbshare.php?url=VOTE_URL&size=VOTE_BUTTON_DESIGN');  }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadFBShareMe_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
@@ -612,9 +830,6 @@ class DD_FbShareMe extends BaseDD{
 		"Compact" => "18"
 	);
 	
-	const DEFAULT_BUTTON_WEIGHT = "94";
-	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
     public function DD_FbShareMe() {
@@ -634,17 +849,46 @@ class DD_FbShareMe extends BaseDD{
 		
          parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
       
-    } 
+    }
+ 
+    public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(self::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_WIDTH,$this->getButtonDesignLazyWidth($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN_LAZY_HEIGHT,$this->getButtonDesignLazyHeight($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_TITLE,$title,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::VOTE_URL,$url,$finalURL_lazy_script);
+    	$finalURL_lazy_script = str_replace(self::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(self::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(self::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    	
+    }
+    
 }
 
-//facebook.com like fucntion
+/******************************************************************************************
+ * 
+ * Facebook Like (IFrame)
+ * 
+ */
 class DD_FbLike extends BaseIFrameDD{
 	
-	const NAME = "Facebook Like";
+	const NAME = "Facebook Like (IFrame)";
 	const URL_WEBSITE = "http://www.facebook.com";
 	const URL_API = "http://developers.facebook.com/docs/reference/plugins/like";
 	const BASEURL = "<iframe src='http://www.facebook.com/plugins/like.php?href=VOTE_URL&amp;locale=FACEBOOK_LOCALE&amp;VOTE_BUTTON_DESIGN' scrolling='no' frameborder='0' style='border:none; overflow:hidden; EXTRA_VALUE' allowTransparency='true'></iframe>";
+	
 	const FB_LOCALES = "http://www.facebook.com/translations/FacebookLocales.xml";
+	const DEFAULT_BUTTON_WEIGHT = "99";
 	
 	const OPTION_APPEND_TYPE = "dd_fblike_appendType";
 	const OPTION_BUTTON_DESIGN = "dd_fblike_buttonDesign";
@@ -652,22 +896,20 @@ class DD_FbLike extends BaseIFrameDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_fblike_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_fblike_lazy_load";
 	
-	const BASEURL_LAZY = "<div class='dd-fblike-ajax-load dd-fblike-POST_ID'></div><iframe class=\"DD_FBLIKE_AJAX_POST_ID\" src='#' height='0' width='0' scrolling='no' frameborder='0' allowTransparency='true'></iframe>";
+	const BASEURL_LAZY = "<div class='dd-fblike-ajax-load dd-fblike-POST_ID'></div><iframe class=\"DD_FBLIKE_AJAX_POST_ID\" src='' height='0' width='0' scrolling='no' frameborder='0' allowTransparency='true'></iframe>";
 	const BASEURL_LAZY_SCRIPT = " function loadFBLike_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-fblike-POST_ID').remove();\$('.DD_FBLIKE_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_FBLIKE_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_FBLIKE_AJAX_POST_ID').attr('src','http://www.facebook.com/plugins/like.php?href=VOTE_URL&amp;locale=FACEBOOK_LOCALE&amp;VOTE_BUTTON_DESIGN'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadFBLike_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
 	
-	const LIKE_STANDARD = "layout=standard&amp;action=like&amp;width=350&amp;height=23&amp;colorscheme=light"; //350x23
+	const LIKE_STANDARD = "layout=standard&amp;action=like&amp;width=350&amp;height=24&amp;colorscheme=light"; //350x24
 	const LIKE_BUTTON_COUNT= "layout=button_count&amp;action=like&amp;width=92&amp;height=20&amp;colorscheme=light"; //92x20
 	const LIKE_BOX_COUNT= "layout=box_count&amp;action=like&amp;width=50&amp;height=60&amp;colorscheme=light"; //50x60
-	const RECOMMEND_STANDARD = "layout=standard&amp;action=recommend&amp;width=400&amp;height=23&amp;colorscheme=light"; //400x23
+	const RECOMMEND_STANDARD = "layout=standard&amp;action=recommend&amp;width=400&amp;height=24&amp;colorscheme=light"; //400x24
 	const RECOMMEND_BUTTON_COUNT= "layout=button_count&amp;action=recommend&amp;width=130&amp;height=20&amp;colorscheme=light"; //130x20
 	const RECOMMEND_BOX_COUNT= "layout=box_count&amp;action=recommend&amp;width=90&amp;height=60&amp;colorscheme=light"; //90x60
 
 	const EXTRA_VALUE = "EXTRA_VALUE";
 	const FACEBOOK_LOCALE = "FACEBOOK_LOCALE";
-	
-	const DEFAULT_BUTTON_WEIGHT = "94";
 	
 	var $float_button_design = "Like Box Count";
 	
@@ -689,12 +931,11 @@ class DD_FbLike extends BaseIFrameDD{
 		"Recommend Box Count" => self::RECOMMEND_BOX_COUNT
 	);
 	
-	//TODO : need testing to adjust the width
 	var $buttonLayoutWidthHeight = array(
-		"Like Standard" => "width:500px; height:23px;",
+		"Like Standard" => "width:500px; height:24px;",
 		"Like Button Count" => "width:92px; height:20px;",
 		"Like Box Count" => "width:50px; height:60px;",
-		"Recommend Standard" => "width:500px; height:23px;",
+		"Recommend Standard" => "width:500px; height:24px;",
 		"Recommend Button Count" => "width:130px; height:20px;",
 		"Recommend Box Count" => "width:90px; height:60px;"
 	);
@@ -709,10 +950,10 @@ class DD_FbLike extends BaseIFrameDD{
 	);
     
     var $buttonLayoutLazyHeight = array(
-		"Like Standard" => "23",
+		"Like Standard" => "24",
 		"Like Button Count" => "20",
 		"Like Box Count" => "60",
-		"Recommend Standard" => "23",
+		"Recommend Standard" => "24",
 		"Recommend Button Count" => "20",
 		"Recommend Box Count" => "60"
 	);
@@ -736,20 +977,16 @@ class DD_FbLike extends BaseIFrameDD{
         
     } 
     
-	//lazy load url
     public function constructLazyLoadURL($url, $title,$button, $postId){
     	
     	$finalURL_lazy = $this->baseURL_lazy;
-    	
     	$finalURL_lazy = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::VOTE_TITLE,$title,$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::VOTE_URL,$url,$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::POST_ID,$postId,$finalURL_lazy);	
     	$this->finalURL_lazy = $finalURL_lazy;
     	
-    	//lazy loading javascript
     	$finalURL_lazy_script = $this->baseURL_lazy_script;
-    	
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN_LAZY_WIDTH,$this->getButtonDesignLazyWidth($button),$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN_LAZY_HEIGHT,$this->getButtonDesignLazyHeight($button),$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy_script);
@@ -760,10 +997,8 @@ class DD_FbLike extends BaseIFrameDD{
     	//add new line
     	//convert &amp; to &
     	$finalURL_lazy_script = str_replace("&amp;","&",$finalURL_lazy_script);
-    	
     	$this->finalURL_lazy_script = $finalURL_lazy_script;
     	
-    	//scheduler to run the lazy loading
     	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
     	$final_scheduler_lazy_script = str_replace(parent::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
     	$final_scheduler_lazy_script = str_replace(parent::POST_ID,$postId,$final_scheduler_lazy_script);
@@ -771,7 +1006,7 @@ class DD_FbLike extends BaseIFrameDD{
     	
     }
     
-	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = '', $commentcount = ''){
+	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
     	
  		if($this->isEncodeRequired){
  			$title = rawurlencode($title);
@@ -792,20 +1027,130 @@ class DD_FbLike extends BaseIFrameDD{
 
     		$this->baseURL_lazy_script = str_replace(self::FACEBOOK_LOCALE,$facebook_locale,$this->baseURL_lazy_script);
     		$this->constructLazyLoadURL($url, $title,$button, $postId);
+    		
     	}
     	
     }
     
 }
 
-//delicious.com
+/******************************************************************************************
+ * 
+ * Facebook Like (XFBML)
+ * https://developers.facebook.com/tools/lint/
+ * 
+ */
+class DD_FbLike_XFBML extends BaseDD{
+	
+	const NAME = "Facebook Like (XFBML)";
+	const URL_WEBSITE = "http://www.facebook.com";
+	const URL_API = "http://developers.facebook.com/docs/reference/plugins/like";
+
+	const BASEURL = "<script src=\"http://connect.facebook.net/FACEBOOK_LOCALE/all.js#xfbml=1\"></script><fb:like href=\"VOTE_URL\" FACEBOOK_SEND FACEBOOK_SHOW_FACE VOTE_BUTTON_DESIGN ></fb:like>";
+		
+	const FB_LOCALES = "http://www.facebook.com/translations/FacebookLocales.xml";
+	const DEFAULT_BUTTON_WEIGHT = "98";
+	
+	const OPTION_APPEND_TYPE = "dd_fblike_xfbml_appendType";
+	const OPTION_BUTTON_DESIGN = "dd_fblike_xfbml_buttonDesign";
+	const OPTION_BUTTON_WEIGHT = "dd_fblike_xfbml_button_weight";
+	const OPTION_AJAX_LEFT_FLOAT = "dd_fblike_xfbml_ajax_left_float";
+	const OPTION_LAZY_LOAD = "dd_fblike_xfbml_lazy_load";
+	
+	const LIKE_STANDARD =  " width=\"450\" "; 
+	const LIKE_BUTTON_COUNT= " layout=\"button_count\" width=\"92\" ";
+	const LIKE_BOX_COUNT= " layout=\"box_count\" width=\"50\" ";
+	const RECOMMEND_STANDARD = " action=\"recommend\" width=\"400\" ";
+	const RECOMMEND_BUTTON_COUNT= " action=\"recommend\" layout=\"button_count\" width=\"130\" ";
+	const RECOMMEND_BOX_COUNT= " action=\"recommend\" layout=\"box_count\" width=\"90\" ";
+
+	const FACEBOOK_SEND = "FACEBOOK_SEND"; //send=\"true\"
+	const FACEBOOK_SHOW_FACE = "FACEBOOK_SHOW_FACE"; //show_faces=\"true\" 
+	const FACEBOOK_LOCALE = "FACEBOOK_LOCALE";
+	
+	var $islazyLoadAvailable = false;
+	
+	var $float_button_design = "Like Box Count";
+	
+	var $buttonLayout = array(
+		"Like Standard" => self::LIKE_STANDARD,
+		"Like Button Count" => self::LIKE_BUTTON_COUNT,
+		"Like Box Count" => self::LIKE_BOX_COUNT,
+		"Recommend Standard" => self::RECOMMEND_STANDARD,
+		"Recommend Button Count" => self::RECOMMEND_BUTTON_COUNT,
+		"Recommend Box Count" => self::RECOMMEND_BOX_COUNT
+	);
+    
+    public function DD_FbLike_XFBML() {
+    	
+		$this->option_append_type = self::OPTION_APPEND_TYPE;
+		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
+		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
+		$this->option_ajax_left_float = self::OPTION_AJAX_LEFT_FLOAT;
+		$this->option_lazy_load = self::OPTION_LAZY_LOAD;
+    	
+		$this->button_weight_value = self::DEFAULT_BUTTON_WEIGHT;
+		
+        parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
+        
+    } 
+
+	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
+    	
+ 		if($this->isEncodeRequired){
+ 			$title = rawurlencode($title);
+    		$url = rawurlencode($url);
+ 		}
+ 	
+ 		$fb_locale = '';
+ 		$fb_send = '';
+ 		$fb_face = '';
+ 		$fb_send_value = '';
+ 		$fb_face_value = '';
+ 		
+ 		if($globalcfg!=''){
+ 			$fb_locale = $globalcfg[DD_GLOBAL_FACEBOOK_OPTION][DD_GLOBAL_FACEBOOK_OPTION_LOCALE]; 
+ 			$fb_send = $globalcfg[DD_GLOBAL_FACEBOOK_OPTION][DD_GLOBAL_FACEBOOK_OPTION_SEND]; 
+ 			$fb_face = $globalcfg[DD_GLOBAL_FACEBOOK_OPTION][DD_GLOBAL_FACEBOOK_OPTION_FACE]; 
+ 			
+ 			if($fb_send == DD_DISPLAY_ON){
+ 				$fb_send_value = "send=\"true\"";
+ 			}else{
+ 				$fb_send_value = "send=\"false\"";
+ 			}
+ 			
+ 			if($fb_face == DD_DISPLAY_ON){
+ 				$fb_face_value = "show_faces=\"true\"";
+ 			}else{
+ 				$fb_face_value = "show_faces=\"false\"";
+ 			}
+ 			
+ 		}
+
+ 		//show face and send button 
+    	$this->baseURL = str_replace(self::FACEBOOK_LOCALE,$fb_locale,$this->baseURL);
+    	$this->baseURL = str_replace(self::FACEBOOK_SEND,$fb_send_value,$this->baseURL);
+    	$this->baseURL = str_replace(self::FACEBOOK_SHOW_FACE,$fb_face_value,$this->baseURL);
+    	
+    	$this->constructNormalURL($url, $title,$button, $postId);
+    	    	
+    }
+    
+}
+
+/******************************************************************************************
+ * 
+ * http://www.delicious.com
+ * 
+ */
 class DD_Delicious extends BaseDD{
 	
 	const NAME = "Delicious";
 	const URL_WEBSITE = "http://www.delicious.com";
 	const URL_API = "http://www.delicious.com/help/feeds";
+	const DEFAULT_BUTTON_WEIGHT = "93";
 	
-	const BASEURL = "<a class='dd-delicious' style='background:url(VOTE_BUTTON_DESIGN)no-repeat;' href='http://delicious.com/save' onclick=\"window.open('http://delicious.com/save?v=5&amp;noui&amp;jump=close&amp;url='+encodeURIComponent('VOTE_URL')+'&amp;title='+encodeURIComponent('VOTE_TITLE'),'delicious', 'toolbar=no,width=550,height=550'); return false;\"><span id='DD_DELICIOUS_AJAX_POST_ID'>SAVED_COUNT</span></a>";
+	const BASEURL = "<div class='VOTE_BUTTON_DESIGN dd_delicious'><a class='VOTE_BUTTON_DESIGN' href='http://delicious.com/save' onclick=\"window.open('http://delicious.com/save?v=5&amp;noui&amp;jump=close&amp;url='+encodeURIComponent('VOTE_URL')+'&amp;title='+encodeURIComponent('VOTE_TITLE'),'delicious', 'toolbar=no,width=550,height=550'); return false;\"><span id='DD_DELICIOUS_AJAX_POST_ID'><div style='padding-top:3px'>SAVED_COUNT</div></span></a></div>";
 	
 	const OPTION_APPEND_TYPE = "dd_delicious_appendType";
 	const OPTION_BUTTON_DESIGN = "dd_delicious_buttonDesign";
@@ -813,16 +1158,13 @@ class DD_Delicious extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_delicious_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_delicious_lazy_load";
 
-	const BASEURL_LAZY = "<a class='dd-delicious' style='background:url(VOTE_BUTTON_DESIGN)no-repeat;' href='http://delicious.com/save' onclick=\"window.open('http://delicious.com/save?v=5&amp;noui&amp;jump=close&amp;url='+encodeURIComponent('VOTE_URL')+'&amp;title='+encodeURIComponent('VOTE_TITLE'),'delicious', 'toolbar=no,width=550,height=550'); return false;\"><span id='DD_DELICIOUS_AJAX_POST_ID'>SAVED_COUNT</span></a>";
+	const BASEURL_LAZY = "<div class='VOTE_BUTTON_DESIGN dd_delicious'><a href='http://delicious.com/save' onclick=\"window.open('http://delicious.com/save?v=5&amp;noui&amp;jump=close&amp;url='+encodeURIComponent('VOTE_URL')+'&amp;title='+encodeURIComponent('VOTE_TITLE'),'delicious', 'toolbar=no,width=550,height=550'); return false;\"><span id='DD_DELICIOUS_AJAX_POST_ID'>SAVED_COUNT</span></a></div>";
 	const BASEURL_LAZY_SCRIPT = " function loadDelicious_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-delicious-POST_ID').remove();\$.getJSON('http://feeds.delicious.com/v2/json/urlinfo/data?url=VOTE_URL&amp;callback=?',function(data) {var msg ='';var count = 0;if (data.length > 0) {count = data[0].total_posts;if(count ==0){msg = '0';}else if(count ==1){msg = '1';}else{msg = count}}else{msg = '0';}\$('#DD_DELICIOUS_AJAX_POST_ID').text(msg);}); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadDelicious_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
-		
-	const DEFAULT_BUTTON_WEIGHT = "93";
 	
 	const SAVED_COUNT = "SAVED_COUNT";
 
-	//url or title encode is not require
 	var $isEncodeRequired = false;
 	
 	var $buttonLayout = array(
@@ -853,7 +1195,6 @@ class DD_Delicious extends BaseDD{
          parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
     }  
 
-	//implement own normal constructor
 	public function constructNormalURL($url, $title,$button, $postId){
 		
 		$count = '';
@@ -881,34 +1222,26 @@ class DD_Delicious extends BaseDD{
     	$this->finalURL = $finalURL;
     }
    
-	//lazy load url
     public function constructLazyLoadURL($url, $title,$button, $postId){
     	
     	$finalURL_lazy = $this->baseURL_lazy;
-    	
     	$finalURL_lazy = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::VOTE_TITLE,$title,$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::VOTE_URL,$url,$finalURL_lazy);
     	$finalURL_lazy = str_replace(parent::POST_ID,$postId,$finalURL_lazy);
-    	
     	//add new line
     	$finalURL_lazy = str_replace(self::SAVED_COUNT,'',$finalURL_lazy);
-
     	$this->finalURL_lazy = $finalURL_lazy;
     	
-    	//lazy loading javascript
     	$finalURL_lazy_script = $this->baseURL_lazy_script;
-    	
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN_LAZY_WIDTH,$this->getButtonDesignLazyWidth($button),$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN_LAZY_HEIGHT,$this->getButtonDesignLazyHeight($button),$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_TITLE,$title,$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::VOTE_URL,$url,$finalURL_lazy_script);
     	$finalURL_lazy_script = str_replace(parent::POST_ID,$postId,$finalURL_lazy_script);
-    	
     	$this->finalURL_lazy_script = $finalURL_lazy_script;
     	
-    	//scheduler to run the lazy loading
     	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
     	$final_scheduler_lazy_script = str_replace(parent::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
     	$final_scheduler_lazy_script = str_replace(parent::POST_ID,$postId,$final_scheduler_lazy_script);
@@ -916,13 +1249,18 @@ class DD_Delicious extends BaseDD{
     }
 }
 
-//stumbleupon
+/******************************************************************************************
+ * 
+ * http://www.stumbleupon.com
+ * 
+ */
 class DD_StumbleUpon extends BaseDD{
 	
 	const NAME = "Stumbleupon";
 	const URL_WEBSITE = "http://www.stumbleupon.com";
 	const URL_API = "http://www.stumbleupon.com/badges/";
 	const BASEURL = "<script src='http://www.stumbleupon.com/hostedbadge.php?s=VOTE_BUTTON_DESIGN&amp;r=VOTE_URL'></script>";
+	const DEFAULT_BUTTON_WEIGHT = "97";
 	
 	const OPTION_APPEND_TYPE = "dd_stumbleupon_appendType";
 	const OPTION_BUTTON_DESIGN = "dd_stumbleupon_buttonDesign";
@@ -930,8 +1268,6 @@ class DD_StumbleUpon extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_stumbleupon_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_stumbleupon_lazy_load";
 
-	const DEFAULT_BUTTON_WEIGHT = "91";
-	
 	var $islazyLoadAvailable = false;
 	
 	var $buttonLayout = array(
@@ -950,15 +1286,21 @@ class DD_StumbleUpon extends BaseDD{
 		$this->button_weight_value = self::DEFAULT_BUTTON_WEIGHT;
 		
          parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
-    }     
+    }
+    
 }
 
-//buzz.yahoo.com
+/******************************************************************************************
+ * 
+ * http://buzz.yahoo.com
+ * 
+ */
 class DD_YBuzz extends BaseDD{
 
 	const NAME = "Yahoo Buzz";
 	const URL_WEBSITE = "http://buzz.yahoo.com";
 	const URL_API = "http://buzz.yahoo.com/buttons";
+	const DEFAULT_BUTTON_WEIGHT = "90";
 	
 	const BASEURL = "<script type='text/javascript'>yahooBuzzArticleHeadline=\"VOTE_TITLE\";yahooBuzzArticleId=\"VOTE_URL\";</script><script type='text/javascript' src='http://d.yimg.com/ds/badge2.js' badgetype='VOTE_BUTTON_DESIGN'></script>";
 	
@@ -968,8 +1310,6 @@ class DD_YBuzz extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_ybuzz_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_ybuzz_lazy_load";
 	
-	const DEFAULT_BUTTON_WEIGHT = "90";
-	
 	var $islazyLoadAvailable = false;
 	
 	var $buttonLayout = array(
@@ -978,13 +1318,10 @@ class DD_YBuzz extends BaseDD{
 		"Compact_Text" => "text-votes"
 	);
 	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
-	//constructor
     public function DD_YBuzz() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
@@ -998,80 +1335,17 @@ class DD_YBuzz extends BaseDD{
     
 }
 
-//sphinn.com
-class DD_Sphinn extends BaseIFrameDD{
-	
-	const NAME = "Sphinn";
-	const URL_WEBSITE = "http://www.sphinn.com";
-	const URL_API = "http://sphinn.com/widgets/";
-	
-	const BASEURL = "<iframe src='http://sphinn.com/evb/VOTE_BUTTON_DESIGN?url=VOTE_URL' EXTRA_VALUE scrolling='no' frameborder='0' allowtransparency='true'></iframe>";
-	
-	const OPTION_APPEND_TYPE = "dd_sphinn_appendType";
-	const OPTION_BUTTON_DESIGN = "dd_sphinn_buttonDesign";
-	const OPTION_BUTTON_WEIGHT = "dd_sphinn_button_weight";
-	const OPTION_AJAX_LEFT_FLOAT = "dd_sphinn_ajax_left_float";
-	const OPTION_LAZY_LOAD = "dd_sphinn_lazy_load";
-	
-	const BASEURL_LAZY = "<div class='dd-sphinn-ajax-load dd-sphinn-POST_ID'></div><iframe class='DD_SPHINN_AJAX_POST_ID' width='0' height='0' scrolling='no' frameborder='0' src='#'></iframe>";
-	const BASEURL_LAZY_SCRIPT = " function loadSphinn_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-sphinn-POST_ID').remove();\$('.DD_SPHINN_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_SPHINN_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_SPHINN_AJAX_POST_ID').attr('src','http://sphinn.com/evb/VOTE_BUTTON_DESIGN?url=VOTE_URL'); }); }";
-	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadSphinn_POST_ID()',SCHEDULER_TIMER);";
-	const SCHEDULER_LAZY_TIMER = "1000";
-
-	const DEFAULT_BUTTON_WEIGHT = "92";
-	
-	var $buttonLayout = array(
-		"Normal" => "vurl.php",
-		"Compact" => "hurl.php"
-	);
-    
-	var $buttonLayoutWidthHeight = array(
-		"Normal" => "height='68' width='50'",
-		"Compact" => "height='22' width='110'",
-	);
-	
-	var $buttonLayoutLazy = array(
-		"Normal" => "vurl.php",
-		"Compact" => "hurl.php"
-	);
-	
-	var $buttonLayoutLazyWidth = array(
-		"Normal" => "50",
-		"Compact" => "110"
-	);
-    
-    var $buttonLayoutLazyHeight = array(
-		"Normal" => "68",
-		"Compact" => "22"
-	);
-	
-    public function DD_Sphinn() {
-    	
-		$this->option_append_type = self::OPTION_APPEND_TYPE;
-		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
-		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
-		$this->option_ajax_left_float = self::OPTION_AJAX_LEFT_FLOAT;
-		$this->option_lazy_load = self::OPTION_LAZY_LOAD;
-		
-		$this->baseURL_lazy = self::BASEURL_LAZY;
-    	$this->baseURL_lazy_script = self::BASEURL_LAZY_SCRIPT;
-    	$this->scheduler_lazy_script = self::SCHEDULER_LAZY_SCRIPT;
-    	$this->scheduler_lazy_timer = self::SCHEDULER_LAZY_TIMER;
-    	
-		$this->button_weight_value = self::DEFAULT_BUTTON_WEIGHT;
-		
-         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
-        
-    } 
-    
-}
-
-//blogengage.com
+/******************************************************************************************
+ * 
+ * http://www.blogengage.com
+ * 
+ */
 class DD_BlogEngage extends BaseDD{
 
 	const NAME = "BlogEngage";
 	const URL_WEBSITE = "http://www.blogengage.com";
 	const URL_API = "http://www.blogengage.com/profile_promo.php";
+	const DEFAULT_BUTTON_WEIGHT = "84";
 	
 	const BASEURL = "<script type='text/javascript'>submit_url = 'VOTE_URL';</script><script src='http://blogengage.com/evb/VOTE_BUTTON_DESIGN'></script>";
   
@@ -1081,11 +1355,7 @@ class DD_BlogEngage extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_blogengage_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_blogengage_lazy_load";
 	
-	const DEFAULT_BUTTON_WEIGHT = "84";
-	
 	var $islazyLoadAvailable = false;
-	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
 	var $buttonLayout = array(
@@ -1107,12 +1377,17 @@ class DD_BlogEngage extends BaseDD{
     
 }  
 
-//designbump.com
+/******************************************************************************************
+ * 
+ * http://www.designbump.com
+ * 
+ */
 class DD_DesignBump extends BaseDD{
 	
 	const NAME = "DesignBump";
 	const URL_WEBSITE = "http://www.designbump.com";
 	const URL_API = "http://designbump.com/content/evb";
+	const DEFAULT_BUTTON_WEIGHT = "87";
 
 	const BASEURL = "<script type='text/javascript'>url_site='VOTE_URL'; </script> <script src='http://designbump.com/sites/all/modules/drigg_external/js/button.js' type='text/javascript'></script>";
 	
@@ -1122,27 +1397,20 @@ class DD_DesignBump extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_designbump_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_designbump_lazy_load";
 	
-	const DEFAULT_BUTTON_WEIGHT = "87";
-	
 	var $islazyLoadAvailable = false;
-	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
 	var $buttonLayout = array(
 		"Normal" => "Normal"
 	);
 	
-	//constructor
     public function DD_DesignBump() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
 		$this->option_ajax_left_float = self::OPTION_AJAX_LEFT_FLOAT;
 		$this->option_lazy_load = self::OPTION_LAZY_LOAD;
-		
 		$this->button_weight_value = self::DEFAULT_BUTTON_WEIGHT;
 		
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
@@ -1151,12 +1419,17 @@ class DD_DesignBump extends BaseDD{
     
 }
 
-//thewebblend.com
+/******************************************************************************************
+ * 
+ * http://www.thewebblend.com
+ * 
+ */
 class DD_TheWebBlend extends BaseDD{
 
 	const NAME = "TheWebBlend";
 	const URL_WEBSITE = "http://www.thewebblend.com";
 	const URL_API = "http://thewebblend.com/tools/vote";
+	const DEFAULT_BUTTON_WEIGHT = "85";
 
 	const BASEURL = "<script type='text/javascript'>url_site='VOTE_URL'; VOTE_BUTTON_DESIGN</script><script src='http://thewebblend.com/sites/all/modules/drigg_external/js/button.js' type='text/javascript'></script>";
 	
@@ -1167,21 +1440,15 @@ class DD_TheWebBlend extends BaseDD{
 	const OPTION_LAZY_LOAD = "dd_webblend_lazy_load";
 	
 	var $islazyLoadAvailable = false;
-	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
-	
-	const DEFAULT_BUTTON_WEIGHT = "85";
 	
 	var $buttonLayout = array(
 		"Normal" => "",
 		"Compact" => "badge_size='compact';"
 	);
 	
-	//constructor
     public function DD_TheWebBlend() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
@@ -1194,12 +1461,17 @@ class DD_TheWebBlend extends BaseDD{
     }    
 }
 
-//official twitter button
+/******************************************************************************************
+ * 
+ * http://www.twitter.com
+ * //data-counturl
+ */
 class DD_Twitter extends BaseDD{
 	
 	const NAME = "Twitter";
 	const URL_WEBSITE = "http://www.twitter.com";
 	const URL_API = "http://twitter.com/goodies/tweetbutton";
+	const DEFAULT_BUTTON_WEIGHT = "98";
 
 	const BASEURL ="<a href=\"http://twitter.com/share\" class=\"twitter-share-button\" data-url=\"VOTE_URL\" data-count=\"VOTE_BUTTON_DESIGN\" data-text=\"VOTE_TITLE\" data-via=\"VOTE_SOURCE\" ></a><script type=\"text/javascript\" src=\"http://platform.twitter.com/widgets.js\"></script>";
 	
@@ -1214,8 +1486,6 @@ class DD_Twitter extends BaseDD{
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadTwitter_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
 
-	const DEFAULT_BUTTON_WEIGHT = "98";
-	
 	var $buttonLayout = array(
 		"Normal" => "vertical",
 		"Compact" => "horizontal"
@@ -1226,7 +1496,6 @@ class DD_Twitter extends BaseDD{
 		"Compact" => "horizontal"
 	);
 	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
 	const VOTE_SOURCE = "VOTE_SOURCE";
@@ -1250,7 +1519,7 @@ class DD_Twitter extends BaseDD{
         
     }
 
- 	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = '', $commentcount = ''){
+ 	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
     	
  		if($this->isEncodeRequired){
  			$title = rawurlencode($title);
@@ -1277,14 +1546,38 @@ class DD_Twitter extends BaseDD{
     	
     }
 
+	public function constructLazyLoadURL($url, $title,$button, $postId){
+    	
+    	$finalURL_lazy = $this->baseURL_lazy;
+    	$finalURL_lazy = str_replace(parent::VOTE_BUTTON_DESIGN,$this->getButtonDesignLazy($button),$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::VOTE_TITLE,$title,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::VOTE_URL,$url,$finalURL_lazy);
+    	$finalURL_lazy = str_replace(parent::POST_ID,$postId,$finalURL_lazy);
+    	$this->finalURL_lazy = $finalURL_lazy;
+    	
+    	$finalURL_lazy_script = $this->baseURL_lazy_script;
+    	$finalURL_lazy_script = str_replace(parent::POST_ID,$postId,$finalURL_lazy_script);
+    	$this->finalURL_lazy_script = $finalURL_lazy_script;
+    	
+    	$final_scheduler_lazy_script = $this->scheduler_lazy_script;
+    	$final_scheduler_lazy_script = str_replace(parent::SCHEDULER_TIMER,$this->scheduler_lazy_timer,$final_scheduler_lazy_script);
+    	$final_scheduler_lazy_script = str_replace(parent::POST_ID,$postId,$final_scheduler_lazy_script);
+    	$this->final_scheduler_lazy_script =  $final_scheduler_lazy_script;
+    }
+    
 }
 
-//tweetmeme.com
+/******************************************************************************************
+ * 
+ * http://www.tweetmeme.com/
+ * 
+ */
 class DD_TweetMeme extends BaseDD{
 	
 	const NAME = "TweetMeme";
 	const URL_WEBSITE = "http://www.tweetmeme.com/";
 	const URL_API = "http://wordpress.org/extend/plugins/tweetmeme/";
+	const DEFAULT_BUTTON_WEIGHT = "97";
 	
 	const BASEURL ="<iframe src='http://api.tweetmeme.com/button.js?url=VOTE_URL&source=VOTE_SOURCE&service=VOTE_SERVICE_NAME&service_api=VOTE_SERVICE_API&style=VOTE_BUTTON_DESIGN frameborder='0' scrolling='no'></iframe>";
 	const OPTION_APPEND_TYPE = "dd_tweetmeme_appendType";
@@ -1293,7 +1586,7 @@ class DD_TweetMeme extends BaseDD{
 	const OPTION_AJAX_LEFT_FLOAT = "dd_tweetmeme_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_tweetmeme_lazy_load";
 	
-	const BASEURL_LAZY = "<div class='dd-tweetmeme-ajax-load dd-tweetmeme-POST_ID'></div><iframe class='DD_TWEETMEME_AJAX_POST_ID' src='#' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
+	const BASEURL_LAZY = "<div class='dd-tweetmeme-ajax-load dd-tweetmeme-POST_ID'></div><iframe class='DD_TWEETMEME_AJAX_POST_ID' src='' height='0' width='0' scrolling='no' frameborder='0'></iframe>";
 	const BASEURL_LAZY_SCRIPT = " function loadTweetMeme_POST_ID(){ jQuery(document).ready(function(\$) { \$('.dd-tweetmeme-POST_ID').remove();\$('.DD_TWEETMEME_AJAX_POST_ID').attr('width','VOTE_BUTTON_DESIGN_LAZY_WIDTH');\$('.DD_TWEETMEME_AJAX_POST_ID').attr('height','VOTE_BUTTON_DESIGN_LAZY_HEIGHT');\$('.DD_TWEETMEME_AJAX_POST_ID').attr('src','http://api.tweetmeme.com/button.js?url=VOTE_URL&source=VOTE_SOURCE&style=VOTE_BUTTON_DESIGN&service=VOTE_SERVICE_NAME&service_api=VOTE_SERVICE_API'); }); }";
 	const SCHEDULER_LAZY_SCRIPT = "window.setTimeout('loadTweetMeme_POST_ID()',SCHEDULER_TIMER);";
 	const SCHEDULER_LAZY_TIMER = "1000";
@@ -1318,19 +1611,14 @@ class DD_TweetMeme extends BaseDD{
 		"Compact" => "20"
 	);
 	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
-	
-    const DEFAULT_BUTTON_WEIGHT = "97";
-          
+     
 	const VOTE_SOURCE = "VOTE_SOURCE";
 	const VOTE_SERVICE_NAME = "VOTE_SERVICE_NAME";
 	const VOTE_SERVICE_API = "VOTE_SERVICE_API";
 	
-	//constructor
     public function DD_TweetMeme() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
@@ -1347,7 +1635,7 @@ class DD_TweetMeme extends BaseDD{
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
     } 
     
-	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = '',$commentcount = ''){
+	public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
     	
  		if($this->isEncodeRequired){
  			$title = rawurlencode($title);
@@ -1385,12 +1673,17 @@ class DD_TweetMeme extends BaseDD{
     
 }
 
-//topsy.com
+/******************************************************************************************
+ * 
+ * http://www.topsy.com
+ * 
+ */
 class DD_Topsy extends BaseDD{
 	
 	const NAME = "Topsy";
 	const URL_WEBSITE = "http://www.topsy.com";
 	const URL_API = "http://labs.topsy.com/button/retweet-button/";
+	const DEFAULT_BUTTON_WEIGHT = "96";
 	
 	const BASEURL = "<script type=\"text/javascript\" src=\"http://cdn.topsy.com/topsy.js?init=topsyWidgetCreator\"></script><div class=\"topsy_widget_data\"><!--{\"url\":\"VOTE_URL\",\"style\":\"VOTE_BUTTON_DESIGN\",\"theme\":\"VOTE_THEME\",\"nick\":\"VOTE_SOURCE\"}--></div>";
 
@@ -1399,8 +1692,6 @@ class DD_Topsy extends BaseDD{
 	const OPTION_BUTTON_WEIGHT = "dd_topsy_button_weight";
 	const OPTION_AJAX_LEFT_FLOAT = "dd_topsy_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_topsy_lazy_load";
-		
-    const DEFAULT_BUTTON_WEIGHT = "96";
 
 	const VOTE_SOURCE = "VOTE_SOURCE";
 	const VOTE_THEME = "VOTE_THEME";
@@ -1427,7 +1718,7 @@ class DD_Topsy extends BaseDD{
         
     } 
     
-    public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = '', $commentcount = ''){
+    public function constructURL($url, $title,$button, $postId, $lazy, $globalcfg = ''){
 
     	if($this->isEncodeRequired){
  			$title = rawurlencode($title);
@@ -1450,17 +1741,21 @@ class DD_Topsy extends BaseDD{
     
     	$this->finalURL = $finalURL;
 
-    	
     }
     
 }
 
-//post comments
+/******************************************************************************************
+ * 
+ * Post comments
+ * 
+ */
 class DD_Comments extends BaseDD{
 
 	const NAME = "Comments";
 	const URL_WEBSITE = "http://none";
 	const URL_API = "http://none";
+	const DEFAULT_BUTTON_WEIGHT = "88";
 	
 	const BASEURL = "<div id='dd_comments'><a class='clcount' href=VOTE_URL><span class='ctotal'>COMMENTS_COUNT</span></a><a class='clink' href=VOTE_URL></a></div>";
 	
@@ -1469,8 +1764,6 @@ class DD_Comments extends BaseDD{
 	const OPTION_BUTTON_WEIGHT = "dd_comments_button_weight";
 	const OPTION_AJAX_LEFT_FLOAT = "dd_comments_ajax_left_float";
 	const OPTION_LAZY_LOAD = "dd_comments_lazy_load";
-	
-	const DEFAULT_BUTTON_WEIGHT = "88";
 	
 	const COMMENTS_COUNT = "COMMENTS_COUNT";
 	const COMMENTS_RESPONSE_ID = "#respond";
@@ -1507,7 +1800,11 @@ class DD_Comments extends BaseDD{
     
 }
 
-//serpd.com
+/******************************************************************************************
+ * 
+ * http://www.serpd.com
+ * 
+ */
 class DD_Serpd extends BaseDD{
 	
 	const NAME = "Serpd";
@@ -1524,18 +1821,14 @@ class DD_Serpd extends BaseDD{
 	const DEFAULT_BUTTON_WEIGHT = "86";
 	
 	var $islazyLoadAvailable = false;
-	
-	//url or title dun need to encode
 	var $isEncodeRequired = false;
 	
 	var $buttonLayout = array(
 		"Normal" => "",
 	);
 	
-	//constructor
     public function DD_Serpd() {
     	
-    	//wordpress option value
 		$this->option_append_type = self::OPTION_APPEND_TYPE;
 		$this->option_button_design = self::OPTION_BUTTON_DESIGN;
 		$this->option_button_weight = self::OPTION_BUTTON_WEIGHT;
@@ -1547,5 +1840,4 @@ class DD_Serpd extends BaseDD{
         parent::BaseDD(self::NAME, self::URL_WEBSITE, self::URL_API, self::BASEURL);
     }    
 }
-
 ?>

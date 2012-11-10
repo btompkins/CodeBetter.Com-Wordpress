@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>The Dependency Injection Pattern  – What is it and why do I care? | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Build pattern: Fast build/full build' href='http://codebetter.com/jeremymiller/2005/10/03/build-pattern-fast-buildfull-build/' />
+<link rel='next' title='Serenity' href='http://codebetter.com/jeremymiller/2005/10/10/serenity/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=85' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,176] -->
+<link rel="canonical" href="http://codebetter.com/jeremymiller/2005/10/06/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-85" class="post-85 post type-post status-publish format-standard hentry category-design-patterns category-test-driven-development">
+					<h1 class="entry-title">The Dependency Injection Pattern  – What is it and why do I care?</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2005/10/06/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care/" title="3:57 pm" rel="bookmark"><span class="entry-date">October 6, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><P class="MsoNormal">A couple of weeks ago I wrote about using the <A HREF="/blogs/jeremy.miller/archive/2005/09/20/132290.aspx">Inversion of Control</A> (IoC) principle to create classes that are easier to unit test.<SPAN>&nbsp; </SPAN>One major thing I left out of that post was using the Dependency Injection pattern to loosely couple classes from their dependencies.<SPAN>&nbsp; </SPAN>In a nutshell, dependency injection just means that a given class or system is no longer responsible for instantiating their own dependencies.<SPAN>&nbsp; </SPAN>In this case “Inversion of Control” refers to moving the responsibility for locating and attaching dependency objects to another class or a DI tool.<SPAN>&nbsp; </SPAN>That might not sound that terribly profound, but it opens the door for a lot of interesting scenarios.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">While there’s a fair amount of unnecessary buzz and hype about the concept, I’ve found Dependency Injection to be very advantageous for doing Test Driven Development without pulling your hair out.<SPAN>&nbsp; </SPAN>If you’ve seen articles or blog posts about Dependency Injection but don’t quite internalize the value of DI yet, here are the facts as I see them:</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<OL type="1"><br />
+<LI class="MsoNormal">Dependency Injection is an important pattern for creating classes that are easier to unit test in isolation</LI><br />
+<LI class="MsoNormal">Promotes loose coupling between classes and subsystems </LI><br />
+<LI class="MsoNormal">Adds potential flexibility to a codebase for future changes</LI><br />
+<LI class="MsoNormal">Can enable better code reuse</LI><br />
+<LI class="MsoNormal"><B>The implementation is simple and does *not* require a fancy DI tool</B></LI></OL><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">The <A href="http://picocontainer.org/">PicoContainer</A> team even has silly tee shirts printed up that say “I expected a paradigm shift, but all I got was a lousy constructor function.”<SPAN>&nbsp; </SPAN>DI is certainly a case where a minimum of effort supplies quite a bit of benefit.<SPAN>&nbsp; </SPAN>Don’t blow it off just because it seems trivial.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">There are tools out there that do Dependency Injection in .Net.<SPAN>&nbsp; </SPAN>I use my own tool called <A href="http://structuremap.sourceforge.net/">StructureMap</A> in my development, but I’m going to focus on only the concept of DI in this post.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Example Problem</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">My first experience with conscious usage of DI was a WinForms client communicating with the backend via web services that was built with the <A HREF="/blogs/jeremy.miller/articles/129546.aspx">Model View Presenter</A> (“Humble Dialog Box”) architecture for easier unit testing.<SPAN>&nbsp; </SPAN>Most screens in the client end up with something like this set of classes:</P><br />
+<UL type="disc"><br />
+<LI class="MsoNormal">Model – Whatever business object/DataSet/chunk of data is being displayed or edited</LI><br />
+<LI class="MsoNormal">View – A WinForms UserControl class.<SPAN>&nbsp; </SPAN>Displays data to a user and captures user input and screen events (duh).</LI><br />
+<LI class="MsoNormal">Service – A web service proxy class to send requests to the backend</LI><br />
+<LI class="MsoNormal">Presenter – The controller class that coordinates all of the above.</LI></UL><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">The presenter class without Dependency Injection might look like this.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> Presenter</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> View _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Model _model;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter(){}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>object</SPAN> CreateView(Model model)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_model = model;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = <SPAN>new</SPAN> View();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view.DisplayModel(model);</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Close()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>bool</SPAN> canClose = <SPAN>true</SPAN>;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN> (_view.IsDirty())</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>canClose = _view.CanCloseDirtyScreen();<SPAN>&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN> (canClose)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view.Close();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Save()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Service service = <SPAN>new</SPAN> Service();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>service.Persist(_model);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">This code cannot be unit tested in isolation because it has a tight coupling to a concrete implementation of both the WinForms UserControl (View) and the proxy class to a web service (Service).<SPAN>&nbsp; </SPAN>This code as is cannot function without both the User Interface and a web server running the backend.<SPAN>&nbsp;&nbsp; </SPAN>The point of using the MVP is to isolate most of the user interface logic away from the WinForms and web service mechanics to enable effective unit testing, so we’re missing something here.<SPAN>&nbsp; </SPAN>To unit test the presenter logic we’d like to replace the user interface and web service dependencies with a <A href="http://martinfowler.com/articles/mocksArentStubs.html">Mock</A> object inside our test fixture classes.<SPAN>&nbsp; </SPAN>In order to mock the view and service, we first need to use the <A HREF="/blogs/jeremy.miller/articles/129543.aspx">Dependency Inversion Principle</A> to make the <SPAN>Presenter</SPAN> class depend on an abstracted <SPAN>IView</SPAN> and <SPAN>IService</SPAN> interface instead of the concrete <SPAN>UserControl</SPAN> and <SPAN>WebProxy</SPAN> classes.<SPAN>&nbsp; </SPAN>The next thing to do is to alter the <SPAN>Presenter</SPAN> class so that we can substitute at run time the mock objects instead of the concrete classes within the unit tests.<SPAN>&nbsp; </SPAN>This is where Dependency Injection comes into play.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">There are a couple of different flavors of Dependency Injection (via <A href="http://martinfowler.com/articles/injection.html">Martin Fowler</A> + the Pico guys)</P><br />
+<OL type="1"><br />
+<LI class="MsoNormal">Constructor Injection – Attach the dependencies through a constructor function at object creation</LI><br />
+<LI class="MsoNormal">Setter Injection – Attach the dependencies through setter properties</LI><br />
+<LI class="MsoNormal">Interface Injection – This is an odd duck.<SPAN>&nbsp; </SPAN>I’ve never used it or seen this used.<SPAN>&nbsp; </SPAN>I suspect its usage is driven by specific DI tools in the Java world.</LI><br />
+<LI class="MsoNormal">Service Locator – Use a well known class that knows how to retrieve and create dependencies.<SPAN>&nbsp; </SPAN>Not technically DI, but this is what most DI/IoC container tools really do. </LI></OL><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Constructor Injection</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">My preference is to use the “Constructor Injection” flavor of DI.<SPAN>&nbsp; </SPAN>The mechanism here is pretty simple; just push the dependencies in through the constructor function.<SPAN>&nbsp; </SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> Presenter</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IView _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Model _model;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IService _service;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter(IView view, IService service)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_service = service;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>object</SPAN> CreateView(Model model){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Close(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Save(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[TestFixture]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> PresenterTestFixture</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IMock _serviceMock;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IMock _viewMock;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Presenter _presenter;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[SetUp]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> SetUp()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the dynamic mock classes for IService and IView</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_serviceMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IService));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_viewMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IView));</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create an instance of the Presenter class using the mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_presenter = <SPAN>new</SPAN> Presenter(</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IView) _viewMock.MockInstance, </SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>(IService) _serviceMock.MockInstance);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}<SPAN>&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">One of the benefits of using Constructor Injection is that the constructor function now explicitly declares the dependencies of a class.<SPAN>&nbsp; </SPAN>I also thing Constructor Injection makes it easier for other developers to use your class because it expresses a contract.<SPAN>&nbsp; </SPAN>Give the class what it needs in its constructor function and it should be ready to function.<SPAN>&nbsp; </SPAN>It’s usually a best practice to create a valid object in as few steps as possible for ease of use.<SPAN>&nbsp; </SPAN>Using Constructor Injection also allows you to maintain more encapsulation by eliminating the need to expose getter and setter properties for dependencies like the <SPAN>IService</SPAN> interface that are immutable.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Exposing the dependencies in a constructor function is arguably a violation of encapsulation because now a client of <SPAN>Presenter</SPAN> would have to create instances of <SPAN>IView</SPAN> and <SPAN>IService</SPAN> first before calling the constructor function.<SPAN>&nbsp; </SPAN>To get around this issue I usually suggest a compromise.<SPAN>&nbsp; </SPAN>Create a second no argument constructor that builds the default instances for clients of <SPAN>Presenter</SPAN> to use.<SPAN>&nbsp; </SPAN>The “full” constructor is usually commented as a testing constructor.<SPAN>&nbsp; </SPAN>Some people think this pattern is evil redundancy, but it gets the job done.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Testing constructor</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter(IView view, IService service)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_service = service;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Default constructor</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter() : <SPAN>this</SPAN>(<SPAN>new</SPAN> View(), <SPAN>new</SPAN> Service()){}</SPAN></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal"><B>Setter Injection</B></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Setter injection is just creating a setter property to replace a dependency on a previously instantiated object.<SPAN>&nbsp; </SPAN>I don’t like Setter Injection because it requires extra, hidden steps to prepare an object to execute.<SPAN>&nbsp; </SPAN>I’ve been burned a couple times in the last year when I’ve inherited some code that depended on setters to set up dependencies.<SPAN>&nbsp; </SPAN>That being said, Setter Injection does work and is often necessary when you’re dealing with existing code.<SPAN>&nbsp; </SPAN>Michael Feathers recommends using Setter Injection as a dependency breaking technique for legacy code when a dependency is too difficult to expose through a constructor.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Here’s the <SPAN>Presenter</SPAN> class using Setter Injection. </P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> Presenter</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IView _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Model _model;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IService _service;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = <SPAN>new</SPAN> View();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_service = <SPAN>new</SPAN> Service();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> IView View</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _view; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _view = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> IService Service</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN> { <SPAN>return</SPAN> _service; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _service = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>object</SPAN> CreateView(Model model){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Close(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Save(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[TestFixture]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> PresenterTestFixture</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IMock _serviceMock;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IMock _viewMock;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Presenter _presenter;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>[SetUp]</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> SetUp()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create the dynamic mock classes for IService and IView</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_serviceMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IService));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_viewMock = <SPAN>new</SPAN> DynamicMock(<SPAN>typeof</SPAN>(IView));</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Create an instance of the Presenter class</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_presenter = <SPAN>new</SPAN> Presenter();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Attach the Mock objects</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_presenter.View = (IView) _viewMock.MockInstance;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_presenter.Service = (IService) _serviceMock.MockInstance;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal">Here’s a variation on Setter Injection I’ve seen other teams use.<SPAN>&nbsp; </SPAN>In the getter of the property, just create the default instance of the dependency if it hasn’t been created.<SPAN>&nbsp; </SPAN>I don’t like this approach because it hides the dependencies of a class.<SPAN>&nbsp; </SPAN>I think this is creating “Mystery Meat” dependencies and brittle code.<SPAN>&nbsp; </SPAN>In practice I thought that this made it difficult to retrofit unit tests into existing code.<SPAN>&nbsp; </SPAN>Of course, retrofitting unit tests onto existing code is always hard so maybe that’s really not a drawback.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Always access the _view field through the Property</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> IView View</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN> (_view == <SPAN>null</SPAN>)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = <SPAN>new</SPAN> View();</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN> { _view = <SPAN>value</SPAN>; }</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Service Locator</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">An alternative to using Dependency Injection is to use a Service Locator to fetch the dependency objects.<SPAN>&nbsp; </SPAN>Using a Service Locator creates a level of indirection between a class and its dependencies.<SPAN>&nbsp; </SPAN>Here’s a version of the <SPAN>Presenter</SPAN> class that gets its <SPAN>IView</SPAN> and <SPAN>IService</SPAN> dependencies by asking StructureMap’s <SPAN>ObjectFactory</SPAN> class for the default type and configuration of <SPAN>IView</SPAN> and <SPAN>IService</SPAN>.<SPAN>&nbsp; </SPAN>While it is generally possible to use the Service Locator to return mock or stub objects inside test fixtures, I would still prefer to leave a testing constructor so the unit tests can be simpler.<SPAN>&nbsp; </SPAN>I find that using a Service Locator within a unit test can be confusing because it’s not clear where the mock object is used.</P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> Presenter</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IView _view;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> Model _model;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> IService _service;</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Presenter()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Call to StructureMap to fetch the default configurations of IView and IService</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_view = (IView) StructureMap.ObjectFactory.GetInstance(<SPAN>typeof</SPAN>(IView));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_service = (IService) StructureMap.ObjectFactory.GetInstance(<SPAN>typeof</SPAN>(IService));</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>object</SPAN> CreateView(Model model){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Close(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> Save(){…}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal">I’ve seen several teams go their own way to create custom Service Locator’s, usually with a Singleton like this.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> ServiceFactory</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> <SPAN>static</SPAN> IService _instance = <SPAN>new</SPAN> Service();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN> ServiceFactory(){}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>static</SPAN> IService GetInstance()</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN> _instance;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Used to register mock or stub instances in place of </SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// the concrete Service class</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>static</SPAN> <SPAN>void</SPAN> RegisterInstance(IService instance)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_instance = instance;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">I detest this pattern and I’ve been eliminating this from my team’s primary product.<SPAN>&nbsp; </SPAN>There are just too many opportunities to screw up your tests by not having isolated unit tests.<SPAN>&nbsp; </SPAN>It’s also unnecessary because there are existing tools specifically for this.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><B>Good for More than Unit Testing</B></P><br />
+<P class="MsoNormal"><B>&nbsp;</B></P><br />
+<P class="MsoNormal">I’ve focused almost entirely on the value of Dependency Injection for unit testing and I’ve even bitterly referred to using DI as “Mock Driven Design.”<SPAN>&nbsp; </SPAN>That’s not the whole story though.<SPAN>&nbsp; </SPAN>One of original usages for Dependency Injection was to provide smoother migration paths away from legacy code.<SPAN>&nbsp; </SPAN>One evolutionary approach to replacing legacy code is the “<A href="http://www.martinfowler.com/bliki/StranglerApplication.html">Strangler</A>” approach.<SPAN>&nbsp; </SPAN>Making sure that any new code that depends on undesirable legacy code uses Dependency Injection leaves an easier migration path to eliminate the legacy code later with all new code.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>interface</SPAN> IDataService{}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Now</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> ProxyToNastyLegacyDataService : IDataService{}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Later</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> CleanNewCodeDataService : IDataService{}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> StranglerApplication</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> StranglerApplication(IDataService dataService){}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Another benefit of Dependency Injection is increasing the potential for reuse later.<SPAN>&nbsp; </SPAN>Going back to the MVP architecture, what if you need to replace the heavy WinForms client with an ASP.NET system?<SPAN>&nbsp; </SPAN>The <SPAN>View</SPAN> is obviously useless, and I think it’s probably silly to use a Web Service when a local class will do for the <SPAN>IService</SPAN> implementation.<SPAN>&nbsp; </SPAN>We can potentially reuse the Presenter class; just inject a different implementation for both <SPAN>IView</SPAN> and <SPAN>IService</SPAN>.</P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> ASPNetView : System.Web.UI.UserControl, IView</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>…</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> LocalService : IService</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>…</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>class</SPAN> WebClientMasterController</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> <SPAN>void</SPAN> CreateView(Page page)</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>{</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>ASPNetView view = (ASPNetView) page.Controls[0];</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Model model = <SPAN>this</SPAN>.GetModel();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>IService service = <SPAN>new</SPAN> LocalService();</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// Presenter can work with a different concrete implementation of</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>// IView and IService</SPAN></SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>Presenter presenter = <SPAN>new</SPAN> Presenter(view, service);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>presenter.CreateView(model);</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><SPAN>&nbsp;</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN> Model GetModel(){<SPAN>return</SPAN> <SPAN>new</SPAN> Model();}</SPAN></P><br />
+<P class="MsoNormal"><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>}</SPAN></P><br />
+<P class="MsoNormal"><B></B>&nbsp;</P><br />
+<P class="MsoNormal"><B>Using a Dependency Injection Tool</B></P><br />
+<P class="MsoNormal">&nbsp;</P><br />
+<P class="MsoNormal">Using Dependency Injection potentially adds some overhead to using the classes that don’t create their own dependencies.<SPAN>&nbsp; </SPAN>This is where one of the Dependency Injection tools can pay large dividends by handling this mechanical work and creating some indirection between clients and dependencies.<SPAN>&nbsp; </SPAN>The next (and last) post in the whole Inversion of Control chain will look at using a Dependency Injection tool to “wire up” an application.</P><br />
+<P class="MsoNormal"><B></B>&nbsp;</P><br />
+<P class="MsoNormal"><B>Links</B></P><br />
+<UL type="disc"><br />
+<LI class="MsoNormal">The canonical article on Dependency Injection is from <A href="http://martinfowler.com/articles/injection.html">Martin Fowler</A>.<B></B></LI><br />
+<LI class="MsoNormal">I have some other information on the <A href="http://structuremap.sourceforge.net/">StructureMap</A> website<B></B></LI><br />
+<LI class="MsoNormal"><A href="http://picocontainer.org/">http://PicoContainer.org</A> has some good information<B></B></LI><br />
+<LI class="MsoNormal">Griffin Caprio (of Spring.Net) on <A href="http://msdn.microsoft.com/msdnmag/issues/05/09/DesignPatterns/default.aspx">MSDN Magazine</A><B></B></LI><br />
+<LI class="MsoNormal">J.B. Rainsberger in <A href="http://www.diasparsoftware.com/articles/DependencyInjection.pdf">Better Software</A> <B></B></LI></UL></p>
+<div class="shr-publisher-85"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>, <a href="http://codebetter.com/jeremymiller/category/test-driven-development/" title="View all posts in Test Driven Development" rel="category tag">Test Driven Development</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2005/10/06/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care/" title="Permalink to The Dependency Injection Pattern  – What is it and why do I care?" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2005/10/06/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care/feed/" title="Comments RSS to The Dependency Injection Pattern  – What is it and why do I care?" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-85 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2005/10/03/build-pattern-fast-buildfull-build/" rel="prev"><span class="meta-nav">&larr;</span> Build pattern: Fast build/full build</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2005/10/10/serenity/" rel="next">Serenity <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-268">
+                    <div id="dsq-comment-header-268" class="dsq-comment-header">
+                        <cite id="dsq-cite-268">
+                                <span id="dsq-author-user-268">Michael</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-268" class="dsq-comment-body">
+                        <div id="dsq-comment-message-268" class="dsq-comment-message"><p>Can you expand on &#8220;There are just too many opportunities to screw up your tests by not having isolated unit tests&#8221; in reference to a custom Service Locator?  I can obviously infer a bit on my own, but perhaps just a brief blurb in your own words to hear what your experiences have been when using that pattern in practice?</p>
+<p>Otherwise, great post as usual.  The focus on patterns lately is awesome.  Despite the fact that absolutely everyone is covering it, your explanations and examples are always well presented, real-world, and usable, which is a nice change of pace from the academia found elsewhere.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-269">
+                    <div id="dsq-comment-header-269" class="dsq-comment-header">
+                        <cite id="dsq-cite-269">
+                                <span id="dsq-author-user-269">Jeremy D. Miller</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-269" class="dsq-comment-body">
+                        <div id="dsq-comment-message-269" class="dsq-comment-message"><p>Michael,</p>
+<p>All I meant is that you might use a service locator to rig up a mock object or a stub in one test fixture and forget to clean up the static member.  That static state can leak into another testfixture.  You&#8217;ll notice that you start getting nasty behavior like a test passing when it runs by itself but failing when it runs with the rest of the test suite.</p>
+<p>The other thing is that using a service locator inside of a unit test makes it a little bit harder to see where that particular dependency comes into play.</p>
+<p>Thanks for the kind words.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-270">
+                    <div id="dsq-comment-header-270" class="dsq-comment-header">
+                        <cite id="dsq-cite-270">
+                                <span id="dsq-author-user-270">Murat Uysal</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-270" class="dsq-comment-body">
+                        <div id="dsq-comment-message-270" class="dsq-comment-message"><p>I have been reading your post and finding them really informative and to the point. Thanks for all the great effort in sharing your experince. </p>
+<p>I have one question here. I have been using the what you call &#8220;Setter Injection&#8221; for breaking the dependency of domain objects to database. I am using the domain model pattern with the mapper pattern. So far I have been thinking about this dependency breaking technique as abstracting the mapper by Dependency Inversion principle and setting the dependency property with a stub in order to do unit testing. And I was thinking it is an example of &#8220;Strategy Pattern&#8221;. I know the important thing is to break the dependency but as you mentioned at one of your old posts it is also important to use the right pattern name at the right place. </p>
+<p>Thanks for all the great posts again,</p>
+<p>Murat</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-271">
+                    <div id="dsq-comment-header-271" class="dsq-comment-header">
+                        <cite id="dsq-cite-271">
+    http://haacked.com/                            <span id="dsq-author-user-271">Haacked</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-271" class="dsq-comment-body">
+                        <div id="dsq-comment-message-271" class="dsq-comment-message"><p>Jeremy, I know you wrote this a looong time ago, but I was reading up on Dependency Injection and noticed something I thought I should point out.</p>
+<p>You mentioned that in your presenter, you sometimes use an empty constructor to set up default views and models.</p>
+<p>> public Presenter() : this(new View(), new Service()){}</p>
+<p>The problem with this is that this Presenter now has a dependency on concrete instances of the IView and IService, which was kind of the point of using IOC and DI.</p>
+<p>This would be a problem in the example of re-use within ASP.NET you mentioned.</p>
+<p>> We can potentially reuse the Presenter class;<br />
+> just inject a different implementation for both<br />
+> IView and IService.</p>
+<p>The problem is that the Presenter class has a dependency on a WinForm View and Service, which you&#8217;ll need to include with your ASP.NET application.</p>
+<p>Of course, I&#8217;m being nitpicky and I apologize. In the real world, I would go with your approach and if I really DID need to use the presenter in ASP.NET, I&#8217;d probably change it.</p>
+<p>It&#8217;s that balance between potential re-use and premature generalization (<a href="http://haacked.com/archive/2005/09/19/10231.aspx" rel="nofollow">http://haacked.com/archive/2005/09/19/10231.aspx</a>).</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-272">
+                    <div id="dsq-comment-header-272" class="dsq-comment-header">
+                        <cite id="dsq-cite-272">
+                                <span id="dsq-author-user-272">Richard Corfield</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-272" class="dsq-comment-body">
+                        <div id="dsq-comment-message-272" class="dsq-comment-message"><p>I use the Setter Injection pattern, often with &#8220;lazy instantiation&#8221; in a situation where I know at design time the one implementation that I need, but know also that for testing or in the future there may be others. Where I know at design time that there are multiple implementations I use Inversion of Control and wire them up at a higher level &#8211; still with Setter Injection.</p>
+<p>I have debated with other developers a lot about constructors and whether you should leave them spartan or put all your dependencies in them. If you leve them spartan you have a class in an invalid state. If you place all dependencies then you have something that, in the past at least, I&#8217;ve thought of as being harder to extend. What happens when you add a new dependency?</p>
+<p>With Setter Injection you provide a default implementation of that new dependency (or null for &#8220;don&#8217;t use this&#8221; perhaps) and old code still works. With the dependencies in the constructor you have to provide an overload to allow old code to work.</p>
+<p>I suppose both mechanisms can work and it comes down to style. All in the constructor can give you more compact code where you create something and assign it in one, but this can become messy with many indented nested constructions and is a nightmare to debug on current Microsoft debuggers at least. (You can&#8217;t get at the intermediate values and stepping in is hard).</p>
+<p>What&#8217;s nicer?</p>
+<p>Foo myFoo = new Foo(<br />
+   &#8220;Hello&#8221;,<br />
+   12,<br />
+   &#8220;This is a Foo&#8221;,<br />
+   new Bar<br />
+   (<br />
+       96,<br />
+       myDBConnection<br />
+   )<br />
+);</p>
+<p>or</p>
+<p>Bar barProvider = new Bar();<br />
+barProvider.PoolSize = 96;<br />
+barProvider.Database = myDBConnection;</p>
+<p>Foo theFoo = new Foo();<br />
+foo.ID = &#8220;Hello&#8221;;<br />
+foo.Name = &#8220;This is a Foo&#8221;;<br />
+foo.MagicNumber = 12;<br />
+foo.BarProvider = barProvider;</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-273">
+                    <div id="dsq-comment-header-273" class="dsq-comment-header">
+                        <cite id="dsq-cite-273">
+    http://www.teclallc.com                            <span id="dsq-author-user-273">Slade Stewart</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-273" class="dsq-comment-body">
+                        <div id="dsq-comment-message-273" class="dsq-comment-message"><p>I haven&#8217;t yet finished reading your post, but I wanted to let you know that a) I like it so far,  and b) you have provided me with my new motto: &#8220;Don’t blow it off just because it seems trivial&#8221;.  That seems to apply to most of the most effective concepts in software development and with how they are received in general.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-274">
+                    <div id="dsq-comment-header-274" class="dsq-comment-header">
+                        <cite id="dsq-cite-274">
+                                <span id="dsq-author-user-274">mcgurk</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-274" class="dsq-comment-body">
+                        <div id="dsq-comment-message-274" class="dsq-comment-message"><p>Holy crap.  Can we please not go shit-crazy with jargon?  I come here because I&#8217;ve never heard of &#8220;Dependency Injection&#8221;; I thought it was some wicked cool new pattern.  Come to find out that this &#8220;Dependency Injection&#8221; isn&#8217;t a fucken pattern at all&#8211;its standard best practices when it comes to method signatures.<br />
+Your methods should take base objects/interfaces as input and return high-level objects.<br />
+If your method takes a List<int> as a parameter, your callers are restricted to that specific collection.  However, if you take an IEnumerable</int><int>, your callers can choose to use one of the many implementations of the interface (I count 15 in mscorlib alone).<br />
+If you return an IEnumerable, your callers can only enumerate through the result set.  But if you return a List</int><int>, you callers can treat it as a List</int><int>, an ICollection</int><int>, and IEnumerable</int><int> or just as an IEnumerable.<br />
+Its amazing how brilliant I am; I&#8217;ve been doing this ever since I read CLR Via C#.  I had no idea I was implementing the Dependency Injection pattern.  Lurl.  I wonder what other patterns I&#8217;m implementing&#8230;</int></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-275">
+                    <div id="dsq-comment-header-275" class="dsq-comment-header">
+                        <cite id="dsq-cite-275">
+    http://codebetter.com/blogs/jeremy.miller                            <span id="dsq-author-user-275">jmiller</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-275" class="dsq-comment-body">
+                        <div id="dsq-comment-message-275" class="dsq-comment-message"><p>Mcgurk,</p>
+<p>A pattern is just that, a solution that reoccurs. It&#8217;s just something you do.  </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-276">
+                    <div id="dsq-comment-header-276" class="dsq-comment-header">
+                        <cite id="dsq-cite-276">
+                                <span id="dsq-author-user-276">Afif</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-276" class="dsq-comment-body">
+                        <div id="dsq-comment-message-276" class="dsq-comment-message"><p>Jeremy,</p>
+<p>I noticed Structuremap requires metadata attributes to identify classes and methods as pluggable / interfaces / constructors / factory…  Then you have to write the config files to link everything together, but you can only inject classes that you have written using structuremap attributes&#8230;</p>
+<p>Spring is much better – all configuration is external in the config and will work with any class / library written by anyone.</p>
+<p>Structuremap probably is faster, but not as flexible as Spring. </p>
+<p>How far do you agree?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-277">
+                    <div id="dsq-comment-header-277" class="dsq-comment-header">
+                        <cite id="dsq-cite-277">
+    http://codebetter.com/blogs/jeremy.miller                            <span id="dsq-author-user-277">Jeremy D. Miller</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-277" class="dsq-comment-body">
+                        <div id="dsq-comment-message-277" class="dsq-comment-message"><p>Afif,</p>
+<p>I don&#8217;t agree with you at all <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>You&#8217;ve mistated some little things.  You do not have to use the attributes at all if you don&#8217;t want to.  In some very common cases the attributes can take the xml configuration down to near zero, and that&#8217;s cool in my book.  If you don&#8217;t want to use attributes at all, everything can be done via Xml, assuming you have a high tolerance for coding in Xml.  2.0 did make the Xml configuration quite a bit tighter with less duplication.</p>
+<p>As of 2.0, you can wire up dependencies in code with a Fluent interface as well.  Can Spring.Net do that?  Didn&#8217;t think so.</p>
+<p>Honestly, I don&#8217;t like Spring.Net&#8217;s approach to IoC at all, but I&#8217;m too biased to make a judgement.  StructureMap (and Castle Windsor) does auto wiring vastly better than Spring.Net because it&#8217;s type safe.  No wiring stuff together by string values.  Use Type&#8217;s first.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-278">
+                    <div id="dsq-comment-header-278" class="dsq-comment-header">
+                        <cite id="dsq-cite-278">
+    http://www.portraitkingdom.com                            <span id="dsq-author-user-278">oil portraits</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-278" class="dsq-comment-body">
+                        <div id="dsq-comment-message-278" class="dsq-comment-message"><p>Thanks for sharing this information.  I can still my favorite professor way back in college whose favorite design technique is Construction Injection.  May I know what sets the difference between Setter Injection and Construction Injection?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-279">
+                    <div id="dsq-comment-header-279" class="dsq-comment-header">
+                        <cite id="dsq-cite-279">
+    http://revizyonileorganizematbaacilikbrnckvvtmllttrhaberi.bloggum.com                            <span id="dsq-author-user-279">revizyon ile organize matbaacılık brnckvvtmllttrhaberi</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-279" class="dsq-comment-body">
+                        <div id="dsq-comment-message-279" class="dsq-comment-message"><p>thank you</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-6921">
+                    <div id="dsq-comment-header-6921" class="dsq-comment-header">
+                        <cite id="dsq-cite-6921">
+    http://www.key-logger.ws                            <span id="dsq-author-user-6921">Lokesh Ruhela</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-6921" class="dsq-comment-body">
+                        <div id="dsq-comment-message-6921" class="dsq-comment-message"><p><a href="http://www.key-logger.ws" rel="nofollow">keylogger</a></p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-7218">
+                    <div id="dsq-comment-header-7218" class="dsq-comment-header">
+                        <cite id="dsq-cite-7218">
+                                <span id="dsq-author-user-7218">Rasaq Otunba</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-7218" class="dsq-comment-body">
+                        <div id="dsq-comment-message-7218" class="dsq-comment-message"><p>Over 6 years later, some of us are still benefiting from this brilliant work. Thanks, Jeremy! </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-7471">
+                    <div id="dsq-comment-header-7471" class="dsq-comment-header">
+                        <cite id="dsq-cite-7471">
+                                <span id="dsq-author-user-7471">a true professional</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-7471" class="dsq-comment-body">
+                        <div id="dsq-comment-message-7471" class="dsq-comment-message"><p>nice code format. . .</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-7507">
+                    <div id="dsq-comment-header-7507" class="dsq-comment-header">
+                        <cite id="dsq-cite-7507">
+                                <span id="dsq-author-user-7507">Martinez</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-7507" class="dsq-comment-body">
+                        <div id="dsq-comment-message-7507" class="dsq-comment-message"><p>Terrible. Why do you post anything and not bother to format it correctly?</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/jeremymiller/2005/10/06/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care/';
+    var disqus_identifier = '85 /blogs/jeremy.miller/archive/2005/10/06/132825.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'theshadetreedeveloper';
+    var disqus_title = "The Dependency Injection Pattern  – What is it and why do I care?";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=85');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2005\/10\/06\/the-dependency-injection-pattern-%e2%80%93-what-is-it-and-why-do-i-care\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2012/01/' title='January 2012'>January 2012</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/09/' title='September 2011'>September 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/07/' title='July 2011'>July 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/06/' title='June 2011'>June 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/05/' title='May 2011'>May 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/04/' title='April 2011'>April 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/03/' title='March 2011'>March 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://zacherygaines.webstarts.com/' rel='external nofollow' class='url'>KadeemFulton</a> on <a href="http://codebetter.com/jeremymiller/2007/07/26/the-build-your-own-cab-series-table-of-contents/#comment-7523">The Build Your Own CAB Series Table of Contents</a></li><li class="recentcomments"><a href='http://jonsonbettly.wordpress.com/' rel='external nofollow' class='url'>ScottWorkman</a> on <a href="http://codebetter.com/jeremymiller/2007/07/26/the-build-your-own-cab-series-table-of-contents/#comment-7517">The Build Your Own CAB Series Table of Contents</a></li><li class="recentcomments">haihao on <a href="http://codebetter.com/jeremymiller/2008/10/18/profile-s-in-structuremap/#comment-7513">Profile’s in StructureMap</a></li><li class="recentcomments">neon on <a href="http://codebetter.com/jeremymiller/2008/09/10/using-the-structuremap-container-independently-of-objectfactory/#comment-7512">Using the StructureMap Container independently of ObjectFactory</a></li><li class="recentcomments">weaponfan on <a href="http://codebetter.com/jeremymiller/2008/09/25/using-structuremap-2-5-to-inject-your-entity-objects-into-services/#comment-7511">Using StructureMap 2.5 to inject your Entity objects into Services</a></li></ul></li>				</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 2.410 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 12:26:37 -->
+<!-- super cache -->

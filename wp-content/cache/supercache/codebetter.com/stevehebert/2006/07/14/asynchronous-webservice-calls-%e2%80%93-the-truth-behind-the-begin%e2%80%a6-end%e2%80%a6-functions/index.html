@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Asynchronous WebService calls – the truth behind the Begin… End… functions  | Steve Hebert</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/stevehebert/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/stevehebert/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Executing MSIs remotely' href='http://codebetter.com/stevehebert/2006/07/11/executing-msis-remotely/' />
+<link rel='next' title='Asynchronous Webservice Calls – the Truth behind the Begin… End… functions – Part II' href='http://codebetter.com/stevehebert/2006/07/21/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions-%e2%80%93-part-ii/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/stevehebert/?p=292' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,186] -->
+<link rel="canonical" href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-292" class="post-292 post type-post status-publish format-standard hentry category-uncategorized">
+					<h1 class="entry-title">Asynchronous WebService calls – the truth behind the Begin… End… functions</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/stevehebert/author/stevehebert/" title="View all posts by stevehebert">stevehebert</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/" title="7:15 am" rel="bookmark"><span class="entry-date">July 14, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/stevehebert/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/stevehebert/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>I’ve finally solved this one – not that the resolution makes<br />
+me happy, but it’s nice to finally explain the behavior.</p>
+<p>I ran into a funny behavior four years ago with WebService<br />
+calls on the .Net platform.<span>&nbsp; </span>At that<br />
+time, my idea was to launch webservice calls simultaneously against multiple<br />
+backend webservices.<span>&nbsp; </span>The effect would be<br />
+the pipelining of these requests.<span> </span><span></span></p>
+<p>To illustrate, if I make a total of ten 5-second requests<br />
+sequentially, the total run time from my client is ~50 seconds.<span>&nbsp; </span>If I make a total of ten 5-second pipelined<br />
+requests,<span>&nbsp; </span>my client runtime is reduced to<br />
+~5 seconds.<span>&nbsp; </span>In my time estimates I’m<br />
+factoring out call overhead, but the pipelined requests are potentially more<br />
+efficient because the IP transmission overhead is overlaid as opposed to being<br />
+sequentially blocked.</p>
+<p>While I could launch these from multiple worker threads, the<br />
+existence of the Begin… End… functions is far more compelling.<span>&nbsp; </span>This is because the webservice calls are<br />
+fully blocking to the client application and really wastes a perfectly good<br />
+thread.<span>&nbsp; </span>I’d much rather launch the<br />
+functions and hold onto a synchronizing object to tell when the processing is<br />
+complete.<span>&nbsp; </span>With the Async methods, I don’t<br />
+need to synchronize worker threads and buy into that complexity. It sounds good…</p>
+<p>After running into this same fundamental problem again<br />
+(different calling behavior, but same pipelining idea), the behavior is<br />
+different than I expected based on the documentation. I decided to do some more<br />
+digging and resolve this once and for all.</p>
+<p>To illustrate, let’s take a simple WebService function<br />
+exposed on a service called SimpleService:</p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span> <span style="color: blue">struct</span> Bar<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span><br />
+<span style="color: blue">int</span> i;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>[WebMethod]<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span> int<br />
+Foo( Bar bar )<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span>System.Threading.Thread.Sleep(2000);<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">return</span><br />
+<span style="color: blue">bar.i;</span><br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">Next, let’s take some client code to make everything clear:</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span><span>&nbsp;<font color="#008000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></span><span><font color="#008000">// this class<br />
+hold the details needed to get results back</font><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: green">// which<br />
+include the web service instance and the IAsyncResult</span></span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span> <span style="color: blue">class</span> AsyncDetails<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span><br />
+SimpleProcess Function;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span><br />
+IAsyncResult AsyncResult;&nbsp;<br /><span></span></span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span><br />
+AsyncDetails( SimpleProcess function, IAsyncResult result )<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Function = function;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>AsyncResult = result;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}&nbsp;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span>&nbsp;<br /><span></span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">public</span> <span style="color: blue">void</span> TestRun()<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>ArrayList results = <span style="color: blue">new</span> ArrayList();<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>SimpleProcess process = <span style="color: blue">new</span> SimpleProcess();<br />&nbsp;</span></p>
+<p class="MsoNormal"><span><font color="#008000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>// note -<br />
+the behavior only becomes obvious when passing<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>// a<br />
+struct or class &#8211; value parameters only help mask the<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></font><span style="color: green"><font color="#008000">// real<br />
+underlying behavior.</font></span></span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Bar bar = <span style="color: blue">new</span><br />
+Bar();</span></p>
+<p class="MsoNormal"><span><font color="#008000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>// Launch<br />
+20 running instances and aggregate them in an <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></font><span style="color: green"><font color="#008000">// ArrayList<br />
+for further processing</font></span></span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">for</span>(<br />
+<span style="color: blue">int</span> x = 0; x &lt; 20; x++ )<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /></span></p>
+<p class="MsoNormal"><font color="#008000" face="Courier New" size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <font face="Courier New" size="2">// this works the same whether I use a shared webservice instance or</font><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // create a new instance for each call</font><br /><span></span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>bar.i = x;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>results.Add( <span style="color: blue">new</span> AsyncDetails( process, process.BeginFoo(bar, <span style="color: blue">null</span>, <span style="color: blue">null</span>)));<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}&nbsp;<br /><font color="#008000"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span>// next,<br />
+go through each result and complete processing. <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></font><span><font color="#008000">//<br />
+real-world app would be aggregating results at this point<br /></font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">foreach</span>(<br />
+AsyncDetails detail <span style="color: blue">in</span> results )<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>{<br /><font color="#008000">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp;  &nbsp;&nbsp;  // assuming that processing is order dependent&#8230;</font></p>
+<p><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="color: blue">if</span>(<br />
+!detail.AsyncResult.IsCompleted )<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+</span>detail.AsyncResult.AsyncWaitHandle.WaitOne();&nbsp;<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Console.WriteLine(<br />
+detail.Function.EndFoo( detail.AsyncResult ));<br /><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p class="MsoNormal"><span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>}</span></p>
+<p>So what would you expect the output to be?<span> <br /></span>
+<p class="MsoNormal">{0,1,2,3,4,5,6,…,19} in roughly 2 seconds?</p>
+<p class="MsoNormal">&nbsp; </p>
+<p class="MsoNormal">Wrong.</p>
+<p class="MsoNormal">&nbsp;The answer is:<span>&nbsp; </span>{19,<br />
+19, 19, 19, 19,…, 19} in roughly 10 seconds!</p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">Why is this?<span>&nbsp; </span>It turns<br />
+out my operating assumption is incorrect.<span>&nbsp;<br />
+</span>My belief that BeginFoo(…) actually launched a request is completely<br />
+invalid &#8211; it only queues the request.<span> </span></p>
+<p class="MsoNormal"></p>
+<p class="MsoNormal">If they were run as I expected, my Bar struct would be<br />
+serialized during my call to BeginFoo(…). Because it’s being queued, the actual<br />
+physical call being made to Foo is using the shared Bar struct which has a<br />
+value of 19 when it’s actually made!<span>&nbsp;<br />
+</span>Furthermore, when you watch this run in NUnit you’ll see that it’s<br />
+actually making two requests at a time (two results appear simultaneously, two<br />
+second wait, two more results appear simultaneously, two second wait…, and so<br />
+on).</p>
+<p class="MsoNormal"></p>
+<p class="MsoNormal">My answer to this problem four years ago was to place<br />
+synchronous requests in a worker threadpool and manage the threads – it turns<br />
+out that was the right call.<span>&nbsp; </span>After<br />
+looking at the behavior of .Net, it appears that they are also running these calls<br />
+on background threads.<span>&nbsp; </span>When doing this,<br />
+you have to be conscientious in the number of threads being used to service<br />
+these requests (especially if you’re making these from within a web<br />
+application or webservice).<span>&nbsp; <br /></span></p>
+<p class="MsoNormal"><span></span></p>
+<p class="MsoNormal"><span></span>I would have hoped the<br />
+.Net implementation would have been more elegant than my thrown-together threadpool, but it turns out that’s just not the case. Perhaps they could have used Overlapped I/O with sockets available since winsock 2???&nbsp; I suppose if you are making these calls over the public internet you risk being mistaken as an attemped DOS source</p>
+<p class="MsoNormal">[Update 7/20/2006 - It turns out the two connection limit is a machine.config level setting.&nbsp; <a HREF="/blogs/steve.hebert/archive/2006/07/20/147565.aspx">Check out my followup to this post for more details</a>. While this is configurable, all calls are still being made within .Net's threadpool - so if you are making web service calls from a server-side web application/service, you are dealing with a limited resource.]</p>
+<p class="MsoNormal"><span><br /></span></p>
+<p class="MsoNormal"><span>[Note:]<br /></span></p>
+<p class="MsoNormal"><span>The <a href="http://msdn2.microsoft.com/en-us/library/tz4bkcx2.aspx">MSDN documentation errantly states</a>: </span><i><span>The client instructs the <b>Begin</b> method to start processing the service call, but return immediately.&nbsp;</span></i><span> It&#8217;s the &#8220;start processing the service call&#8221; line that should be reworded to &#8220;queue the service call&#8221;.</span></p>
+<div class="shr-publisher-292"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/stevehebert/category/uncategorized/" title="View all posts in Uncategorized" rel="category tag">Uncategorized</a>. Bookmark the <a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/" title="Permalink to Asynchronous WebService calls – the truth behind the Begin… End… functions" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/feed/" title="Comments RSS to Asynchronous WebService calls – the truth behind the Begin… End… functions" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-292 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/stevehebert/2006/07/11/executing-msis-remotely/" rel="prev"><span class="meta-nav">&larr;</span> Executing MSIs remotely</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/stevehebert/2006/07/21/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions-%e2%80%93-part-ii/" rel="next">Asynchronous Webservice Calls – the Truth behind the Begin… End… functions – Part II <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">7 Responses to <em>Asynchronous WebService calls – the truth behind the Begin… End… functions</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-477">
+		<div id="comment-477">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-477">July 24, 2006 at 4:12 am</a></div>
+
+		<div class="comment-body"><p>John,</p>
+<p>It&#8217;s really just impromptu test code &#8211; I switched to WaitOne when the WaitAll was taking longer to process than expected.  I agree, a final solution shouldn&#8217;t rely on the order of processing &#8211; changes to the framework could change operation.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-476">
+		<div id="comment-476">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.winterdom.com/weblog' rel='external nofollow' class='url'>Tomas Restrepo</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-476">July 17, 2006 at 11:23 pm</a></div>
+
+		<div class="comment-body"><p>Steve,</p>
+<p>Out of curiosity: Are you running your test with all services being called on the same server? If so, you might also be aware (or want to be aware) of a different issue altogether that also affects this: The HTTP stack in .NET (even when used indirectly through a webservice proxy) will limit concurrent connections to a single server to 2 to comply with some recomendations in the HTTP spec. While this is useful for browsers, it can really hose you when doing a bunch of webservice calls.</p>
+<p>Fortunately, you can change that behavior. See <a href="http://blogs.msdn.com/tess/archive/2006/02/23/537681.aspx" rel="nofollow">http://blogs.msdn.com/tess/archive/2006/02/23/537681.aspx</a> for a detailed explanation of it all (with far more detail than you might want to care about, btw)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-475">
+		<div id="comment-475">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Mark Brackett</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-475">July 17, 2006 at 2:40 pm</a></div>
+
+		<div class="comment-body"><p>I must be missing something here&#8230;.Since bar is a struct, wouldn&#8217;t SimpleProcess.BeginFoo get it&#8217;s own copied bar anyway? Or is bar, since it&#8217;s defined server side as a struct, being defined by the WS proxy as a class on the client?</p>
+<p>The 2 requests at a time is an artifact of the HTTP 1.1 (RFC2068) specs. Section 8.1.4 states:<br />
+&#8220;Clients that use persistent connections SHOULD limit the number of simultaneous connections that they maintain to a given server. A single-user client SHOULD maintain AT MOST 2 connections with any server or proxy.&#8221;</p>
+<p>There&#8217;s a regedit <a href="http://www.winguides.com/registry/display.php/536" rel="nofollow">http://www.winguides.com/registry/display.php/536</a> that&#8217;ll increase it in IE, but I don&#8217;t know if .NET would pick up on the change.</p>
+<p>Note that I haven&#8217;t looked at the actual implementation of Begin/End, but I think using the ThreadPool is a reasonable tactic and assumption for the Begin/End requests. Your tight for loop, your lack of locking on the bar.i read/write, and the 2 request limit I think may be artificial. It&#8217;s not like the call isn&#8217;t actually made until you call EndRequest (which would be pointless), it&#8217;s just that you can count to 19 and change a property faster than the worker thread can open a socket and negotiate the HTTP request.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-474">
+		<div id="comment-474">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://secretGeek.net' rel='external nofollow' class='url'>secretGeek</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-474">July 16, 2006 at 11:13 pm</a></div>
+
+		<div class="comment-body"><p>>two results appear simultaneously, two second wait,<br />
+>two more results appear simultaneously, two second wait…,<br />
+>and so on).</p>
+<p>could this be because IIS is limiting the number of connections per ip address down to two, as is the default behaviour? what if you added this to your web config?</p>
+<p>  &lt;system.net><br />
+    &lt;connectionManagement><br />
+      &lt;add address=&#8221;*&#8221; maxconnection=&#8221;100&#8243;/><br />
+    &lt;/connectionManagement><br />
+  &lt;/system.net></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-473">
+		<div id="comment-473">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dotnetjunkies.com/weblog/johnwood' rel='external nofollow' class='url'>johnwood</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-473">July 14, 2006 at 7:08 pm</a></div>
+
+		<div class="comment-body"><p>I don&#8217;t think you can assume that the threads will be executed in the order they were queued. That&#8217;s dependent on the context switching and the relationship between the managed and unmanaged threads, it&#8217;s certainly not something you should depend on. Why don&#8217;t you do a .WaitAll or .WaitAny instead?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-472">
+		<div id="comment-472">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://mo.notono.us' rel='external nofollow' class='url'>Oskar Austegard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-472">July 14, 2006 at 2:42 pm</a></div>
+
+		<div class="comment-body"><p>Interesting, and a further validation of my latest approach towards calling webservices asynchronously in 1.1: I use Juval Lowy&#8217;s BackgroundWorker Component for 1.1 and call the webservice from the DoWork event handler.  This vastly simplifies things and makes it understandable for junior developers as well.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-471">
+		<div id="comment-471">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jihohan.com' rel='external nofollow' class='url'>Jiho Han</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2006/07/14/asynchronous-webservice-calls-%e2%80%93-the-truth-behind-the-begin%e2%80%a6-end%e2%80%a6-functions/#comment-471">July 14, 2006 at 12:39 pm</a></div>
+
+		<div class="comment-body"><p>I don&#8217;t understand why &#8220;bar&#8221; is shared.  If it&#8217;s a struct, wouldn&#8217;t each call to Foo get a copy?  So even if it does take 10 seconds altogether, I&#8217;d think you should receive {0, 1, 2, 3, &#8230; 19}.  Am I missing something?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/stevehebert/2006/07/14/asynchronous-webservice-calls-%E2%80%93-the-truth-behind-the-begin%E2%80%A6-end%E2%80%A6-functions/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/stevehebert/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fstevehebert%2F2006%2F07%2F14%2Fasynchronous-webservice-calls-%25e2%2580%2593-the-truth-behind-the-begin%25e2%2580%25a6-end%25e2%2580%25a6-functions%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.371 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:09:06 -->
+<!-- super cache -->

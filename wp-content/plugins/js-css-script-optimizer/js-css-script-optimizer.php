@@ -1,8 +1,8 @@
 <?php
 /*
   Plugin Name: JS & CSS Script Optimizer
-  Plugin URI: http://4coder.info/en/wordpress-js-css-optimizer/
-  Version: 0.2.0
+  Plugin URI: http://4coder.info/en/code/wordpress-plugins/js-css-script-optimizer/
+  Version: 0.2.2
   Author: Evgeniy Kotelnitskiy
   Author URI: http://4coder.info/en/
   Description: Features: Combine all scripts into the single file, Pack scripts using <a href="http://joliclic.free.fr/php/javascript-packer/en/">PHP version of the Dean Edwards's JavaScript Packer</a>, Move all JavaScripts to the bottom, Combine all CSS scripts into the single file, Pack CSS files (remove comments, tabs, spaces, newlines).
@@ -260,7 +260,7 @@ class evScriptOptimizer {
             $fileId = 0;
             foreach ($auto_compress_scripts as $handle => $script) {
                 if (! $script['external']) {
-                    $path = ABSPATH . str_replace($home, '', $script['src']);
+                    $path = self::get_path_by_url($script['src'], $home);
                     $fileId += @filemtime($path);
                 }
             }
@@ -269,7 +269,7 @@ class evScriptOptimizer {
             // Find a cache
             if ((self::$options['cache'][$cache_name] == $fileId) && is_readable($cache_file_path)) {
                 // Include script: ?>
-                <script type="text/javascript" src="<?php echo $cache_file_url; ?>">/*Is Cache!*/</script>
+                <script type="text/javascript" src="<?php echo $cache_file_url . '?v='.$fileId; ?>">/*Is Cache!*/</script>
                 <?php
                 $auto_compress_scripts = array();
                 return;
@@ -297,7 +297,7 @@ class evScriptOptimizer {
             update_option('spacker-options', self::$options);
 
             // Include script: ?>
-            <script type="text/javascript" src="<?php echo $cache_file_url; ?>"></script>
+            <script type="text/javascript" src="<?php echo $cache_file_url . '?v='.$fileId;; ?>"></script>
             <?php
             $auto_compress_scripts = array();
             //--------------------------------------------------------------------------------
@@ -307,7 +307,7 @@ class evScriptOptimizer {
                 $src = $script['src'];
                 $fileId = 0;
                 if (! $script['external']) {
-                    $path = ABSPATH . str_replace($home, '', $script['src']);
+                    $path = self::get_path_by_url($script['src'], $home);
                     $fileId = @filemtime($path);
                 }
                 $cache_name = md5($handle);
@@ -317,7 +317,7 @@ class evScriptOptimizer {
                 // Find a cache
                 if ((self::$options['cache'][$cache_name] == $fileId) && is_readable($cache_file_path)) {
                     // Include script: ?>
-                    <script type="text/javascript" src="<?php echo $cache_file_url; ?>">/*Is Cache!*/</script>
+                    <script type="text/javascript" src="<?php echo $cache_file_url . '?v='.$fileId;; ?>">/*Is Cache!*/</script>
                     <?php
                     continue;
                 }
@@ -335,7 +335,7 @@ class evScriptOptimizer {
                 self::save_script($cache_file_path, $comment . $content);
                 self::$options['cache'][$cache_name] = $fileId;
                 ?>
-                <script type="text/javascript" src="<?php echo $cache_file_url; ?>"></script>
+                <script type="text/javascript" src="<?php echo $cache_file_url . '?v='.$fileId;; ?>"></script>
                 <?php
             }
             update_option('spacker-options', self::$options);
@@ -350,10 +350,20 @@ class evScriptOptimizer {
 
         // url
         $dir = dirname($path).'/';
-        $css = preg_replace('|url\(\'?"?([a-zA-Z0-9\-_\s\./]*)\'?"?\)|', "url(\"$dir$1\")", $css);
+        $css = preg_replace('|url\(\'?"?([a-zA-Z0-9\?\&\-_\s\./]*)\'?"?\)|', "url(\"$dir$1\")", $css);
 
         return $css;
     }
+	
+	function get_path_by_url($url, $home) {
+		$path = ABSPATH . str_replace($home, '', $url);
+		$_p = strpos($path, '?');
+		if ($_p !== false) {
+			$path = substr($path, 0, $_p);
+		}
+		return $path;
+	}
+	
 	
     /*
      * Print CSS
@@ -378,16 +388,16 @@ class evScriptOptimizer {
             $fileId = 0;
             foreach ($auto_compress_styles[$media] as $handle => $script) {
                 if (! $script['external']) {
-                    $path = ABSPATH . str_replace($home, '', $script['src']);
+                    $path = self::get_path_by_url($script['src'], $home);
                     $fileId += @filemtime($path);
                 }
             }
 
-            //echo "$fileId<br>".self::$options['cache'][$cache_name]."<br>$cache_file_path<br>$cache_file_url<br>".is_readable($cache_file_path);
+           // echo "$fileId<br>".self::$options['cache-css'][$cache_name]."<br>$cache_file_path<br>$cache_file_url<br>".is_readable($cache_file_path);
             // Find a cache
             if ((self::$options['cache-css'][$cache_name] == $fileId) && is_readable($cache_file_path)) {
                 // Include script: ?>
-                <link rel="stylesheet" href="<?php echo $cache_file_url; ?>" type="text/css" media="<?php echo $media; ?>" /><!-- Is Cache! -->
+                <link rel="stylesheet" href="<?php echo $cache_file_url . '?v='.$fileId;; ?>" type="text/css" media="<?php echo $media; ?>" /><!-- Is Cache! -->
                 <?php
                 $auto_compress_styles[$media] = array();
                 return;
@@ -413,7 +423,7 @@ class evScriptOptimizer {
             update_option('spacker-options', self::$options);
 
             // Include script: ?>
-            <link rel="stylesheet" href="<?php echo $cache_file_url; ?>" type="text/css" media="<?php echo $media; ?>" />
+            <link rel="stylesheet" href="<?php echo $cache_file_url . '?v='.$fileId;; ?>" type="text/css" media="<?php echo $media; ?>" />
             <?php
             $auto_compress_styles[$media] = array();
             //--------------------------------------------------------------------------------
@@ -423,7 +433,7 @@ class evScriptOptimizer {
                 $src = $script['src'];
                 $fileId = 0;
                 if (! $script['external']) {
-                    $path = ABSPATH . str_replace($home, '', $script['src']);
+                    $path = self::get_path_by_url($script['src'], $home);
                     $fileId = @filemtime($path);
                 }
                 $cache_name = md5($handle);
@@ -433,7 +443,7 @@ class evScriptOptimizer {
                 // Find a cache
                 if ((self::$options['cache-css'][$cache_name] == $fileId) && is_readable($cache_file_path)) {
                     // Include script: ?>
-                    <link rel="stylesheet" href="<?php echo $cache_file_url; ?>" type="text/css" media="<?php echo $media; ?>" /><!-- Is Cache! -->
+                    <link rel="stylesheet" href="<?php echo $cache_file_url . '?v='.$fileId;; ?>" type="text/css" media="<?php echo $media; ?>" /><!-- Is Cache! -->
                     <?php
                     continue;
                 }
@@ -449,7 +459,7 @@ class evScriptOptimizer {
                 self::save_script($cache_file_path, $comment . $content);
                 self::$options['cache-css'][$cache_name] = $fileId;
                 ?>
-                <link rel="stylesheet" href="<?php echo $cache_file_url; ?>" type="text/css" media="<?php echo $media; ?>" />
+                <link rel="stylesheet" href="<?php echo $cache_file_url . '?v='.$fileId;; ?>" type="text/css" media="<?php echo $media; ?>" />
                 <?php
             }
             update_option('spacker-options', self::$options);

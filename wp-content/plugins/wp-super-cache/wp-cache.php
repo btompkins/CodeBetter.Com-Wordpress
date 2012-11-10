@@ -3,7 +3,7 @@
 Plugin Name: WP Super Cache
 Plugin URI: http://ocaoimh.ie/wp-super-cache/
 Description: Very fast caching plugin for WordPress.
-Version: 0.9.9.8
+Version: 0.9.9.9
 Author: Donncha O Caoimh
 Author URI: http://ocaoimh.ie/
 */
@@ -59,7 +59,7 @@ add_action( 'init', 'wp_super_cache_text_domain' );
 
 function wp_cache_set_home() {
 	global $wp_cache_is_home;
-	$wp_cache_is_home = ( is_front_page || is_home() );
+	$wp_cache_is_home = ( is_front_page() || is_home() );
 	if ( $wp_cache_is_home && is_paged() )
 		$wp_cache_is_home = false;
 }
@@ -239,6 +239,7 @@ function wp_cache_manager_error_checks() {
 		?><div id="message" class="updated fade"><h3><?php _e( 'Read Only Mode. Configuration cannot be changed.', 'wp-super-cache' ); ?></h3>
 		<p><?php printf( __( 'The WP Super Cache configuration file is <code>%s/wp-cache-config.php</code> and cannot be modified. That file must be writeable by the webserver to make any changes.', 'wp-super-cache' ), WP_CONTENT_DIR ); ?>
 		<?php _e( 'A simple way of doing that is by changing the permissions temporarily using the CHMOD command or through your ftp client. Make sure it&#8217;s globally writeable and it should be fine.', 'wp-super-cache' ); ?></p>
+		<p><?php _e( '<a href="http://codex.wordpress.org/Changing_File_Permissions">This page</a> explains how to change file permissions.', 'wp-super-cache' ); ?></p>
 		<?php _e( 'Writeable:', 'wp-super-cache' ); ?> <code>chmod 666 <?php echo WP_CONTENT_DIR; ?>/wp-cache-config.php</code>
 		<?php _e( 'Readonly:', 'wp-super-cache' ); ?> <code>chmod 644 <?php echo WP_CONTENT_DIR; ?>/wp-cache-config.php</code></p>
 		</div><?php
@@ -253,7 +254,9 @@ function wp_cache_manager_error_checks() {
 		$wp_content_mode = ( $wp_content_stat[ 'mode' ] & 0777 );
 		if( $wp_content_mode != 0755 ) {
 			?><div id="message" class="updated fade"><h3><?php printf( __( 'Warning! %s is writeable!', 'wp-super-cache' ), WP_CONTENT_DIR ); ?></h3>
-			<p><?php printf( __( 'You should change the permissions on %s and make it more restrictive. Use your ftp client, or the following command to fix things:', 'wp-super-cache' ), WP_CONTENT_DIR ); ?> <code>chmod 755 <?php echo WP_CONTENT_DIR; ?>/</code></p></div><?php
+			<p><?php printf( __( 'You should change the permissions on %s and make it more restrictive. Use your ftp client, or the following command to fix things:', 'wp-super-cache' ), WP_CONTENT_DIR ); ?> <code>chmod 755 <?php echo WP_CONTENT_DIR; ?>/</code></p>
+			<p><?php _e( '<a href="http://codex.wordpress.org/Changing_File_Permissions">This page</a> explains how to change file permissions.', 'wp-super-cache' ); ?></p></div>
+			<?php
 		}
 	}
 
@@ -824,7 +827,7 @@ jQuery(document).ready(function(){
 		</table>
 		<h3><?php _e( 'Note:', 'wp-super-cache' ); ?></h3>
 		<ol>
-		<li><?php __( 'Uninstall this plugin on the plugins page. It will automatically clean up after itself. If manual intervention is required then simple instructions are provided.', 'wp-super-cache' ); ?></li>
+		<li><?php _e( 'Uninstall this plugin on the plugins page. It will automatically clean up after itself. If manual intervention is required then simple instructions are provided.', 'wp-super-cache' ); ?></li>
 		<li><?php printf( __( 'If uninstalling this plugin, make sure the directory <em>%s</em> is writeable by the webserver so the files <em>advanced-cache.php</em> and <em>cache-config.php</em> can be deleted automatically. (Making sure those files are writeable too is probably a good idea!)', 'wp-super-cache' ), WP_CONTENT_DIR ); ?></li>
 		<li><?php printf( __( 'Please see the <a href="%1$s/wp-super-cache/readme.txt">readme.txt</a> for instructions on uninstalling this script. Look for the heading, "How to uninstall WP Super Cache".', 'wp-super-cache' ), WP_PLUGIN_URL ); ?></li><?php
 		echo "<li><em>" . sprintf( __( 'Need help? Check the <a href="%1$s">Super Cache readme file</a>. It includes installation documentation, a FAQ and Troubleshooting tips. The <a href="%2$s">support forum</a> is also available. Your question may already have been answered.', 'wp-super-cache' ), 'http://wordpress.org/extend/plugins/wp-super-cache/', 'http://wordpress.org/tags/wp-super-cache?forum_id=10' ) . "</em></li>";
@@ -1081,10 +1084,11 @@ function wsc_mod_rewrite() {
 			global $current_site;
 			$protocol = ( 'on' == strtolower( $_SERVER['HTTPS' ] ) ) ? 'https://' : 'http://';
 			if ( isset( $wpmu_version ) ) {
-				echo '<div id="message" class="updated fade"><p>' .  sprintf( __( 'Notice: WP Super Cache mod_rewrite rule checks disabled unless running on <a href="%s">the main site</a> of this network.', 'wp-super-cache' ), admin_url( "ms-admin.php?page=wpsupercache" ) ) . '</p></div>';
+				$link_to_admin = admin_url( "wpmu-admin.php?page=wpsupercache" );
 			} else {
-				echo '<div id="message" class="updated fade"><p>' .  sprintf( __( 'Notice: WP Super Cache mod_rewrite rule checks disabled unless running on <a href="%s">on the main site</a> of this network.', 'wp-super-cache' ), admin_url( "wpmu-admin.php?page=wpsupercache" ) ) . '</p></div>';
+				$link_to_admin = admin_url( "ms-admin.php?page=wpsupercache" );
 			}
+			echo '<div id="message" class="updated fade"><p>' .  sprintf( __( 'Notice: WP Super Cache mod_rewrite rule checks disabled unless running on <a href="%s">the main site</a> of this network.', 'wp-super-cache' ), $link_to_admin ) . '</p></div>';
 			return false;
 		}
 	}
@@ -1105,8 +1109,8 @@ function wsc_mod_rewrite() {
 		echo "<p>" . sprintf( __( "You must have <strong>BEGIN</strong> and <strong>END</strong> markers in %s.htaccess for the auto update to work. They look like this and surround the main WordPress mod_rewrite rules:", 'wp-super-cache' ), $home_path );
 		echo "<blockquote><pre><em># BEGIN WordPress</em>\n RewriteCond %{REQUEST_FILENAME} !-f\n RewriteCond %{REQUEST_FILENAME} !-d\n RewriteRule . /index.php [L]\n <em># END WordPress</em></pre></blockquote>";
 		_e( 'Refresh this page when you have updated your .htaccess file.', 'wp-super-cache' );
-		echo "</fieldset></div>";
-		return;
+		echo "</fieldset>";
+		$dohtaccess = false;
 	} elseif( strpos( $wprules, 'wordpressuser' ) ) { // Need to clear out old mod_rewrite rules
 		echo "<p><strong>" . __( 'Thank you for upgrading.', 'wp-super-cache' ) . "</strong> " . sprintf( __( 'The mod_rewrite rules changed since you last installed this plugin. Unfortunately you must remove the old supercache rules before the new ones are updated. Refresh this page when you have edited your .htaccess file. If you wish to manually upgrade, change the following line: %1$s so it looks like this: %2$s The only changes are "HTTP_COOKIE" becomes "HTTP:Cookie" and "wordpressuser" becomes "wordpress". This is a WordPress 2.5 change but it&#8217;s backwards compatible with older versions if you&#8217;re brave enough to use them.', 'wp-super-cache' ), '<blockquote><code>RewriteCond %{HTTP_COOKIE} !^.*wordpressuser.*$</code></blockquote>', '<blockquote><code>RewriteCond %{HTTP:Cookie} !^.*wordpress.*$</code></blockquote>' ) . "</p>";
 		echo "</fieldset></div>";
@@ -1685,7 +1689,7 @@ function wp_cache_verify_cache_dir() {
 	$dir = dirname($cache_path);
 	if ( !file_exists($cache_path) ) {
 		if ( !is_writeable_ACLSafe( $dir ) || !($dir = mkdir( $cache_path ) ) ) {
-				echo "<strong>" . __( 'Error', 'wp-super-cache' ) . ":</strong> " . sprintf( __( 'Your cache directory (<strong>$cache_path</strong>) did not exist and couldn&#8217;t be created by the web server. Check %s permissions.', 'wp-super-cache' ), $dir );
+				echo "<strong>" . __( 'Error', 'wp-super-cache' ) . ":</strong> " . sprintf( __( 'Your cache directory (<strong>%1$s</strong>) did not exist and couldn&#8217;t be created by the web server. Check %1$s permissions.', 'wp-super-cache' ), $dir );
 				return false;
 		}
 	}
@@ -2640,7 +2644,7 @@ function wp_cache_disable_plugin() {
 	extract( wpsc_get_htaccess_info() );
 	if ( $scrules != '' && insert_with_markers( $home_path.'.htaccess', 'WPSuperCache', array() ) ) {
 		$wp_rewrite->flush_rules();
-	} else {
+	} elseif( $scrules != '' ) {
 		wp_mail( get_option( 'admin_email' ), __( 'Supercache Uninstall Problems', 'wp-super-cache' ), sprintf( __( "Dear User,\n\nWP Super Cache was removed from your blog but the mod_rewrite rules\nin your .htaccess were not.\n\nPlease edit the following file and remove the code\nbetween 'BEGIN WPSuperCache' and 'END WPSuperCache'. Please backup the file first!\n\n%s\n\nRegards,\nWP Super Cache Plugin\nhttp://wordpress.org/extend/plugins/wp-super-cache/", 'wp-super-cache' ), ABSPATH . '/.htaccess' ) );
 	}
 }

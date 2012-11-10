@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Validating Architecture through LINQ Query | Patrick Smacchia</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/patricksmacchia/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/patricksmacchia/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Screencast: Inspecting Code Quality and Code Complexity' href='http://codebetter.com/patricksmacchia/2012/10/15/screencast-inspecting-code-quality-and-code-complexity/' />
+<link rel='next' title='Two Screencasts on How to Demystify Spaghetti Code' href='http://codebetter.com/patricksmacchia/2012/10/31/two-screencasts-on-how-to-demystify-spaghetti-code/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/patricksmacchia/?p=731' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,151] -->
+<link rel="canonical" href="http://codebetter.com/patricksmacchia/2012/10/26/validating-architecture-through-one-linq-query/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/patricksmacchia/files/2012/10/Matrix1.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-731" class="post-731 post type-post status-publish format-standard hentry category-c category-code-dependency category-code-query category-code-rule category-code-structure category-code-visualization category-cqlinq category-dependency-matrix category-layer category-linq category-namespace category-namespaces category-ndepend category-pattern category-patterns category-performance">
+					<h1 class="entry-title">Validating Architecture through LINQ Query</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/patricksmacchia/author/patricksmacchia/" title="View all posts by Patrick Smacchia">Patrick Smacchia</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/patricksmacchia/2012/10/26/validating-architecture-through-one-linq-query/" title="9:53 am" rel="bookmark"><span class="entry-date">October 26, 2012</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/patricksmacchia/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/patricksmacchia/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>These days we are restructuring the NDepend code base to make it more suited to welcome future features implementation. Here is below the new architecture of the NDepend.UI assembly, made of around 50.000 lines of code, shown through a <a href="http://www.ndepend.com/Doc_Matrix.aspx" target="_blank">Dependency Structure Matrix</a>:</p>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Matrix1.png"><img class="alignnone size-full wp-image-743" src="http://codebetter.com/patricksmacchia/files/2012/10/Matrix1.png" alt="" width="595" height="429" /></a></p>
+<p>As always, the dependency matrix naturally exhibits architectural patterns. Keep in mind that a <span style="color: #0000ff">blue cell</span> means: the namespace in column is using the namespace in row. The number on a <span style="color: #0000ff">blue cell</span> represents the number of members used (see the option in the matrix menu: <em>Weight on Cells</em> set to <em>Direct: # members</em>). This cell number is then a measure of the coupling between the two namespaces.</p>
+<p>Here are architecture patterns emerging from this dependency matrix:</p>
+<ul>
+<li>There is one <strong>Top</strong> namespace, that is using all namespaces (<span style="color: #0000ff">blue column #0</span>)</li>
+<li>There is one <strong>Base</strong> namespace, that is used by all namespaces (<span style="color: #0000ff">blue row #17</span>)</li>
+<li>The <strong>Panels</strong> namespaces don&#8217;t use each others (<span style="color: #ff0000">empty big red square</span>, rows/columns [1-12])</li>
+<li>The <strong>Shared</strong> namespaces don&#8217;t use each others (<span style="color: #ff0000">empty small red square</span>, rows/columns [13-16])</li>
+<li>The <span style="color: #0000ff">blue cells</span> in the rectangle rows [13,16] x columns [1,12], represents the usage of shared features by the panels. For example, on row #15 we can see that the <strong>DependencyContextMenu</strong> feature is used by the <strong>Top</strong>, <strong>Graph</strong> and <strong>Matrix</strong> impl.</li>
+</ul>
+<p>I found this NDepend.UI architecture pretty neat. Whether we will add a new panel or a new shared feature in the future, it will be inserted naturally in this structure. And this architecture is simple enough to get validated at a glance. But at a glance is not enough. What about defining custom rules that take care of validating this architecture and inform us <em>automatically</em> of any violation?</p>
+<p>Each of this architecture pattern could be actually validated through a <a href="http://www.ndepend.com/Features.aspx#CQL" target="_blank">Code Query LINQ</a> rule. Let&#8217;s go through 5 steps to write the rule <strong>Panels shouldn&#8217;t use each others</strong> through a LINQ query.</p>
+<h2><strong>5 steps to write the rule: Panels shouldn&#8217;t use each others</strong></h2>
+<p><span style="text-decoration: underline"><strong>Step 1:</strong></span> First, let&#8217;s match all panels namespaces. Here we are using the extension method <a href="http://www.ndepend.com/API/webframe.html?NDepend.API~NDepend.CodeModel.ExtensionMethodsNaming~WithNameWildcardMatch.html" target="_blank">WithNameWildcardMatch()</a> to match the panels namespaces by name. We can see that some panels (<em>Matrix, QueryEdit, Search</em>&#8230;) are made of several sub-namespaces. The rule must be smart enough to both:</p>
+<ul>
+<li>let sub-namespaces of a panel use each others,</li>
+<li>forbid sub-namespaces of different panels use each others:</li>
+</ul>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Query1.png"><img class="alignnone size-full wp-image-734" src="http://codebetter.com/patricksmacchia/files/2012/10/Query1.png" alt="" width="563" height="715" /></a></p>
+<p><strong><span style="text-decoration: underline">Step 2:</span> </strong>Now let&#8217;s use the method <a href="http://www.ndepend.com/API/webframe.html?NDepend.API~NDepend.CodeModel.IUser~IsUsing.html" target="_blank">IUser.IsUsing()</a> to list the couples of [namespace user, namespace used]. Notice that to improve the query performance:</p>
+<ul>
+<li>we are restraining the set of namespaces <em>user</em> only to the panels namespaces that are indeed <em>using</em> another panel namespace (with the extension method <a href="http://www.ndepend.com/API/webframe.html?NDepend.API~NDepend.CodeModel.ExtensionMethodsSequenceUsage~UsingAny.html" target="_blank">UsingAny()</a> )</li>
+<li>we are restraining the set of namespaces <em>used</em> only to the panels namespaces that are indeed <em>used by</em> another panel namespace (with the extension method <a href="http://www.ndepend.com/API/webframe.html?NDepend.API~NDepend.CodeModel.ExtensionMethodsSequenceUsage~UsedByAny.html" target="_blank">UsedByAny()</a> )</li>
+</ul>
+<div><span style="font-size: medium"><span style="line-height: 24px">And indeed the query runs fast: 5 milli-seconds on a more than 130.000 lines of code code base! There are 45 couples of [namespace user, namespace used] listed:</span></span></div>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Query2.png"><img class="alignnone size-full wp-image-740" src="http://codebetter.com/patricksmacchia/files/2012/10/Query2.png" alt="" width="559" height="854" /></a></p>
+<p><strong><span style="text-decoration: underline">Step 3:</span> </strong>Now, we need to validate for each couple of [namespace user, namespace used], that both user/used namespaces belong to the same panel. For that we have to work on the namespace name string. Let&#8217;s first get rid of the prefix <em>&#8220;NDepend.UI.Panels.&#8221;</em> and obtain for each namespace what we call its<em> sub-name</em>:</p>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Query3.png"><img class="alignnone size-full wp-image-740" src="http://codebetter.com/patricksmacchia/files/2012/10/Query3.png" alt="" width="556" height="814" /></a></p>
+<p><span style="text-decoration: underline"><strong>Step 4:</strong></span> Let&#8217;s get the panel name from the namespace sub-name. For that we are using the ternary operator: if the namespace sub-name doens&#8217;t contain any dot, it is already the panel name. Else, the panel name is the sub-string until the first dot met in the sub-name:</p>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Query4.png"><img class="alignnone size-full wp-image-740" src="http://codebetter.com/patricksmacchia/files/2012/10/Query4.png" alt="" width="558" height="827" /></a></p>
+<p><span style="text-decoration: underline"><strong>Step 5:</strong></span> <em>Et voila!</em> We now just have to make sure that for each couple of [namespace user, namespace used] they have the same panel name! This is as simple as adding the where clause: <em>where nUserPanel != nUsedPanel</em>.</p>
+<p>We then add the prefix <em>warnif count &gt; 0</em> to transform our code query into a code rule. Plus, we set the name of the rule to <em>Panels shouldn&#8217;t use each others</em>. And the rule is ready to be saved, and to be run continuously in Visual Studio and/or on the build machine.</p>
+<p><a href="http://codebetter.com/patricksmacchia/files/2012/10/Query5.png"><img class="alignnone size-full wp-image-739" src="http://codebetter.com/patricksmacchia/files/2012/10/Query5.png" alt="" width="560" height="563" /></a></p>
+<p>Note that this rule gets compiled and executed in only 7 milli-seconds (see <em>7 ms</em> on the screenshot). This means that a typical machine can run in one second more than 140 of such complex rules against a large code base!</p>
+<p>And also, <strong>when new panels will be developed, this rule won&#8217;t have to be updated</strong>. It&#8217;ll just work!</p>
+<p>Could it be easier or faster to validate the architecture of a big lump of code?</p>
+<p>Btw, just a quick side remark: The fact that panels <em>implementations</em> are not <em>using</em> each other doesn&#8217;t mean that panel shouldn&#8217;t <em>interact</em> with each other. They actually do interact <em>a lot</em> with each others. But they do interact through using a <a href="http://en.wikipedia.org/wiki/Mediator_pattern" target="_blank">mediator implementation</a> that lives in the <strong>Base</strong> namespace. This mediator then calls the <strong>Top</strong> implementation (through inversion of control) that takes care of dispatching any interaction to the right panel.</p>
+<div class="shr-publisher-731"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/patricksmacchia/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/patricksmacchia/category/code-dependency/" title="View all posts in Code Dependency" rel="category tag">Code Dependency</a>, <a href="http://codebetter.com/patricksmacchia/category/code-query/" title="View all posts in Code Query" rel="category tag">Code Query</a>, <a href="http://codebetter.com/patricksmacchia/category/code-rule/" title="View all posts in Code Rule" rel="category tag">Code Rule</a>, <a href="http://codebetter.com/patricksmacchia/category/code-structure/" title="View all posts in code structure" rel="category tag">code structure</a>, <a href="http://codebetter.com/patricksmacchia/category/code-visualization/" title="View all posts in Code visualization" rel="category tag">Code visualization</a>, <a href="http://codebetter.com/patricksmacchia/category/cqlinq/" title="View all posts in CQLinq" rel="category tag">CQLinq</a>, <a href="http://codebetter.com/patricksmacchia/category/dependency-matrix/" title="View all posts in Dependency Matrix" rel="category tag">Dependency Matrix</a>, <a href="http://codebetter.com/patricksmacchia/category/layer/" title="View all posts in Layer" rel="category tag">Layer</a>, <a href="http://codebetter.com/patricksmacchia/category/linq/" title="View all posts in LINQ" rel="category tag">LINQ</a>, <a href="http://codebetter.com/patricksmacchia/category/namespace/" title="View all posts in namespace" rel="category tag">namespace</a>, <a href="http://codebetter.com/patricksmacchia/category/namespaces/" title="View all posts in namespaces" rel="category tag">namespaces</a>, <a href="http://codebetter.com/patricksmacchia/category/ndepend/" title="View all posts in NDepend" rel="category tag">NDepend</a>, <a href="http://codebetter.com/patricksmacchia/category/pattern/" title="View all posts in Pattern" rel="category tag">Pattern</a>, <a href="http://codebetter.com/patricksmacchia/category/patterns/" title="View all posts in Patterns" rel="category tag">Patterns</a>, <a href="http://codebetter.com/patricksmacchia/category/performance/" title="View all posts in Performance" rel="category tag">Performance</a>. Bookmark the <a href="http://codebetter.com/patricksmacchia/2012/10/26/validating-architecture-through-one-linq-query/" title="Permalink to Validating Architecture through LINQ Query" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/patricksmacchia/2012/10/26/validating-architecture-through-one-linq-query/feed/" title="Comments RSS to Validating Architecture through LINQ Query" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-731 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/patricksmacchia/2012/10/15/screencast-inspecting-code-quality-and-code-complexity/" rel="prev"><span class="meta-nav">&larr;</span> Screencast: Inspecting Code Quality and Code Complexity</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/patricksmacchia/2012/10/31/two-screencasts-on-how-to-demystify-spaghetti-code/" rel="next">Two Screencasts on How to Demystify Spaghetti Code <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-1737">
+                    <div id="dsq-comment-header-1737" class="dsq-comment-header">
+                        <cite id="dsq-cite-1737">
+                                <span id="dsq-author-user-1737">Dylan Smith</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1737" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1737" class="dsq-comment-message"><p>I handle this scenario via Visual Studio Layer Diagrams (<a href="http://blogs.msdn.com/b/jennifer/archive/2010/05/13/visual-studio-2010-how-to-maintain-control-of-your-code-using-layer-diagrams-custom-msbuild-tasks-and-work-item-integration.aspx" rel="nofollow">http://blogs.msdn.com/b/jennifer/archive/2010/05/13/visual-studio-2010-how-to-maintain-control-of-your-code-using-layer-diagrams-custom-msbuild-tasks-and-work-item-integration.aspx</a>)<br />
+They seem more intuitive, and more visual.  Have you ever tried using them.  Does the NDepend approach described above have any benefits over Layer Diagrams that I&#8217;m overlooking?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-1738">
+                    <div id="dsq-comment-header-1738" class="dsq-comment-header">
+                        <cite id="dsq-cite-1738">
+                                <span id="dsq-author-user-1738">PatrickSmacchia</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-1738" class="dsq-comment-body">
+                        <div id="dsq-comment-message-1738" class="dsq-comment-message"><p>Dylan, these are two different approaches to the same problem. At first glance, box and arrows is more intuitive than the LINQ approach. But it is also less flexible and maintainable, because it cannot be abstracted. For example, in this LINQ rule I don’t need to list explicitly each panel one by one, and as a consequence the rule is still valid no matter if I add 1, 10 or 100 extra panels. And if you look at NDepend default architectural LINQ rules, you’ll see that one can rely a lot on this abstractness level. For example there is a rule to detect Singleton patterns usage, or to detect dependency cycles between namespaces, or even to detect if the UI layer is using directly the DAL layer (UI layer and DAL layer being automatically matched from which framework they are using). These kind of abstracted architecture rules cannot be coded with a boxes and arrows approach.</p>
+<p>Beside that, NDepend code analysis and validation is faster than VS validation  (20x to 100x faster from my tests), it can scale on large code bases (while I’ve never succeed in making VS validation or graph work on large code bases).  And VS layer validation comes only in VS Ultimate edition, which costs 30x more than a NDepend Developer license.</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/patricksmacchia/2012/10/26/validating-architecture-through-one-linq-query/';
+    var disqus_identifier = '731 http://codebetter.com/patricksmacchia/?p=731';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'codebetter';
+    var disqus_title = "Validating Architecture through LINQ Query";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=731');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/patricksmacchia\/2012\/10\/26\/validating-architecture-through-one-linq-query\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.464 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:41:07 -->
+<!-- super cache -->

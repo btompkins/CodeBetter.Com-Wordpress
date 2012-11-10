@@ -63,7 +63,6 @@ class MagpieRSS {
 		if ( !is_resource($parser) )
 			trigger_error( "Failed to create an instance of PHP's XML parser. http://www.php.net/manual/en/ref.xml.php");
 
-
 		$this->parser = $parser;
 
 		# pass in parser, and a reference to this object
@@ -167,7 +166,6 @@ class MagpieRSS {
 
 			$this->incontent = $el;
 
-
 		}
 
 		// if inside an Atom content construct (e.g. content or summary) field treat tags as text
@@ -205,8 +203,6 @@ class MagpieRSS {
 			array_unshift($this->stack, $el);
 		}
 	}
-
-
 
 	function feed_cdata ($p, $text) {
 
@@ -394,7 +390,7 @@ if ( !function_exists('fetch_rss') ) :
 /**
  * Build Magpie object based on RSS from URL.
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  *
@@ -435,7 +431,6 @@ function fetch_rss ($url) {
 		if (MAGPIE_DEBUG and $cache->ERROR) {
 			debug($cache->ERROR, E_USER_WARNING);
 		}
-
 
 		$cache_status 	 = 0;		// response of check_cache
 		$request_headers = array(); // HTTP headers to send with fetch
@@ -532,7 +527,7 @@ endif;
 /**
  * Retrieve URL headers and content using WP HTTP Request API.
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  *
@@ -555,7 +550,7 @@ function _fetch_remote_file($url, $headers = "" ) {
 	// Snoopy returns headers unprocessed.
 	// Also note, WP_HTTP lowercases all keys, Snoopy did not.
 	$return_headers = array();
-	foreach ( $resp['headers'] as $key => $value ) {
+	foreach ( wp_remote_retrieve_headers( $resp ) as $key => $value ) {
 		if ( !is_array($value) ) {
 			$return_headers[] = "$key: $value";
 		} else {
@@ -565,10 +560,10 @@ function _fetch_remote_file($url, $headers = "" ) {
 	}
 
 	$response = new stdClass;
-	$response->status = $resp['response']['code'];
-	$response->response_code = $resp['response']['code'];
+	$response->status = wp_remote_retrieve_response_code( $resp );
+	$response->response_code = wp_remote_retrieve_response_code( $resp );
 	$response->headers = $return_headers;
-	$response->results = $resp['body'];
+	$response->results = wp_remote_retrieve_body( $resp );
 
 	return $response;
 }
@@ -576,7 +571,7 @@ function _fetch_remote_file($url, $headers = "" ) {
 /**
  * Retrieve
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  *
@@ -626,7 +621,7 @@ function _response_to_rss ($resp) {
 /**
  * Set up constants with default values, unless user overrides.
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  */
@@ -871,7 +866,7 @@ if ( !function_exists('wp_rss') ) :
 /**
  * Display all RSS items in a HTML ordered list.
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  *
@@ -911,7 +906,7 @@ if ( !function_exists('get_rss') ) :
  * to display. You can't display all of them like you can with wp_rss()
  * function.
  *
- * @since unknown
+ * @since 1.5.0
  * @package External
  * @subpackage MagpieRSS
  *
@@ -935,5 +930,3 @@ function get_rss ($url, $num_items = 5) { // Like get posts, but for RSS
 	}
 }
 endif;
-
-?>

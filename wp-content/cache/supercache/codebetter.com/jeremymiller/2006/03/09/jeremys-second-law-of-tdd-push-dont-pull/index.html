@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Jeremy&#8217;s Second Law of TDD:  Push, Don&#8217;t Pull | Jeremy D. Miller</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/jeremymiller/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/jeremymiller/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Things we talked about at the Austin Code Camp' href='http://codebetter.com/jeremymiller/2006/03/06/things-we-talked-about-at-the-austin-code-camp/' />
+<link rel='next' title='One Year Blogging Anniversary, and going dark for awhile' href='http://codebetter.com/jeremymiller/2006/03/10/one-year-blogging-anniversary-and-going-dark-for-awhile/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/jeremymiller/?p=139' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,166] -->
+<link rel="canonical" href="http://codebetter.com/jeremymiller/2006/03/09/jeremys-second-law-of-tdd-push-dont-pull/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-139" class="post-139 post type-post status-publish format-standard hentry category-design-patterns category-test-driven-development">
+					<h1 class="entry-title">Jeremy&#8217;s Second Law of TDD:  Push, Don&#8217;t Pull</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">Jeremy Miller</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/jeremymiller/2006/03/09/jeremys-second-law-of-tdd-push-dont-pull/" title="1:56 pm" rel="bookmark"><span class="entry-date">March 9, 2006</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/jeremymiller/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/jeremymiller/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><P>Laws of TDD is probably something that should be written by someone with more authority in the community, but I&#8217;ve got a blog and I thought of it first, so here goes.&nbsp; I&#8217;ll expound on each of these at some point in the misty future, but just for fun here is Jeremy&#8217;s Laws of Test Driven Development (I&#8217;m certainly not claiming any kind of originality here.&nbsp; Some of these rules predate TDD anyway).</P><br />
+<OL><br />
+<LI><A href="/blogs/jeremy.miller/archive/2005/10/20/133437.aspx">Isolate the Ugly Stuff</A><br />
+<LI>Push, Don&#8217;t Pull (this post)<br />
+<LI>Test small before testing big<br />
+<LI>Avoid a long tail<br />
+<LI>Favor composition over inheritance<br />
+<LI>Go declarative whenever possible<br />
+<LI>Don&#8217;t treat testing code like a second class citizen<br />
+<LI>Isolate your unit tests, or suffer the consequences!<br />
+<LI>The unit tests will break someday<br />
+<LI>Unit tests shall be easy to setup</LI></OL><br />
+<P>And the overriding &#8220;Zeroeth Law&#8221; is &#8220;If code is hard to test, change it.&#8221;</P><br />
+<P>We&#8217;re told that the key to safe lifting is to &#8220;<A href="http://northonline.sccd.ctc.edu/backcare/tutorials/slide9.html">Push, Don&#8217;t Pull</A>.&#8221;&nbsp; Pushing gives you more control over a load, greater leverage, and it is safer and easier for your back.&nbsp; We can apply the same principle to software development to create code more efficiently.&nbsp; The goal of &#8220;Push, Don&#8217;t Pull&#8221; is threefold:</P><br />
+<OL><br />
+<LI>Making unit tests easier to setup.&nbsp;&nbsp;<br />
+<LI>Greater chance of reusing code because of the shorter &#8220;tail.&#8221;<br />
+<LI>Looser coupling because functionality is isolated from its configuration and/or data store</LI></OL><br />
+<P>One of my favorite quotes about code quality is from <A href="http://www.artima.com/weblogs/viewpost.jsp?thread=42486">Michael Feathers</A>:</P><br />
+<BLOCKQUOTE><br />
+<P>&#8220;I don&#8217;t care how good you think your design is. If I can&#8217;t walk in and write a test for an arbitrary method of yours in five minutes its not as good as you think it is, and whether you know it or not, you&#8217;re paying a price for it.&#8221;</P></BLOCKQUOTE><br />
+<P>In many ways I think testability is the ultimate test of code and design quality <B>in the small</B>.&nbsp; If a class is easy to test it&#8217;s often because its dependencies are minimized or at least loosely coupled.&nbsp; A class or method that is hard to unit test is often indicative of a coupling problem.&nbsp; So back to the Michael Feathers quote, let&#8217;s talk about how to make unit tests easy to setup and execute.&nbsp; The easiest test to write is a state-based test where you can easily create the test inputs inside the unit test, execute the code, and verify the results without any external environment setup.&nbsp; Interaction tests are good too, as long as you can keep the mock object setup to a reasonable level.&nbsp; In both cases you&#8217;re pushing the data and any dependencies into the class or method being tested inside the test. Much more difficult is a class that &#8220;pulls&#8221; data, configuration, or dependencies for itself. To test this code you often have to do much more setup work to get the class to function in a test harness.&nbsp; Even worse is the possibility that the test probably depends on data that is external to the test.&nbsp; Understanding a test can be much more difficult if you have to &#8220;ALT-TAB&#8221; between a sql script, a web.config file, and the test fixture class to relate the inputs of the test to the expected outcome.</P><br />
+<P>Here&#8217;s an example of changing &#8220;pull&#8221; to &#8220;push.&#8221;&nbsp; We have some code in our system we inherited that is responsible for translating an older flat file format to a new industry standard hierarchical xml format.&nbsp; It&#8217;s obviously a vital piece of code in the system that has to be rock solid with tests.&nbsp; There&#8217;s a large number of permutations of data that require test scenarios.&nbsp; I&#8217;ve also wanted to reuse the code in a couple other situations but I couldn&#8217;t easily do it because the translator code &#8220;pulls&#8221; too much stuff from the database and it&#8217;s coupled to a singleton deep in the bowels.&nbsp; The code is difficult to test because there is all of the extra environment setup necessary to run the translation, both in terms of the database state and configuration around the data access code.&nbsp; My answer, when we get around to it, is to refactor the translation code so that its data needs are pushed into the constructor function.&nbsp; The dependency on the singleton can probably be eliminated and moved to an Observer pattern class that will also be injected into the translator class.&nbsp; Once we get to the point where the translation code is given everything it needs to function, that code will be much easier to test and reuse in different situations because it no longer depends on so many other application services.&nbsp; We will be able to completely unit test the translation code without ever involving a database.</P><br />
+<H4>When is Now?</H4><br />
+<P><A href="/blogs/scott.bellware">Scott Bellware</A> and I had a conversation at the Austin Code Camp about testing date sensitive business rules.&nbsp; It&#8217;s something we take for granted, but the call to <FONT face="Courier New">DateTime.Now</FONT> is a tight coupling to the system clock.&nbsp; Say you want to create a static set of test data that should exercise a set of business validations against the Invoice object below.&nbsp; The test data might be stored in a flat file (we&#8217;re talking testers here), an xml file, or database tables.&nbsp; The point being that the dates in the test data are static.&nbsp; In order for the tests to function the same way going forward we need a way to fake the system clock to make the test behave like the current date is the day the test was created.&nbsp; You could fiddle with the system clock, but that&#8217;ll make the tests harder to run.&nbsp; An easy solution is to push in the &#8220;Now&#8221; time into the <FONT face="Courier New">OverdueInvoiceProcessor.ProcessOverdueInvoices(DateTime)</FONT> method like the code below.&nbsp; I&#8217;ve used this technique before to great effect, but there&#8217;s another approach at the very bottom of the post that I like better now.*</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> Invoice</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> DateTime _invoiceDate;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>string</SPAN> _invoiceNumber;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> Invoice(DateTime invoiceDate, <SPAN>string</SPAN> invoiceNumber)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _invoiceDate = invoiceDate;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _invoiceNumber = invoiceNumber;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> DateTime InvoiceDate</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>get</SPAN> { <SPAN>return</SPAN> _invoiceDate; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>set</SPAN> { _invoiceDate = <SPAN>value</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> InvoiceNumber</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>get</SPAN> { <SPAN>return</SPAN> _invoiceNumber; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>set</SPAN> { _invoiceNumber = <SPAN>value</SPAN>; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> OverdueInvoiceProcessor</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> ProcessOverdueInvoices(DateTime nowTime)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// do stuff</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> OverdueInvoiceProcessorTester</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [Test]</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> ProcessOverdueInvoices()</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; setupTestData();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; setupExpectations();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; OverdueInvoiceProcessor processor = <SPAN>new</SPAN> OverdueInvoiceProcessor();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; processor.ProcessOverdueInvoices(<SPAN>new</SPAN> DateTime(2006,3,1));</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; verifyTestResults();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<H4>Dependency Injection </H4><br />
+<P>Dependency Injection is a common stratagem for creating testable code.&nbsp; Most classes will depend on other classes to perform other actions or gather information.&nbsp; Typically a class has created its own dependencies when it has needed them.&nbsp; The call to the &#8220;new Dependency()&#8221; constructor function of a concrete class is a hidden form of tight coupling.&nbsp; If the dependency is something that is hard to test against, or you need looser coupling between the server and client, you&#8217;ll want to push in the dependency object with some sort of Dependency Injection.&nbsp; </P><br />
+<P>Here&#8217;s a class called <FONT face="Courier New">Client</FONT> that uses <FONT face="Courier New">ServiceProvider</FONT> within its <FONT face="Courier New">DoSomething()</FONT> method.&nbsp; In this incarnation, <FONT face="Courier New">Client</FONT> cannot function at all unless the <FONT face="Courier New">ServiceProvider</FONT> class is completely configured with all of its dependencies.</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> ServiceProvider</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> ProvideService()</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Provide the Service</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> Client</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> DoSomething()</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Needs a ServerProvider, so it just creates one as its needed</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ServiceProvider provider = <SPAN>new</SPAN> ServiceProvider();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; provider.ProvideService();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>Here&#8217;s the same class, but this time use <A href="/blogs/jeremy.miller/archive/2005/10/06/132825.aspx">Dependency Injection</A> to &#8220;push&#8221; in an <FONT face="Courier New">IServiceProvider</FONT> argument to its constructor function.&nbsp; Client simply executes with the <FONT face="Courier New">IServiceProvider</FONT> member that it is handed.&nbsp; The <FONT face="Courier New">IServerProvider</FONT> could be a mock object, a stub, the original <FONT face="Courier New">ServiceProvider</FONT>, or some totally new implementation of <FONT face="Courier New">IServiceProvider</FONT>.&nbsp; Simply by inverting the control over dependency location we&#8217;ve greatly increased the testability and potential reuse for the <FONT face="Courier New">Client</FONT> class.</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> IServiceProvider</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProvideService();</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> Client</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>readonly</SPAN> IServiceProvider _provider;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Client is not responsible for instantiating an instance of IServerProvider</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> Client(IServiceProvider provider)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _provider = provider;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> DoSomething()</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _provider.ProvideService();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; [TestFixture]</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> ClientTester</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; [Test]</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> DoSomethingHappyPath()</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Mock IServiceProvider with RhinoMocks</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MockRepository mocks = <SPAN>new</SPAN> MockRepository();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; IServiceProvider provider = (IServiceProvider) mocks.CreateMock(<SPAN>typeof</SPAN>(IServiceProvider));</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Setup expectations on the mock object</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; mocks.ReplayAll();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Client client = <SPAN>new</SPAN> Client(provider);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; client.DoSomething();</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Verify the expected interactions between Client and IServiceProvider</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; mocks.VerifyAll();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<H4>Use the Lowly Builder Pattern</H4><br />
+<P><A href="http://www.dofactory.com/Patterns/PatternBuilder.aspx">Builder Pattern</A> &#8211; &#8220;Separate the construction of a complex object from its representation so that the same construction process can create different representations.&#8221;&nbsp; </P><br />
+<P>I&#8217;m not entirely sure what the original GoF definition means, but the Builder design pattern <B>is</B> a simple and effective way to isolate logic from the mucky details of configuration and persistence.&nbsp; Think of it this way, when a rock band like Aerosmith is playing a concert they don&#8217;t set up the sound stage, unload the instruments, and plug everything together.&nbsp; The roadies and the concert crews put all of the stage and equipment together.&nbsp; Aerosmith just has to swoop in, pick up the instruments that are waiting**, and play the show.&nbsp; A Builder class is like the concert crew.&nbsp; The Builder&#8217;s only job is to put together everything that another class needs in order to do its work.&nbsp; The great advantage of using a Builder pattern is to isolate business logic away from logistical code.&nbsp; We can concentrate on making the Aerosmith classes work first and get the desired functionality working, then create some roadie classes to handle the logistics later.</P><br />
+<P>Here&#8217;s an example that&#8217;s taken from work my team did last year to rewrite a custom rules engine component.&nbsp; We had to work a couple months with the legacy component a little while and ran into some significant trouble:</P><br />
+<OL><br />
+<LI>The input data had to be put into the database.&nbsp; The rules engine absolutely could not run except by pulling information from the database.&nbsp; The database tables in question had a lot of referential integrity.&nbsp; The overhead cost of setting up test data was substantial.<br />
+<LI>The rules had to be placed in a SOAP serialized xml file that the rules engine expected to be at a certain absolute path.<br />
+<LI>There was no way to programmatically configure rules and test data inside the test harness.</LI></OL><br />
+<P>There was a large number of permutations of rule configuration and test data that needed to be executed.&nbsp; By forcing us to load up test data in a database and create and move around separate rules configuration files (that weren&#8217;t human readable) around made for a tremendous amount of friction in development.&nbsp; When we built the replacement we were able to dramatically improve this situation by separating configuration away from the basic processing engine.&nbsp; The processing engine is given the correct rule objects and data.&nbsp; All it has to do is execute the rules and coordinate the resulting actions.&nbsp; All services are attached through either Dependency Injection or a Service Locator, so it&#8217;s relatively easy to substitute mock or stub objects in testing.</P><br />
+<P>Let&#8217;s say your building a system to automate the fulfillment of drug prescriptions.&nbsp; When a prescription order is made a series of <A href="http://eclipse.engin.umich.edu/Paper/MFSMs%20Implemented%20As%20ECA%20Systems.pdf">Event-Condition-Action</A> rules need to be executed to determine actions to take based on the patient&#8217;s medical history, prescription, and insurance coverage.&nbsp; Here&#8217;s a &#8220;before&#8221; skeleton of the implementation that could be difficult test.&nbsp; The prescriptions to examine have to be pulled from the database.&nbsp; The rule objects are assembled from configuration of some sort.</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> Patient</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> PatientId;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> DataSet MedicalHistory;</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> Prescription</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> Id;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> PatientId;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>string</SPAN> PrescriptionType;</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>// Interface for the prescription rules</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>interface</SPAN> IPrescriptionHandler</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>void</SPAN> ProcessPrescription(Prescription prescription, Patient patient);</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;summary&gt;</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>///</SPAN><SPAN> The initial version that &#8220;Pulls&#8221; rules and data as it needs it inside the processing</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>///</SPAN><SPAN> This version is much more difficult to test because of the tight coupling with</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>///</SPAN><SPAN> the database and the rules configuration</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>///</SPAN><SPAN> </SPAN><SPAN>&lt;/summary&gt;</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> PrescriptionRulesEngine1</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> ProcessPrescriptions(<SPAN>string</SPAN> prescriptionId)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Fetch the Prescription object from the persisted database data</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Prescription prescription = fetchPrescription(prescriptionId);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Fetch the Patient object from the persisted database data</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Patient patient = fetchPatient(prescription.PatientId);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Query the database for a list of all the IPrescriptionHandler objects that handle</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// this type of Prescription</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; IPrescriptionHandler[] handlers = fetchRelatedHandlers(prescription.PrescriptionType);</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (IPrescriptionHandler handler <SPAN>in</SPAN> handlers)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handler.ProcessPrescription(prescription, patient);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> Prescription fetchPrescription(<SPAN>string</SPAN> prescriptionId){}&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> Patient fetchPatient(<SPAN>string</SPAN> patientid){}&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> IPrescriptionHandler[] fetchRelatedHandlers(<SPAN>string</SPAN> prescriptionType){}</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><!--EndFragment--><br />
+<P>Now, here&#8217;s a second implementation that follows the &#8220;Push, Don&#8217;t Pull&#8221; law.&nbsp; In this version the rules engine accepts an array of <FONT face="Courier New">IPrescriptionHandler</FONT> objects in the constructor and works on the <FONT face="Courier New">Prescription</FONT> and <FONT face="Courier New">Patient</FONT> objects passed into the <FONT face="Courier New">ProcessPrescription()</FONT> method.&nbsp; This version makes new rules far simpler to test because you can create an instance of an <FONT face="Courier New">IPrescriptionHandler</FONT> rule object and the input data completely inside of an NUnit test fixture class and validate the results.</P><br />
+<DIV><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> PrescriptionRulesEngine2</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>private</SPAN> <SPAN>readonly</SPAN> IPrescriptionHandler[] _handlers;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// The IPrescriptionHandler[] array is pushed in through the constructor</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> PrescriptionRulesEngine2(IPrescriptionHandler[] handlers)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; _handlers = handlers;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// All the Prescription and Patient data is pushed in through the method</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>void</SPAN> ProcessPrescription(Prescription prescription, Patient patient)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>foreach</SPAN> (IPrescriptionHandler handler <SPAN>in</SPAN> _handlers)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handler.ProcessPrescription(prescription,&nbsp; patient);</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;</PRE><PRE>&nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> <SPAN>class</SPAN> PrescriptionRulesEngineBuilder</PRE><PRE>&nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>// Assemble the proper array of IPrescriptionHandler objects for the requested PrescriptionType</SPAN></PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>public</SPAN> PrescriptionRulesEngine2 CreateRulesForPrescriptionType(<SPAN>string</SPAN> prescriptionType)</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <SPAN>throw</SPAN> <SPAN>new</SPAN> NotImplementedException();</PRE><PRE>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }</PRE><PRE>&nbsp;&nbsp;&nbsp; }</PRE></DIV><br />
+<P>&nbsp;</P><br />
+<H4>Configuration &amp; Persistence Last</H4><br />
+<P>One of the pieces of advice I try to give to people that are new to software design is to concentrate on creating functionality first, and worry about configuration second.&nbsp; Let the business functionality drive the need for configuration.&nbsp; Trying to create the configuration, or persistence for that matter, at the same time as the business logic can just cloud the issue.&nbsp; Focus on one responsibility at a time.</P><br />
+<P>&nbsp;</P><br />
+<P>* There&#8217;s an easier alternative for date sensitive testing that might be more intention revealing anyway.&nbsp; We have a lot of business rules that are date sensitive like &#8220;Invoice shall be rejected if older than # days.&#8221;&nbsp; Inside of unit tests you just set up test data by saying &#8220;<FONT face="Courier New">DateTime invoiceDate = DateTime.Now.AddDays(-30)</FONT>.&#8221;&nbsp; In our FitNesse acceptance tests we&#8217;ve coded the fixtures to translate &#8220;(today+-#)&#8221; into the date relative to the current time as the test is executed.</P><br />
+<TABLE border="1"><br />
+<TBODY><br />
+<TR><br />
+<TD colSpan="2">InvoiceFixture</TD></TR><br />
+<TR><br />
+<TD>Invoice Date</TD><br />
+<TD>Invoice Start Date</TD></TR><br />
+<TR><br />
+<TD>(today-5)</TD><br />
+<TD>(today)</TD></TR><br />
+<TR><br />
+<TD>(today-30)</TD><br />
+<TD>(today+1)</TD></TR></TBODY></TABLE><br />
+<P>**Here&#8217;s a story for you Austinites out there, when my wife and I first moved to Austin I begged her to go see Billie Joe Shaver play at the Saxon Pub.&nbsp; Malford Milligan (Storyville lead singer) was tagging along just to help the band carry in their sound equipment.&nbsp; I&#8217;m betting Aerosmith doesn&#8217;t have to do that anymore.&nbsp; It was a hell of a show by the way.&nbsp; RIP, Eddy.</P><br />
+<P>&nbsp;</P><br />
+<P>&nbsp;</P></p>
+<div class="shr-publisher-139"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/db65c5c5cf9f1c51e842f733892eace1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About Jeremy Miller</h2>
+							Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.							<div id="author-link">
+								<a href="http://codebetter.com/jeremymiller/author/jeremymiller/" title="View all posts by Jeremy Miller">View all posts by Jeremy Miller &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/jeremymiller/category/design-patterns/" title="View all posts in Design Patterns" rel="category tag">Design Patterns</a>, <a href="http://codebetter.com/jeremymiller/category/test-driven-development/" title="View all posts in Test Driven Development" rel="category tag">Test Driven Development</a>. Bookmark the <a href="http://codebetter.com/jeremymiller/2006/03/09/jeremys-second-law-of-tdd-push-dont-pull/" title="Permalink to Jeremy&#8217;s Second Law of TDD:  Push, Don&#8217;t Pull" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/jeremymiller/2006/03/09/jeremys-second-law-of-tdd-push-dont-pull/feed/" title="Comments RSS to Jeremy&#8217;s Second Law of TDD:  Push, Don&#8217;t Pull" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-139 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/jeremymiller/2006/03/06/things-we-talked-about-at-the-austin-code-camp/" rel="prev"><span class="meta-nav">&larr;</span> Things we talked about at the Austin Code Camp</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/jeremymiller/2006/03/10/one-year-blogging-anniversary-and-going-dark-for-awhile/" rel="next">One Year Blogging Anniversary, and going dark for awhile <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-571">
+                    <div id="dsq-comment-header-571" class="dsq-comment-header">
+                        <cite id="dsq-cite-571">
+    http://david_DOT_a_DOT_r_DOT_kemp_HAT_gmail_DOT_com_REMOVE_DOT_                            <span id="dsq-author-user-571">David Kemp</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-571" class="dsq-comment-body">
+                        <div id="dsq-comment-message-571" class="dsq-comment-message"><p>Nice work.</p>
+<p>I need to check reread GoF + Fowler&#8217;s PEAA, but the Gateway acts like a Facade for service?</p>
+<p>I&#8217;ve picked up your blog recently, in conjunction with reading Head First Design Patterns (this is the best Design Patterns book I&#8217;ve read, even if there is a bit Java specific code in there), and it&#8217;s all starting to make sense. </p>
+<p>Basically, you&#8217;re re-enforcing the &#8220;program to interfaces, not objects&#8221; rule, and using builder and strategy patterns to create systems with very low levels of coupling? And of course, because everything&#8217;s very flexible, you can easily test stuff with mocks, etc, etc.</p>
+<p>I think there&#8217;s one example in Head First Design Patterns that hammers home just how dependant things can get. Consider:</p>
+<p>public void foo( )<br />
+{<br />
+ /*..*/<br />
+   ITemperature temperature = this.weatherStation.Thermometer.CurrentTemperature;<br />
+  /*..*/<br />
+}</p>
+<p>vs.</p>
+<p>public void foo( )<br />
+{<br />
+ /*..*/<br />
+   ITemperature temperature = this.weatherStation.CurrentTemperature;<br />
+  /*..*/<br />
+}</p>
+<p>In the firstexample, foo() needs to know about weatherStation, thermometers, and Temperatures. In the second, the dependancy has disappeared.</p>
+<p>What you&#8217;re saying is to refactor it to:</p>
+<p>public void foo ( ITemperature temperature )<br />
+{<br />
+   /*&#8230;*/<br />
+}</p>
+<p>and reduce the dependances even further?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-572">
+                    <div id="dsq-comment-header-572" class="dsq-comment-header">
+                        <cite id="dsq-cite-572">
+    http://bubbler.net/outlaw/blog                            <span id="dsq-author-user-572">mario contestabile</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-572" class="dsq-comment-body">
+                        <div id="dsq-comment-message-572" class="dsq-comment-message"><p>Couldn&#8217;t agree more. I&#8217;d have to add, get &#8216;buy in&#8217;.<br />
+Buy-in from the managers, and the other developers.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-573">
+                    <div id="dsq-comment-header-573" class="dsq-comment-header">
+                        <cite id="dsq-cite-573">
+                                <span id="dsq-author-user-573">Sheldonp</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-573" class="dsq-comment-body">
+                        <div id="dsq-comment-message-573" class="dsq-comment-message"><p>I love the first two in the series.  Can&#8217;t wait for the next one!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-574">
+                    <div id="dsq-comment-header-574" class="dsq-comment-header">
+                        <cite id="dsq-cite-574">
+                                <span id="dsq-author-user-574">Jeremy Miller</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-574" class="dsq-comment-body">
+                        <div id="dsq-comment-message-574" class="dsq-comment-message"><p>David,</p>
+<p>I wouldn&#8217;t make any hard and fast rule about reducing dependencies, but yes, the more you can the easier things will be to test and change in the future.</p>
+<p>Mario,</p>
+<p>So true.</p>
+<p>Jeremy</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-575">
+                    <div id="dsq-comment-header-575" class="dsq-comment-header">
+                        <cite id="dsq-cite-575">
+    http://ramacd@nbnet.nb.ca                            <span id="dsq-author-user-575">Randy MacDonald</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-575" class="dsq-comment-body">
+                        <div id="dsq-comment-message-575" class="dsq-comment-message"><p>The forced font required horizontal scrolling, and made your post, however valuable otherwise, unreadable. A shame, really.</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/jeremymiller/2006/03/09/jeremys-second-law-of-tdd-push-dont-pull/';
+    var disqus_identifier = '139 /blogs/jeremy.miller/archive/2006/03/09/140465.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'theshadetreedeveloper';
+    var disqus_title = "Jeremy&#8217;s Second Law of TDD:  Push, Don&#8217;t Pull";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=139');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/jeremymiller\/2006\/03\/09\/jeremys-second-law-of-tdd-push-dont-pull\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">The Shade Tree Developer</h3>Jeremy is the Chief Software Architect at Dovetail Software, the coolest ISV in Austin.  Jeremy began his IT career writing "Shadow IT" applications to automate his engineering documentation, then wandered into software development because it looked like more fun. Jeremy is the author of the open source StructureMap tool for Dependency Injection with .Net, StoryTeller for supercharged acceptance testing in .Net, and one of the principal developers behind FubuMVC.  Jeremy's thoughts on all things software can be found at The Shade Tree Developer at http://codebetter.com/jeremymiller.
+</li><li id="text-3" class="widget-container widget_text"><h3 class="widget-title">Upcoming posts&#8230;</h3>			<div class="textwidget"><p>How I'm using StoryTeller to test FubuMVC<br />
+Building a "Lookup" html convention w/ FubuMVC<br />
+FubuMVC's Configuration Model "Special Sauce"<br />
+Managing Script dependencies with FubuMVC<br />
+Authorization and FubuMVC<br />
+Continuations<br />
+Composing Views with FubuMVC<br />
+Extensible Model Binding with FubuMVC<br />
+Introducing "Bottles"<br />
+Modular Packaging with FubuMVC<br />
+Self-Installing Apps w/ FubuMVC<br />
+Routing and Behavioral Conventions with FubuMVC<br />
+What Should I Learn?</p>
+</div>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://twitter.com/jeremydmiller">Follow me on Twitter</a></li>
+<li><a href="https://github.com/DarthFubuMVC/fubumvc" target="_blank">FubuMVC on GitHub</a></li>
+<li><a href="https://github.com/jeremydmiller">My GitHub Page</a></li>
+<li><a href="https://github.com/storyteller/storyteller">StoryTeller on GitHub</a></li>
+<li><a href="https://github.com/structuremap/structuremap">StructureMap on GitHub</a></li>
+
+	</ul>
+</li>
+		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+					<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Archives</h3>		<ul>
+			<li><a href='http://codebetter.com/jeremymiller/2012/01/' title='January 2012'>January 2012</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/09/' title='September 2011'>September 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/07/' title='July 2011'>July 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/06/' title='June 2011'>June 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/05/' title='May 2011'>May 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/04/' title='April 2011'>April 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/03/' title='March 2011'>March 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2011/01/' title='January 2011'>January 2011</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/12/' title='December 2010'>December 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/09/' title='September 2010'>September 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/08/' title='August 2010'>August 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/07/' title='July 2010'>July 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/06/' title='June 2010'>June 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/05/' title='May 2010'>May 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/03/' title='March 2010'>March 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/02/' title='February 2010'>February 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2010/01/' title='January 2010'>January 2010</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/12/' title='December 2009'>December 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/11/' title='November 2009'>November 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/10/' title='October 2009'>October 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/09/' title='September 2009'>September 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/08/' title='August 2009'>August 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/07/' title='July 2009'>July 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/06/' title='June 2009'>June 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/05/' title='May 2009'>May 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/04/' title='April 2009'>April 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/03/' title='March 2009'>March 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/02/' title='February 2009'>February 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2009/01/' title='January 2009'>January 2009</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/12/' title='December 2008'>December 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/11/' title='November 2008'>November 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/10/' title='October 2008'>October 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/09/' title='September 2008'>September 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/08/' title='August 2008'>August 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/07/' title='July 2008'>July 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/06/' title='June 2008'>June 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/05/' title='May 2008'>May 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/04/' title='April 2008'>April 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/03/' title='March 2008'>March 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/02/' title='February 2008'>February 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2008/01/' title='January 2008'>January 2008</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/12/' title='December 2007'>December 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/11/' title='November 2007'>November 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/10/' title='October 2007'>October 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/09/' title='September 2007'>September 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/08/' title='August 2007'>August 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/07/' title='July 2007'>July 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/06/' title='June 2007'>June 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/05/' title='May 2007'>May 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/04/' title='April 2007'>April 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/03/' title='March 2007'>March 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/02/' title='February 2007'>February 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2007/01/' title='January 2007'>January 2007</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/12/' title='December 2006'>December 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/11/' title='November 2006'>November 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/10/' title='October 2006'>October 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/09/' title='September 2006'>September 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/08/' title='August 2006'>August 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/07/' title='July 2006'>July 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/06/' title='June 2006'>June 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/05/' title='May 2006'>May 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/04/' title='April 2006'>April 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/03/' title='March 2006'>March 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/02/' title='February 2006'>February 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2006/01/' title='January 2006'>January 2006</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/12/' title='December 2005'>December 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/11/' title='November 2005'>November 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/10/' title='October 2005'>October 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/09/' title='September 2005'>September 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/08/' title='August 2005'>August 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/07/' title='July 2005'>July 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/06/' title='June 2005'>June 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/05/' title='May 2005'>May 2005</a></li>
+	<li><a href='http://codebetter.com/jeremymiller/2005/04/' title='April 2005'>April 2005</a></li>
+		</ul>
+</li><li id="recent-comments-3" class="widget-container widget_recent_comments"><h3 class="widget-title">What others have said&#8230;</h3><ul id="recentcomments"><li class="recentcomments"><a href='http://zacherygaines.webstarts.com/' rel='external nofollow' class='url'>KadeemFulton</a> on <a href="http://codebetter.com/jeremymiller/2007/07/26/the-build-your-own-cab-series-table-of-contents/#comment-7523">The Build Your Own CAB Series Table of Contents</a></li><li class="recentcomments"><a href='http://jonsonbettly.wordpress.com/' rel='external nofollow' class='url'>ScottWorkman</a> on <a href="http://codebetter.com/jeremymiller/2007/07/26/the-build-your-own-cab-series-table-of-contents/#comment-7517">The Build Your Own CAB Series Table of Contents</a></li><li class="recentcomments">haihao on <a href="http://codebetter.com/jeremymiller/2008/10/18/profile-s-in-structuremap/#comment-7513">Profile’s in StructureMap</a></li><li class="recentcomments">neon on <a href="http://codebetter.com/jeremymiller/2008/09/10/using-the-structuremap-container-independently-of-objectfactory/#comment-7512">Using the StructureMap Container independently of ObjectFactory</a></li><li class="recentcomments">weaponfan on <a href="http://codebetter.com/jeremymiller/2008/09/25/using-structuremap-2-5-to-inject-your-entity-objects-into-services/#comment-7511">Using StructureMap 2.5 to inject your Entity objects into Services</a></li></ul></li>				</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.803 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 12:36:17 -->
+<!-- super cache -->

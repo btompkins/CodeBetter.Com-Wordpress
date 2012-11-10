@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Much Ado About Monads – Maybe Edition | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Functional Programming Unit Testing – Using Type Classes' href='http://codebetter.com/matthewpodwysocki/2009/01/20/functional-programming-unit-testing-using-type-classes/' />
+<link rel='next' title='Functional Programming Unit Testing – Part 7' href='http://codebetter.com/matthewpodwysocki/2009/01/29/functional-programming-unit-testing-part-7/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=104' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,150] -->
+<link rel="canonical" href="http://codebetter.com/matthewpodwysocki/2009/01/28/much-ado-about-monads-maybe-edition/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-104" class="post-104 post type-post status-publish format-standard hentry category-c category-f category-functional-programming category-haskell">
+					<h1 class="entry-title">Much Ado About Monads – Maybe Edition</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by Matthew Podwysocki">Matthew Podwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2009/01/28/much-ado-about-monads-maybe-edition/" title="10:19 pm" rel="bookmark"><span class="entry-date">January 28, 2009</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>In the past I’ve extensively talked about creating monads, but not as much more around them in terms of why you might use them and what problems they are trying to solve.&#160; Since that time, I’ve been challenged by others to actually prove not only that it can be understood by everyone, but they are very useful as well.&#160; It’s been a form of geekery among us software professionals to say, “Whoopee! I’ve learned how to implement a monad to do x” without really explaining the reason why people should care.&#160; </p>
+<p>This series of posts is set to dispel some of those qualms people have with the word monad and why it might be useful in other languages besides Haskell, from which the term in the computer science world came.&#160; In the past here, I’ve talked extensively about them, so I won’t necessarily bore you with the excruciating details, but I still have to answer the question in a brief and to the point answer, what exactly is a monad anyways?</p>
+<p>&#160;</p>
+<h2>What is a Monad?</h2>
+<p>For those not really interested in category theory and such, let’s get to a basic definition instead.&#160; Think of it as a basic abstract data type used to represent computations.&#160; We can abstract away complex behavior, such as IO actions, asynchronous behavior uniformly in such a way that we can sequence these operations together.&#160; Here’s the best definition of all, “We can abstract the complicated things out of the way so that we can write a program that we want to read it instead of how it really works”.&#160; I’d rather see the focus not on the category theory part, as that is interesting and a key to what’s going on here, but instead as a nice design pattern for abstracting complexity.</p>
+<p>Now the question arises, how and when do we use them?&#160; When does it make sense?&#160; To understand that, we need to look at the problems we’re facing.&#160; Let’s take an example of chaining conditionals together which may or may not succeed.</p>
+<p>&#160;</p>
+<h2>What’s the Problem?</h2>
+<p>To really understand why it’s useful, we first have to understand the problem we’re trying to solve.&#160; As I stated above, let’s first take a look at chaining together conditional operations which may or may not succeed.&#160; Let’s take for example a series of lookups against some hash tables in a way where one lookup depends on another.&#160; Typically in C#, our code might look like the following.&#160; It’s naive code in terms of the style but I’ve seen this pattern time and time again in code:</p>
+<div style="font-family: courier new"><span style="color: blue">class</span> Program     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">private</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">readonly</span> Dictionary&lt;<span style="color: blue">string</span>,<span style="color: blue">string</span>&gt; employeeDept =&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">new</span> Dictionary&lt;<span style="color: blue">string</span>, <span style="color: blue">string</span>&gt;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;John&quot;</span>, <span style="color: maroon">&quot;Sales&quot;</span>},     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;Bob&quot;</span>, <span style="color: maroon">&quot;IT&quot;</span>}     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; };     <br />&#160;&#160;&#160; <span style="color: blue">private</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">readonly</span> Dictionary&lt;<span style="color: blue">string</span>, <span style="color: blue">string</span>&gt; deptCountry =&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">new</span> Dictionary&lt;<span style="color: blue">string</span>, <span style="color: blue">string</span>&gt;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;IT&quot;</span>, <span style="color: maroon">&quot;USA&quot;</span>},     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;Sales&quot;</span>, <span style="color: maroon">&quot;France&quot;</span>}     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; };     <br />&#160;&#160;&#160; <span style="color: blue">private</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">readonly</span> Dictionary&lt;<span style="color: blue">string</span>, <span style="color: blue">string</span>&gt; countryCurrency =&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">new</span> Dictionary&lt;<span style="color: blue">string</span>, <span style="color: blue">string</span>&gt;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;USA&quot;</span>,<span style="color: maroon">&quot;Dollar&quot;</span>},     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; {<span style="color: maroon">&quot;France&quot;</span>,<span style="color: maroon">&quot;Euro&quot;</span>}     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; };     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">public</span>&#160;<span style="color: blue">static</span>&#160;<span style="color: blue">string</span> GetEmployeeCurrency(<span style="color: blue">string</span> name)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">string</span> dept;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">string</span> country;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">string</span> currency;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">if</span>(!employeeDept.TryGetValue(name, <span style="color: blue">out</span> dept))     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span>&#160;<span style="color: blue">null</span>;     </p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">if</span>(!deptCountry.TryGetValue(dept, <span style="color: blue">out</span> country))     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span>&#160;<span style="color: blue">null</span>;     </p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span> !countryCurrency.TryGetValue(country, <span style="color: blue">out</span> currency)&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; ? <span style="color: blue">null</span> : currency;     <br />&#160;&#160;&#160; }     </p>
+<p>&#160;&#160;&#160; <span style="color: blue">static</span>&#160;<span style="color: blue">void</span> Main(<span style="color: blue">string</span>[] args)     <br />&#160;&#160;&#160; {     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; var johnCurrency = <span style="color: blue">string</span>.Format(<span style="color: maroon">&quot;John&#8217;s currency: {0}&quot;</span>,&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; GetEmployeeCurrency(<span style="color: maroon">&quot;John&quot;</span>));     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; var peteCurrency = <span style="color: blue">string</span>.Format(<span style="color: maroon">&quot;Pete&#8217;s currency: {0}&quot;</span>,     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; GetEmployeeCurrency(<span style="color: maroon">&quot;Pete&quot;</span>));     </p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160; Console.WriteLine(johnCurrency);     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; Console.WriteLine(peteCurrency);     <br />&#160;&#160;&#160; }     <br />}</div>
+<p>As you’ll notice from the above code, we have three dictionaries of various information that we’re using as lookups.&#160; And you’ll also note that we have to go through a bit of hassle just to determine if one’s in a list, and if so, continue onto the next.&#160; Similarly, in F#, we run into that same issue as well, with an example of how that could be a problem.</p>
+<div style="font-family: courier new"><span style="color: blue">let</span> employeeDept = Map<span style="color: blue">.</span>of_list<span style="color: blue">(</span><span style="color: blue">[</span><span style="color: blue">(</span><span style="color: maroon">&quot;John&quot;</span>,<span style="color: maroon">&quot;Sales&quot;</span><span style="color: blue">)</span>; <span style="color: blue">(</span><span style="color: maroon">&quot;Bob&quot;</span>,<span style="color: maroon">&quot;IT&quot;</span><span style="color: blue">)</span><span style="color: blue">]</span><span style="color: blue">)</span>&#160; <br /><span style="color: blue">let</span> deptCountry = Map<span style="color: blue">.</span>of_list<span style="color: blue">(</span><span style="color: blue">[</span><span style="color: blue">(</span><span style="color: maroon">&quot;IT&quot;</span>,<span style="color: maroon">&quot;USA&quot;</span><span style="color: blue">)</span>; <span style="color: blue">(</span><span style="color: maroon">&quot;Sales&quot;</span>,<span style="color: maroon">&quot;France&quot;</span><span style="color: blue">)</span><span style="color: blue">]</span><span style="color: blue">)</span>&#160; <br /><span style="color: blue">let</span> countryCurrency = Map<span style="color: blue">.</span>of_list<span style="color: blue">(</span><span style="color: blue">[</span><span style="color: blue">(</span><span style="color: maroon">&quot;USA&quot;</span>, <span style="color: maroon">&quot;Dollar&quot;</span><span style="color: blue">)</span>; <span style="color: blue">(</span><span style="color: maroon">&quot;France&quot;</span>, <span style="color: maroon">&quot;Euro&quot;</span><span style="color: blue">)</span><span style="color: blue">]</span><span style="color: blue">)</span>&#160; </p>
+<p><span style="color: blue">let</span> employeeCurrency name =&#160; <br />&#160; <span style="color: blue">match</span> Map<span style="color: blue">.</span>tryfind name employeeDept <span style="color: blue">with</span>&#160; <br />&#160; <span style="color: blue">|</span> None&#160;&#160;&#160;&#160;&#160; <span style="color: blue">-&gt;</span> None&#160; <br />&#160; <span style="color: blue">|</span> Some dept <span style="color: blue">-&gt;</span>&#160; <br />&#160;&#160;&#160;&#160;&#160; <span style="color: blue">match</span> Map<span style="color: blue">.</span>tryfind dept deptCountry <span style="color: blue">with</span>&#160; <br />&#160;&#160;&#160;&#160;&#160; <span style="color: blue">|</span> None&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">-&gt;</span> None&#160; <br />&#160;&#160;&#160;&#160;&#160; <span style="color: blue">|</span> Some country <span style="color: blue">-&gt;</span>&#160;&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; Map<span style="color: blue">.</span>tryfind country countryCurrency     </p>
+<p><span style="color: blue">let</span> johnCurrency = sprintf <span style="color: maroon">&quot;John&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency <span style="color: maroon">&quot;John&quot;</span><span style="color: blue">)</span>     <br /><span style="color: blue">let</span> peteCurrency = sprintf <span style="color: maroon">&quot;Pete&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency <span style="color: maroon">&quot;Pete&quot;</span><span style="color: blue">)</span></div>
+<div style="font-family: courier new">&#160;</div>
+<p>And indeed, you could run into this pattern as well in Haskell without trying really hard either:</p>
+<div style="font-family: courier new"><font color="#0000ff">import</font> qualified <font color="#ff0000">Data.Map</font>&#160;<font color="#0000ff">as</font>&#160;<font color="#ff0000">M</font>     </p>
+<p><strong><font color="#000080">employeeDept</font> ::<font color="#ff0000"> M.Map String String</font>       <br /></strong>employeeDept = M.fromList([(<font color="#008000">&quot;John&quot;</font>,<font color="#008000">&quot;Sales&quot;</font>), (<font color="#008000">&quot;Bob&quot;</font>,<font color="#008000">&quot;IT&quot;</font>)])     </p>
+<p><strong><font color="#000080">deptCountry</font> ::<font color="#ff0000"> M.Map String String</font></strong>     <br />deptCountry = M.fromList([(<font color="#008000">&quot;IT&quot;</font>,<font color="#008000">&quot;USA&quot;</font>), (<font color="#008000">&quot;Sales&quot;</font>,<font color="#008000">&quot;France&quot;</font>)])     </p>
+<p><strong><font color="#000080">countryCurrency</font> :: M.Map String String</strong>     <br />countryCurrency = M.fromList([(<font color="#008000">&quot;USA&quot;</font>, <font color="#008000">&quot;Dollar&quot;</font>), (<font color="#008000">&quot;France&quot;</font>, <font color="#008000">&quot;Euro&quot;</font>)])     </p>
+<p><strong><font color="#000080">employeeCurrency</font> :: <font color="#ff0000">String</font> -&gt; <font color="#ff0000">Maybe String</font></strong>     <br />employeeCurrency name =&#160; <br />&#160; <font color="#0000ff">case</font>&#160;<font color="#ff0000">M</font>.lookup name employeeDept <font color="#0000ff">of</font>     <br />&#160;&#160;&#160;&#160;&#160; <font color="#ff0000">Nothing</font> -&gt; <font color="#ff0000">Nothing</font>     <br />&#160;&#160;&#160;&#160;&#160; <font color="#ff0000">Just</font> dept -&gt;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">case</font>&#160;<font color="#ff0000">M</font>.lookup dept deptCountry <font color="#0000ff">of</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#ff0000">Nothing</font> -&gt; <font color="#ff0000">Nothing</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#ff0000">Just</font> country -&gt;     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#ff0000">M</font>.lookup country countryCurrency</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Just watch that code walk off the screen to the right!&#160; Are you starting to notice a pattern here?&#160; I sure am!&#160; Now the question arises, what can we do about it?&#160; How can we write the code the way it should look instead of all the conditional logic we’ve had to bake in.&#160; Wouldn’t you rather write it something like this?</p>
+<div style="font-family: courier new"><span style="color: green">// Pseudocode F#</span>     <br /><span style="color: blue">let</span> employeeCurrency name =     <br />&#160; <span style="color: blue">let</span> dept = Map<span style="color: blue">.</span>tryfind name employeeDept     <br />&#160; <span style="color: blue">let</span> country = Map<span style="color: blue">.</span>tryfind dept deptCountry     <br />&#160; Map<span style="color: blue">.</span>tryfind country countryCurrency</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Through the power of monads, we can, at least something very similar to this.&#160; So, let’s find out how.</p>
+<p>&#160;</p>
+<h2>Introducing Monads</h2>
+<p>Monads are a concept in the computer science field to come from the Haskell programming language.&#160; Most people assume, oh, it’s only used for IO, but that’s simply not true at all.&#160; Instead, we can treat it as a common abstraction to solve any number of problems, including the conditional logic from above which may succeed or fail.</p>
+<p>To create this abstraction, Haskell has a Monad type class which allows us to generalize the application of them.&#160; Let’s look at exactly what that looks like:</p>
+<div style="font-family: courier new"><font color="#0000ff">class</font>&#160;<font color="#ff0000">Monad</font> m <font color="#0000ff">where</font>     <br /><font color="#008000">&#160; <span style="color: green">&#8211;</span> Sequentially compose two actions       <br />&#160; <span style="color: green">&#8211;</span> passing any value produced from the first to the next       <br /></font>&#160; <font color="#000080">(&gt;&gt;=)</font> :: m a -&gt; (a -&gt; m b) -&gt; m b     <br />&#160;&#160; <br /><font color="#008000">&#160; <span style="color: green">&#8211;</span> Sequentially compose two actions       <br />&#160; &#8212; discarding any value produced from the first</font>     <br />&#160; <font color="#000080">(&gt;&gt;)</font> :: m a -&gt; m b -&gt; m b     <br />&#160;&#160; <br /><font color="#008000">&#160; <span style="color: green">&#8211;</span> Inject a value into the monadic type</font>     <br />&#160; <font color="#000080">return</font> :: a -&gt; m a     <br />&#160;&#160; <br />&#160; <span style="color: green">&#8211;</span> Fail with a message     <br />&#160; <font color="#000080">fail</font> :: <font color="#ff0000">String</font> -&gt; m a</div>
+<div style="font-family: courier new">&#160;</div>
+<p>I added comments to each function that the type class implements to give you an idea about what each one of them does.&#160; What’s our ultimate goal here?&#160; Well, it’s the ability to string together functions that may or may not succeed and to sequence these instructions together.&#160; With an implementation of a monad, we get that ability.</p>
+<p>Now, let’s move onto the Maybe implementation.&#160; What is maybe anyways?&#160; It’s a simple algebraic data type which allows for just a value or no value at all such as this:</p>
+<div style="font-family: courier new"><font color="#0000ff">data</font>&#160; <font color="#ff0000">Maybe</font> a&#160; =&#160; <font color="#ff0000">Nothing</font> | <font color="#ff0000">Just</font> a     <br />&#160; <font color="#0000ff">deriving</font> (<font color="#ff0000">Eq</font>, <font color="#ff0000">Ord</font>)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now that we understand that, let’s move onto looking at the monad instance for the Maybe type.</p>
+<div style="font-family: courier new"><font color="#0000ff">instance</font>&#160; Monad Maybe&#160; <font color="#0000ff">where</font>     <br />&#160;&#160;&#160; (<font color="#ff0000">Just</font> x) &gt;&gt;= k&#160;&#160;&#160;&#160;&#160; = k x     <br />&#160;&#160;&#160; <font color="#ff0000">Nothing</font>&#160; &gt;&gt;= _&#160;&#160;&#160;&#160;&#160; = <font color="#ff0000">Nothing</font>     </p>
+<p>&#160;&#160;&#160; (<font color="#ff0000">Just</font> _) &gt;&gt;&#160; k&#160;&#160;&#160;&#160;&#160; = k     <br />&#160;&#160;&#160; <font color="#ff0000">Nothing</font>&#160; &gt;&gt;&#160; _&#160;&#160;&#160;&#160;&#160; = <font color="#ff0000">Nothing</font>     </p>
+<p>&#160;&#160;&#160; return&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; = <font color="#ff0000">Just</font>     <br />&#160;&#160;&#160; fail _&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; = <font color="#ff0000">Nothing</font></div>
+<p>These are defined in the base class libraries in Haskell, so there is no need to implement this yourself.&#160; What this allows us to do is simply our code dramatically.&#160; Let’s look at the sugared and de-sugared examples:</p>
+<div style="font-family: courier new"><span style="color: green">&#8211;</span><font color="#008000"> Imperative style</font>     <br /><strong><font color="#000080">employeeCurrency&#8217;</font> :: <font color="#ff0000">String</font> -&gt; <font color="#ff0000">Maybe String</font></strong>     <br />employeeCurrency&#8217; name = <font color="#0000ff">do</font>     <br />&#160; dept &lt;- M.lookup name employeeDept     <br />&#160; country &lt;- M.lookup dept deptCountry     <br />&#160; M.lookup country countryCurrency     </p>
+<p><span style="color: green">&#8211;</span><font color="#008000"> De-sugared version on one line</font>     <br /><strong><font color="#000080">employeeCurrency&#8221;</font> :: <strong><font color="#ff0000">String</font> -&gt; <font color="#ff0000">Maybe String</font></strong> </strong>    <br />employeeCurrency&#8221; name =&#160; <br />&#160; lookup employeeDept name &gt;&gt;= lookup deptCountry &gt;&gt;= lookup countryCurrency</div>
+<div style="font-family: courier new">&#160; <font color="#0000ff">where</font> lookup = flip M.lookup</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Wow, looks much nicer!&#160; How, you say?&#160; Because we get to see the code as we’d like to read it, as a script instead of a bunch of nested if statements.&#160; But, how does this apply to F# and other .NET languages?&#160; The answer is actually simple and straight forward.</p>
+<p>&#160;</p>
+<h2>Maybe F#?</h2>
+<p>Now that we understand some of the basics and how it can be done in Haskell.&#160; Let’s translate these ideas to F#.&#160; First, we need to consider the Option type, which is a similar implementation to the Haskell Maybe type.&#160; Knowing what we’ve learned in previous posts on my blog about how monads can be implemented, let’s look at a standard F# implementation.&#160; </p>
+<div style="font-family: courier new"><span style="color: blue">[&lt;</span>AutoOpen<span style="color: blue">&gt;]</span>     <br /><span style="color: blue">module</span> MaybeMonad =&#160;&#160; <br />&#160; <span style="color: blue">let</span> bindM x k =</div>
+<div style="font-family: courier new">&#160;&#160;&#160; match x with   <br />&#160;&#160;&#160; <span style="color: blue">|</span> Some x <span style="color: blue">-&gt;</span> k x     <br />&#160;&#160;&#160; <span style="color: blue">|</span> None&#160;&#160; <span style="color: blue">-&gt;</span> None     <br />&#160;&#160;&#160;&#160; <br />&#160; <span style="color: blue">let</span> returnM x = Some x     </p>
+<p><span style="color: blue">type</span> MaybeBuilder<span style="color: blue">(</span><span style="color: blue">)</span> =     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Bind<span style="color: blue">(</span>x, k<span style="color: blue">)</span> = bindM x k    <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Return<span style="color: blue">(</span>x<span style="color: blue">)</span>&#160; = returnM     <br />&#160; <span style="color: blue">member</span> x<span style="color: blue">.</span>Delay<span style="color: blue">(</span>f<span style="color: blue">)</span>&#160;&#160; = f<span style="color: blue">(</span><span style="color: blue">)</span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>When we define a builder such as we’ve done above, we now have the ability to use the syntactic sugar to wrap our code up in blocks rather nicely.&#160; This is a bare implementation of the monad, as I could add additional features such as support for using bind statements and such.&#160; The Expert F# book walks through this in detail in the Language Oriented Programming section.&#160; We could use either the sugared or de-sugared versions if we do a little bit of work on our part to make this happen.&#160; Let’s see how we implement this behavior to get what we want:</p>
+<div style="font-family: courier new"><span style="color: green">// Sugared syntax</span>     <br /><span style="color: blue">let</span> maybe = <span style="color: blue">new</span> MaybeBuilder<span style="color: blue">(</span><span style="color: blue">)</span>     <br /><span style="color: blue">let</span> employeeCurrency&#8217; name =     <br />&#160; maybe <span style="color: blue">{</span>&#160;<span style="color: blue">let</span>! dept = Map<span style="color: blue">.</span>tryfind name employeeDept     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">let</span>! country = Map<span style="color: blue">.</span>tryfind dept deptCountry     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">return</span>! Map<span style="color: blue">.</span>tryfind country countryCurrency     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span style="color: blue">}</span>     <br />&#160;&#160; <br /><span style="color: blue">let</span> johnCurrency&#8217; =&#160; <br />&#160; sprintf <span style="color: maroon">&quot;John&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency&#8217; <span style="color: maroon">&quot;John&quot;</span><span style="color: blue">)</span>     <br /><span style="color: blue">let</span> peteCurrency&#8217; =&#160; <br />&#160; sprintf <span style="color: maroon">&quot;Pete&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency&#8217; <span style="color: maroon">&quot;Pete&quot;</span><span style="color: blue">)</span>&#160;&#160;&#160;&#160; <br />&#160;&#160; <br /><span style="color: green">// Desugared syntax</span>     <br /><span style="color: blue">let</span> flip f x y =&#160; f y x     <br /><span style="color: blue">let</span>&#160;<span style="color: blue">(</span>&gt;&gt;=<span style="color: blue">)</span> = bindM     <br /><span style="color: blue">let</span> employeeCurrency&#8221; name =     <br />&#160; <span style="color: blue">let</span> lookup = flip Map<span style="color: blue">.</span>tryfind     <br />&#160; lookup employeeDept name &gt;&gt;= lookup deptCountry &gt;&gt;= lookup countryCurrency&#160; <br />&#160;&#160;&#160;&#160;&#160; <br /><span style="color: blue">let</span> johnCurrency&#8221; = sprintf <span style="color: maroon">&quot;John&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency&#8221; <span style="color: maroon">&quot;John&quot;</span><span style="color: blue">)</span>&#160; <br /><span style="color: blue">let</span> peteCurrency&#8221; = sprintf <span style="color: maroon">&quot;Pete&#8217;s currency: %A&quot;</span>&#160;<span style="color: blue">(</span>employeeCurrency&#8221; <span style="color: maroon">&quot;Pete&quot;</span><span style="color: blue">)</span>&#160; </div>
+<div style="font-family: courier new">&#160;</div>
+<p>This gives us the flexibility we need as programmers to use whichever abstraction we see fit.&#160; Unfortunately, due to type classes not really being something you can easily do in F#, we had to take some liberties with the bind operator and so on.&#160; As an imperative programmer, the sugared syntax makes absolute sense about what I’m trying to accomplish.&#160; It reads much like a script and to not have to worry about the noise associated with nested if statements littering the codebase.</p>
+<p>And yes, you could use the lessons from my <a href="http://code.msdn.microsoft.com/FunctionalCSharp">Functional C# libraries</a> on MSDN Code Gallery to also implement this in C#, as I’ve covered in the past.&#160; With the careful use of extension methods and a little know how, you too can write LINQ statements such as this to determine whether an employee’s currency can be found.&#160; As I’ve said earlier, you can use the LINQ syntax to do things that don’t deal with collections at all, such as this:</p>
+<div style="font-family: courier new"><span style="color: blue">public</span>&#160;<span style="color: blue">static</span> Maybe&lt;<span style="color: blue">string</span>&gt; GetEmployeeCurrency(<span style="color: blue">string</span> name)     <br />{     <br />&#160;&#160;&#160; <span style="color: blue">return</span>&#160;<font color="#0000ff">from</font> dept <span style="color: blue">in</span> employeeDept.TryFind(name)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">from</font> country <span style="color: blue">in</span> deptCountry.TryFind(dept)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">from</font> currency <span style="color: blue">in</span> countryCurrency.TryFind(country)     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">select</font> currency;     <br />}</div>
+<div style="font-family: courier new">&#160;</div>
+<p>The more you keep working with these abstractions, the more you’ll understand how to use them and where they apply.&#160; For further reading, I always recommend the Real World Haskell book which goes over these design patterns in detail.</p>
+<p>&#160;</p>
+<h2>Conclusion</h2>
+<p>Now, I think through this careful exploration, you may have a better understanding of these design patterns or at least how you might be able to abstract some sort of uniform complexity.&#160; There’s more to these patterns than just the maybe, as there’s the ever so familiar list and error, but also some interesting ones that are unique to F# in the async “workflow”.&#160; What I’m really trying to drive home here is that ideas from functional programming aren’t just for guys in lab coats or those at the universities, but for general line of business developers as well.&#160; Stepping out of that comfort zone that is C# or VB and into a more functional language will give you a greater appreciation of different styles and improve your day to day coding.</p>
+<div class="shr-publisher-104"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/f/" title="View all posts in F#" rel="category tag">F#</a>, <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2009/01/28/much-ado-about-monads-maybe-edition/" title="Permalink to Much Ado About Monads – Maybe Edition" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2009/01/28/much-ado-about-monads-maybe-edition/feed/" title="Comments RSS to Much Ado About Monads – Maybe Edition" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-104 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2009/01/20/functional-programming-unit-testing-using-type-classes/" rel="prev"><span class="meta-nav">&larr;</span> Functional Programming Unit Testing – Using Type Classes</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2009/01/29/functional-programming-unit-testing-part-7/" rel="next">Functional Programming Unit Testing – Part 7 <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-259">
+                    <div id="dsq-comment-header-259" class="dsq-comment-header">
+                        <cite id="dsq-cite-259">
+                                <span id="dsq-author-user-259">Omer Mor</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-259" class="dsq-comment-body">
+                        <div id="dsq-comment-message-259" class="dsq-comment-message"><p>If performance is not an issue, or if the lookup is expected to succeed most of the time, I&#8217;d write the code in the following much more intent revealing way:</p>
+<p>public static string GetEmployeeCurrency(string name)<br />
+{<br />
+    try<br />
+    {<br />
+        var dept = employeeDept[name];<br />
+        var country = deptCountry[dept];<br />
+        return countryCurrency[country];<br />
+    }<br />
+    catch<br />
+    {<br />
+        return null;<br />
+    }<br />
+}</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-260">
+                    <div id="dsq-comment-header-260" class="dsq-comment-header">
+                        <cite id="dsq-cite-260">
+    http://podwysocki.codebetter.com                            <span id="dsq-author-user-260">Matthew.Podwysocki</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-260" class="dsq-comment-body">
+                        <div id="dsq-comment-message-260" class="dsq-comment-message"><p>@Omer,</p>
+<p>Yes, that is a viable solution, but still the fun of dealing with the exception.  Otherwise I have that option wittled away for free.  Note that it doesn&#8217;t apply to C# as much as it does to Haskell and F# in terms of monads but still curious that C# can do some of it.</p>
+<p>Matt</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-261">
+                    <div id="dsq-comment-header-261" class="dsq-comment-header">
+                        <cite id="dsq-cite-261">
+                                <span id="dsq-author-user-261">Rob</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-261" class="dsq-comment-body">
+                        <div id="dsq-comment-message-261" class="dsq-comment-message"><p>I found this post via a link at artima.com, so I don&#8217;t follow it and don&#8217;t know your intended audience. However, having no knowledge of Haskell or F#, your solution to the C# approach is almost useless to me. I think I understand you to be creating some sort of a type that implicitly short circuits multi-step lookups, at least for your example, but it was difficult to follow the solution and I have no idea how, or whether, it can be mapped to C# or other imperative languages.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-262">
+                    <div id="dsq-comment-header-262" class="dsq-comment-header">
+                        <cite id="dsq-cite-262">
+    http://podwysocki.codebetter.com                            <span id="dsq-author-user-262">Matthew.Podwysocki</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-262" class="dsq-comment-body">
+                        <div id="dsq-comment-message-262" class="dsq-comment-message"><p>@Rob,</p>
+<p>It can be mapped to imperative languages.  Perhaps this was more of a clumsy way of approaching understanding monads for an imperative programmer.  In the next post, I hope to rectify that situation by covering a monad you&#8217;re already probably using, the List monad.</p>
+<p>Matt</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/matthewpodwysocki/2009/01/28/much-ado-about-monads-maybe-edition/';
+    var disqus_identifier = '104 /blogs/matthew.podwysocki/archive/2009/01/28/much-ado-about-monads-maybe-edition.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'matthewpodwysocki';
+    var disqus_title = "Much Ado About Monads – Maybe Edition";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=104');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2009\/01\/28\/much-ado-about-monads-maybe-edition\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.482 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 18:13:54 -->
+<!-- super cache -->

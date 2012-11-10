@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Wrapping up nHibernate in repositories | Peter van Ooijen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/petervanooijen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/petervanooijen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Wrapping up nHibernate' href='http://codebetter.com/petervanooijen/2008/03/26/wrapping-up-nhibernate/' />
+<link rel='next' title='Jimmy Nilsson is coming to the Netherlands' href='http://codebetter.com/petervanooijen/2008/04/07/jimmy-nilsson-is-coming-to-the-netherlands/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/petervanooijen/?p=533' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,147] -->
+<link rel="canonical" href="http://codebetter.com/petervanooijen/2008/04/04/wrapping-up-nhibernate-in-repositories/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-533" class="post-533 post type-post status-publish format-standard hentry category-coding category-data category-featured">
+					<h1 class="entry-title">Wrapping up nHibernate in repositories</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/petervanooijen/author/petervanooijen/" title="View all posts by Peter van Ooijen">Peter van Ooijen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/petervanooijen/2008/04/04/wrapping-up-nhibernate-in-repositories/" title="7:46 pm" rel="bookmark"><span class="entry-date">April 4, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/petervanooijen/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/petervanooijen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><P>In <A href="http://codebetter.com/blogs/peter.van.ooijen/archive/2008/03/26/wrapping-up-nhibernate.aspx">my last post</A> I discussed wrapping up the two core objects of nHibernate, the session<STRIKE>manager</STRIKE>factory and the session, in a helper class. At the end of the story I briefly mentioned how to use helper objects in a repository. In this post I am further exploring the actual database actions of the helper and how this helper can be used in real repositories in a &#8220;regular&#8221; DDD style. Again, don&#8217;t take this as <EM>the</EM> way to do things. The web is covered with a lot of ways to get that done and there are several tools available. This is just a minimalistic way which works well for me and does demonstrate some programming ideas. Feel free to comment. </P><br />
+<P>The <A href="http://codebetter.com/blogs/peter.van.ooijen/archive/2008/03/26/wrapping-up-nhibernate.aspx">previous post</A> discussed a way to manage nHibernate sessions. All data operations are performed on such a session. The major operations are described in this interface </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>interface</SPAN><SPAN> </SPAN><SPAN>INhibernateHelper</SPAN><SPAN> : </SPAN><SPAN>IDisposable</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> Query(</SPAN><SPAN>string</SPAN><SPAN> query); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; T UniqueResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IList</SPAN><SPAN>&lt;T&gt; ListResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IEnumerable</SPAN><SPAN>&lt;T&gt; EnumerateResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN><SPAN> BeginTransAction(); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN><SPAN> Commit(); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN><SPAN> Save(</SPAN><SPAN>object</SPAN><SPAN> dObject); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>void</SPAN><SPAN> Delete(</SPAN><SPAN>object</SPAN><SPAN> o); </SPAN></SPAN></P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>The main reason for describing the functionality as an interface lies in testing; an interface is relatively easy to mock. </P><br />
+<P>The members which return data are defined as generic methods; this gives me the luxury of strongly typed data. At first sight it might be tempting to make the interface itself generic, that is: </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>interface</SPAN><SPAN> </SPAN><SPAN>INhibernateHelper</SPAN><SPAN>&lt;T&gt; : </SPAN><SPAN>IDisposable</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; T UniqueResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query); </SPAN></SPAN></P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>But that will backfire when implementing the interface. To manage a shared sessionfactory I am using a static constructor. As every specific type instance of a generic class fires its own specific static constructor the sessionfactory can no longer be shared over different classes. Having only the methods themselves generic will do. </P><br />
+<P>When it comes to writing to the database it is important to realize the way nHibernate works. Invoking <EM>Save</EM> or <EM>Delete</EM> will not immediately persist that data. It takes the session&#8217;s <EM>Flush</EM> method to trigger that. When flushing the data your objects will not always be persisted in the same order as the <EM>Save</EM> and <EM>Delete</EM> invocations. Things are further complicated because nHibernate will sometimes perform an implicit flush when querying to prevent returning stale data. </P><br />
+<P>On a session you can start a transaction but you can only start one transaction on every session. In my implementation of transactions I&#8217;m very forgiving. <EM>BeginTransaction</EM> can be invoked again and again; the first invocation will start the nHibernate transaction. A <EM>Commit</EM> is always honored; in case no transaction was started the helper will just flush the data. </P><br />
+<P>The main things when implementing all members is to take care of exceptions. A session cannot recover from an exception. In case you hit one the only solution is to close the session. </P><br />
+<P><SPAN><SPAN>internal</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> </SPAN><SPAN>NhibernateHelper</SPAN><SPAN> : </SPAN><SPAN>INhibernateHelper</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>ISessionFactory</SPAN><SPAN> sessionFactory; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>static</SPAN><SPAN> NhibernateHelper() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>Configuration</SPAN><SPAN> cfg = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>Configuration</SPAN><SPAN>(); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IDictionary</SPAN><SPAN> props = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>Hashtable</SPAN><SPAN>(); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; props.Add(</SPAN><SPAN>&#8220;hibernate.dialect&#8221;</SPAN><SPAN>, </SPAN><SPAN>&#8220;NHibernate.Dialect.MsSql2000Dialect&#8221;</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; props.Add(</SPAN><SPAN>&#8220;hibernate.connection.provider&#8221;</SPAN><SPAN>, </SPAN><SPAN>&#8220;NHibernate.Connection.DriverConnectionProvider&#8221;</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; props.Add(</SPAN><SPAN>&#8220;hibernate.connection.connection_string&#8221;</SPAN><SPAN>, </SPAN><SPAN>nHibernateConnectionHelper</SPAN><SPAN>.connectionString); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cfg.SetProperties(props); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cfg.AddAssembly(</SPAN><SPAN>nHibernateConnectionHelper</SPAN><SPAN>.domainAssembly); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sessionFactory = cfg.BuildSessionFactory(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> connectionString </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>Type</SPAN><SPAN> typeOfConnectionProvider = </SPAN><SPAN>typeof</SPAN><SPAN> (NHibernate.Connection.</SPAN><SPAN>DriverConnectionProvider</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>PropertyInfo</SPAN><SPAN> ConnectionStringPropertyInfo = typeOfConnectionProvider.GetProperty(</SPAN><SPAN>&#8220;ConnectionString&#8221;</SPAN><SPAN>, </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>BindingFlags</SPAN><SPAN>.Instance | </SPAN><SPAN>BindingFlags</SPAN><SPAN>.NonPublic); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> (</SPAN><SPAN>string</SPAN><SPAN>) ConnectionStringPropertyInfo.GetValue(sessionFactory.ConnectionProvider, </SPAN><SPAN>null</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>ISession</SPAN><SPAN> currentSession; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>internal</SPAN><SPAN> NhibernateHelper() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (</SPAN><SPAN>string</SPAN><SPAN>.IsNullOrEmpty(</SPAN><SPAN>nHibernateConnectionHelper</SPAN><SPAN>.connectionString)) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>Exception</SPAN><SPAN>(</SPAN><SPAN>&#8220;Sessionfactory needs a connectionstring&#8221;</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (</SPAN><SPAN>nHibernateConnectionHelper</SPAN><SPAN>.connectionString != connectionString) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>Exception</SPAN><SPAN>(</SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;Sessionfactory connection allready initialized as {0}&#8221;</SPAN><SPAN>,connectionString)); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession = sessionFactory.OpenSession(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>ITransaction</SPAN><SPAN> tx = </SPAN><SPAN>null</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> BeginTransAction() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (tx == </SPAN><SPAN>null</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tx = currentSession.BeginTransaction(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Commit() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (tx == </SPAN><SPAN>null</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Flush(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN>(</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>else</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tx.Commit(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tx.Rollback(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>finally</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tx = </SPAN><SPAN>null</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>IQuery</SPAN><SPAN> Query(</SPAN><SPAN>string</SPAN><SPAN> query) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> currentSession.CreateQuery(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> CloseSession() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Save(</SPAN><SPAN>object</SPAN><SPAN> dObject) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.SaveOrUpdate(dObject); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Delete(</SPAN><SPAN>object</SPAN><SPAN> o) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Delete(o); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Dispose() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Dispose(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> T UniqueResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> query.UniqueResult&lt;T&gt;(); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> System.Collections.Generic.</SPAN><SPAN>IList</SPAN><SPAN>&lt;T&gt; ListResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> query.List&lt;T&gt;(); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> System.Collections.Generic.</SPAN><SPAN>IEnumerable</SPAN><SPAN>&lt;T&gt; EnumerateResult&lt;T&gt;(</SPAN><SPAN>IQuery</SPAN><SPAN> query) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>try</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> query.Enumerable&lt;T&gt;(); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>catch</SPAN><SPAN> (</SPAN><SPAN>Exception</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; currentSession.Close(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>throw</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>When hitting an exception all this helper does is clean up after which it rethrows the exception, it&#8217;s up to its user to take further action. </P><br />
+<P>All database interaction through nHibernate is now stuffed in this helper class. It can be used by a generic repository. </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> </SPAN><SPAN>Repository</SPAN><SPAN>&lt;T&gt; </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>INhibernateHelper</SPAN><SPAN> hibernate; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> className; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> Repository(</SPAN><SPAN>INhibernateHelper</SPAN><SPAN> hibernate) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; className = </SPAN><SPAN>typeof</SPAN><SPAN>(T).Name; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>this</SPAN><SPAN>.hibernate = hibernate; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>IQuery</SPAN><SPAN> BuildQuery(</SPAN><SPAN>string</SPAN><SPAN> queryString) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.Query(</SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0} where {1}&#8221;</SPAN><SPAN>, className, queryString)); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>IList</SPAN><SPAN>&lt;T&gt; ListAll(</SPAN><SPAN>string</SPAN><SPAN> orderBy) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> queryString = </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0} order by {1}&#8221;</SPAN><SPAN>, className, orderBy); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> query = hibernate.Query(queryString); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.ListResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>IEnumerable</SPAN><SPAN>&lt;T&gt; EnumerateAll() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> queryString = </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0}&#8221;</SPAN><SPAN>, className); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> query = hibernate.Query(queryString); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.EnumerateResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>IEnumerable</SPAN><SPAN>&lt;T&gt; EnumerateInPeriod(</SPAN><SPAN>string</SPAN><SPAN> propertyName, </SPAN><SPAN>DateTime</SPAN><SPAN> from, </SPAN><SPAN>DateTime</SPAN><SPAN> till) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (from == </SPAN><SPAN>DateTime</SPAN><SPAN>.MinValue) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; from = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>DateTime</SPAN><SPAN>(1753, 1, 1); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (till == </SPAN><SPAN>DateTime</SPAN><SPAN>.MaxValue) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; till = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>DateTime</SPAN><SPAN>(9999, 12, 31); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> queryString = </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0} where {1} &gt;= ? and&nbsp; {1} &lt; ?&#8221;</SPAN><SPAN>, className, propertyName); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> query = hibernate.Query(queryString); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; query.SetDateTime(0, from); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; query.SetDateTime(1, till); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.EnumerateResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> T FindUnique(</SPAN><SPAN>string</SPAN><SPAN> propertyName, </SPAN><SPAN>string</SPAN><SPAN> propertyValue) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> queryString = </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0} where {1}=?&#8221;</SPAN><SPAN>, className, propertyName); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> query = hibernate.Query(queryString); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; query.SetString(0, propertyValue); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.UniqueResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> T FindUnique(</SPAN><SPAN>string</SPAN><SPAN> propertyName, </SPAN><SPAN>long</SPAN><SPAN> propertyValue) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> queryString = </SPAN><SPAN>string</SPAN><SPAN>.Format(</SPAN><SPAN>&#8220;from {0} where {1}=?&#8221;</SPAN><SPAN>, className, propertyName); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IQuery</SPAN><SPAN> query = hibernate.Query(queryString); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; query.SetInt64(0, propertyValue); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.UniqueResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> T FindUnique(</SPAN><SPAN>IQuery</SPAN><SPAN> query) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> hibernate.UniqueResult&lt;T&gt;(query); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Save(T domainObject) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hibernate.Save(domainObject); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>The repository receives the helper in its constructor. In a test scenario I can inject mocked persistence here. My repository has methods to retrieve and update data. Quite straightforward ones like <EM>ListAll</EM> and more fancy ones like <EM>EnumerateInPeriod</EM>. It&#8217;s up to you to fulfill your specific needs. To build the hibernate queries the name of the class is needed. In the constructor this name is pulled from the Type parameter. </P><br />
+<P>Here&#8217;s an example how to use this repository. Given this domain class: </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> </SPAN><SPAN>School</SPAN><SPAN> : </SPAN><SPAN>ValidatableDomainObject</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> id; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> omschrijving; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> noSchool = </SPAN><SPAN>&#8220;Geen binding&#8221;</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>virtual</SPAN><SPAN> </SPAN><SPAN>int</SPAN><SPAN> Id </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> id; } </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN><SPAN> { id = </SPAN><SPAN>value</SPAN><SPAN>; } </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>virtual</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> Omschrijving </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> omschrijving; } </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN><SPAN> { omschrijving = </SPAN><SPAN>value</SPAN><SPAN>; } </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> NoSchool </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> noSchool; } </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN><SPAN> { noSchool = </SPAN><SPAN>value</SPAN><SPAN>; } </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>protected</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> DoValidate(</SPAN><SPAN>RepositoryManager</SPAN><SPAN> repositoryManager) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; validateExpression(!</SPAN><SPAN>string</SPAN><SPAN>.IsNullOrEmpty(omschrijving), </SPAN><SPAN>&#8220;Naam school ontbreekt&#8221;</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>A simple class with some properties and it does validation. A repository for this class will now look like: </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> </SPAN><SPAN>SchoolRepository</SPAN><SPAN> : </SPAN><SPAN>Repository</SPAN><SPAN>&lt;</SPAN><SPAN>School</SPAN><SPAN>&gt; </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> SchoolRepository(</SPAN><SPAN>INhibernateHelper</SPAN><SPAN> hibernate) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; : </SPAN><SPAN>base</SPAN><SPAN>(hibernate) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>School</SPAN><SPAN> OpAfkorting(</SPAN><SPAN>string</SPAN><SPAN> afkorting) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> FindUnique(</SPAN><SPAN>&#8220;omschrijving&#8221;</SPAN><SPAN>, afkorting); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>School</SPAN><SPAN> GeenBinding() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> OpAfkorting(</SPAN><SPAN>School</SPAN><SPAN>.NoSchool); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>No big deal; there are two School specific members. The base Repository class does the hard work. </P><br />
+<P>Now I can create a repository for every domain class in the application. To manage all of these the app needs a <EM>RepositoryManager</EM>. This class takes care of creating the hibernate helper and creating specific repositories on demand. This example is a part of such a manager; for the sake of demo it only includes two repositories. All others will follow exactly the same pattern. </P><br />
+<P><SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> </SPAN><SPAN>RepositoryManager</SPAN><SPAN> : </SPAN><SPAN>IDisposable</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> dbConnection = </SPAN><SPAN>&#8220;&#8221;</SPAN><SPAN>; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> DbConnection </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> { </SPAN><SPAN>return</SPAN><SPAN> dbConnection; } </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>set</SPAN><SPAN> { dbConnection = </SPAN><SPAN>value</SPAN><SPAN>; } </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>INhibernateHelper</SPAN><SPAN> nhHelper; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>PersoneelRepository</SPAN><SPAN> personeel; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>SchoolRepository</SPAN><SPAN> school; </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> RepositoryManager() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>string</SPAN><SPAN> assemblyName = </SPAN><SPAN>Assembly</SPAN><SPAN>.GetExecutingAssembly().FullName; </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nhHelper = </SPAN><SPAN>NhibernateHelperFactory</SPAN><SPAN>.CreateHelper(dbConnection, assemblyName); </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> BeginTransAction() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nhHelper.BeginTransAction(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Commit() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nhHelper.Commit(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>PersoneelRepository</SPAN><SPAN> Personeel </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (personeel == </SPAN><SPAN>null</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; personeel = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>PersoneelRepository</SPAN><SPAN>(nhHelper); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> personeel; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>SchoolRepository</SPAN><SPAN> School </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>get</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (school == </SPAN><SPAN>null</SPAN><SPAN>) </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; school = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>SchoolRepository</SPAN><SPAN>(nhHelper); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>return</SPAN><SPAN> school; </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; #region</SPAN><SPAN> IDisposable Members </SPAN></SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> Dispose() </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nhHelper.Dispose(); </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P>&nbsp;&nbsp; </P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; #endregion</SPAN><SPAN> </SPAN></SPAN></P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>To store the database connection string there is a static member. On application setup it has to be initialized just once. The constructor uses the helperfactory discussed in the <A href="http://codebetter.com/blogs/peter.van.ooijen/archive/2008/03/26/wrapping-up-nhibernate.aspx">previous post</A>. This manager is in the domain assembly which also contains the hibernate mappings themselves; the name of that assembly is needed for the nHibernate configuration and can be read using the <EM>GetExcutingAssembly</EM> method. </P><br />
+<P>The repositories all share the same session wrapped up in the helper. Transactions are managed at this level. And so a transaction easily spans objects from several domain classes. The helper has to be disposed to clean up the session. The repository manager implements <EM>Idisposable</EM> and will clean up the helper in its implementation of <EM>Dispose</EM>. </P><br />
+<P>Let&#8217;s see it in action </P><br />
+<P><SPAN><SPAN>using</SPAN><SPAN>(</SPAN><SPAN>RepositoryManager</SPAN><SPAN> repoManager = </SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>RepositoryManager</SPAN><SPAN>()) </SPAN></SPAN></P><br />
+<P><SPAN>{ </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; repoManager.BeginTransAction(); </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>School</SPAN><SPAN> mySchool = repoManager.School.OpAfkorting(</SPAN><SPAN>&#8220;BADM&#8221;</SPAN><SPAN>); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>IEnumerable</SPAN><SPAN>&lt;</SPAN><SPAN>Personeel</SPAN><SPAN>&gt; persList = repoManager.Personeel.EnumerateAll(); </SPAN></SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp; </SPAN><SPAN>foreach</SPAN><SPAN> (</SPAN><SPAN>Personeel</SPAN><SPAN> personeel </SPAN><SPAN>in</SPAN><SPAN> persList) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><SPAN>if</SPAN><SPAN> (personeel.IsValid(repoManager) &amp;&amp; (personeel.UitDienst)) </SPAN></SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; { </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; personeel.VerbondenAanSchool = mySchool; </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; repoManager.Personeel.Save(personeel);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; } </SPAN></P><br />
+<P><SPAN>&nbsp;&nbsp;&nbsp; repoManager.Commit(); </SPAN></P><br />
+<P><SPAN>} </SPAN></P><br />
+<P>In one transaction I update all &#8220;personeel&#8221; which meets certain criteria. Note that I pass the repository-manager to the validation method. The validation can use it to do things like data look up. </P><br />
+<P>Well that&#8217;s about it. I do hope this provided you with some insights on a way to use nHibernate in a DDD project.</P></p>
+<div class="shr-publisher-533"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/petervanooijen/category/coding/" title="View all posts in Coding" rel="category tag">Coding</a>, <a href="http://codebetter.com/petervanooijen/category/data/" title="View all posts in Data" rel="category tag">Data</a>, <a href="http://codebetter.com/petervanooijen/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/petervanooijen/2008/04/04/wrapping-up-nhibernate-in-repositories/" title="Permalink to Wrapping up nHibernate in repositories" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/petervanooijen/2008/04/04/wrapping-up-nhibernate-in-repositories/feed/" title="Comments RSS to Wrapping up nHibernate in repositories" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-533 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/petervanooijen/2008/03/26/wrapping-up-nhibernate/" rel="prev"><span class="meta-nav">&larr;</span> Wrapping up nHibernate</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/petervanooijen/2008/04/07/jimmy-nilsson-is-coming-to-the-netherlands/" rel="next">Jimmy Nilsson is coming to the Netherlands <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-2591">
+                    <div id="dsq-comment-header-2591" class="dsq-comment-header">
+                        <cite id="dsq-cite-2591">
+                                <span id="dsq-author-user-2591">Doug</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-2591" class="dsq-comment-body">
+                        <div id="dsq-comment-message-2591" class="dsq-comment-message"><p>Yet another example of perpetuating the cycle of untestable internal classes. <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_wink.gif' alt=';)' class='wp-smiley' />   Otherwise, a very good example.  There has been some work by Ayende and Bobby Diaz on NHibernate.Linq available in the rhino-tools project that is along these lines (also following the Unit of Work wrapper pattern).</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-2592">
+                    <div id="dsq-comment-header-2592" class="dsq-comment-header">
+                        <cite id="dsq-cite-2592">
+    http://codebetter.com/blogs/peter.van.ooijen/                            <span id="dsq-author-user-2592">pvanooijen</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-2592" class="dsq-comment-body">
+                        <div id="dsq-comment-message-2592" class="dsq-comment-message"><p>Would changing the nHibernateHelper class &#8216;s visibility to public make it more testable ? The Helperfactory, which returns an nHibernatehelper object, is public. As used in the promanagers&#8217;s constructor<br />
+nhHelper = NhibernateHelperFactory.CreateHelper(dbConnection, assemblyName); </p>
+<p>I&#8217;ve loads of test on that. The main things I test there are the db, the mappings and hibernates interaction with it.</p>
+<p>An interface to the helper is used by the rpository part, this is mockable to test the repositories themseleves.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-2593">
+                    <div id="dsq-comment-header-2593" class="dsq-comment-header">
+                        <cite id="dsq-cite-2593">
+                                <span id="dsq-author-user-2593">Paul Cowan</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-2593" class="dsq-comment-body">
+                        <div id="dsq-comment-message-2593" class="dsq-comment-message"><p>I use Castle&#8217;s Nhibernate facility to wrap up my session management.  It also has an HTTPModule that can be plugged in.</p>
+<p>I really like it.</p>
+<p>I&#8217;ve never seen a blog post that demonstrated it.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-2594">
+                    <div id="dsq-comment-header-2594" class="dsq-comment-header">
+                        <cite id="dsq-cite-2594">
+    http://geekswithblogs.net/mhildreth/Default.aspx                            <span id="dsq-author-user-2594">Mark Hildreth</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-2594" class="dsq-comment-body">
+                        <div id="dsq-comment-message-2594" class="dsq-comment-message"><p>You start off..</p>
+<p>&#8220;In my last post I discussed wrapping up the two core objects of nHibernate, the sessionmanager and the session, in a helper class.&#8221;</p>
+<p>I&#8217;m assuming you meant SessionFactory rather than SessionManager?</p>
+<p>In any case, I&#8217;ve found that using the SessionManager from Castle works well for me, especially when you consider that I have a few computers using SQL Express, which requires a changed connection string. Thus, my nant build system can alleviate this problem by injecting the connection string into an XML file.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-3234">
+                    <div id="dsq-comment-header-3234" class="dsq-comment-header">
+                        <cite id="dsq-cite-3234">
+    http://www.webdeveloperconnections.com/2011/09/27/yet-another-nhibernate-sessionmanager-for-asp-net-mvc/                            <span id="dsq-author-user-3234">&#124; Blog &#124; (Yet another) nHibernate sessionmanager for ASP.NET (MVC)</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-3234" class="dsq-comment-body">
+                        <div id="dsq-comment-message-3234" class="dsq-comment-message"><p>[...] is a subject to many a blog post, forum question or overflowing stack. Having already made a contibution before, I am nevertheless going to add another go at it combining all I’ve met and trying to find [...]</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/petervanooijen/2008/04/04/wrapping-up-nhibernate-in-repositories/';
+    var disqus_identifier = '533 /blogs/peter.van.ooijen/archive/2008/04/04/wrapping-up-nhibernate-in-repositories.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'codebetterpetergekkosblog';
+    var disqus_title = "Wrapping up nHibernate in repositories";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=533');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+            {
+                'author_name':    "&#124; Blog &#124; (Yet another) nHibernate sessionmanager for ASP.NET (MVC)",
+                'author_url':    "http:\/\/www.webdeveloperconnections.com\/2011\/09\/27\/yet-another-nhibernate-sessionmanager-for-asp-net-mvc\/",
+                'date':            "09\/27\/2011 04:18 PM",
+                'excerpt':        "[...] is a subject to many a blog post, forum question or overflowing stack. Having already made a contibution before, ...",
+                'type':            "pingback"            }
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/petervanooijen\/2008\/04\/04\/wrapping-up-nhibernate-in-repositories\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title">Small bio</h3><div class="ub-grav" style="margin:5px 5px 0px 5px;float: none;"><img alt='' src='http://1.gravatar.com/avatar/5cb0e972c5e405e6bff7e7f2da237c6d?s=96&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D96&amp;r=G' class='avatar avatar-96 photo' height='96' width='96' /></div>
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+					<li id="tag_cloud-3" class="widget-container widget_tag_cloud"><h3 class="widget-title">Post categories</h3><div class="tagcloud"><a href='http://codebetter.com/petervanooijen/category/asp-net/' class='tag-link-1725' title='68 topics' style='font-size: 16.299401197605pt;'>ASP.NET</a>
+<a href='http://codebetter.com/petervanooijen/category/chatter/' class='tag-link-6709' title='69 topics' style='font-size: 16.383233532934pt;'>Chatter</a>
+<a href='http://codebetter.com/petervanooijen/category/coding/' class='tag-link-6706' title='49 topics' style='font-size: 15.125748502994pt;'>Coding</a>
+<a href='http://codebetter.com/petervanooijen/category/data/' class='tag-link-6708' title='46 topics' style='font-size: 14.874251497006pt;'>Data</a>
+<a href='http://codebetter.com/petervanooijen/category/featured/' class='tag-link-1356' title='6 topics' style='font-size: 8pt;'>Featured</a>
+<a href='http://codebetter.com/petervanooijen/category/hardware/' class='tag-link-4927' title='13 topics' style='font-size: 10.51497005988pt;'>Hardware</a>
+<a href='http://codebetter.com/petervanooijen/category/mobile/' class='tag-link-6712' title='14 topics' style='font-size: 10.766467065868pt;'>Mobile</a>
+<a href='http://codebetter.com/petervanooijen/category/outofcontrol/' class='tag-link-6705' title='13 topics' style='font-size: 10.51497005988pt;'>Out+of+control</a>
+<a href='http://codebetter.com/petervanooijen/category/tabletpc/' class='tag-link-6707' title='45 topics' style='font-size: 14.790419161677pt;'>Tablet+PC</a>
+<a href='http://codebetter.com/petervanooijen/category/uncategorized/' class='tag-link-1044' title='331 topics' style='font-size: 22pt;'>Uncategorized</a>
+<a href='http://codebetter.com/petervanooijen/category/usergroupsandmeetings/' class='tag-link-6711' title='25 topics' style='font-size: 12.694610778443pt;'>User+groups+and+meetings</a></div>
+</li>		<li id="recent-posts-3" class="widget-container widget_recent_entries">		<h3 class="widget-title">Recent Posts</h3>		<ul>
+				<li><a href="http://codebetter.com/petervanooijen/2012/10/25/a-crash-course-into-mac-recovery-for-windows-users-and-other-dummies/" title="A crash course into Mac recovery for Windows users and other dummies">A crash course into Mac recovery for Windows users and other dummies</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2012/09/23/facebooks-experience-sucks-comments-of-an-app-builder-on-projectxharen/" title="Facebook&rsquo;s experience sucks (Comments of an app-builder on #ProjectXHaren)">Facebook&rsquo;s experience sucks (Comments of an app-builder on #ProjectXHaren)</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2012/09/14/domain-model-over-database-schema-using-fluent-nhibernate-to-generate-the-database/" title="Domain Model over Database Schema. Using fluent nHibernate to generate the database">Domain Model over Database Schema. Using fluent nHibernate to generate the database</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2012/07/20/small-digital-disappointments/" title="(Small) digital disappointments">(Small) digital disappointments</a></li>
+				<li><a href="http://codebetter.com/petervanooijen/2011/12/28/what-we-did-on-our-holidays-a-classic-guitar-an-ipad-fender-and-irig-2/" title="What we did on our holidays: a classic guitar, an iPad, Fender and iRig">What we did on our holidays: a classic guitar, an iPad, Fender and iRig</a></li>
+				</ul>
+		</li><li id="linkcat-1046" class="widget-container widget_links"><h3 class="widget-title">Blogroll</h3>
+	<ul class='xoxo blogroll'>
+<li><a href="http://www.Gekko-Software.nl" title="Website Gekko Software">My company</a></li>
+
+	</ul>
+</li>
+<li id="archives-2" class="widget-container widget_archive"><h3 class="widget-title">Post archive</h3>		<ul>
+			<li><a href='http://codebetter.com/petervanooijen/2012/10/' title='October 2012'>October 2012</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2012/09/' title='September 2012'>September 2012</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2012/07/' title='July 2012'>July 2012</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/12/' title='December 2011'>December 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/11/' title='November 2011'>November 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/10/' title='October 2011'>October 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/09/' title='September 2011'>September 2011</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/08/' title='August 2011'>August 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/07/' title='July 2011'>July 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/03/' title='March 2011'>March 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/02/' title='February 2011'>February 2011</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2011/01/' title='January 2011'>January 2011</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/12/' title='December 2010'>December 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/11/' title='November 2010'>November 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/10/' title='October 2010'>October 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/09/' title='September 2010'>September 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/08/' title='August 2010'>August 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/07/' title='July 2010'>July 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/06/' title='June 2010'>June 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/05/' title='May 2010'>May 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/04/' title='April 2010'>April 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/03/' title='March 2010'>March 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/02/' title='February 2010'>February 2010</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2010/01/' title='January 2010'>January 2010</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/12/' title='December 2009'>December 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/11/' title='November 2009'>November 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/10/' title='October 2009'>October 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/09/' title='September 2009'>September 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/08/' title='August 2009'>August 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/07/' title='July 2009'>July 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/06/' title='June 2009'>June 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/05/' title='May 2009'>May 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/04/' title='April 2009'>April 2009</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/03/' title='March 2009'>March 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/02/' title='February 2009'>February 2009</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2009/01/' title='January 2009'>January 2009</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/12/' title='December 2008'>December 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/11/' title='November 2008'>November 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/10/' title='October 2008'>October 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/09/' title='September 2008'>September 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/08/' title='August 2008'>August 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/07/' title='July 2008'>July 2008</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/06/' title='June 2008'>June 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/05/' title='May 2008'>May 2008</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/04/' title='April 2008'>April 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/03/' title='March 2008'>March 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/02/' title='February 2008'>February 2008</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2008/01/' title='January 2008'>January 2008</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/12/' title='December 2007'>December 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/11/' title='November 2007'>November 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/10/' title='October 2007'>October 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/09/' title='September 2007'>September 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/08/' title='August 2007'>August 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/07/' title='July 2007'>July 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/06/' title='June 2007'>June 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/05/' title='May 2007'>May 2007</a>&nbsp;(1)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/04/' title='April 2007'>April 2007</a>&nbsp;(2)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/03/' title='March 2007'>March 2007</a>&nbsp;(3)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/02/' title='February 2007'>February 2007</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2007/01/' title='January 2007'>January 2007</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/12/' title='December 2006'>December 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/11/' title='November 2006'>November 2006</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/10/' title='October 2006'>October 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/09/' title='September 2006'>September 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/08/' title='August 2006'>August 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/07/' title='July 2006'>July 2006</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/06/' title='June 2006'>June 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/05/' title='May 2006'>May 2006</a>&nbsp;(6)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/04/' title='April 2006'>April 2006</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/03/' title='March 2006'>March 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/02/' title='February 2006'>February 2006</a>&nbsp;(10)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2006/01/' title='January 2006'>January 2006</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/12/' title='December 2005'>December 2005</a>&nbsp;(4)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/11/' title='November 2005'>November 2005</a>&nbsp;(7)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/10/' title='October 2005'>October 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/09/' title='September 2005'>September 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/08/' title='August 2005'>August 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/07/' title='July 2005'>July 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/06/' title='June 2005'>June 2005</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/05/' title='May 2005'>May 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/04/' title='April 2005'>April 2005</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/03/' title='March 2005'>March 2005</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/02/' title='February 2005'>February 2005</a>&nbsp;(27)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2005/01/' title='January 2005'>January 2005</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/12/' title='December 2004'>December 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/11/' title='November 2004'>November 2004</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/10/' title='October 2004'>October 2004</a>&nbsp;(11)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/09/' title='September 2004'>September 2004</a>&nbsp;(9)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/08/' title='August 2004'>August 2004</a>&nbsp;(8)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/07/' title='July 2004'>July 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/06/' title='June 2004'>June 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/05/' title='May 2004'>May 2004</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/04/' title='April 2004'>April 2004</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/03/' title='March 2004'>March 2004</a>&nbsp;(21)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/02/' title='February 2004'>February 2004</a>&nbsp;(23)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2004/01/' title='January 2004'>January 2004</a>&nbsp;(14)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/12/' title='December 2003'>December 2003</a>&nbsp;(15)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/11/' title='November 2003'>November 2003</a>&nbsp;(20)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/10/' title='October 2003'>October 2003</a>&nbsp;(30)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/09/' title='September 2003'>September 2003</a>&nbsp;(13)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/08/' title='August 2003'>August 2003</a>&nbsp;(12)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/07/' title='July 2003'>July 2003</a>&nbsp;(5)</li>
+	<li><a href='http://codebetter.com/petervanooijen/2003/06/' title='June 2003'>June 2003</a>&nbsp;(4)</li>
+		</ul>
+</li>				</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.566 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 19:09:39 -->
+<!-- super cache -->

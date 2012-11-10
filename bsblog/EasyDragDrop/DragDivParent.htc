@@ -1,0 +1,120 @@
+<PUBLIC:COMPONENT TAGNAME="DragParentDiv" LIGHTWEIGHT="true">
+
+  <PUBLIC:ATTACH EVENT="onmousedown" FOR="element" ONEVENT="setDragInfo()" />
+  <PUBLIC:ATTACH EVENT="onmousemove" FOR="element" ONEVENT="updateDragFeedback()" />
+  <PUBLIC:ATTACH EVENT="ondrag" FOR="element" ONEVENT="updateDragFeedback()" />
+  <PUBLIC:ATTACH EVENT="onmouseup" FOR="element" ONEVENT="doDragEnd()" />
+  <PUBLIC:ATTACH EVENT="ondragend" FOR="element" ONEVENT="doDragEnd()" />
+  <PUBLIC:ATTACH EVENT="ondocumentready" FOR="element" ONEVENT="positionDiv()" />
+  <PUBLIC:ATTACH EVENT="ondragover" FOR="element" ONEVENT="setHandlingType()" />
+  <PUBLIC:ATTACH EVENT="ondrop" FOR="element" ONEVENT="doDrop()" />
+
+<SCRIPT Language="JScript">
+
+var dragging = false;
+var	el;
+var offsetLeft = 0;
+var offsetTop = 0;
+
+
+// Handler for the ondragenter and ondragover events.  Must indicate 
+// weather drop is allow for the current drag operation.
+function setHandlingType() 
+{  
+	event.returnValue = false;            
+	event.dataTransfer.dropEffect = "move";  		
+}
+
+// Handler for the ondrop event.  The routine should determine
+// how to deal with the data.
+function doDrop()
+{	
+	//debugger;
+	var dragColumn = fnGetTargetInfo();
+	__doPostBack('', dragColumn + '|REMOVE_COLUMN');	
+}
+
+// Helper function.  Returns the Text component held in the
+// the dataTransfer object associated with the drag drop event.
+function fnGetTargetInfo() 
+{
+  event.returnValue = false;                           
+  event.dataTransfer.dropEffect = "move";              
+  return event.dataTransfer.getData("Text");  
+}
+
+// Handler for the ondragstart event.  Sets the values in the
+// dataTransfer object associated with the event.
+function setDragInfo() 
+{ 
+	dragging = true;
+	offsetLeft = event.offsetX + 2;
+	offsetTop = event.offsetY + 2;
+	event.cancelBubble = true;
+}
+
+function positionDiv()
+{
+	el = getParentDiv(element);
+
+	if(getCookie(el.id + "_TOP"))
+	{
+		el.style.top	= getCookie(el.id + "_TOP");
+		el.style.left	= getCookie(el.id + "_LEFT");
+	}
+}
+
+ function getParentDiv(el)
+ {
+	while((el = el.parentNode || el.parentElement) && (el.tagName != 'DIV'));
+	return el;
+}
+
+// Handler for the ondrag event.  This routine presents the IFRAME used
+// for drag feedback in the same location as the cursor.
+function updateDragFeedback()
+{	
+	// Get the frame to track the x and y of the cursor (thru the event object)
+	// Include the scroll offset in the calculation
+	if(dragging)
+	{
+		el.style.top  = event.clientY - offsetTop;
+		el.style.left = event.clientX - offsetLeft;
+	}
+}
+
+
+// Handler for the ondragend event.
+function doDragEnd()
+{
+	dragging = false;
+	setCookie(el.id + "_TOP", el.style.top);
+	setCookie(el.id + "_LEFT", el.style.left);
+}
+
+function getCookie (name) {
+	var dcookie = element.document.cookie; 
+	var cname = name + "=";
+	var clen = dcookie.length;
+	var cbegin = 0;
+    while (cbegin < clen) {
+		var vbegin = cbegin + cname.length;
+        if (dcookie.substring(cbegin, vbegin) == cname) { 
+            var vend = dcookie.indexOf (";", vbegin);
+            if (vend == -1) vend = clen;
+            return unescape(dcookie.substring(vbegin, vend));
+        }
+        
+        cbegin = dcookie.indexOf(" ", cbegin) + 1;
+        if (cbegin == 0) break;
+    }
+	return null;
+}
+
+function setCookie (name, value) {
+	element.document.cookie = name + "=" + escape (value) + "; expires=Thu, 01-Jan-10 00:00:01 GMT; path=/";
+}
+
+</SCRIPT>
+
+</PUBLIC:COMPONENT>

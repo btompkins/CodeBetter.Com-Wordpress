@@ -1,6 +1,139 @@
 <?php
 require_once 'dd-global-variable.php';
 
+//3.1 : This hook is now fired only when the user activates the plugin and not when an automatic plugin update occurs 
+////http://codex.wordpress.org/Function_Reference/register_activation_hook
+function dd_run_when_plugin_activated(){
+
+	dd_clear_form_global_config();
+	dd_clear_form_normal_display();
+	dd_clear_form_float_display();
+	
+}
+
+function dd_clear_all_forms_settings(){
+
+	dd_clear_form_global_config(DD_FUNC_TYPE_RESET);
+	dd_clear_form_normal_display(DD_FUNC_TYPE_RESET);
+	dd_clear_form_float_display(DD_FUNC_TYPE_RESET);
+	
+}
+
+function dd_clear_form_global_config($type=""){
+	
+	global $ddGlobalConfig;
+	
+	$old_ddGlobalConfig = get_option(DD_GLOBAL_CONFIG);
+	
+	if(empty($old_ddGlobalConfig) || $type==DD_FUNC_TYPE_RESET){
+		
+		//update $ddGlobalConfig to default setting
+		update_option(DD_GLOBAL_CONFIG, $ddGlobalConfig);
+		
+	}
+	
+}
+
+function dd_clear_form_normal_display($type=""){
+	
+	global $ddNormalDisplay,$ddNormalButtons;
+	
+	$dd_Old_NormalDisplay = get_option(DD_NORMAL_DISPLAY_CONFIG);
+	
+	if(empty($dd_Old_NormalDisplay) || $type==DD_FUNC_TYPE_RESET){
+
+		//update $ddNormalDisplay to default setting
+		update_option(DD_NORMAL_DISPLAY_CONFIG, $ddNormalDisplay);
+		
+	}
+	
+	$dd_Old_NormalButton = get_option(DD_NORMAL_BUTTON);
+	
+	if(empty($dd_Old_NormalButton) || $type==DD_FUNC_TYPE_RESET){
+		
+		//update $ddNormalButtons to default setting
+		update_option(DD_NORMAL_BUTTON, $ddNormalButtons);
+		
+	}
+	
+}
+
+function dd_clear_form_float_display($type=""){
+	
+	global $ddFloatDisplay,$ddFloatButtons;
+	
+	$dd_Old_FloatDisplay = get_option(DD_FLOAT_DISPLAY_CONFIG);
+	
+	if(empty($dd_Old_FloatDisplay) || $type==DD_FUNC_TYPE_RESET){
+		
+		//update $ddFloatDisplay to default setting
+		update_option(DD_FLOAT_DISPLAY_CONFIG, $ddFloatDisplay);
+		
+	}
+	
+	$dd_Old_FloatButton = get_option(DD_FLOAT_BUTTON);
+	
+	if(empty($dd_Old_FloatButton) || $type==DD_FUNC_TYPE_RESET){
+		
+		//update $ddFloatButtons to default setting
+		update_option(DD_FLOAT_BUTTON, $ddFloatButtons);
+		
+	}
+	
+}
+
+function dd_output_css_to_html()
+{
+	echo '<link rel="stylesheet" href="' . DD_PLUGIN_URL . '../css/diggdigg-style.css?ver=' . DD_VERSION . '" type="text/css" media="screen" />';
+}
+
+function dd_get_thumbnails_for_fb()
+{
+	//check ig crawl is allowed
+	$globalcfg = get_option(DD_GLOBAL_CONFIG);
+	
+	$fb_thumb = $globalcfg[DD_GLOBAL_FACEBOOK_OPTION][DD_GLOBAL_FACEBOOK_OPTION_THUMB];
+	
+	if($fb_thumb==DD_DISPLAY_ON){
+		
+		global $posts;
+		$default = $globalcfg[DD_GLOBAL_FACEBOOK_OPTION][DD_GLOBAL_FACEBOOK_OPTION_DEFAULT_THUMB];
+	
+		$content = $posts[0]->post_content;
+		$output = preg_match_all( '/<img.+src=[\'"]([^\'"]+)[\'"].*>/i', $content, $matches);
+		if ($output > 0){
+			$thumb = $matches[1][0];
+		}else{
+			$thumb = $default;
+		}
+			
+		echo "<link rel=\"image_src\" href=\"$thumb\" />";
+	
+	}
+	
+}
+
+//http://codex.wordpress.org/Function_Reference/wp_enqueue_script
+function dd_enable_required_js_in_wordpress() {
+	
+	if (!is_admin()) {
+
+		//jQuery need to put on head
+		wp_deregister_script('jquery');
+		wp_register_script('jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js');
+		wp_enqueue_script('jquery');
+		
+		//load in footer
+		//wp_enqueue_script('jquery','https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js',array('jquery'),'1.6.0',true);
+    	
+		//output to footer
+		wp_deregister_script('dd_sharethis_js');
+    	wp_register_script('dd_sharethis_js', 'http://w.sharethis.com/button/buttons.js');
+		wp_enqueue_script('dd_sharethis_js','http://w.sharethis.com/button/buttons.js',array('sharethis'),'1.0.0',true);
+
+	}
+}
+
 //filter for ajax floating javascript
 function dd_filter_weird_characters($str){
 	
@@ -108,145 +241,9 @@ function dd_GetText($id, $key){
 	}
 }
 
-/**
- * Merge two arrays, $newArray's new key will remain, but value will override by $mergeArray
- * $a = array('abcArray' => array('a'=>'1','b'=>'2','c'=>'3'));
- * $b = array('abcArray' => array('a'=>'1','b'=>'3'));
- * $result = dd_array_merge_subkey($a,$b);
- * $result = array('abcArray' => array('a'=>'1','b'=>'3','c'=>'3'));
- */
-function dd_array_merge_subkey($newArray, $oldArray){
-	
-	foreach(array_keys($newArray) as $key){
-	    	
-		foreach(array_keys($newArray[$key]) as $subkey){
-			
-			//echo '<h1>' . $key . '-' . $subkey . '</h1>';
-			if(isset($oldArray[$key][$subkey])){
-				$newArray[$key][$subkey] = $oldArray[$key][$subkey];
-			}
-			
-		}
-    }	
-	return $newArray;
-}
-
-//initial the value
-function dd_initialIt(){
-	
-	//http://codex.wordpress.org/Function_Reference/register_activation_hook
-	dd_clear_form_global_config();
-	dd_clear_form_normal_display();
-	dd_clear_form_float_display();
-}
-
-//global config, clear form
-function dd_clear_form_global_config($type=""){
-	
-	global $ddGlobalConfig;
-	
-	$old_ddGlobalConfig = get_option(DD_GLOBAL_CONFIG);
-	
-	if($old_ddGlobalConfig==DD_EMPTY_VALUE || $type==DD_FUNC_TYPE_RESET){
-		//reset all value
-		update_option(DD_GLOBAL_CONFIG, $ddGlobalConfig);
-		
-	}else{
-		//in case new key is added during plugin initilization, merge new and old array
-		$result = dd_array_merge_subkey($ddGlobalConfig,$old_ddGlobalConfig);
-		update_option(DD_GLOBAL_CONFIG, $result);
-	}
-	
-}
-
-//normal display, clear form
-function dd_clear_form_normal_display($type=""){
-	
-	global $ddNormalDisplay,$ddNormalButtons;
-	
-	/********* Normal Display **************/
-	$old_ddNormalDisplay = get_option(DD_NORMAL_DISPLAY_CONFIG);
-	
-	if($old_ddNormalDisplay==DD_EMPTY_VALUE || $type==DD_FUNC_TYPE_RESET){
-		//reset all value	
-		
-		update_option(DD_NORMAL_DISPLAY_CONFIG, $ddNormalDisplay);
-		
-	}else{
-		//in case new key is added during plugin initilization, merge new and old array
-		$result = dd_array_merge_subkey($ddNormalDisplay,$old_ddNormalDisplay);
-		update_option(DD_NORMAL_DISPLAY_CONFIG, $result);
-	}
-	
-	
-	if(get_option(DD_NORMAL_BUTTON)==DD_EMPTY_VALUE || $type==DD_FUNC_TYPE_RESET){
-		//reset all value
-		update_option(DD_NORMAL_BUTTON, $ddNormalButtons);
-		
-	}else{
-		//in case any new class is added during plugin initilization, 
-		//new class properties will not added until the save operation	
-		$old_ddNormalButtons = get_option(DD_NORMAL_BUTTON);
-		$result = dd_array_merge_subkey($ddNormalButtons,$old_ddNormalButtons);
-		
-		//add for final display
-		foreach($result[DD_NORMAL_BUTTON_DISPLAY] as $key => $value){
-			if(($value->getOptionAppendType()!=DD_SELECT_NONE)){
-				$result[DD_NORMAL_BUTTON_FINAL][$key] = $value;
-			}
-	    }
-			
-		update_option(DD_NORMAL_BUTTON, $result);
-		
-	}
-
-}
-
-//float display, clear form
-function dd_clear_form_float_display($type=""){
-	
-	global $ddFloatDisplay,$ddFloatButtons;
-	
-	/********* Float Display **************/
-	$old_ddFloatDisplay = get_option(DD_FLOAT_DISPLAY_CONFIG);
-	
-	if($old_ddFloatDisplay==DD_EMPTY_VALUE || $type==DD_FUNC_TYPE_RESET){
-		//reset all value	
-		update_option(DD_FLOAT_DISPLAY_CONFIG, $ddFloatDisplay);
-		
-	}else{
-		//in case new key is added during plugin initilization, merge new and old array
-		$result = dd_array_merge_subkey($ddFloatDisplay,$old_ddFloatDisplay);
-		update_option(DD_FLOAT_DISPLAY_CONFIG, $result);
-	}
-	
-	
-	if(get_option(DD_FLOAT_BUTTON)==DD_EMPTY_VALUE || $type==DD_FUNC_TYPE_RESET){
-		//reset all value
-		update_option(DD_FLOAT_BUTTON, $ddFloatButtons);
-		
-	}else{
-		//in case any new class is added during plugin initilization, 
-		//new class properties will not added until the save operation	
-		$old_ddFloatButtons = get_option(DD_FLOAT_BUTTON);
-		$result = dd_array_merge_subkey($ddFloatButtons,$old_ddFloatButtons);
-
-		//add for final display
-	    foreach($result[DD_FLOAT_BUTTON_DISPLAY] as $key => $value){
-			if(($value->getOptionAjaxLeftFloat()!=DD_DISPLAY_OFF)){
-				$result[DD_FLOAT_BUTTON_FINAL][$key] = $value;
-			}
-	    }
-	         
-		update_option(DD_FLOAT_BUTTON, $result);
-		
-	}
-	    
-}
 
 /**
- * Validate whether allow buttons to display
- * @return true page excluded, do not display
+ * @return "true" if page excluded
  */
 function dd_isThisPageExcluded($content){
 	
@@ -352,7 +349,7 @@ function dd_IsCategoryExclude($category_disallow){
 	}
 	return false;
 }
-
+	
 function get_server() {
 	$protocol = 'http';
 	if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == '443') {
@@ -426,39 +423,6 @@ function dd_exclude_js_trim_excerpt($text) {
 	}
 	return $text;
 }
-
-/*************** Digg Digg Admin menu ***************/
-add_action('admin_init', 'dd_admin_init');
-add_action('admin_menu', 'dd_admin_menu');
-
-/**
- * Menu Handling
- */
-function dd_admin_menu() {
-	
-	$page = add_menu_page('Digg Digg', 'Digg Digg', 'manage_options', 'dd_button_setup');
-	
-	add_submenu_page('dd_button_setup', 'Digg Digg --> Global Configuration', 'Global Config', 'manage_options', 'dd_button_setup', 'dd_button_global_setup');
-	add_submenu_page('dd_button_setup', 'Digg Digg --> Normal Button Configuration ', 'Normal Display', 'manage_options', 'dd_button_normal_setup', 'dd_button_normal_setup');
-	add_submenu_page('dd_button_setup', 'Digg Digg --> Floating Button Configuration', 'Floating Display', 'manage_options', 'dd_button_floating_setup', 'dd_button_floating_setup');
-	add_submenu_page('dd_button_setup', 'Digg Digg --> Toolbar Configuration', 'Toolbar Display', 'manage_options', 'dd_button_toolbar_setup', 'dd_button_toolbar_setup');
-	add_submenu_page('dd_button_setup', 'Digg Digg --> Manual Placement', 'Manual Placement', 'manage_options', 'dd_button_manual_setup', 'dd_button_manual_setup');
-	add_submenu_page('dd_button_setup', 'Digg Digg --> FAQ', 'FAQ', 'manage_options', 'dd_button_faq_setup', 'dd_button_faq_setup');
-
-	/* Load css style for all digg digg menu page */
-    add_action('admin_print_styles', 'dd_admin_styles');
-}
-
-//admin page
-function dd_admin_init() {
-	wp_register_style('dd_admin_style', DD_PLUGIN_URL . '../css/diggdigg-style-admin.css');
-}
-
-function dd_admin_styles(){
-	wp_enqueue_style('dd_admin_style');
-}
-/*************** Digg Digg Admin menu ***************/
-
 
 //not implement yet
 //make sure wordpress > 2.3 and PHP >= 5

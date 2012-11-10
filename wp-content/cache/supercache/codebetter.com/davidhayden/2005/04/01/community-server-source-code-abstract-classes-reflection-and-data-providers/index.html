@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers | David Hayden</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/davidhayden/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/davidhayden/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Domain-Driven Design &#8211; Layered Applications' href='http://codebetter.com/davidhayden/2005/03/29/domain-driven-design-layered-applications/' />
+<link rel='next' title='Design Patterns in C# &#8211; Construction Pattern &#8211; Factory Method' href='http://codebetter.com/davidhayden/2005/04/02/design-patterns-in-c-construction-pattern-factory-method/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/davidhayden/?p=32' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,189] -->
+<link rel="canonical" href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<!-- Shareaholic Notice: There is neither a featured nor gallery image set -->
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=5302176208">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-32" class="post-32 post type-post status-publish format-standard hentry category-c category-grasp-patterns">
+					<h1 class="entry-title">Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/davidhayden/author/davidhayden/" title="View all posts by davidhayden">davidhayden</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/" title="2:00 pm" rel="bookmark"><span class="entry-date">April 1, 2005</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/davidhayden/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/davidhayden/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p><P>In my post, <A href="/blogs/david.hayden/articles/59642.aspx">Data Access Application Block Revealed &#8211; Factory Methods and Reflection</A>, I talked about how the <A href="/blogs/david.hayden/articles/59526.aspx">Enterprise Library Data Access Application Block</A> used <A href="/blogs/david.hayden/articles/59642.aspx">abstract classes and reflection</A> to instantiate data providers to provide a extensible solution for data storage.&nbsp; As luck would have it, <STRONG>Community Server</STRONG> also&nbsp;exploits the concepts of abstract classes, reflection, and data providers to pull off a similar architecture for their data storage.&nbsp; To&nbsp;reinforce these concepts, let&#8217;s dig into the Community Server source code to show how a post is viewed on&nbsp;a blog.</P><br />
+<P><STRONG>View-Post.ascx</STRONG> is the user control responsbile for displaying a post, and it basically just hands the work off to the class, <STRONG>EntryViewContainer</STRONG>.&nbsp; Here is a snippet of <STRONG>EntryViewContainer</STRONG>:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>EntryViewContainer</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> EntryViewContainer :  WeblogThemedControl<br />
+{<br />
+    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+    </SPAN><SPAN>void</SPAN><SPAN> BindData()<br />
+    {<br />
+        CSContext csContext </SPAN><SPAN>=</SPAN><SPAN> CSContext.Current;</p>
+<p>        BlogPostQuery query </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> BlogPostQuery();<br />
+        query.PostID </SPAN><SPAN>=</SPAN><SPAN> csContext.PostID;</p>
+<p>        </SPAN><SPAN>string</SPAN><SPAN> name </SPAN><SPAN>=</SPAN><SPAN> Context.Request.QueryString[</SPAN><SPAN>"</SPAN><SPAN>PostName</SPAN><SPAN>"</SPAN><SPAN>];<br />
+        </SPAN><SPAN>if</SPAN><SPAN>(</SPAN><SPAN>!</SPAN><SPAN>Globals.IsNullorEmpty(name))<br />
+            query.Name </SPAN><SPAN>=</SPAN><SPAN> name;</p>
+<p>        query.IncludeCategories </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>false</SPAN><SPAN>;<br />
+        query.ReturnFullThread </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>true</SPAN><SPAN>;<br />
+        query.BlogID </SPAN><SPAN>=</SPAN><SPAN> CurrentWeblog.SectionID;</p>
+<p>        PostSet ps </SPAN><SPAN>=</SPAN><SPAN>  WeblogPosts.GetPosts(query,</SPAN><SPAN>true</SPAN><SPAN>);</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>One of the interesting things here that I won&#8217;t really go into is the use of a <STRONG>BlogPostQuery</STRONG> object to pass parameters that essentially end up as parameters for <STRONG>stored procedures</STRONG>.&nbsp; This is a nice way to package up parameters as opposed to having several overloads of <STRONG>GetPosts</STRONG> that take varying parameters.</P><br />
+<P>As you can see, <STRONG>EntryViewContainer</STRONG> just grabs the <STRONG>BlogID</STRONG> and <STRONG>PostID</STRONG> along with a few defaults and calls <STRONG>WeblogPosts.GetPosts</STRONG> to go get the post to be displayed.&nbsp; It actually returns a <STRONG>PostSet</STRONG> object, which is&nbsp;basically a thread of posts &#8211; the main post and the flow of comments to the post.</P><br />
+<P><STRONG>WeblogPosts</STRONG> is essentially just a set of functions that handle post related activity.&nbsp; You could call it a <STRONG>Controller</STRONG> class of sorts as it is the first object beyond the UI layer that is responsible for receiving or handling a system operation message (See <A href="http://davidhayden.com/blog/dave/archive/2004/11/28/648.aspx">Applying UML and Patterns: Controller GRASP Pattern &#8211; Model View Controller Design Pattern &#8211; First Object Beyond UI Layer</A>).</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>WeblogPosts Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> WeblogPosts<br />
+{<br />
+    </SPAN><SPAN>private</SPAN><SPAN> WeblogPosts(){}</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> PostSet GetPosts(BlogPostQuery query, </SPAN><SPAN>bool</SPAN><SPAN> cacheable)<br />
+    {<br />
+        </SPAN><SPAN>string</SPAN><SPAN> key </SPAN><SPAN>=</SPAN><SPAN> cacheable </SPAN><SPAN>?</SPAN><SPAN> query.Key : </SPAN><SPAN>null</SPAN><SPAN>;<br />
+        PostSet ps </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN>(cacheable)<br />
+            ps </SPAN><SPAN>=</SPAN><SPAN> CSCache.Get(key) </SPAN><SPAN>as</SPAN><SPAN> PostSet;</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN>(ps </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+        {<br />
+            WeblogDataProvider wdp </SPAN><SPAN>=</SPAN><SPAN> WeblogDataProvider.Instance();<br />
+            ps </SPAN><SPAN>=</SPAN><SPAN> wdp.GetPosts(query);</p>
+<p>            </SPAN><SPAN>if</SPAN><SPAN>(cacheable)<br />
+                CSCache.Insert(key,ps,</SPAN><SPAN>30</SPAN><SPAN>,System.Web.Caching.CacheItemPriority.Low);<br />
+        }</p>
+<p>        </SPAN><SPAN>return</SPAN><SPAN> ps;<br />
+    }</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>Here is where the caching is done as well as where we start to see the data providers coming into action.&nbsp; <STRONG>WeblogDataProvider</STRONG> is an abstract class with not much more than a single method, <STRONG>Instance()</STRONG>, that grabs the concrete data provider class that handles the storage operations for blogs.&nbsp; The concrete class returned is the class that actually carries out the operation to get the post and its comments from data storage.&nbsp; Here is some of the code in <STRONG>WeblogDataProvider</STRONG>:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>WeblogDataProvider Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>abstract</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> WeblogDataProvider<br />
+{<br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>readonly</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN> WeblogDataProviderName </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>WeblogDataProvider</SPAN><SPAN>&#8220;</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> WeblogDataProvider _defaultInstance </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>    </SPAN><SPAN>static</SPAN><SPAN> WeblogDataProvider()<br />
+    {<br />
+        CreateDefaultCommonProvider();<br />
+    }</p>
+<p>    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> WeblogDataProvider Instance()<br />
+    {<br />
+        </SPAN><SPAN>return</SPAN><SPAN> _defaultInstance;<br />
+    }</p>
+<p>    </SPAN><SPAN>private</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>void</SPAN><SPAN> CreateDefaultCommonProvider()<br />
+    {</p>
+<p>        CSConfiguration config </SPAN><SPAN>=</SPAN><SPAN> CSConfiguration.GetConfig();</p>
+<p>        Provider sqlForumsProvider </SPAN><SPAN>=</SPAN><SPAN> (Provider) config.Providers[WeblogDataProviderName];</p>
+<p>        _defaultInstance </SPAN><SPAN>=</SPAN><SPAN> DataProviders.CreateInstance(sqlForumsProvider) </SPAN><SPAN>as</SPAN><SPAN> WeblogDataProvider;<br />
+    }</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The main work happens in the <STRONG>CreateDefaultCommonProvider</STRONG> method.&nbsp; It goes out and grabs the&nbsp;configuration information&nbsp;which contains&nbsp;the name of the concrete class that will be handling the data storage and retrieval of blog posts.&nbsp; This information is tucked away in a config file, called <STRONG>communityserver.config</STRONG>, that has the following entry:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>communityserver.config</LEGEND><PRE><SPAN>&lt;</SPAN><SPAN>add<br />
+    name </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>WeblogDataProvider</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    type </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>CommunityServer.Data.WeblogSqlDataProvider,</SPAN><SPAN>CommunityServer.SqlDataProvider</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+    connectionStringName </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>SiteSqlServer</SPAN><SPAN>&#8220;</SPAN><SPAN> databaseOwnerStringName </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>SiteSqlServerOwner</SPAN><SPAN>&#8220;</SPAN><SPAN><br />
+</SPAN><SPAN>/&gt;</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>There is the concrete class that will actually be handling the blog storage and retrieval: <STRONG>WeblogSqlDataProvider</STRONG>.&nbsp; You can guess that we will need to dynamically create this class during runtime.&nbsp; This is the job of the <STRONG>DataProviders</STRONG> class, which is just a set of helper functions for just that thing:</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>DataProviders Class</LEGEND><PRE><SPAN>public</SPAN><SPAN> </SPAN><SPAN>sealed</SPAN><SPAN> </SPAN><SPAN>class</SPAN><SPAN> DataProviders<br />
+{</p>
+<p>    </SPAN><SPAN>private</SPAN><SPAN> DataProviders()<br />
+    {<br />
+    }</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+    </SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>static</SPAN><SPAN> </SPAN><SPAN>object</SPAN><SPAN> CreateInstance(Provider dataProvider)<br />
+    {<br />
+        </SPAN><SPAN>string</SPAN><SPAN> connectionString </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;<br />
+        </SPAN><SPAN>string</SPAN><SPAN> databaseOwner </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>        GetDataStoreParameters(dataProvider, </SPAN><SPAN>out</SPAN><SPAN> connectionString, </SPAN><SPAN>out</SPAN><SPAN> databaseOwner);</p>
+<p>        Type type  </SPAN><SPAN>=</SPAN><SPAN> Type.GetType(dataProvider.Type);</p>
+<p>        </SPAN><SPAN>object</SPAN><SPAN> newObject </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>;</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN>(type </SPAN><SPAN>!=</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+        {<br />
+            newObject </SPAN><SPAN>=</SPAN><SPAN>  Activator.CreateInstance(type,</SPAN><SPAN>new</SPAN><SPAN> </SPAN><SPAN>object</SPAN><SPAN>[]{databaseOwner,connectionString});<br />
+        }</p>
+<p>        </SPAN><SPAN>if</SPAN><SPAN>(newObject </SPAN><SPAN>==</SPAN><SPAN> </SPAN><SPAN>null</SPAN><SPAN>)<br />
+            ProviderException(dataProvider.Name);</p>
+<p>        </SPAN><SPAN>return</SPAN><SPAN> newObject;<br />
+    }</p>
+<p>    </SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN>}</SPAN></PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>The <STRONG>CreateInstance</STRONG> method is the work horse that uses reflection to create an instance of the concrete class, <STRONG>WeblogSqlDataProvider</STRONG>,&nbsp;that will eventually get returned&nbsp;to the controller class, <STRONG>WeblogPosts</STRONG>.</P><br />
+<P>As you can see below, <STRONG>WeblogSqlDataProvider</STRONG> is making use of the <STRONG>BlogPostQuery</STRONG> object to pass out the values for the parameters and essentially just calling the stored procedure that returns a few resultsets of data to be passed back as a <STRONG>PostSet</STRONG>.</P><br />
+<P>&nbsp;</P><br />
+<FIELDSET><LEGEND>WeblogSqlDataProvider</LEGEND><PRE><SPAN>public</SPAN><SPAN>  </SPAN><SPAN>class</SPAN><SPAN> WeblogSqlDataProvider : WeblogDataProvider<br />
+{</p>
+<p></SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+</SPAN><SPAN>public</SPAN><SPAN> </SPAN><SPAN>override</SPAN><SPAN> PostSet GetPosts(BlogPostQuery query)<br />
+{<br />
+    </SPAN><SPAN>using</SPAN><SPAN>( SqlConnection connection </SPAN><SPAN>=</SPAN><SPAN> GetSqlConnection() )<br />
+    {<br />
+        </SPAN><SPAN>using</SPAN><SPAN>(SqlCommand command </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> SqlCommand(databaseOwner </SPAN><SPAN>+</SPAN><SPAN> </SPAN><SPAN>&#8220;</SPAN><SPAN>.cs_weblog_Postset</SPAN><SPAN>&#8220;</SPAN><SPAN>, connection))<br />
+        {<br />
+            command.CommandType </SPAN><SPAN>=</SPAN><SPAN> CommandType.StoredProcedure;</p>
+<p>            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@SectionID</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int).Value </SPAN><SPAN>=</SPAN><SPAN> query.BlogID;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@PostID</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int).Value </SPAN><SPAN>=</SPAN><SPAN> query.PostID;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@PostName</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.NVarChar).Value </SPAN><SPAN>=</SPAN><SPAN> query.Name;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@PageIndex</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int, </SPAN><SPAN>4</SPAN><SPAN>).Value </SPAN><SPAN>=</SPAN><SPAN> query.PageIndex;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@PageSize</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int, </SPAN><SPAN>4</SPAN><SPAN>).Value </SPAN><SPAN>=</SPAN><SPAN> query.PageSize;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@ReturnFullThread</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Bit, </SPAN><SPAN>1</SPAN><SPAN>).Value </SPAN><SPAN>=</SPAN><SPAN> query.ReturnFullThread;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@UserID</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int).Value </SPAN><SPAN>=</SPAN><SPAN> query.UserID;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@IncludeCategories</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Bit).Value </SPAN><SPAN>=</SPAN><SPAN> query.IncludeCategories;<br />
+            command.Parameters.Add(</SPAN><SPAN>&#8220;</SPAN><SPAN>@TotalRecords</SPAN><SPAN>&#8220;</SPAN><SPAN>, SqlDbType.Int).Direction </SPAN><SPAN>=</SPAN><SPAN> ParameterDirection.Output;</p>
+<p>            PostSet ps </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> PostSet();</p>
+<p>            connection.Open();</p>
+<p>            </SPAN><SPAN>//</SPAN><SPAN>NOTE TO SELF: We return the results as seperate sets so that we can avoid some of the more<br />
+            </SPAN><SPAN>//</SPAN><SPAN>expensive lookups done ont the main posts!</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+            </SPAN><SPAN>using</SPAN><SPAN>(SqlDataReader reader </SPAN><SPAN>=</SPAN><SPAN> command.ExecuteReader())<br />
+            {<br />
+                </SPAN><SPAN>//</SPAN><SPAN>this will return just one post, forget the rest if nothing found here</SPAN><SPAN><br />
+</SPAN><SPAN>                </SPAN><SPAN>if</SPAN><SPAN>(reader.Read())<br />
+                {<br />
+                    WeblogPost entry </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> WeblogPost();<br />
+                    PopulateWeblogEntryFromIDataReader(reader,entry);</p>
+<p>                    </SPAN><SPAN>if</SPAN><SPAN>(query.IncludeCategories)<br />
+                    {<br />
+                        reader.NextResult();<br />
+                        ArrayList categories </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> ArrayList();<br />
+                        </SPAN><SPAN>while</SPAN><SPAN>(reader.Read())<br />
+                        {<br />
+                            categories.Add(reader[</SPAN><SPAN>"</SPAN><SPAN>Name</SPAN><SPAN>"</SPAN><SPAN>] </SPAN><SPAN>as</SPAN><SPAN> </SPAN><SPAN>string</SPAN><SPAN>);<br />
+                        }</p>
+<p>                        entry.Categories </SPAN><SPAN>=</SPAN><SPAN> (</SPAN><SPAN>string</SPAN><SPAN>[])categories.ToArray(</SPAN><SPAN>typeof</SPAN><SPAN>(</SPAN><SPAN>string</SPAN><SPAN>));<br />
+                    }</p>
+<p>                    </SPAN><SPAN>//</SPAN><SPAN>we could be setting the thread starter right here?</SPAN><SPAN><br />
+</SPAN><SPAN>                    ps.Posts.Add(entry);</p>
+<p>                    </SPAN><SPAN>//</SPAN><SPAN>comment list</SPAN><SPAN><br />
+</SPAN><SPAN>                    reader.NextResult();</p>
+<p>                    </SPAN><SPAN>while</SPAN><SPAN>(reader.Read())<br />
+                    {<br />
+                        entry </SPAN><SPAN>=</SPAN><SPAN> </SPAN><SPAN>new</SPAN><SPAN> WeblogPost();<br />
+                        PopulateWeblogEntryFromIDataReader(reader,entry);</p>
+<p>                        ps.Posts.Add(entry);<br />
+                    }</p>
+<p>                    reader.NextResult();<br />
+                    ps.TotalRecords </SPAN><SPAN>=</SPAN><SPAN> (</SPAN><SPAN>int</SPAN><SPAN>) command.Parameters[</SPAN><SPAN>"</SPAN><SPAN>@TotalRecords</SPAN><SPAN>"</SPAN><SPAN>].Value;</p>
+<p>                    reader.Close();<br />
+                }<br />
+                </SPAN><SPAN>else</SPAN><SPAN><br />
+                {<br />
+                    reader.Close();<br />
+                }<br />
+            }</p>
+<p>            </SPAN><SPAN>return</SPAN><SPAN> ps;</p>
+<p>        }<br />
+    }<br />
+}</p>
+<p></SPAN><SPAN>//</SPAN><SPAN> &#8230;</SPAN><SPAN><br />
+</SPAN><SPAN><br />
+}</SPAN></PRE><PRE><SPAN></SPAN>&nbsp;</PRE></FIELDSET><br />
+<P>&nbsp;</P><br />
+<P>When you break down the source code like this it becomes pretty clear how all these fundamental&nbsp;OOP techniques come into play .&nbsp; There are a few other goodies in Community Server that are probably worth talking about at a later time, too.</P></p>
+<div class="shr-publisher-32"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/davidhayden/category/c/" title="View all posts in C#" rel="category tag">C#</a>, <a href="http://codebetter.com/davidhayden/category/grasp-patterns/" title="View all posts in GRASP Patterns" rel="category tag">GRASP Patterns</a>. Bookmark the <a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/" title="Permalink to Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/feed/" title="Comments RSS to Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-32 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/davidhayden/2005/03/29/domain-driven-design-layered-applications/" rel="prev"><span class="meta-nav">&larr;</span> Domain-Driven Design &#8211; Layered Applications</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/davidhayden/2005/04/02/design-patterns-in-c-construction-pattern-factory-method/" rel="next">Design Patterns in C# &#8211; Construction Pattern &#8211; Factory Method <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">7 Responses to <em>Community Server Source Code &#8211; Abstract Classes, Reflection and Data Providers</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-75">
+		<div id="comment-75">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Liang</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-75">April 4, 2005 at 1:46 pm</a></div>
+
+		<div class="comment-body"><p>Very appreciate, David! It is very interesting to look at the source code. The first time I saw this Provider Pattern was from Rainbowportal.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-74">
+		<div id="comment-74">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-74">April 4, 2005 at 1:08 pm</a></div>
+
+		<div class="comment-body"><p>Here is the link to download the community server source code for version 1.0:</p>
+<p><a href="http://www.telligentsystems.com/Solutions/license.aspx?File=cs_1.0_src.exe" rel="nofollow">http://www.telligentsystems.com/Solutions/license.aspx?File=cs_1.0_src.exe</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-73">
+		<div id="comment-73">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Liang</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-73">April 4, 2005 at 11:52 am</a></div>
+
+		<div class="comment-body"><p>That is very nice, David!<br />
+Quick question: how do you get the source code? I downloaded the project as well from their site. But only ASPX files and DLLs, there has no source code for those DLLs.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-72">
+		<div id="comment-72">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://www.jeffperrin.com' rel='external nofollow' class='url'>Jeff Perrin</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-72">April 2, 2005 at 12:31 pm</a></div>
+
+		<div class="comment-body"><p>&#8220;With a traditional AF pattern you wouldn&#8217;t need the Activator.CreateInstance stuff, which is does have performance issues.&#8221;</p>
+<p>Since it looks like the instance will only ever be created once, this isn&#8217;t really an issue.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-71">
+		<div id="comment-71">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://davidhayden.com/blog/dave/' rel='external nofollow' class='url'>dhayden</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-71">April 1, 2005 at 9:45 pm</a></div>
+
+		<div class="comment-body"><p>Hey Brendan,</p>
+<p>There is no abstract factory pattern used in the above example.</p>
+<p>In this piece of code:</p>
+<p>WeblogDataProvider wdp = WeblogDataProvider.Instance();</p>
+<p>the Instance() method is often referred to as a Factory Method. It essentially hides the actual class that is being instantiated from the client code.</p>
+<p>There is no requirement that the concrete class being created is done via reflection or not.</p>
+<p>Enterprise Library and Community Server use reflection only to support instantiating classes in 3rd party assemblies. This creates more of a true plug-in framework.</p>
+<p>The Abstract Factory Pattern has to do with creating families of classes, which is not what is being done here.</p>
+<p>A good series of articles on design patterns would be a phenomenal contribution to the developer community.  So many things to talk about, so little time <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-70">
+		<div id="comment-70">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codbetter.com/blogs/brendan.tompkins' rel='external nofollow' class='url'>Brendan Tompkins</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-70">April 1, 2005 at 4:21 pm</a></div>
+
+		<div class="comment-body"><p>I may be a little confused about Abstract Factory&#8230; I thought you could do it without the reflection stuff, but now that I think about it, (and read your first post) I see that this is standard.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-69">
+		<div id="comment-69">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codbetter.com/blogs/brendan.tompkins' rel='external nofollow' class='url'>Brendan Tompkins</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#comment-69">April 1, 2005 at 3:24 pm</a></div>
+
+		<div class="comment-body"><p>This is a nice explanation.  I&#8217;ve not delved this deep into the actual data provider implementation yet, but I have a question for you..</p>
+<p>Is this a variation on the Abstract Factory pattern? If so, what is the benefit of doing it this way?  With a traditional AF pattern you wouldn&#8217;t need the Activator.CreateInstance stuff, which is does have performance issues.</p>
+<p>I&#8217;m sure there are very good reasons for doing it this way &#8211; a &#8220;method to the madness.&#8221;</p>
+<p>Community server is a pretty large app.. there are all kinds of neat things to see once you get under the covers, huh?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/davidhayden/2005/04/01/community-server-source-code-abstract-classes-reflection-and-data-providers/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<form action="http://codebetter.com/davidhayden/wp-comments-post.php" method="post" id="commentform">
+																			<p class="comment-notes">Your email address will not be published. Required fields are marked <span class="required">*</span></p>							<p class="comment-form-author"><label for="author">Name</label> <span class="required">*</span><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email</label> <span class="required">*</span><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><input id="url" name="url" type="text" value="" size="30" /></p>
+												<p class="comment-form-comment"><label for="comment">Comment</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>						<p class="form-allowed-tags">You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes:  <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></p>						<p class="form-submit">
+							<input name="submit" type="submit" id="submit" value="Post Comment" />
+							<input type='hidden' name='comment_post_ID' value='32' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+						</p>
+						<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="da4be814c9" /></p>					</form>
+							</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.457 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-10 00:04:55 -->
+<!-- super cache -->

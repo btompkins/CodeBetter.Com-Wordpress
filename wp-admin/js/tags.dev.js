@@ -11,7 +11,7 @@ jQuery(document).ready(function($) {
 					$('#ajax-response').empty();
 					tr.fadeOut('normal', function(){ tr.remove(); });
 					// Remove the term from the parent box and tag cloud
-					$('select#parent option[value=' + data.match(/tag_ID=(\d+)/)[1] + ']').remove();
+					$('select#parent option[value="' + data.match(/tag_ID=(\d+)/)[1] + '"]').remove();
 					$('a.tag-link-' + data.match(/tag_ID=(\d+)/)[1]).remove();
 				} else if ( '-1' == r ) {
 					$('#ajax-response').empty().append('<div class="error"><p>' + tagsl10n.noPerm + '</p></div>');
@@ -33,9 +33,9 @@ jQuery(document).ready(function($) {
 			return false;
 
 		$.post(ajaxurl, $('#addtag').serialize(), function(r){
-		   $('#ajax-response').empty();
+			$('#ajax-response').empty();
 			var res = wpAjax.parseAjaxResponse(r, 'ajax-response');
-			if ( ! res )
+			if ( ! res || res.errors )
 				return;
 
 			var parent = form.find('select#parent').val();
@@ -44,6 +44,8 @@ jQuery(document).ready(function($) {
 				$('.tags #tag-' + parent).after( res.responses[0].supplemental['noparents'] ); // As the parent exists, Insert the version with - - - prefixed
 			else
 				$('.tags').prepend( res.responses[0].supplemental['parents'] ); // As the parent is not visible, Insert the version with Parent - Child - ThisTerm
+
+			$('.tags .no-items').remove();
 
 			if ( form.find('select#parent') ) {
 				// Parents field exists, Add new term to the list.

@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Making your ASP.NET Web API&#8217;s secure | John V. Petersen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/johnvpetersen/xmlrpc.php" />
+	                <link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/ea73517eb74a545f51c376487c94dc9f.css?v=3912785705" type="text/css" media="all" /><!-- Is Cache! -->
+                <script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://dtym7iokkjlif.cloudfront.net/dough/1.0/recipe.js'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/johnvpetersen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://codebetter.com/johnpetersen/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Converting to System.Net.Http' href='http://codebetter.com/johnvpetersen/2012/03/24/converting-to-system-net-http/' />
+<link rel='next' title='Moving from Action Filters to Message Handlers' href='http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/johnvpetersen/?p=389' />
+
+<!-- All in One SEO Pack 1.6.13.2 by Michael Torbert of Semper Fi Web Design[83,151] -->
+<link rel="canonical" href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://codebetter.com/johnpetersen/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=4.5.3.3" type="text/css" media="screen" />
+
+<!-- Start Shareaholic OgTags -->
+
+	<meta property='og:image' content='http://codebetter.com/johnvpetersen/files/2012/04/image1-300x162.png' />
+
+<!-- End Shareaholic OgTags -->
+
+<meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+                <script type="text/javascript" src="http://codebetter.com/johnpetersen/wp-content/uploads/spacker-cache/dc168cf39155d7b5d39f696ca94d5980.js?v=3981720249">/*Is Cache!*/</script>
+                	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-389" class="post-389 post type-post status-publish format-standard hentry category-asp-net category-asp-net-mvc-4">
+					<h1 class="entry-title">Making your ASP.NET Web API&#8217;s secure</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">johnvpetersen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/" title="5:03 pm" rel="bookmark"><span class="entry-date">April 2, 2012</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/johnpetersen/feed/rss/"  rel="nofollow"><img src="http://codebetter.com/johnpetersen/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/johnpetersen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>Note: Code for this example is on Google Docs.</p>
+<p><a href="https://docs.google.com/open?id=0B6Zn8tqUVSf1Z0RiNzFPODdUOGVDRXFfS3JHaHYtUQ" target="_blank">SecureWebAPI</a><br />
+<a href="https://docs.google.com/open?id=0B6Zn8tqUVSf1bDh3eVI3ZTRTZGE5NGVkZjBILW1FUQ" target="_blank">SecureWebAPITest</a></p>
+<p>NOTE: DO NOT USE THE PUBLIC/PRIVATE KEYS IN THIS EXAMPLE IN YOUR PRODUCTION APPLICATION!!!! BE SURE TO GENERATE YOUR OWN KEYS!! OTHERWISE, YOUR APPLICATION WILL NOT BE SECURE AS THE PRIVATE KEY WILL BE IN THE FIELD!!!! <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>Recently, I&#8217;ve been exploring the new ASP.NET Web API. So far, I&#8217;ve been impressed with how easy it is to build RESTful web interfaces. In the examples I&#8217;ve published, none have been secure. In the real world &#8211; the world that exists beyond the world of samples and demos &#8211; security is a matter than cannot be brushed aside. In this post, I squarely tackle that issue by showing you an approach that locks down and secures your ASP.NET Web API.</p>
+<p>In research this topic, looking what others have done this far, I came away with a lot of approaches that in my opinion, where too complicated and quite frankly, a pain to setup. It was also questionable what the value proposition was for all that pain. In other words, how was my site made more secure by implementing one approach or another. Two big topics that I won&#8217;t discuss today are oAuth and OpenID. Sure, those approaches each solve a segment of the overall problem. oAuth is about authorization. For example, I can use my credentials in Twitter to gain access to another site. The relationship with oAuth is one app authorizing another app. OpenID on the other hand is about authentication. I have an Openid and I use that as the basis for an application to authenticate who I am  &#8211; without the need for that application to maintain my security details. With OpenID, it&#8217;s one security mechanism used for many applications. In any application, you need to be both authenticated and authorized. Once a user gets access to an application, the process still needs to be secure &#8211; especially if HIPPA related type data is presented. </p>
+<p>For many applications, OpenID or oAuth can work fine. But for a Web API, it really does not work. First, RESTful apis are just that &#8211; RESTful &#8211; which means they are stateless. To be effective, we cannot make assumptions from one call to the next. We have to supply credentials with each and every request, whether it is a GET, POST, PUT or DELETE. Like Any API, a Web API should, in my opinion be self sufficient as to controlling how people get to the site. Indeed, things like oAuth and OpenID can work. However, I think the process can be made simpler &#8211; with techniques that have been around a while and are as relevant as ever &#8211; with all due respect to their newer counterparts. </p>
+<p><strong>HTTPS</strong></p>
+<p>Of all the things that can be done to make your API,  more secure, requiring it to run over HTTPS is the easiest thing to implement. This does nothing for authorization and authentication &#8211; which I will get to in a moment. HTTPS however, does afford encryption that is not present in regular HTTP traffic. With HTTPS, your traffic is far less likely to be subject to packet sniffing eavesdropping attacks. The key is, how can you ensure that your Web API is only accessed via HTTPS? The answer lies in one of the most useful features in ASP.NET MVC &#8211; that has also been implemented in ASP.NET Web API: Action Filters. And in this case, I&#8217;ll make the action filter a global action filter &#8211; eliminating the need to manually add the filter to every controller action.</p>
+<p>Here is the custom action filter</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Web.Http.Filters;
+using System.Web.Http.Controllers;
+
+namespace WebAPI
+{
+ public class CustomHttpsAttribute : ActionFilterAttribute
+ {
+  public override void OnActionExecuting(HttpActionContext actionContext)
+  {
+   if (!String.Equals(actionContext.Request.RequestUri.Scheme, &quot;https&quot;, StringComparison.OrdinalIgnoreCase))
+   {
+    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+    {
+     Content = new StringContent(&quot;HTTPS Required&quot;)
+    };
+    return;
+   }
+  }
+ }
+}
+</pre>
+<p>Nothing very complicated going on here. If https is not present in the URL, a response is fabricated indicating a bad request (error 400). A message is also added to the response content as well.</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image1.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image1-300x162.png" alt="" width="300" height="162" /></a></p>
+<p>As the previous figure illustrates, when we attempt to navigate to the Web API with HTTP, as opposed to HTTPS, a response with status code 400 results &#8211; along with a friendly message in the response body that describes the error.</p>
+<p><strong>Tokens based on Public/Private Keys</strong></p>
+<p>Of all the ways to authorize and authenticate, it seems to me that tokens have done a good at this task. A token can be used to authorize, and for the most part, authenticate a user. Of course, it is possible for a key to get passed around. I&#8217;ll address that in the next section. That said, it may be perfectly fine to assume that if a visitor has a properly encrypted token, that visitor is who he/she/it claims to be (in cases where its an application, not a person, it is the right pronoun!!)  </p>
+<p>The idea behind a private and public key pair is simple. A token is encrypted with the public key. In some cases, the public key sits in the field. In cases where data has to be encrypted by the client to be decrypted on the server, the public key needs to be in the field. The server is the only thing that should have the private key. It&#8217;s the private key that handles the decryption. To get this working, we need a simple class to handle our encryption needs:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace WebAPI
+{
+ public class RSAClass
+ {
+  private static string _privateKey = &quot;&lt;RSAKeyValue&gt;&lt;Modulus&gt;s6lpjspk+3o2GOK5TM7JySARhhxE5gB96e9XLSSRuWY2W9F951MfistKRzVtg0cjJTdSk5mnWAVHLfKOEqp8PszpJx9z4IaRCwQ937KJmn2/2VyjcUsCsor+fdbIHOiJpaxBlsuI9N++4MgF/jb0tOVudiUutDqqDut7rhrB/oc=&lt;/Modulus&gt;&lt;Exponent&gt;AQAB&lt;/Exponent&gt;&lt;P&gt;3J2+VWMVWcuLjjnLULe5TmSN7ts0n/TPJqe+bg9avuewu1rDsz+OBfP66/+rpYMs5+JolDceZSiOT+ACW2Neuw==&lt;/P&gt;&lt;Q&gt;0HogL5BnWjj9BlfpILQt8ajJnBHYrCiPaJ4npghdD5n/JYV8BNOiOP1T7u1xmvtr2U4mMObE17rZjNOTa1rQpQ==&lt;/Q&gt;&lt;DP&gt;jbXh2dVQlKJznUMwf0PUiy96IDC8R/cnzQu4/ddtEe2fj2lJBe3QG7DRwCA1sJZnFPhQ9svFAXOgnlwlB3D4Gw==&lt;/DP&gt;&lt;DQ&gt;evrP6b8BeNONTySkvUoMoDW1WH+elVAH6OsC8IqWexGY1YV8t0wwsfWegZ9IGOifojzbgpVfIPN0SgK1P+r+kQ==&lt;/DQ&gt;&lt;InverseQ&gt;LeEoFGI+IOY/J+9SjCPKAKduP280epOTeSKxs115gW1b9CP4glavkUcfQTzkTPe2t21kl1OrnvXEe5Wrzkk8rA==&lt;/InverseQ&gt;&lt;D&gt;HD0rn0sGtlROPnkcgQsbwmYs+vRki/ZV1DhPboQJ96cuMh5qeLqjAZDUev7V2MWMq6PXceW73OTvfDRcymhLoNvobE4Ekiwc87+TwzS3811mOmt5DJya9SliqU/ro+iEicjO4v3nC+HujdpDh9CVXfUAWebKnd7Vo5p6LwC9nIk=&lt;/D&gt;&lt;/RSAKeyValue&gt;&quot;;
+  private static string _publicKey = &quot;&lt;RSAKeyValue&gt;&lt;Modulus&gt;s6lpjspk+3o2GOK5TM7JySARhhxE5gB96e9XLSSRuWY2W9F951MfistKRzVtg0cjJTdSk5mnWAVHLfKOEqp8PszpJx9z4IaRCwQ937KJmn2/2VyjcUsCsor+fdbIHOiJpaxBlsuI9N++4MgF/jb0tOVudiUutDqqDut7rhrB/oc=&lt;/Modulus&gt;&lt;Exponent&gt;AQAB&lt;/Exponent&gt;&lt;/RSAKeyValue&gt;&quot;;
+  private static UnicodeEncoding _encoder = new UnicodeEncoding();
+
+  public static string Decrypt(string data)
+  {
+   var rsa = new RSACryptoServiceProvider();
+   var dataArray = data.Split(new char[] { ',' });
+   byte[] dataByte = new byte[dataArray.Length];
+   for (int i = 0; i &lt; dataArray.Length; i++)
+   {
+    dataByte[i] = Convert.ToByte(dataArray[i]);
+   }
+
+   rsa.FromXmlString(_privateKey);
+   var decryptedByte = rsa.Decrypt(dataByte, false);
+   return _encoder.GetString(decryptedByte);
+  }
+
+  public static string Encrypt(string data)
+  {
+   var rsa = new RSACryptoServiceProvider();
+   rsa.FromXmlString(_publicKey);
+   var dataToEncrypt = _encoder.GetBytes(data);
+   var encryptedByteArray = rsa.Encrypt(dataToEncrypt, false).ToArray();
+   var length = encryptedByteArray.Count();
+   var item = 0;
+   var sb = new StringBuilder();
+   foreach (var x in encryptedByteArray)
+   {
+    item++;
+    sb.Append(x);
+
+    if (item &lt; length)
+     sb.Append(&quot;,&quot;);
+   }
+
+   return sb.ToString();
+  }
+ }
+}
+</pre>
+<p>In this simple RSAClass, I have embedded the public/private RSA Parameters. To create and export new parameters, you would issue the following code outlined in the next image:</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image41.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image41-300x93.png" alt="" width="300" height="93" /></a></p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+[Test]
+ public void RSAParameters() {
+
+  var rsa = new RSACryptoServiceProvider();
+  var privateParameters = rsa.ExportParameters(true);
+  var publicParameters = rsa.ExportParameters(false);
+  
+  //Export private parameter XML representation of privateParameters
+  //object created above
+  Debug.WriteLine(rsa.ToXmlString(true));
+
+  //Export private parameter XML representation of publicParameters
+  //object created above
+  Debug.WriteLine(rsa.ToXmlString(false));
+ }
+</pre>
+<p>The following is a simple test that illustrates how to encrypt and decrypt a string with the public/private key pair:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+[Test]
+  public void VerifyToken() {
+  
+   var token = &quot;User1&quot;;
+   var encryptedToken = RSAClass.Encrypt(token);
+   var decryptedToken = RSAClass.Decrypt(encryptedToken);
+
+   Assert.AreEqual(token,decryptedToken);
+
+  }
+</pre>
+<p>In this case, the encrypted 128 byte token that results for &#8220;User1&#8243; is:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+57,46,60,70,93,230,85,33,98,19,10,46,84,91,218,43,207,42,159,
+167,5,25,157,4,224,142,235,8,160,199,123,100,107,58,37,204,133,
+81,138,196,237,190,56,119,158,7,224,89,84,85,208,169,44,179,102,
+218,55,60,76,134,144,22,208,230,165,179,83,125,86,57,224,42,
+29,58,188,45,73,33,160,87,165,105,131,139,132,137,209,67,92,36,
+168,73,176,205,251,48,240,228,14,39,197,36,42,21,216,242,172,
+4,160,234,138,77,156,28,191,63,111,207,221,31,103,213,58,62,
+186,123,221,230
+</pre>
+<p>You may wish to modify this by having a smaller encrypted token. This is but one approach of many that are possible.</p>
+<p>The next thing we need is an action filter to make sure the token is present in each and every request:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Net.Http;
+using System.Web.Http.Filters;
+using System.Web.Http.Controllers;
+using WebAPI.Models;
+
+namespace WebAPI
+{
+ public class TokenValidationAttribute : ActionFilterAttribute
+ {
+  public override void OnActionExecuting(HttpActionContext actionContext)
+  {
+   string token;
+
+   try
+   {
+    token = actionContext.Request.Headers.GetValues(&quot;Authorization-Token&quot;).First();
+   }
+   catch (Exception)
+   {
+    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+    {
+     Content = new StringContent(&quot;Missing Authorization-Token&quot;)
+    };
+    return;
+   }
+
+   try
+   {
+    AuthorizedUserRepository.GetUsers().First(x =&gt; x.Name == RSAClass.Decrypt(token));
+    base.OnActionExecuting(actionContext); 
+   }
+   catch (Exception)
+   {
+    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+    {
+     Content = new StringContent(&quot;Unauthorized User&quot;)
+    };
+    return;
+   }
+  }
+ }
+}
+</pre>
+<p>There are two levels of checking here. The first is whether or not the authorization token is present in the header. If not, a bad request response (error 400) is returned. If the token was provided but does not resolve to an authorized user, then an unauthorized response (error 401) is returned. The following illustrates how to setup Fiddler with the Authorization-Token in the header:</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image2.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image2-300x80.png" alt="" width="300" height="80" /></a></p>
+<p>The following illustrates the results of the call in the previous image:</p>
+<p><a href="http://codebetter.com/johnvpetersen/files/2012/04/image3.png"><img src="http://codebetter.com/johnvpetersen/files/2012/04/image3-300x162.png" alt="" width="300" height="162" /></a></p>
+<p>For purposes of this demo, I established a simple authorized user repository that has a list of pre-defined users:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WebAPI.Models
+{
+ public class AuthorizedUserRepository
+ {
+   public static IQueryable&lt;User&gt; GetUsers() {
+   
+      IList&lt;User&gt; users = new List&lt;User&gt;();   
+      users.Add(new User(&quot;User1&quot;));
+      users.Add(new User(&quot;User2&quot;));
+      users.Add(new User(&quot;User3&quot;));
+      users.Add(new User(&quot;Administrator&quot;));
+   
+      return users.AsQueryable();
+   }
+ }
+}
+</pre>
+<p>Within this approach, there are all sorts of variants you could employ. For example, you could swap out the public/private keys on some periodic basis. Of course, that means you will have to issue new tokens to users who have access to your API!!</p>
+<p><strong> IP Filtering</strong></p>
+<p>Up to this point, while the system is pretty secure, it can be locked down further. Right now, tokens could be moved from location to location. It may be that you only want to authorize traffic from certain IP addresses and hosts. For purposes of this demo, I created a simple Authorized IP Repository:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WebAPI.Models
+{
+ public class AuthorizedIPRepository
+ {
+    public static IQueryable&lt;string&gt; GetAuthorizedIPs() {
+    
+      var ips = new List&lt;string&gt;();
+
+      ips.Add(&quot;127.0.0.1&quot;);
+      ips.Add(&quot;::1&quot;);
+      
+      return ips.AsQueryable();
+    }
+ }
+}
+</pre>
+<p>In actual practice, I might take the extra step of linking specific tokens to a specific IP range. I&#8217;ll leave that exercise to you! The following is the action filter that restricts traffic from a defined IP list:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+using System;
+using System.Linq;
+using System.Web.Http.Controllers;
+using System.Web.Http.Filters;
+using System.Net.Http;
+using WebAPI.Models;
+
+namespace WebAPI
+{
+ public class IPHostValidationAttribute : ActionFilterAttribute
+ {
+  public override void OnActionExecuting(HttpActionContext actionContext)
+  {
+
+   var context = actionContext.Request.Properties[&quot;MS_HttpContext&quot;] as System.Web.HttpContextBase;
+   string userIP = context.Request.UserHostAddress;
+   try
+   {
+    AuthorizedIPRepository.GetAuthorizedIPs().First(x =&gt; x == userIP);
+   }
+   catch (Exception)
+   {
+    actionContext.Response =
+       new HttpResponseMessage(System.Net.HttpStatusCode.Forbidden)
+       {
+        Content = new StringContent(&quot;Unauthorized IP Address&quot;)
+       };
+    return;
+   }
+  }
+ }
+}
+</pre>
+<p>To make these action filters global, the following code in the Global.asax Application_Start() will do the trick:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+var config = GlobalConfiguration.Configuration;
+config.Filters.Add(new TokenValidationAttribute());
+config.Filters.Add(new CustomHttpsAttribute());
+config.Filters.Add(new IPHostValidationAttribute());
+</pre>
+<p>If you wished to initiate a request from your C# code, you might have a utility method like this:</p>
+<pre class="brush: csharp; title: ; notranslate" title="">
+  WebRequest getRequest(string method, string contentType, string endPoint)
+  {
+   var request = WebRequest.Create(endPoint);
+   request.Method = method;
+   request.ContentType = contentType;
+
+   ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+   request.Headers.Add(&quot;Authorization-Token&quot;, &quot;57,46,60,70,93,230,85,33,98,19,10,46,84,91,218,43,207,42,159,167,5,25,157,4,224,142,235,8,160,199,123,100,107,58,37,204,133,81,138,196,237,190,56,119,158,7,224,89,84,85,208,169,44,179,102,218,55,60,76,134,144,22,208,230,165,179,83,125,86,57,224,42,29,58,188,45,73,33,160,87,165,105,131,139,132,137,209,67,92,36,168,73,176,205,251,48,240,228,14,39,197,36,42,21,216,242,172,4,160,234,138,77,156,28,191,63,111,207,221,31,103,213,58,62,186,123,221,230&quot;);
+
+   return request;
+  }
+
+</pre>
+<p>This request has the necessary information to make an API request </p>
+<p>That&#8217;s pretty much it. Now we have a ASP.NET Web API that requires requests to be under the HTTPS protocol, requires an encrypted authorization token and requires traffic to only come from a predefined population of IP addresses. There are any number of ways you can vary this implementation. My goal with this post was to make it easy to get started. With this approach, you don&#8217;t have to worry about cumbersome query string parameters, etc. In this example, I am putting authentication details where they belong &#8211; in the header &#8211; which means it will work for anything. No need to deal with clumsy query string parameters either. </p>
+<p>Enjoy!!</p>
+<div class="shr-publisher-389"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->											</div><!-- .entry-content -->
+
+					<div id="entry-author-info">
+						<div id="author-avatar">
+							<img alt='' src='http://1.gravatar.com/avatar/545d3ad0823f1fc4431ff9521a8e74f1?s=60&amp;d=http%3A%2F%2F1.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D60&amp;r=G' class='avatar avatar-60 photo' height='60' width='60' />						</div><!-- #author-avatar 	-->
+						<div id="author-description">
+							<h2>About johnvpetersen</h2>
+							I've been developing software for 20 years, starting with dBase, Clipper and FoxBase + thereafter, migrating to FoxPro and Visual FoxPro and Visual Basic. Other areas of concentration include Oracle and SQL Server - versions 6-2008. From 1995 to 2001, I was a Microsoft Visual FoxPro MVP. Today, my emphasis is on ASP MVC .NET applications. I am a current Microsoft ASP .NET MVP. Publishing In 1999, I wrote the definitive whitepaper on ADO for VFP Developers. In 2002, I wrote the Absolute Beginner’s Guide to Databases for Que Publishing. I was a co-author of Visual FoxPro Enterprise Development from Prima Publishing with Rod Paddock, Ron Talmadge and Eric Ranft. I was also a co-author of Visual Basic Web Development from Prima Publishing with Rod Paddock and Richard Campbell. Education - B.S Business Administration – Mansfield University - M.B.A. – Information Systems – Saint Joseph’s University - J.D. – Rutgers University School of Law (Camden) In 2004, I graduated from the Rutgers University School of Law with a Juris Doctor Degree. I passed the Pennsylvania and New Jersey Bar exams and was in private practice for several years – concentrating transactional and general business law (contracts, copyrights, trademarks, independent contractor agreements, NDA’s, intellectual property and mergers and acquisitions.).							<div id="author-link">
+								<a href="http://codebetter.com/johnvpetersen/author/johnvpetersen/" title="View all posts by johnvpetersen">View all posts by johnvpetersen &rarr;</a>
+							</div><!-- #author-link	-->
+						</div><!-- #author-description	-->
+					</div><!-- .entry-author-info -->
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/johnvpetersen/category/asp-net/" title="View all posts in ASP.NET" rel="category tag">ASP.NET</a>, <a href="http://codebetter.com/johnvpetersen/category/asp-net-mvc-4/" title="View all posts in ASP.NET MVC 4" rel="category tag">ASP.NET MVC 4</a>. Bookmark the <a href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/" title="Permalink to Making your ASP.NET Web API&#8217;s secure" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/feed/" title="Comments RSS to Making your ASP.NET Web API&#8217;s secure" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-389 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/johnvpetersen/2012/03/24/converting-to-system-net-http/" rel="prev"><span class="meta-nav">&larr;</span> Converting to System.Net.Http</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/johnvpetersen/2012/04/04/moving-from-action-filters-to-message-handlers/" rel="next">Moving from Action Filters to Message Handlers <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+            <ul id="dsq-comments">
+                    <li id="dsq-comment-252">
+                    <div id="dsq-comment-header-252" class="dsq-comment-header">
+                        <cite id="dsq-cite-252">
+    http://blog.cwa.me.uk/2012/04/03/the-morning-brew-1078/                            <span id="dsq-author-user-252">The Morning Brew &#8211; Chris Alcock &raquo; The Morning Brew #1078</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-252" class="dsq-comment-body">
+                        <div id="dsq-comment-message-252" class="dsq-comment-message"><p>[...] Making your ASP.NET Web API&#8217;s secure &#8211; John V. Petersen takes a look at securing WebAPI implemented services, exploring public / private key based tokens and HTTPS. [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-254">
+                    <div id="dsq-comment-header-254" class="dsq-comment-header">
+                        <cite id="dsq-cite-254">
+                                <span id="dsq-author-user-254">Guest</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-254" class="dsq-comment-body">
+                        <div id="dsq-comment-message-254" class="dsq-comment-message"><p>Nice article. And a straightforward approach. But have you looked at WIF and it&#8217;s support for Simple Web Tokens? Wouldn&#8217;t that work just as well?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-255">
+                    <div id="dsq-comment-header-255" class="dsq-comment-header">
+                        <cite id="dsq-cite-255">
+                                <span id="dsq-author-user-255">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-255" class="dsq-comment-body">
+                        <div id="dsq-comment-message-255" class="dsq-comment-message"><p>Thank you. Certainly, WIF would work. The underpinnings of that, like my solution, is a public/private key. WIF is a viable approach, albeit a bit more complicated. I think that would make a nice blog post too&#8230; hint hint&#8230; <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-256">
+                    <div id="dsq-comment-header-256" class="dsq-comment-header">
+                        <cite id="dsq-cite-256">
+    http://twitter.com/bartczernicki                            <span id="dsq-author-user-256">Bart Czernicki</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-256" class="dsq-comment-body">
+                        <div id="dsq-comment-message-256" class="dsq-comment-message"><p>I would have split the article up&#8230;you start talking about Authentication and Authorization..OAuth and then jump to HTTPS?</p>
+<p>First you want to start off talking about private or public APIs&#8230;huge difference.</p>
+<p>I would have then started with Identification.  That is a public API key concept&#8230;Bing Maps or Azure Storage where API Keys identify the subscriber of the API.  That is a concept all on its own&#8230;IP filterting and API throttling etc can all be discussed.  Public API Keys (can be) and usually are shareable (Google, Azure APIs etc)</p>
+<p>Authentication is a completely different topic on its own.  There are ways to pass derived/encrypted tokens around.  HMAC is a great example..no private key needed its a Hash + Salt match with a timespan.  Login cookies as well&#8230; While talking about private/public keys you mention Authorization&#8230;.this has nothing to do with Authorization/data level security&#8230;that is usually up to the Controller actions or business logic to determine (roles, users etc.)</p>
+<p>Then you have your transport layer&#8230;HTTPs/TLS.  You can also add in here encrypting the payload of the actual HTTP request/response whether its JSON/XML.  This allows you to have the flexibility of an HTTP service and only encrypting select sensitive data and not take the CPU overhead, complexity of adding HTTPs or &#8220;some of&#8221; the HTTPs caching pitfalls in older browsers etc.</p>
+<p>I point these out, because securing your Web API layer is much more complex and needs to be thought out in a layered approach.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-257">
+                    <div id="dsq-comment-header-257" class="dsq-comment-header">
+                        <cite id="dsq-cite-257">
+    http://twitter.com/cecilphillip                            <span id="dsq-author-user-257">Cecil L. Phillip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-257" class="dsq-comment-body">
+                        <div id="dsq-comment-message-257" class="dsq-comment-message"><p>How would JavaScript clients handle encryption in browser environments? Encryption is pretty intensive in browsers &#8230; isn&#8217;t it ?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-258">
+                    <div id="dsq-comment-header-258" class="dsq-comment-header">
+                        <cite id="dsq-cite-258">
+                                <span id="dsq-author-user-258">Chris Staley</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-258" class="dsq-comment-body">
+                        <div id="dsq-comment-message-258" class="dsq-comment-message"><p>Nice post.</p>
+<p>However, it is considered bad form to use try/catch blocks for control flow for a number of different reasons (e.g. readability, performance, and unexpected exceptions).  For example, to test for the presence of the authorization token in TokenValidationAttribute it&#8217;s considered better to do something like this:</p>
+<p>var token = actionContext.Request.Headers.GetValues(&#8220;Authorization-Token&#8221;).FirstOrDefault();<br />
+if (token == null)   {<br />
+    actionContext.Response = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)<br />
+    {<br />
+     Content = new StringContent(&#8220;Missing Authorization-Token&#8221;)<br />
+    };<br />
+    return;<br />
+ }</p>
+<p>It&#8217;s clearer from that code why a 400 would be returned by the filter.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-259">
+                    <div id="dsq-comment-header-259" class="dsq-comment-header">
+                        <cite id="dsq-cite-259">
+                                <span id="dsq-author-user-259">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-259" class="dsq-comment-body">
+                        <div id="dsq-comment-message-259" class="dsq-comment-message"><p>The goal was to make it simple. I had to at least mention oAuth and OpenID. Your points are well taken, but with all due respect, had I gone down the approach you suggested, I would not have met my goal. The title is about securing your Web API. My goal was to explain how to make that happen in a simple, yet robust way. I did that. Cookies, CPU overhead, etc &#8211; all stuff that is valid in the discussion &#8211; but nothing that I have brought up here.</p>
+<p>I completely disagree that Authentication is a topic on its own &#8211; at least to the extent that it did not belong in this post. You have to consider both authentication and authorization when discussing how to secure a Web API. </p>
+<p>You are right &#8211; securiing a Web API is a complex problem &#8211; but it does not have to be unecessarily complex. IMO, some of the items in your comment go down an uncessarily complex road. In fact, most of the discussions I&#8217;ve seen are too complex &#8211; which is why I created the post.</p>
+<p>Indeed, I could easily expand the appraoch to encrypt the payload and to incorporate different approaches to passing a token around. As for bing maps, etc &#8211; I&#8217;m familiar wtih those approaches. But &#8211; I didn&#8217;t want to get into query strings. Could I modify my approach to do something like that? Sure.  And it would be fairly easy to do that. It probably makes sense to also allow the passing of a smaller encrypted token to do just that. Much of that boils down to how your API will be consumed. For Bing/Google Maps, that approach makes perfect sense.</p>
+<p>As to what you would split up or what you would have started with &#8211; all I will suggest is that you are free to make a blog post of your own&#8230;. <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> </p>
+<p>JVP</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-260">
+                    <div id="dsq-comment-header-260" class="dsq-comment-header">
+                        <cite id="dsq-cite-260">
+                                <span id="dsq-author-user-260">Gene Reddick</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-260" class="dsq-comment-body">
+                        <div id="dsq-comment-message-260" class="dsq-comment-message"><p>If you wanted to know which user&#8217;s token had been used, how would you pass that to the api action method?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-261">
+                    <div id="dsq-comment-header-261" class="dsq-comment-header">
+                        <cite id="dsq-cite-261">
+                                <span id="dsq-author-user-261">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-261" class="dsq-comment-body">
+                        <div id="dsq-comment-message-261" class="dsq-comment-message"><p>&#8220;it is considered bad form to use try/catch blocks for control flow &#8230;&#8221;</p>
+<p>Says who? Conventional Wisdom?  I see this sort of thing getting tossed around like &#8220;Best Practice&#8221; or &#8220;Bad Form&#8221;. Usually, folks can&#8217;t cite to a single authority to really substantiate that conclusion. </p>
+<p>Now&#8230;let&#8217;s get to the use of FirstOrDefault. Essentially, that gobbles up the exception handling. There is an implicit try catch in there. Regardless of which approach, I would have to check the value. Whether I check for null (with an if statement) &#8211; or I let a try catch handle it (using just First) &#8211; I don&#8217;t see the big difference. If you are going to talk about readility, that Chris &#8211; is purely a matter of preference and opinion. What reads well for one may not read well for another. </p>
+<p>As to performance, I would seriously question whether there is any performance impact here &#8211; especially given what FirstOrDefault actually does under the covers. </p>
+<p>The real issue is how cohesive the code is &#8211; how well it conforms to SOLID principles. In this case, single responsibility applies and that is all a filter should do&#8230;just one thing. </p>
+<p>It&#8217;s clear from my code why a 400 would be returned as well. If there is one flaw, it&#8217;s that I only have one exception block. What about cases when another exception is at hand. I probably should handle that differently and that is a point I think you were making (even though your code sample has no exception handling whatsoever.. <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' /> ). </p>
+<p>When a token can&#8217;t be found &#8211; that is an exception in my API &#8211; and it&#8217;s an exception I handle.  Some may choose to deal wit the exception implicitly (via FirstOrDefault) or explcitely like I did). Reasonable people can disagree as to readability.  FirstOrDefault has a cost &#8211; just like exception handling. If you are going to cite performance, you are oblgiated to confront that topic. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-262">
+                    <div id="dsq-comment-header-262" class="dsq-comment-header">
+                        <cite id="dsq-cite-262">
+                                <span id="dsq-author-user-262">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-262" class="dsq-comment-body">
+                        <div id="dsq-comment-message-262" class="dsq-comment-message"><p>In my example, I pass it in the header. But, you could modify things and pass it as a QueryString Parameter. You would want to use something smaller than the byte array I used here&#8230;:-) Does that help?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-263">
+                    <div id="dsq-comment-header-263" class="dsq-comment-header">
+                        <cite id="dsq-cite-263">
+                                <span id="dsq-author-user-263">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-263" class="dsq-comment-body">
+                        <div id="dsq-comment-message-263" class="dsq-comment-message"><p>Not sure I understand the question. If you are talking about an Ajax call, then in the beforeSend handler, you would take care of  adding the header. In practice, I would likely never do that &#8211; especially if my app was consuming the services of the Web API. Instead, I&#8217;d having something on my server that hid the details from the browser. That said, there&#8217;s nothing stopping you from making an Ajax call  &#8211; something like $.ajax() &#8211; and then building up the request and then processing the results. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-264">
+                    <div id="dsq-comment-header-264" class="dsq-comment-header">
+                        <cite id="dsq-cite-264">
+                                <span id="dsq-author-user-264">Gene Reddick</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-264" class="dsq-comment-body">
+                        <div id="dsq-comment-message-264" class="dsq-comment-message"><p>I guess what I&#8217;m really asking is how to pass in the authenticated userId, so you don&#8217;t have to do a second look up in the API action to confirm the userId and the token match?</p>
+<p>I&#8217;m assuming in my case that I can&#8217;t just use the userId as the basis for the token. </p>
+<p>For example, with the web api inside of a web project that handles authentication, I can (somewhat clumsily) call:</p>
+<p>    var principal = ControllerContext.Request.GetUserPrincipal();<br />
+    if(!principal.Identity.IsAuthenticated)  {<br />
+        throw new HttpResponseException(HttpStatusCode.Unauthorized);<br />
+    }<br />
+    var userName = principal.Identity.Name;</p>
+<p>I suppose I could pass the userId in the header and then validate that in addition to the token in the TokenValidationFilter, then read it in the action method now that I know that both userId and token match?</p>
+<p>Or is there a better way to handle this?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-265">
+                    <div id="dsq-comment-header-265" class="dsq-comment-header">
+                        <cite id="dsq-cite-265">
+    http://twitter.com/cecilphillip                            <span id="dsq-author-user-265">Cecil L. Phillip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-265" class="dsq-comment-body">
+                        <div id="dsq-comment-message-265" class="dsq-comment-message"><p>I was looking at it from the perspective of encryption algorithm performance on the client.  Do you have a sample or recommended library to handle encryption/decryption of the pay load  in JavaScript?</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-266">
+                    <div id="dsq-comment-header-266" class="dsq-comment-header">
+                        <cite id="dsq-cite-266">
+                                <span id="dsq-author-user-266">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-266" class="dsq-comment-body">
+                        <div id="dsq-comment-message-266" class="dsq-comment-message"><p>The token you would have would already be encrypted. The server handles the decryption &#8211; with the private key.  Once the user id has already been encrypted with the public key, there&#8217;s no reason to keep doing that.  Remember, this is a rest service, so each call has to be authenticated/authorized &#8211; and that is getting handled with the token. </p>
+<p>HTH</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-267">
+                    <div id="dsq-comment-header-267" class="dsq-comment-header">
+                        <cite id="dsq-cite-267">
+                                <span id="dsq-author-user-267">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-267" class="dsq-comment-body">
+                        <div id="dsq-comment-message-267" class="dsq-comment-message"><p>In this case, insofar as the content is concerned, I&#8217;m letting https handle that security. But assuming I wanted to encrypted the payload with a private key, then I would want some intermediate service (the true client to the rest service) to handle that task. Then, as far as your client is concerned (which only communicates with the intermediate service behind your dmz) &#8211; it&#8217;s all unencrypted &#8211; and would be secure since you are behind your firewall. I&#8217;m sure there are js based libraries, that with a public key, you could encrypt. BUT &#8211; you would only have a public key. You typically don&#8217;t decrypt with a public key &#8211; only do so with the private key.  Again &#8211; relying on https to handle the transport issues. My goal in this post was to offer a simple way to authorize/authenticate &#8211; in a secure way &#8211; and at the same time &#8211; be simple and not burdensome. </p>
+<p>HTH</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-268">
+                    <div id="dsq-comment-header-268" class="dsq-comment-header">
+                        <cite id="dsq-cite-268">
+    http://twitter.com/cecilphillip                            <span id="dsq-author-user-268">Cecil L. Phillip</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-268" class="dsq-comment-body">
+                        <div id="dsq-comment-message-268" class="dsq-comment-message"><p>Got it. Great post and I appreciate your responses.<br />
+Thanks </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-269">
+                    <div id="dsq-comment-header-269" class="dsq-comment-header">
+                        <cite id="dsq-cite-269">
+    http://pedroreys.com/                            <span id="dsq-author-user-269">Pedro Reys</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-269" class="dsq-comment-body">
+                        <div id="dsq-comment-message-269" class="dsq-comment-message"><p>John, </p>
+<p>Why did you choose to create Action Filters instead of HttpMessageHandlers?</p>
+<p>The type of things you are doing are more related to the Http Request Message itself, so makes more sense to me to use message handlers instead of filters. Also, using message handlers allow you to short circuit the message processing and return before even getting into the Controller Dispatcher.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-270">
+                    <div id="dsq-comment-header-270" class="dsq-comment-header">
+                        <cite id="dsq-cite-270">
+                                <span id="dsq-author-user-270">Chris Martin</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-270" class="dsq-comment-body">
+                        <div id="dsq-comment-message-270" class="dsq-comment-message"><p>Let me preface this by saying that I have no dog in this fight. <img src='http://codebetter.com/johnpetersen/wp-includes/images/smilies/icon_biggrin.gif' alt=':D' class='wp-smiley' /> </p>
+<p>FirstOrDefault does NOT swallow exceptions. If nothing matches the predicate it returns false.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-271">
+                    <div id="dsq-comment-header-271" class="dsq-comment-header">
+                        <cite id="dsq-cite-271">
+                                <span id="dsq-author-user-271">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-271" class="dsq-comment-body">
+                        <div id="dsq-comment-message-271" class="dsq-comment-message"><p>Returns false or  null? </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-272">
+                    <div id="dsq-comment-header-272" class="dsq-comment-header">
+                        <cite id="dsq-cite-272">
+                                <span id="dsq-author-user-272">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-272" class="dsq-comment-body">
+                        <div id="dsq-comment-message-272" class="dsq-comment-message"><p>That is an excellent point. I&#8217;ll look into that. As an mvc guy, I still have controllers on the mind!!</p>
+<p>Thanks for the comment.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-273">
+                    <div id="dsq-comment-header-273" class="dsq-comment-header">
+                        <cite id="dsq-cite-273">
+                                <span id="dsq-author-user-273">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-273" class="dsq-comment-body">
+                        <div id="dsq-comment-message-273" class="dsq-comment-message"><p>As it turns out, you do have to wrap the Headers.GetValues call in a try catch block. If no authorization header is passed, the code never gets to the linq query First or FirstOrDefault. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-274">
+                    <div id="dsq-comment-header-274" class="dsq-comment-header">
+                        <cite id="dsq-cite-274">
+                                <span id="dsq-author-user-274">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-274" class="dsq-comment-body">
+                        <div id="dsq-comment-message-274" class="dsq-comment-message"><p>The next post converts the attributes to message handlers. Thanks again Pedro for the comment!! </p>
+<p>I probably could bypass controllers completely!!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-276">
+                    <div id="dsq-comment-header-276" class="dsq-comment-header">
+                        <cite id="dsq-cite-276">
+    http://twitter.com/sidecut                            <span id="dsq-author-user-276">James Raden</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-276" class="dsq-comment-body">
+                        <div id="dsq-comment-message-276" class="dsq-comment-message"><p>Null, unless T in FirstOrDefault is bool, in which case the default value *is* false. Slip of the tongue, I&#8217;m sure.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-288">
+                    <div id="dsq-comment-header-288" class="dsq-comment-header">
+                        <cite id="dsq-cite-288">
+    http://rogue-technology.com/blog/?p=1503                            <span id="dsq-author-user-288">Distributed Weekly 149 &mdash; Scott Banwart&#039;s Blog</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-288" class="dsq-comment-body">
+                        <div id="dsq-comment-message-288" class="dsq-comment-message"><p>[...] Making your ASP.NET Web API’s secure ** [...]</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-296">
+                    <div id="dsq-comment-header-296" class="dsq-comment-header">
+                        <cite id="dsq-cite-296">
+    http://twitter.com/anthonyyates                            <span id="dsq-author-user-296">anthonyyates</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-296" class="dsq-comment-body">
+                        <div id="dsq-comment-message-296" class="dsq-comment-message"><p>Hi Cecil, </p>
+<p>I&#8217;ve used <a href="http://code.google.com/p/crypto-js/" rel="nofollow">http://code.google.com/p/crypto-js/</a> for simple stuff and can recommend it.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-297">
+                    <div id="dsq-comment-header-297" class="dsq-comment-header">
+                        <cite id="dsq-cite-297">
+                                <span id="dsq-author-user-297">naim_akbar</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-297" class="dsq-comment-body">
+                        <div id="dsq-comment-message-297" class="dsq-comment-message"><p>When do we generate these public private keys used for encrypting/decrypting tokens for a particular user. Would this be done on registration?</p>
+<p>Maybe I have misunderstood the post, but what level of security is  this. If the token is based on a username, then whats to stop a malicious user to use the same username and hence masquerade as this user. Is it down to the public/provate key pair? I guess it would be.</p>
+<p>If this is the case how would I as a user have access to my private key when I am signing the token ? Where do I get it from</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-301">
+                    <div id="dsq-comment-header-301" class="dsq-comment-header">
+                        <cite id="dsq-cite-301">
+    http://twitter.com/AzZuM                            <span id="dsq-author-user-301">Ken deKlerk</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-301" class="dsq-comment-body">
+                        <div id="dsq-comment-message-301" class="dsq-comment-message"><p>John, relating to your other posts, how would you add the key to every request when you consume a rest api?  </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-302">
+                    <div id="dsq-comment-header-302" class="dsq-comment-header">
+                        <cite id="dsq-cite-302">
+                                <span id="dsq-author-user-302">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-302" class="dsq-comment-body">
+                        <div id="dsq-comment-message-302" class="dsq-comment-message"><p>Hi Ken, </p>
+<p>You add it to the request header. I named it Authorization-Token. The API examines the request and checks the headers collection to make sure Authorization-Token is present. Look at the tests in the example code. You will see the factory method that creates a new request. Part of that process adds the Authorization-Token to the headers collection.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-303">
+                    <div id="dsq-comment-header-303" class="dsq-comment-header">
+                        <cite id="dsq-cite-303">
+                                <span id="dsq-author-user-303">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-303" class="dsq-comment-body">
+                        <div id="dsq-comment-message-303" class="dsq-comment-message"><p>You can generate the keys when you register the user. You could generate new ones on some perioidic basis. The user would need the public key so that they could encrypt their user id. In this example, I used the user id as the thing that was encrypted. You could use something else if you wanted. For example, let&#8217;s say you encrypt a json string that has your user id and a time stamp (based on utc &#8211; ut0). You could set up the API to only accept a request that has a timestamp that is no older than 1 minute. That&#8217;s pretty secure since it would require the user to have the public key. That&#8217;s an assumption you have to make. You could limit the requests for that user id to a specific set of IP addresses.  In my opinion, that would be secure enough. Even if some malicious user got the key and encrypted, they are not in your DMZ &#8211; and hence would have a different IP address. That would be pretty hard to spoof.  There are all kinds of variants within the approach. Regardless of which one you choose, the same basic mechanisim remains the same.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-304">
+                    <div id="dsq-comment-header-304" class="dsq-comment-header">
+                        <cite id="dsq-cite-304">
+                                <span id="dsq-author-user-304">naim_akbar</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-304" class="dsq-comment-body">
+                        <div id="dsq-comment-message-304" class="dsq-comment-message"><p>Hi Jon,</p>
+<p>Thanks for your reply. I think this post is slightly confusing the idea of a public/private key pair (based on the concept of public key encryption). </p>
+<p>The whole idea of a public key is that it is public. Anyone can use it. So if for example I am sending a message to a User called &#8216;X&#8217;, then i&#8217;d encrypt the message with &#8216;X&#8217;s public key, knowing that X is the only one who can read it(decrypt it).. using  his private key.</p>
+<p>Otherwise, based on what I have read in the post (and ignoring the IP checking you mentioned), you could have 2 users, encrypt their token with the same key &#8230;as its public, and the server would not be able to distinguish between the two users.</p>
+<p>Digital signatures work the other way. With this approach, you&#8217;d sign the token (or encrypt) with your private key&#8230;.and only you know this key.. and the sever could verify (decrypt) the token by using your public key. This way, the sever can be sure that the token has come from you (origin authentication).</p>
+<p>What would make more sense is using the concept of &#8216;secret key encryption&#8217;. This is where both the client and server share the same secret.  Therefore you still get origin authentication.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-305">
+                    <div id="dsq-comment-header-305" class="dsq-comment-header">
+                        <cite id="dsq-cite-305">
+                                <span id="dsq-author-user-305">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-305" class="dsq-comment-body">
+                        <div id="dsq-comment-message-305" class="dsq-comment-message"><p>Good points.   Indeed, we could easily flip things and have the server decrypt with the user&#8217;s public key. The server app could still generate these keys and make them available to the user. </p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-308">
+                    <div id="dsq-comment-header-308" class="dsq-comment-header">
+                        <cite id="dsq-cite-308">
+    http://www.abercrombieandfitchonsale.co.uk/                            <span id="dsq-author-user-308">Beverly</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-308" class="dsq-comment-body">
+                        <div id="dsq-comment-message-308" class="dsq-comment-message"><p>Your site provided us with valuable information to work on.You have done a marvellous job!</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-313">
+                    <div id="dsq-comment-header-313" class="dsq-comment-header">
+                        <cite id="dsq-cite-313">
+    http://twitter.com/ryanwi                            <span id="dsq-author-user-313">Ryan Williams</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-313" class="dsq-comment-body">
+                        <div id="dsq-comment-message-313" class="dsq-comment-message"><p>I&#8217;m really confused by this statement, &#8220;For many applications, OpenID or oAuth can work fine. But for a Web API, it really does not work.&#8221;</p>
+<p>oAuth is designed specifically for API usage while OpenID fits more into what you were saying as far as not working well for Web APIs.  By combining the two and claiming that oAuth doesn&#8217;t work is a dangerous statement. It is pretty much the standard for API authorization.  Plus, it&#8217;s based on tokens as you go on to write about.</p>
+<p>Now, I would agree that oAuth is complicated and requires an interaction with another party, so from that standpoint it really depends on the use of the API as to whether to use oAuth.</p>
+</div>
+                    </div>
+                </li>
+                    <li id="dsq-comment-314">
+                    <div id="dsq-comment-header-314" class="dsq-comment-header">
+                        <cite id="dsq-cite-314">
+                                <span id="dsq-author-user-314">Anonymous</span>
+                            </cite>
+                    </div>
+                    <div id="dsq-comment-body-314" class="dsq-comment-body">
+                        <div id="dsq-comment-message-314" class="dsq-comment-message"><p>Hi Ryan, </p>
+<p>Thanks for the comment. </p>
+<p>You nailed it with this aspect of your comment:<br />
+**<br />
+Now, I would agree that oAuth is complicated and requires an interaction with another party,<br />
+**</p>
+<p>That was my point in saying it &#8220;really&#8221;does not work all that well. I could have and should have been more artful in the way I phrased that. The fact is, technically, it (oAuth) can and does work. OpenID definitely represents an impedance mismatch between what WebAPI&#8217;s require and do and how OpenID works.</p>
+<p>I will be re-working this example to incorporate oAuth (google, twitter, etc). What I don&#8217;t want lost is the point on business practicality. If your API is something that sits out in the public (like the Bing Maps API for example) &#8211; then sure &#8211; oAuth can work. But I&#8217;ll tell you &#8211; I like the simplicity of sending an API Key!! Can the key get stolen?  Sure, but if you send it in a header under https &#8211; that is not likely to happen. Also, you can renew/re-gen the key&#8217;s. That, with a combination of IP sourcing, the likelihood of getting spoofed goes way down. </p>
+<p>On the other hand, what if yours is a private API &#8211; behind your DMZ? Or, it&#8217;s reach is limited? In that case, Windows Authentication (in the case of a Windows Server) could certainly work. I certainly would not expect a private enterprise to defer to some third party like Google, Twitter, etc.</p>
+<p>And finally, what if those third parties or some other entity is down? I like the idea of API&#8217;s being self-sufficient. </p>
+<p>That&#8217;s where I was coming from. Your point on the technical applicability of oAuth is well taken and I will expand the example to include that.</p>
+<p>Thanks, </p>
+<p>JVP</p>
+</div>
+                    </div>
+                </li>
+                </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/johnvpetersen/2012/04/02/making-your-asp-net-web-apis-secure/';
+    var disqus_identifier = '389 http://codebetter.com/johnvpetersen/?p=389';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'johnvpetersensblog';
+    var disqus_title = "Making your ASP.NET Web API&#8217;s secure";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /* 
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            DISQUS.request.get('?cf_action=sync_comments&post_id=389');
+        });
+                    };
+    var facebookXdReceiverPath = 'http://codebetter.com/johnpetersen/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+            {
+                'author_name':    "The Morning Brew - Chris Alcock &raquo; The Morning Brew #1078",
+                'author_url':    "http:\/\/blog.cwa.me.uk\/2012\/04\/03\/the-morning-brew-1078\/",
+                'date':            "04\/03\/2012 04:33 AM",
+                'excerpt':        "[...] Making your ASP.NET Web API&#8217;s secure - John V. Petersen takes a look at securing WebAPI implemented services, exploring ...",
+                'type':            "pingback"            }
+,            {
+                'author_name':    "Distributed Weekly 149 &mdash; Scott Banwart&#039;s Blog",
+                'author_url':    "http:\/\/rogue-technology.com\/blog\/?p=1503",
+                'date':            "04\/06\/2012 09:38 AM",
+                'excerpt':        "[...] Making your ASP.NET Web API’s secure ** [...] ",
+                'type':            "pingback"            }
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/johnvpetersen\/2012\/04\/02\/making-your-asp-net-web-apis-secure\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.' + disqus_domain + '/embed.js?pname=wordpress&pver=2.67';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 1.469 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-09 12:55:26 -->
+<!-- super cache -->
