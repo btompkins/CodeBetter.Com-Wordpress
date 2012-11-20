@@ -21,7 +21,7 @@ define('WP_CACHE', true);
 define('DB_NAME', 'wp_codebetter');
 
 /** MySQL database username */
-define('DB_USER', 'dbuser');
+define('DB_USER', 'root');
 
 /** MySQL database password */
 define('DB_PASSWORD', 'bupfre26');
