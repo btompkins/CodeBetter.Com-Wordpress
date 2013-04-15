@@ -33,6 +33,7 @@
 <li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
 <li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
 <li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+<li><a href="http://ducksboard.com/" target="_blank">Ducksboard</a></li>
 	</ul>				
 				</div><!-- #third .widget-area -->
 				<div class="grid_4">
@@ -113,6 +114,6 @@
     }//]]></script>
 <script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
 <script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
- 
+ <?php wp_footer(); ?>
 </body>
 </html>

@@ -10,9 +10,6 @@ function shrsb_correct_protocol($url) {
   }
 }
 
-
-
-
 function shrsb_is_mobile_browser() {
     $useragent=$_SERVER['HTTP_USER_AGENT'];
     $isMobile = false;
@@ -55,7 +52,7 @@ function bookmark_list_item($name, $opts=array()) {
                 var s=d.createElement("script");
                 s.setAttribute("language","javascript");
                 s.id="shr-servicelet";
-                s.setAttribute("src", "'.$shrsb_plugopts['shrbase'].'" + "/media/js/servicelet.min.js");
+                s.setAttribute("src", "'.shrsb_correct_protocol($shrsb_plugopts['shrbase']).'" + "/media/js/servicelet.min.js");
                 d.body.appendChild(s);
             } else{
                 SHR.Servicelet.show();
@@ -71,7 +68,7 @@ function bookmark_list_item($name, $opts=array()) {
           $onclick = " onclick=\"$clickHandler\"";
     }
   
-    $url = $shrsb_plugopts['shrbase'].'/api/share/?'.implode('&amp;',array(
+    $url = shrsb_correct_protocol($shrsb_plugopts['shrbase']).'/api/share/?'.implode('&amp;',array(
     																		'title=TITLE',
     																		'link=PERMALINK',
     																		'notes='.$post_info['notes'],
@@ -88,11 +85,9 @@ function bookmark_list_item($name, $opts=array()) {
     																		'ctype='
     																		));
   }
-  else if($name == 'shr-comfeed') {// Otherwise, use default baseUrl format
-      $url=$shrsb_bookmarks_data[$name]['baseUrl'];
-  }
+
   else {
-	 $url = $shrsb_plugopts['shrbase'].'/api/share/?'.implode('&amp;',array(	
+	 $url = shrsb_correct_protocol($shrsb_plugopts['shrbase']).'/api/share/?'.implode('&amp;',array(	
 																			'title=TITLE',
 																			'link=PERMALINK',
 																			'notes='.$post_info['notes'],
@@ -145,8 +140,6 @@ function bookmark_list_item($name, $opts=array()) {
 		);
 	}
 }
-
-
 
 
 // Displays a multi-dimensional array as a HTML List (Tree structure).

@@ -18,18 +18,31 @@
 		}
     ?></title>
 	<link rel="profile" href="http://gmpg.org/xfn/11" />
-	
 	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
 	<?php
 		wp_enqueue_style( 'mainstyle', '/wp-content/themes/codebetter/style.css');
-			wp_enqueue_style( 'jquerystyle', '/wp-content/themes/codebetter/jquery-ui-1.8.1.custom.css');	
+		wp_enqueue_style( 'jquerystyle', '/wp-content/themes/codebetter/jquery-ui-1.8.1.custom.css');	
 	?>
 
 	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
 	<link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 	<?php wp_head(); ?>
 	
-	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<script type="text/javascript">var p="http",d="static";if(document.location.protocol=="https:"){p+="s";d="engine";}var z=document.createElement("script");z.type="text/javascript";z.async=true;z.src=p+"://"+d+".adzerk.net/ados.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(z,s);</script>
+
+	<script type="text/javascript">
+	var ados = ados || {};
+	ados.run = ados.run || [];
+	ados.run.push(function() {
+	ados_add_placement(4795, 21212, "azk94205", 16).setZone(16618);
+	ados_add_placement(4795, 21212, "azk46263", 16).setZone(16619);
+	ados_add_placement(4795, 21212, "azk39422", 16).setZone(16620);
+	ados_add_placement(4795, 21212, "azk22352", 16).setZone(16621);
+	ados_add_placement(4795, 21212, "azk32170", 5).setZone(16622);
+	ados_load();
+	});</script>
+
+
 	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
 <!-- BuySellAds Ad Code -->
 <script type="text/javascript">
@@ -46,7 +59,7 @@
 
 <body>
 
-	<?php switch_to_blog(1); ?>		
+	<?php switch_to_blog(1); ?>
 		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
 			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
@@ -64,24 +77,20 @@
   </div>
 </form>
 <script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
-				</div>				
+				</div>
 			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
 		</div>
-			
 		<div id="main" class="container_12">
-		
 			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - <?php bloginfo('description'); ?>"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
 			<div id="ad_leaderboard" class="grid_9">
 			<!-- BuySellAds Zone Code -->
-<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
-<!-- End BuySellAds Zone Code --></div>
-			
+			<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+			<!-- End BuySellAds Zone Code --></div>
 			<div id="globalNav" class="grid_12">
 				<ul>
 					<li><a href="<?php bloginfo('url'); ?>" title="home">Home</a></li>
 					<?php wp_list_pages('title_li=&exclude=41'); ?>
 					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
 				</ul>
-								
-			</div><!-- end div#globalNav.container_12 -->				
+			</div><!-- end div#globalNav.container_12 -->
 	<?php restore_current_blog(); ?>

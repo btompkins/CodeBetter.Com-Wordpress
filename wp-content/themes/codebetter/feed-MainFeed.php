@@ -6,6 +6,7 @@
  */
 
 header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
+
 $more = 1;
 
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
@@ -30,8 +31,6 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<sy:updatePeriod><?php echo apply_filters( 'rss_update_period', 'hourly' ); ?></sy:updatePeriod>
 	<sy:updateFrequency><?php echo apply_filters( 'rss_update_frequency', '1' ); ?></sy:updateFrequency>
 	<?php do_action('rss2_head'); ?>
-	
-	
 	<?php
 	global $query_string;
 	
@@ -54,6 +53,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	$wp_query->request = $querystr;
 	$pageposts = $wpdb->get_results($wp_query->request, OBJECT);	
 	$use_excerpt = get_option('rss_use_excerpt');
+	
  ?>
  <?php if ($pageposts): ?>
   <?php foreach ($pageposts as $post): ?>

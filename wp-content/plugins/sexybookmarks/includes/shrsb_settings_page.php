@@ -1,42 +1,37 @@
 <?php
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-/*
  * @desc Like button Set Settings
  */
+
 function shrsb_likeButtonSetHTML($settings,$pos = 'Bottom') {   // $pos = Bottom/Top
 
     ?>
 
     <table><tbody style ="display:none" class="likeButtonsAvailable<?php echo $pos;?>">
             <tr class="tabForTr">
-                <td><span class="shrsb_option"><?php _e('Include Facebook Like Button', 'shrsb'); ?> <span style="color:red;">*</span></span>
+                <td><span class="shrsb_option"><?php _e('Include Facebook Like Button', 'shrsb'); ?></span>
                 </td>
                 <td style="width:125px"><label><input <?php echo (($settings["fbLikeButton$pos"] == "1")? 'checked="checked"' : ""); ?> name="fbLikeButton<?php echo $pos;?>" id="fbLikeButton<?php echo $pos;?>-yes" type="radio" value="1" /> <?php _e('Yes', 'shrsb'); ?></label>
                 </td><td><label><input <?php echo (($settings["fbLikeButton$pos"] == "0")? 'checked="checked"' : ""); ?> name="fbLikeButton<?php echo $pos;?>" id="fbLikeButton<?php echo $pos;?>-no" type="radio" value="0" /> <?php _e('No', 'shrsb'); ?></label>
                 </td>
             </tr>
             <tr class="tabForTr">
-                <td><span class="shrsb_option"><?php _e('Include Facebook Send Button', 'shrsb'); ?> <span style="color:red;">*</span></span>
+                <td><span class="shrsb_option"><?php _e('Include Facebook Send Button', 'shrsb'); ?></span>
                 </td>
                 <td style="width:125px"><label><input <?php echo (($settings["fbSendButton$pos"] == "1")? 'checked="checked"' : ""); ?> name="fbSendButton<?php echo $pos;?>" id="fbSendButton<?php echo $pos;?>-yes" type="radio" value="1" /> <?php _e('Yes', 'shrsb'); ?></label>
                 </td><td><label><input <?php echo (($settings["fbSendButton$pos"] == "0")? 'checked="checked"' : ""); ?> name="fbSendButton<?php echo $pos;?>" id="fbSendButton<?php echo $pos;?>-no" type="radio" value="0" /> <?php _e('No', 'shrsb'); ?></label>
                 </td>
             </tr>
             <tr class="tabForTr">
-                <td><span class="shrsb_option"><?php _e('Include Google +1 Button', 'shrsb'); ?> <span style="color:red;">*</span></span>
+                <td><span class="shrsb_option"><?php _e('Include Google +1 Button', 'shrsb'); ?></span>
                 </td>
                 <td style="width:125px"><label><input <?php echo (($settings["googlePlusOneButton$pos"] == "1")? 'checked="checked"' : ""); ?> name="googlePlusOneButton<?php echo $pos;?>" id="googlePlusOneButton<?php echo $pos;?>-yes" type="radio" value="1" /> <?php _e('Yes', 'shrsb'); ?></label>
                 </td><td><label><input <?php echo (($settings["googlePlusOneButton$pos"] == "0")? 'checked="checked"' : ""); ?> name="googlePlusOneButton<?php echo $pos;?>" id="googlePlusOneButton<?php echo $pos;?>-no" type="radio" value="0" /> <?php _e('No', 'shrsb'); ?></label>
                 </td>
             </tr>
             <tr class="tabForTr">
-                <td><span class="shrsb_option"><?php _e('Include Tweet Button', 'shrsb'); ?> <span style="color:red;">*</span></span>
+                <td><span class="shrsb_option"><?php _e('Include Tweet Button', 'shrsb'); ?></span>
                 </td>
                 <td style="width:125px"><label><input <?php echo (($settings["tweetButton$pos"] == "1")? 'checked="checked"' : ""); ?> name="tweetButton<?php echo $pos;?>" id="tweetButton<?php echo $pos;?>-yes" type="radio" value="1" /> <?php _e('Yes', 'shrsb'); ?></label>
                 </td><td><label><input <?php echo (($settings["tweetButton$pos"] == "0")? 'checked="checked"' : ""); ?> name="tweetButton<?php echo $pos;?>" id="tweetButton<?php echo $pos;?>-no" type="radio" value="0" /> <?php _e('No', 'shrsb'); ?></label>
@@ -85,7 +80,7 @@ function shrsb_likeButtonSetHTML($settings,$pos = 'Bottom') {   // $pos = Bottom
 
             <tr class ="tabForTr likeButtonSetOptions<?php echo $pos;?>" style="display:none">
                 <td>
-                    <span class="tab shrsb_option" style="display:block"><?php _e('Show counter for +1 Button:', 'shrsb'); ?></span>
+                    <span class="tab shrsb_option" style="display:block"><?php _e('Show share counters:', 'shrsb'); ?></span>
                 </td>
                 <td style="width:125px">
                     <select name="likeButtonSetCount<?php echo $pos;?>">
@@ -251,28 +246,37 @@ function shrsb_right_side_menu(){
 
     <div id="shrsb-col-right">
 
-    <h2 class="sh-logo"></h2>
+        <h2 class="sh-logo"></h2>
 
-	<div class="box-right">
-		<div class="box-right-head">
-			<h3 class="fugue f-info-frame"><?php _e('Helpful Plugin Links', 'shrsb'); ?></h3>
+        <div class="box-right">
+            <div class="box-right-head">
+                <h3 class="fugue f-info-frame"><?php _e('Helpful Plugin Links', 'shrsb'); ?></h3>
+            </div>
+            <div class="box-right-body">
+                <div class="padding">
+                    <ul class="infolinks">
+                        <li><a href="https://shareaholic.com/tools/wordpress/usage-installation" target="_blank"><?php _e('Installation &amp; Usage Guide', 'shrsb'); ?></a></li>
+                        <li><a href="https://shareaholic.com/tools/wordpress/faq" target="_blank"><?php _e('Frequently Asked Questions', 'shrsb'); ?></a></li>
+                        <li><a href="http://support.shareaholic.com/" target="_blank"><?php _e('Bug Submission Form', 'shrsb'); ?></a></li>
+                        <li><a href="http://support.shareaholic.com/" target="_blank"><?php _e('Feature Request Form', 'shrsb'); ?></a></li>
+                        <li><a href="https://shareaholic.com/tools/wordpress/translations" target="_blank"><?php _e('Submit a Translation', 'shrsb'); ?></a></li>
+                        <li><a href="https://shareaholic.com/tools/browser/" target="_blank"><?php _e('Shareaholic Browsers Add-ons', 'shrsb'); ?></a></li>
+                        <li><a href="https://shareaholic.com/tools/wordpress/credits" target="_blank"><?php _e('Thanks &amp; Credits', 'shrsb'); ?></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+		
+		<div style="clear:both;"></div>
+		
+        <div style="padding:15px; margin-bottom: 20px;">
+			<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FShareaholic&amp;layout=standard&amp;show_faces=true&amp;width=240&amp;action=like&amp;font=lucida+grande&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:240px; height:80px;" allowTransparency="true"></iframe>
 		</div>
-		<div class="box-right-body">
-			<div class="padding">
-				<ul class="infolinks">
-					<li><a href="http://www.shareaholic.com/tools/wordpress/usage-installation" target="_blank"><?php _e('Installation &amp; Usage Guide', 'shrsb'); ?></a></li>
-					<li><a href="http://www.shareaholic.com/tools/wordpress/faq" target="_blank"><?php _e('Frequently Asked Questions', 'shrsb'); ?></a></li>
-					<li><a href="http://sexybookmarks.shareaholic.com/contact-forms/bug-form" target="_blank"><?php _e('Bug Submission Form', 'shrsb'); ?></a></li>
-					<li><a href="http://sexybookmarks.shareaholic.com/contact-forms/feature-request" target="_blank"><?php _e('Feature Request Form', 'shrsb'); ?></a></li>
-					<li><a href="http://www.shareaholic.com/tools/wordpress/translations" target="_blank"><?php _e('Submit a Translation', 'shrsb'); ?></a></li>
-					<li><a href="http://www.shareaholic.com/tools/browser/" target="_blank"><?php _e('Shareaholic Browsers Add-ons', 'shrsb'); ?></a></li>
-					<li><a href="http://www.shareaholic.com/tools/wordpress/credits" target="_blank"><?php _e('Thanks &amp; Credits', 'shrsb'); ?></a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
 
-	<div style="padding:15px;"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FShareaholic&amp;layout=standard&amp;show_faces=true&amp;width=240&amp;action=like&amp;font=lucida+grande&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:240px; height:80px;" allowTransparency="true"></iframe></div>
+        <div id="shrsb-updates">
+            <div id="shrsb-updates-container"></div>
+             <script async="true" type="text/javascript" src="//dtym7iokkjlif.cloudfront.net/media/js/platforms/wordpress/wordpress-admin.js"></script>
+        </div>
 
     </div>
 
@@ -301,6 +305,26 @@ EOD;
 	return $snapengage;
 }
 
+function shrsb_getfooter(){
+
+?>
+<div style="clear:both;"></div>
+<ul id="shrsb-sortables" style="width:96%;">
+	<li style="margin:0px;">
+	<div class="footer">
+		<a href="https://shareaholic.com/?src=wp_admin" target="_blank">Shareaholic for WordPress <?php echo SHRSB_vNum; ?></a> <span class="grey_light">|</span> <a href="https://shareaholic.com/privacy/?src=wp_admin" target="_blank">Privacy Policy</a> <span class="grey_light">|</span> <a href="https://shareaholic.com/terms/?src=wp_admin" target="_blank">Terms of Service</a> <span class="grey_light">|</span> <a href="http://support.shareaholic.com/" target="_blank">Support</a> <span class="grey_light">|</span> <a href="https://shareaholic.com/api/?src=wp_admin" target="_blank">API</a> <span class="grey_light">|</span> <a href="https://shareaholic.com/publishers/analytics/<?php $parse = parse_url(get_bloginfo('url')); echo $parse['host']; ?>/" target="_blank">Social Analytics</a> <br /> If you like this plugin and find it useful, please consider showing your support by <a href="http://wordpress.org/support/view/plugin-reviews/shareaholic" target="_blank" style="font-weight:bold;">giving us a good rating</a> on WordPress.org.  Thank you for using <a href="">Shareaholic</a>.
+	</div>
+	<br />
+	<div style="display:block; font-size: 11px; color: #777777;">
+		<?php if (shrsb_get_current_user_role()=="Administrator"){ ?>
+			<?php _e("<p>Note: The analytics portion of Shareaholic may at times use trusted 3rd party services like Google Analytics and AppNexus to enhance its data. Because all of the processing and collection runs on our servers and not yours, it doesn't cause any additional load on your hosting account. In addition, our JavaScript is hosted on Amazon's CDN to make fetching it blazing fast. In fact, it's one of the fastest proven analytics system, hosted or not hosted, that you can use.</p/>"); ?>
+			<?php } ?>
+		<?php _e("Shareaholic is trusted by over 200 thousand publishers and touches almost 300 million people each month.  Designed and built with all the love in the world in Cambridge, Massachusetts."); ?>
+	</div>
+	</li>
+</ul>
+<?php
+}
 
 /**
  * Gets the contents of a url on www.shareaholic.com.  We use shrbase as the
@@ -522,10 +546,10 @@ function shrsb_addFBNameSpace($attr) {
 }
 
 //list all bookmarks in the plugin options page
-function shrsb_network_input_select($name, $hint) {
+function shrsb_network_input_select($name, $id, $hint) {
 	global $shrsb_plugopts;
-	return sprintf('<li class="%s" title="%s"><input %sname="bookmark[]" type="checkbox" value="%s"  id="%s" /><br />%s</li>',
-		$name,
+	return sprintf('<li class="%s" title="%s"><input %sname="bookmark[]" type="checkbox" value="%s"  id="%s" /><div style="margin-top:-8px;"></div>%s</li>',
+		"shr-".$id,
 		$hint,
 		@in_array($name, $shrsb_plugopts['bookmark'])?'checked="checked" ':"",
 		$name,
@@ -580,5 +604,33 @@ function shrsb_select_option_group($field, $options,$settings = NULL) {
 	return $h;
 }
 
+// returns the HTML of options for menu display in type 
+function shrsb_options_menu_type($pageorpost){
+	?>
+	
+	<span class="shrsb_option"><?php _e('Posts, pages, categories or the whole shebang?', 'shrsb'); ?></span>
+	<input type="checkbox" id="type_post" name="content_type[]"  value="post" <?php echo (false!==strpos($pageorpost,"post"))? 'checked' : ""; ?>/><label for="type_post" class="padding"><?php _e('posts', 'shrsb'); ?></label>
+	<input type="checkbox" id="type_page" name="content_type[]"  value="page" <?php echo (false!==strpos($pageorpost,"page"))? 'checked' : ""; ?>/><label for="type_page" class="padding"><?php _e('pages', 'shrsb'); ?></label>
+	<input type="checkbox" id="type_index" name="content_type[]"  value="index" <?php echo (false!==strpos($pageorpost,"index"))? 'checked' : ""; ?>/><label for="type_index"  class="padding"><?php _e('main index', 'shrsb'); ?></label>
+	<input type="checkbox" id="type_category" name="content_type[]"  value="category" <?php echo (false!==strpos($pageorpost,"category"))? 'checked' : ""; ?>/><label for="type_category" class="padding"><?php _e('category index', 'shrsb'); ?></label>
+	
+	<?php
+}
 
+/*
+*   @desc For setting the content type which are enabled
+*/
+function shrsb_set_content_type() {
+    $type  = "";
+    $content = @$_POST['content_type'];
+    if(empty ($content)){
+        $type  = "postpageindexcategory";
+    }else{
+        $n = count($content);
+        for($i = 0; $i < $n; $i++){
+            $type .= $content[$i];
+        }
+    }
+    return $type;
+}                       
 ?>

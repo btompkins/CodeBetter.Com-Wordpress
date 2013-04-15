@@ -27,12 +27,12 @@ function wpmu_recent_posts_mu($how_many=10, $how_long=0, $titleOnly=true, $begin
 	// get a list of blogs in order of most recent update. show only public and nonarchived/spam/mature/deleted
 	if ($how_long > 0) {
 		$blogs = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs WHERE
-			public = '1' AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'
+			public = '1' AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0' AND blog_id != '1'
 			AND last_updated >= DATE_SUB(CURRENT_DATE(), INTERVAL $how_long DAY)
 			ORDER BY last_updated DESC");
 	} else {
 		$blogs = $wpdb->get_col("SELECT blog_id FROM $wpdb->blogs WHERE
-			public = '1' AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0'
+			public = '1' AND archived = '0' AND mature = '0' AND spam = '0' AND deleted = '0' AND blog_id != '1'
 			ORDER BY last_updated DESC");
 	}
 

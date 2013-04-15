@@ -52,25 +52,10 @@ $shrsb_bookmarks_data=array(
 		'check'=>sprintf($checkthis_text,'Reddit'),
 		'share'=>__('Share this on ', 'shrsb').'Reddit'
 	),
-	'shr-twittley'=>array(
-		'id'=>277,
-		'check'=>sprintf($checkthis_text,'Twittley'),
-		'share'=>__('Submit this to ', 'shrsb').'Twittley'
-	),
 	'shr-stumbleupon'=>array(
 		'id'=>38,
 		'check'=>sprintf($checkthis_text,'Stumbleupon'),
 		'share'=>__('Stumble upon something good? Share it on StumbleUpon', 'shrsb')
-	),
-	'shr-technorati'=>array(
-		'id'=>10,
-		'check'=>sprintf($checkthis_text,'Technorati'),
-		'share'=>__('Share this on ', 'shrsb').'Technorati'
-	),
-	'shr-mixx'=>array(
-		'id'=>4,
-		'check'=>sprintf($checkthis_text,'Mixx'),
-		'share'=>__('Share this on ', 'shrsb').'Mixx'
 	),
 	'shr-myspace'=>array(
 		'id'=>39,
@@ -102,12 +87,6 @@ $shrsb_bookmarks_data=array(
 		'check'=>sprintf($checkthis_text,'ToMuse'),
 		'share'=>__('Suggest this article to ', 'shrsb').'ToMuse'
 	),
-	'shr-comfeed'=>array(
-        'id' => NULL,
-		'check'=>sprintf($checkthis_text, __("a 'Subscribe to Comments' link", 'shrsb')),
-		'share'=>__('Subscribe to the comments for this post?', 'shrsb'),
-		'baseUrl'=>'PERMALINK',
-	),
 	'shr-linkedin'=>array(
 		'id'=>88,
 		'check'=>sprintf($checkthis_text,'LinkedIn'),
@@ -123,16 +102,6 @@ $shrsb_bookmarks_data=array(
 		'check'=>sprintf($checkthis_text,'Google Bookmarks'),
 		'share'=>__('Add this to ', 'shrsb').'Google Bookmarks'
 	),
-	'shr-googlereader'=>array(
-		'id'=>207,
-		'check'=>sprintf($checkthis_text,'Google Reader'),
-		'share'=>__('Add this to ', 'shrsb').'Google Reader'
-	),
-	'shr-googlebuzz'=>array(
-		'id'=>257,
-		'check'=>sprintf($checkthis_text,'Google Buzz'),
-		'share'=>__('Post on Google Buzz', 'shrsb')
-	),
 	'shr-misterwong'=>array(
 		'id'=>$wong_id,
 		'check'=>sprintf($checkthis_text,'Mister Wong'),
@@ -142,11 +111,6 @@ $shrsb_bookmarks_data=array(
 		'id'=>263,
 		'check'=>sprintf($checkthis_text,'Izeby'),
 		'share'=>__('Add this to ', 'shrsb').'Izeby'
-	),
-	'shr-tipd'=>array(
-		'id'=>188,
-		'check'=>sprintf($checkthis_text,'Tipd'),
-		'share'=>__('Share this on ', 'shrsb').'Tipd'
 	),
 	'shr-pfbuzz'=>array(
 		'id'=>279,
@@ -208,11 +172,6 @@ $shrsb_bookmarks_data=array(
 		'check'=>sprintf($checkthis_text,'Design Bump'),
 		'share'=>__('Bump this on ', 'shrsb').'DesignBump'
 	),
-	'shr-ning'=>array(
-		'id'=>264,
-		'check'=>sprintf($checkthis_text,'Ning'),
-		'share'=>__('Add this to ', 'shrsb').'Ning'
-	),
 	'shr-identica'=>array(
 		'id'=>205,
 		'check'=>sprintf($checkthis_text,'Identica'),
@@ -227,11 +186,6 @@ $shrsb_bookmarks_data=array(
 		'id'=>204,
 		'check'=>sprintf($checkthis_text,'TechMeme'),
 		'share'=>__('Tip this to ', 'shrsb').'TechMeme'
-	),
-	'shr-sphinn'=>array(
-		'id'=>100,
-		'check'=>sprintf($checkthis_text,'Sphinn'),
-		'share'=>__('Sphinn this on ', 'shrsb').'Sphinn'
 	),
 	'shr-posterous'=>array(
 		'id'=>210,
@@ -262,11 +216,6 @@ $shrsb_bookmarks_data=array(
 		'id'=>21,
 		'check'=>sprintf($checkthis_text,'Netvouz'),
 		'share'=>__('Submit this to ', 'shrsb').'Netvouz'
-	),
-	'shr-netvibes'=>array(
-		'id'=>195,
-		'check'=>sprintf($checkthis_text,'Netvibes'),
-		'share'=>__('Submit this to ', 'shrsb').'Netvibes'
 	),
 	'shr-webblend'=>array(
 		'id'=>284,
@@ -313,11 +262,6 @@ $shrsb_bookmarks_data=array(
 		'check'=>sprintf($checkthis_text,'Squidoo'),
 		'share'=>__('Add to a lense on ', 'shrsb').'Squidoo'
 	),
-	'shr-faqpal'=>array(
-		'id'=>287,
-		'check'=>sprintf($checkthis_text,'FAQpal'),
-		'share'=>__('Submit this to ', 'shrsb').'FAQpal'
-	),
 	'shr-evernote'=>array(
 		'id'=>191,
 		'check'=>sprintf($checkthis_text,'Evernote'),
@@ -347,11 +291,6 @@ $shrsb_bookmarks_data=array(
 		'id'=>289,
 		'check'=>sprintf($checkthis_text,'N4G'),
 		'share'=>__('Submit tip to ', 'shrsb').'N4G'
-	),
-	'shr-strands'=>array(
-		'id'=>190,
-		'check'=>sprintf($checkthis_text,'Strands'),
-		'share'=>__('Submit this to ', 'shrsb').'Strands'
 	),
 	'shr-orkut'=>array(
 		'id'=>247,
@@ -452,7 +391,21 @@ $shrsb_bookmarks_data=array(
 		'id'=>1,
 		'check'=>sprintf($checkthis_text,'Buzzster!'),
 		'share'=>__('Share this via ', 'shrsb').'Buzzster!'
+	),'shr-pinterest'=>array(
+		'id'=>309,
+		'check'=>sprintf($checkthis_text,'Pinterest'),
+		'share'=>__('Pin this to ', 'shrsb').'Pinterest'
 	),
+    'shr-googleplus'=>array(
+		'id'=>304,
+		'check'=>sprintf($checkthis_text, 'Google+'),
+		'share'=>__('Share this on ', 'shrsb').'Google+'
+	),
+	'shr-fastmail'=>array(
+		'id'=>313,
+		'check'=>sprintf($checkthis_text,'Email'),
+		'share'=>__('Send via ', 'shrsb').'Email'	
+	   ),
 );
 ksort($shrsb_bookmarks_data, SORT_STRING); //sort array by keys
 ?>

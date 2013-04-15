@@ -36,11 +36,14 @@
 		
 		$wp_query->request = $querystr;	
 		$pageposts = $wpdb->get_results($wp_query->request, OBJECT);	
+
+
 		$attr = apply_filters( 'previous_posts_link_attributes', '' );
 		
 		$next_link = count($pageposts) > 4 ? '<a href="?page='. ($page + 1) . "\" $attr>". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', ' Next Page &raquo;' ) .'</a>' : "";	
 		$prev_link = $page > 0 ? '<a href="?page='.($page - 1) . "\" $attr>". preg_replace( '/&([^#])(?![a-z]{1,8};)/', '&#038;$1', '&laquo; Previous Page' ) .'</a>' : "";	
-				
+	
+	
 ?>
 
 	<div id="nav-above" class="navigation">
@@ -52,11 +55,9 @@
 <?php endif; ?>		
 	</div><!-- #nav-above -->
 
-
 	<?php foreach ($pageposts as $post): ?>
 	<?php if($blog_id == 1) switch_to_blog($post->blog_id); ?>
 	<?php setup_postdata($post); ?>
-	
 	<?php if ( in_category( 'Gallery' ) ) : ?>
 		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyten' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
@@ -135,7 +136,7 @@
 
 
 	<?php else : ?>
-		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		<div id="post-<?php the_ID(); ?>" <?php post_class(); ?>> 
 			<h2 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'twentyten' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h2>
 
 			<div class="entry-meta">
