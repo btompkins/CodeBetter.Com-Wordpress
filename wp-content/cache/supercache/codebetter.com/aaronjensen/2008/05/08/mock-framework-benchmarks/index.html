@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Mock Framework Benchmarks | Aaron Jensen</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/aaronjensen/xmlrpc.php" />
+	            <link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/9c948bdd2f1091a54122a72f9e6211ad.css" type="text/css" media="all" />
+            <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/aaronjensen/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Introducing Machine.Specifications (or MSpec for short)' href='http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/' />
+<link rel='next' title='Rhino.Mocks Performance Issue Fixed' href='http://codebetter.com/aaronjensen/2008/05/09/rhino-mocks-performance-issue-fixed/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/aaronjensen/?p=12' />
+
+<!-- All in One SEO Pack 1.6.15.2 by Michael Torbert of Semper Fi Web Design[83,130] -->
+<link rel="canonical" href="http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=5.2.9" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+            <script type="text/javascript" src="http://cdn1.codebetter.com/wp-content/uploads/spacker-cache/1124d531e4a0a370bd504ee236d3fdf8.js"></script>
+            	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-12" class="post-12 post type-post status-publish format-standard hentry category-frameworks category-mocking">
+					<h1 class="entry-title">Mock Framework Benchmarks</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/aaronjensen/author/aaronjensen/" title="View all posts by Aaron Jensen">Aaron Jensen</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/" title="3:50 pm" rel="bookmark"><span class="entry-date">May 8, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/aaronjensen/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/aaronjensen/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><strong>UPDATE: I tracked down the issue and committed a patch to Rhino.Mocks. Rhino.Mocks is now much more competetive performance wise, our CI build time nearly halved, and about 4 minutes out of 7 of our test time has disappeared. New numbers below.</strong>
+<p>I&#8217;ve complained before that <a href="http://blog.eleutian.com/2007/12/15/MockingIsSlow.aspx">Mocking is Slow</a> but I never really dove further into it. Today I decided to actually compare Rhino.Mocks to other mock frameworks on a pure performance basis to see if it was a global problem. I timed 2000 unit tests across 100 classes with 20 tests each. The results were a bit surprising:</p>
+<table>
+<tbody>
+<tr>
+<th>Framework</th>
+<th><a href="http://testdriven.net/">TD.NET</a> Time</th>
+<th>nunit-console Time</th>
+</tr>
+<tr>
+<td><a href="http://www.ayende.com/projects/rhino-mocks.aspx">Rhino.Mocks</a> old trunk</td>
+<td>57.36s</td>
+<td>28.82s</td>
+</tr>
+<tr>
+<td><a href="http://www.ayende.com/projects/rhino-mocks.aspx">Rhino.Mocks</a> new trunk</td>
+<td>22.94s</td>
+<td>7.59s</td>
+</tr>
+<tr>
+<td><a href="http://code.google.com/p/moq/">Moq</a> trunk</td>
+<td>18.30s</td>
+<td>5.91s</td>
+</tr>
+<tr>
+<td><a href="http://www.typemock.com/">TypeMock</a> 4.2.3 Reflective Mocks</td>
+<td>15.36s</td>
+<td>9.35s</td>
+</tr>
+<tr>
+<td><a href="http://www.typemock.com/">TypeMock</a> 4.2.3 Natural Mocks</td>
+<td>16.92s</td>
+<td>9.56s</td>
+</tr>
+</tbody>
+</table>
+<p>That&#8217;s right, according to these tests, <a href="http://www.ayende.com/projects/rhino-mocks.aspx">Rhino.Mocks</a> is at least 3 times slower than the other frameworks when under heavy load in TD.NET and five times slower in the console according to these tests. It&#8217;s also interesting to note that <a href="http://www.typemock.com/">TypeMock</a> is faster than <a href="http://code.google.com/p/moq/">Moq</a> in TD.NET, but slower in the console runner.</p>
+<p>While running the Rhino.Mocks tests it is very clear that there is a degrading performance issue. All the other frameworks executed tests with a near constant speed per test, but Rhino.Mocks slowed down noticeably about half way through.</p>
+<p>Please feel free to try it yourself, grab the project <a href="http://blog.eleutian.com/download/BenchMock.zip">here</a>. You should be able to just run the 4 strategy .bat files (run-rhino, run-moq, run-tmock-reflective, run-tmock-natural). Let me know if you find anything interesting.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/aaronjensen/category/frameworks/" title="View all posts in frameworks" rel="category tag">frameworks</a>, <a href="http://codebetter.com/aaronjensen/category/mocking/" title="View all posts in mocking" rel="category tag">mocking</a>. Bookmark the <a href="http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/" title="Permalink to Mock Framework Benchmarks" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/feed/" title="Comments RSS to Mock Framework Benchmarks" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-12 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/" rel="prev"><span class="meta-nav">&larr;</span> Introducing Machine.Specifications (or MSpec for short)</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/aaronjensen/2008/05/09/rhino-mocks-performance-issue-fixed/" rel="next">Rhino.Mocks Performance Issue Fixed <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+
+
+            <ul id="dsq-comments">
+                    <li class="comment even thread-even depth-1" id="dsq-comment-53">
+        <div id="dsq-comment-header-53" class="dsq-comment-header">
+            <cite id="dsq-cite-53">
+http://codebetter.com/members/aaronjensen/default.aspx                <span id="dsq-author-user-53">aaronjensen</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-53" class="dsq-comment-body">
+            <div id="dsq-comment-message-53" class="dsq-comment-message"><p>Hi Royo,</p>
+<p>No offense, but I don&#8217;t know who you are or what release/mocking framework you&#8217;re talking about.  Feel free to rerun them yourself and blog about it though or send me the results. The code is in the article.</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment odd alt thread-odd thread-alt depth-1" id="dsq-comment-52">
+        <div id="dsq-comment-header-52" class="dsq-comment-header">
+            <cite id="dsq-cite-52">
+                <span id="dsq-author-user-52">Royo</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-52" class="dsq-comment-body">
+            <div id="dsq-comment-message-52" class="dsq-comment-message"><p>time to re run these.<br />
+we made major speed improvements in the latest releases.</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment even thread-even depth-1" id="dsq-comment-51">
+        <div id="dsq-comment-header-51" class="dsq-comment-header">
+            <cite id="dsq-cite-51">
+http://www.jameskovacs.com                <span id="dsq-author-user-51">james.kovacs</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-51" class="dsq-comment-body">
+            <div id="dsq-comment-message-51" class="dsq-comment-message"><p>I was equally confused when looking at a performance trace of Moq vs. Rhino. (I don&#8217;t have TypeMock installed.) The majority of the time in both Moq and Rhino was spent creating proxies and both frameworks are using DynamicProxy2 for proxy creation. Something was definitely up. Excellent work tracking down the problem!</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment odd alt thread-odd thread-alt depth-1" id="dsq-comment-50">
+        <div id="dsq-comment-header-50" class="dsq-comment-header">
+            <cite id="dsq-cite-50">
+                <span id="dsq-author-user-50">Aaron Jensen</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-50" class="dsq-comment-body">
+            <div id="dsq-comment-message-50" class="dsq-comment-message"><p>I don&#8217;t really consider NMock2 a framework worth considering, as it lacks a strongly typed, refactor friendly syntax, so no, I didn&#8217;t. Feel free to add a Strategy though and give it a shot.</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment even thread-even depth-1" id="dsq-comment-49">
+        <div id="dsq-comment-header-49" class="dsq-comment-header">
+            <cite id="dsq-cite-49">
+http://lextm.cn                <span id="dsq-author-user-49">Lex Y. Li</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-49" class="dsq-comment-body">
+            <div id="dsq-comment-message-49" class="dsq-comment-message"><p>What about NMock 2? Did you test on that?</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment odd alt thread-odd thread-alt depth-1" id="dsq-comment-48">
+        <div id="dsq-comment-header-48" class="dsq-comment-header">
+            <cite id="dsq-cite-48">
+http://colinjack.blogspot.com                <span id="dsq-author-user-48">Colin Jack</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-48" class="dsq-comment-body">
+            <div id="dsq-comment-message-48" class="dsq-comment-message"><p>Does this contribute to the 2 articles you have to write about liking TypeMock for the free license? <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':)' class='wp-smiley' /> </p>
+</div>
+        </div>
+    </li>
+
+    </li>
+            </ul>
+
+
+        </div>
+
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/aaronjensen/2008/05/08/mock-framework-benchmarks/';
+    var disqus_identifier = '12 /blogs/aaron.jensen/archive/2008/05/08/mock-framework-benchmarks.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'aaronjensen';
+    var disqus_title = "Mock Framework Benchmarks";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /*
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = '?cf_action=sync_comments&post_id=12';
+
+            var firstScript = document.getElementsByTagName( "script" )[0];
+            firstScript.parentNode.insertBefore(script, firstScript);
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/aaronjensen\/2008\/05\/08\/mock-framework-benchmarks\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+        dsq.src = 'http' + '://' + disqus_shortname + '.' + 'disqus.com' + '/embed.js?pname=wordpress&pver=2.73';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.453 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-26 14:29:31 -->
+
+<!-- super cache -->

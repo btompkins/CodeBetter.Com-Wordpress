@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Functional Programming Unit Testing &#8211; Part 1 | Matthew Podwysocki</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php" />
+	<link rel='stylesheet' id='mainstyle-css'  href='http://cdn1.codebetter.com/wp-content/themes/codebetter/style.css?ver=3.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='jquerystyle-css'  href='http://cdn1.codebetter.com/wp-content/themes/codebetter/jquery-ui-1.8.1.custom.css?ver=3.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp_greet_box_style-css'  href='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/css/style.css?ver=3.4.2' type='text/css' media='all' />
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/jquery/jquery.js?ver=1.7.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/comment-reply.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/js/functions.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/js/js-mode.js?ver=3.4.2'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/matthewpodwysocki/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='F# + TestDriven.NET + xUnit.net = WIN' href='http://codebetter.com/matthewpodwysocki/2008/12/04/testdriven-net-f-xunit-net-win/' />
+<link rel='next' title='Functional Programming Unit Testing &#8211; Part 2' href='http://codebetter.com/matthewpodwysocki/2008/12/11/functional-programming-unit-testing-part-2/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/matthewpodwysocki/?p=93' />
+
+<!-- All in One SEO Pack 1.6.15.2 by Michael Torbert of Semper Fi Web Design[83,161] -->
+<link rel="canonical" href="http://codebetter.com/matthewpodwysocki/2008/12/06/functional-programming-unit-testing/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=5.2.9" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-93" class="post-93 post type-post status-publish format-standard hentry category-functional-programming category-haskell category-tddbdd">
+					<h1 class="entry-title">Functional Programming Unit Testing &#8211; Part 1</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/matthewpodwysocki/author/matthewpodwysocki/" title="View all posts by Matthew Podwysocki">Matthew Podwysocki</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/matthewpodwysocki/2008/12/06/functional-programming-unit-testing/" title="12:11 am" rel="bookmark"><span class="entry-date">December 6, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/matthewpodwysocki/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/matthewpodwysocki/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p>As you noticed from my last post regarding functional programming and unit testing, there is a bit to be discussed.&#160; Important to any programming language is not only the language, but the frameworks and tooling around it, such is the case with functional languages.&#160; Let&#8217;s focus on the tooling around testing with functional languages.&#160; </p>
+<p>What kind of options do we have?&#160; In the Haskell world just as the F# world, there are several tools at our disposal to do this.&#160; </p>
+<ul>
+<li><strong><a href="http://hackage.haskell.org/cgi-bin/hackage-scripts/package/HUnit-1.2.0.3">HUnit</a></strong>       <br />A traditional xUnit testing framework for unit testing.&#160; Analogous to such frameworks as <a href="http://www.codeplex.com/xunit">xUnit.net</a>, <a href="http://www.nunit.org/">NUnit</a> and <a href="http://www.mbunit.com/">MbUnit</a> in the .NET world.       </li>
+<li><strong><a href="http://www.cs.chalmers.se/~rjmh/QuickCheck/">QuickCheck</a></strong>       <br />A program in which the developer provides a specification of the program, in the form of properties which functions should satisfy, and then tests that the properties hold in a large number of randomly generated cases that QuickCheck provides.&#160; There are many variants of this tool for most functional languages including F# (<a href="http://www.codeplex.com/fscheck">FsCheck</a>), Erlang, Scala, Java, Python, Standard ML and others. </li>
+</ul>
+<p>Today we&#8217;re going to focus on HUnit as part of developing an API in Haskell.&#160; Some of these lessons apply well to any functional language, but is told well using Haskell.</p>
+<p>&#160;</p>
+<h2>Starting with HUnit</h2>
+<p>HUnit is a fairly simple and yet easy to use xUnit based testing framework for Haskell.&#160; It&#8217;s so bare bones in fact that it only has two main assertion functions that people use, assertEqual and assertBool.&#160; The APIs are straight forward and easy to extend.&#160; I&#8217;ll do that in a subsequent post to get some of the functionality on par with that of say xUnit.net.</p>
+<p>Let&#8217;s walk through an example of creating an API for performing calculations on a list.&#160; Since I have a background in quantitative methods, I&#8217;ll start with some of those.&#160; The first function we need to create is the average function.&#160; This function takes a list and calculates an average over them.&#160; In order to do this, let&#8217;s define a test to set the behavior.</p>
+<div style="font-family: courier new"><font color="#0000ff">&#8211; file HUnitTests.hs</font>     <br /><font color="#0000ff">module</font> HUnitTests (main) <font color="#0000ff">where</font>&#160; </p>
+<p><font color="#0000ff">import</font> Test.HUnit     <br /><font color="#0000ff">import</font> HUnitExample(average)     </p>
+<p><strong><font color="#000080">averageExpected</font> :: <font color="#800040">Test</font></strong>&#160; <br />averageExpected =&#160;&#160; <br />&#160; TestCase (assertEqual <span style="color: maroon"><font color="#008000">&quot;Should get Just averaged number from list&quot;</font></span> x (average xs))&#160; <br />&#160; <font color="#0000ff">where</font> xs = [<span style="color: maroon">1</span>,<span style="color: maroon">2</span>,<span style="color: maroon">3</span>]&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; x&#160; = <span style="color: maroon">2</span><span style="color: maroon">.0</span>&#160; <br />&#160;&#160;&#160;&#160; <br /><strong><font color="#000080">main</font> :: <font color="#800040">IO Counts</font></strong>&#160; <br />main =&#160;&#160; <br />&#160;&#160;&#160; runTestTT $ TestList [averageExpected]</div>
+<p>Now that we&#8217;ve defined our criteria for success, now, let&#8217;s turn our attention to implementing this function.</p>
+<div style="font-family: courier new"><font color="#0000ff"><span style="color: green">&#8211;</span> file HUnitExample.hs</font>     <br /><font color="#0000ff">module</font> HUnitExample (average) <font color="#0000ff">where</font>&#160; </p>
+<p><font color="#0000ff">import</font> Data.List     </p>
+<p><strong><font color="#000080">average</font> :: (<font color="#800040">Fractional</font> a) =&gt; [ a ] -&gt; a</strong>&#160; <br />average xs = (sum l) / fromIntegral (length xs)</div>
+<p>When running this test from the GHC Interactive (ghci.exe), I get the following results.</p>
+<p><a href="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTesting_D6E2/hunit_test_6.png"><img style="border-top-width: 0px;border-left-width: 0px;border-bottom-width: 0px;border-right-width: 0px" height="270" alt="hunit_test" src="http://codebetter.com/blogs/matthew.podwysocki/WindowsLiveWriter/FunctionalProgrammingUnitTesting_D6E2/hunit_test_thumb_2.png" width="532" border="0" /></a> </p>
+<p>But, wait!&#160; What happens when we pass an empty list.&#160; That would cause an error due to a divide by zero exception.&#160; What we need to do is add another pattern to our average function to trap that and report a standard error.&#160; Let&#8217;s define a test case for that.</p>
+<div style="font-family: courier new"><font color="#0000ff">&#8211; file HUnitTests.hs</font></div>
+<div style="font-family: courier new"><font color="#0000ff">module</font> HUnitTests (main) <font color="#0000ff">where</font>     </p>
+<p><font color="#0000ff">import</font> Test.HUnit     <br /><font color="#0000ff">import</font> HUnitExample(average)     </p>
+<p><strong><font color="#000080">averageExpected</font> :: </strong><strong><font color="#800040">Test</font></strong>     <br />averageExpected =&#160;&#160; <br />&#160; <font color="#800040">TestCase</font> (assertEqual <font color="#008000">&quot;Should average number from list&quot;</font> x (average xs))&#160; <br />&#160; <font color="#0000ff">where</font> xs = [1,2,3]&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; x&#160; = 2.0&#160; </p>
+<p><strong><font color="#000080">averageEmpty</font> :: </strong><strong><font color="#800040">Test</font></strong>     <br />averageEmpty =     <br />&#160; <font color="#800040">TestCase</font> $ <font color="#0000ff">do</font>     <br />&#160;&#160;&#160; handleJust errorCalls (\_ -&gt; return ()) performCall <font color="#0000ff">where</font>     <br />&#160;&#160;&#160;&#160;&#160; performCall = <font color="#0000ff">do</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; evaluate ( average [] )     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; assertFailure <font color="#008000">&quot;average [] must throw an error&quot;</font>     </p>
+<p><strong><font color="#000080">main</font> :: <font color="#800040">IO Counts</font>&#160; <br /></strong>main =&#160;&#160; <br />&#160;&#160;&#160; runTestTT $ TestList [averageExpected, averageEmpty]</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now to define that failure pattern in my average function.&#160; My test will already succeed because I&#8217;m not checking whether it is a divide by zero exception or something else, and I could filter that exception, but I&#8217;ll do that in another post.</p>
+<div style="font-family: courier new"><font color="#0000ff">&#8211; file HUnitExample.hs</font>     <br /><font color="#0000ff">module</font> HUnitExample (average) <font color="#0000ff">where</font>     </p>
+<p><font color="#0000ff">import</font> Data.List     </p>
+<p><strong><font color="#000080">average</font> :: (<font color="#800040">Fractional</font> a) =&gt; [ a ] -&gt; a</strong>&#160; <br />average _&#160; = error <font color="#008000">&quot;empty list&quot;</font>     <br />average xs = (sum xs) / fromIntegral (length xs)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Running our tests again, we find that both of them now pass.&#160; Thinking to myself, I think I can generalize this a little bit.&#160; Say for example, I have a list of tuples or record types.&#160; I can&#8217;t average them exactly as is, but instead, would have to provide a way to extract that value that I do care about.&#160; Let&#8217;s define a test for that to take a list of tuples and grab the second value and average that one.&#160; I&#8217;ll omit the rest of the file as it stays the same except for adding our test function to the main function&#8217;s test list.</p>
+<div style="font-family: courier new"><strong><font color="#000080">averageByExpected</font> :: </strong><strong><font color="#800040">Test</font></strong>     <br />averageByExpected =&#160; <br />&#160; <font color="#800040">TestCase</font> $ assertEqual </div>
+<div style="font-family: courier new">&#160;&#160;&#160; <font color="#008000">&quot;Should get averaged number from a list of tuples&quot;</font> x (averageBy f xs)     <br />&#160; <font color="#0000ff">where</font> xs = [(<font color="#008000">&quot;One&quot;</font>, 1), (<font color="#008000">&quot;Two&quot;</font>, 2), (<font color="#008000">&quot;Three&quot;</font>, 3)]&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; x&#160; = 2.0&#160; <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; f&#160; = (\x -&gt; snd x)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now the code to implement this should be rather straight forward.&#160; I&#8217;ll omit the rest of the file and just concentrate on the new averageBy function.</p>
+<div style="font-family: courier new"><strong><font color="#000080">averageBy</font> :: (<font color="#800040">Fractional</font> b) =&gt; (a -&gt; b) -&gt; [ a ] -&gt; b</strong>     <br />averageBy f xs = (sum . map f) xs / fromIntegral&#160; (length xs)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Instead of using the standard sum, I need to add a map projection to this.&#160; This allows me to add my own custom function to the mix.&#160; Once we get this code implemented, another test then suddenly passes.&#160; But once again, we forgot about the empty list yet again.&#160; Let&#8217;s write a test for that case and make it fail.</p>
+<div style="font-family: courier new"><strong><font color="#000080">averageByEmpty</font> :: </strong><strong><font color="#800040">Test</font></strong>     <br />averageByEmpty =     <br />&#160; <font color="#800040">TestCase</font> $ <font color="#0000ff">do</font>     <br />&#160;&#160;&#160; handleJust errorCalls (\_ -&gt; return ()) performCall <font color="#0000ff">where</font>     <br />&#160;&#160;&#160;&#160;&#160; performCall = <font color="#0000ff">do</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; evaluate ( averageBy f xs )     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; assertFailure <font color="#008000">&quot;averageBy f [] must throw an error&quot;</font>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; <font color="#0000ff">where</font> xs = []     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; f&#160; = (\x -&gt; snd x)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>Now the test succeeds, because once again, not checking whether it is a divide by zero exception or something else.&#160; But, let&#8217;s put the guard in there to feel better about ourselves.</p>
+<div style="font-family: courier new"><strong><font color="#000080">averageBy</font> :: (<font color="#800040">Fractional</font> b) =&gt; (a -&gt; b) -&gt; [ a ] -&gt; b&#160; <br /></strong>averageBy _ [] = error &quot;empty list&quot;&#160; <br />averageBy f xs =&#160; (sum . map f) xs / fromIntegral&#160; (length xs)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>But looking at this code, I think it&#8217;s time for a refactoring.&#160; The average and averageBy are very similar and could be generalized.&#160; Why?&#160; Because the averageBy takes a function, we can then supply a projection.&#160; Let&#8217;s redo our average function to instead just use the averageBy function with an extra input.</p>
+<div style="font-family: courier new"><strong><font color="#000080">average</font> :: (<font color="#800040">Fractional</font> a) =&gt; [ a ] -&gt; a</strong>     <br />average = averageBy (\x -&gt; x)</div>
+<div style="font-family: courier new">&#160;</div>
+<p>We can use currying to our favor here to only supply the arguments we need to and leave the rest for the system to figure out.&#160; Running things once again, we see that all four tests pass nicely still.&#160; But, I&#8217;m still not satisfied.&#160; Why not?&#160; Because I don&#8217;t like dealing with errors sometimes, and would like to give a safe alternative to the error prone average and averageBy functions.&#160; Let&#8217;s use the Maybe type to define failure this time around using a new function called tryAverageBy.</p>
+<div style="font-family: courier new"><strong><font color="#000080">tryAverageByExpected</font>&#160;<span style="color: blue">:</span><span style="color: blue">:</span>&#160;<font color="#800040">Test</font></strong>     <br />tryAverageByExpected =&#160; <br />&#160; <font color="#800040">TestCase</font> $ assertEqual <span style="color: maroon"><font color="#008000">&quot;Should get Just averaged number from list&quot;</font></span> x <span style="color: blue">(</span>tryAverageBy f xs<span style="color: blue">)</span>     <br />&#160; <font color="#0000ff">where</font> xs = <span style="color: blue">[</span><span style="color: blue">(</span><span style="color: maroon">&quot;One&quot;</span>, <span style="color: maroon">1</span><span style="color: blue">)</span>, <span style="color: blue">(</span><span style="color: maroon">&quot;Two&quot;</span>, <span style="color: maroon">2</span><span style="color: blue">)</span>, <span style="color: blue">(</span><span style="color: maroon">&quot;Three&quot;</span>, <span style="color: maroon">3</span><span style="color: blue">)</span><span style="color: blue">]</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; x&#160; = <font color="#800040">Just</font>&#160;<span style="color: maroon">2</span><span style="color: maroon">.0</span>     <br />&#160;&#160;&#160;&#160;&#160;&#160;&#160; f&#160; = <span style="color: blue"><font color="#000000">(\x -&gt; snd x)</font></span></div>
+<div style="font-family: courier new"><span style="color: blue"></span></div>
+<p>And the implementation will then look like this to get it to pass.</p>
+<div style="font-family: courier new"><strong><font color="#000080">tryAverageBy</font> :: (<font color="#800040">Fractional</font> b) =&gt; (a -&gt; b) -&gt; [ a ] -&gt; <font color="#800040">Maybe</font> b</strong>     <br />tryAverageBy f xs = Just ( (sum . map f) / fromIntegral (length xs) )</div>
+<div style="font-family: courier new">&#160;</div>
+<p>And the dance continues until I have fully flushed out the tryAverageBy with both cases as well as the tryAverage functions.&#160; But it looks like I could generalize the averageBy function as well, to call our try instead to see whether to throw an error.&#160; We only want to write the algorithm once and use it over and over if we can.&#160; Maybe something like this might work.</p>
+<div style="font-family: courier new"><strong><font color="#000080">averageBy</font> :: (<font color="#800040">Fractional</font> b) =&gt; (a -&gt; b) -&gt; [ a ] -&gt; b</strong>     <br />averageBy f x =&#160; <br />&#160; <font color="#0000ff">case</font> triedAvg <font color="#0000ff">of</font>     <br />&#160;&#160;&#160; <font color="#800040">Nothing</font>&#160;&#160;&#160; -&gt; error <font color="#008000">&quot;Empty list&quot;</font>     <br />&#160;&#160;&#160; <font color="#800040">Just</font> value -&gt; value     <br />&#160; <font color="#0000ff">where</font> triedAvg = tryAverageBy f x</div>
+<div style="font-family: courier new">&#160;</div>
+<p>When all is said and done, we then have 8 passing tests and a nicer code base because we took the time to refactor.&#160; Not that these implementations are perfect, but they show you the evolving code base of using HUnit and TDD within the Haskell environment.</p>
+<p>&#160;</p>
+<h2>Conclusion</h2>
+<p>Building our systems means caring about design, quality and correctness.&#160; When dealing with a language such as Haskell, where purity, polymorphism and an expressive type system helps us write code that is very modular, refactorable and testable.&#160; Along the way, there are tools to help such as HUnit and QuickCheck.&#160; Next time, I&#8217;ll be covering type-based property checking using QuickCheck as well as how we can extend HUnit to fit a few more to suit our needs.</p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/matthewpodwysocki/category/functional-programming/" title="View all posts in Functional Programming" rel="category tag">Functional Programming</a>, <a href="http://codebetter.com/matthewpodwysocki/category/haskell/" title="View all posts in Haskell" rel="category tag">Haskell</a>, <a href="http://codebetter.com/matthewpodwysocki/category/tddbdd/" title="View all posts in TDD/BDD" rel="category tag">TDD/BDD</a>. Bookmark the <a href="http://codebetter.com/matthewpodwysocki/2008/12/06/functional-programming-unit-testing/" title="Permalink to Functional Programming Unit Testing &#8211; Part 1" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/matthewpodwysocki/2008/12/06/functional-programming-unit-testing/feed/" title="Comments RSS to Functional Programming Unit Testing &#8211; Part 1" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-93 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/matthewpodwysocki/2008/12/04/testdriven-net-f-xunit-net-win/" rel="prev"><span class="meta-nav">&larr;</span> F# + TestDriven.NET + xUnit.net = WIN</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/matthewpodwysocki/2008/12/11/functional-programming-unit-testing-part-2/" rel="next">Functional Programming Unit Testing &#8211; Part 2 <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+				
+<div id="disqus_thread">
+                    <div id="dsq-content">
+
+
+            <ul id="dsq-comments">
+                    <li class="comment even thread-even depth-1" id="dsq-comment-231">
+        <div id="dsq-comment-header-231" class="dsq-comment-header">
+            <cite id="dsq-cite-231">
+http://podwysocki.codebetter.com                <span id="dsq-author-user-231">Matthew.Podwysocki</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-231" class="dsq-comment-body">
+            <div id="dsq-comment-message-231" class="dsq-comment-message"><p>@Blog</p>
+<p>You need to make sure you have the following imports:</p>
+<p>import Control.Exception<br />
+import Test.HUnit</p>
+<p>It should build and run from there.  Sorry about the confusion with the imports.</p>
+<p>Matt</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+    <li class="comment odd alt thread-odd thread-alt depth-1" id="dsq-comment-230">
+        <div id="dsq-comment-header-230" class="dsq-comment-header">
+            <cite id="dsq-cite-230">
+                <span id="dsq-author-user-230">blob</span>
+            </cite>
+        </div>
+        <div id="dsq-comment-body-230" class="dsq-comment-body">
+            <div id="dsq-comment-message-230" class="dsq-comment-message"><p>Would you mind posting all of the code  in runnable state ?</p>
+<p>At the moment you have an error in :<br />
+HUnitExample.hs:7:18: Not in scope: `l&#8217;</p>
+<p>and :<br />
+HUnitTests.hs:16:4: Not in scope: `handleJust&#8217;<br />
+HUnitTests.hs:16:15: Not in scope: `errorCalls&#8217;<br />
+HUnitTests.hs:18:8: Not in scope: `evaluate&#8217;</p>
+<p>ususally people use literate Haskell to post code, others can copy and run</p>
+</div>
+        </div>
+    </li>
+
+    </li>
+            </ul>
+
+
+        </div>
+
+    </div>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var disqus_url = 'http://codebetter.com/matthewpodwysocki/2008/12/06/functional-programming-unit-testing/';
+    var disqus_identifier = '93 /blogs/matthew.podwysocki/archive/2008/12/05/functional-programming-unit-testing.aspx';
+    var disqus_container_id = 'disqus_thread';
+    var disqus_domain = 'disqus.com';
+    var disqus_shortname = 'matthewpodwysocki';
+    var disqus_title = "Functional Programming Unit Testing &#8211; Part 1";
+        var disqus_config = function () {
+        var config = this; // Access to the config object
+
+        /*
+           All currently supported events:
+            * preData — fires just before we request for initial data
+            * preInit - fires after we get initial data but before we load any dependencies
+            * onInit  - fires when all dependencies are resolved but before dtpl template is rendered
+            * afterRender - fires when template is rendered but before we show it
+            * onReady - everything is done
+         */
+
+        config.callbacks.preData.push(function() {
+            // clear out the container (its filled for SEO/legacy purposes)
+            document.getElementById(disqus_container_id).innerHTML = '';
+        });
+                config.callbacks.onReady.push(function() {
+            // sync comments in the background so we don't block the page
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = '?cf_action=sync_comments&post_id=93';
+
+            var firstScript = document.getElementsByTagName( "script" )[0];
+            firstScript.parentNode.insertBefore(script, firstScript);
+        });
+                    };
+    var facebookXdReceiverPath = 'http://cdn1.codebetter.com/wp-content/plugins/disqus-comment-system/xd_receiver.htm';
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+    var DsqLocal = {
+        'trackbacks': [
+        ],
+        'trackback_url': "http:\/\/codebetter.com\/matthewpodwysocki\/2008\/12\/06\/functional-programming-unit-testing\/trackback\/"    };
+/* ]]> */
+</script>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+        dsq.src = 'http' + '://' + disqus_shortname + '.' + 'disqus.com' + '/embed.js?pname=wordpress&pver=2.73';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+/* ]]> */
+</script>
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.363 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-26 15:12:26 -->
+
+<!-- super cache -->

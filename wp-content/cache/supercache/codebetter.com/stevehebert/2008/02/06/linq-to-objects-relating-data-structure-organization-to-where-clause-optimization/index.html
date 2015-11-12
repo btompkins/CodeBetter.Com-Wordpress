@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+	<meta charset="UTF-8" />
+    <title>Linq to Objects – measuring performance implications (part 1) | Steve Hebert</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11" />
+	
+	<link href="http://feeds.feedburner.com/CodeBetter" title="CodeBetter.Com &raquo; Feed" type="application/rss+xml" rel="alternate">
+	
+		<link rel="pingback" href="http://codebetter.com/stevehebert/xmlrpc.php" />
+	<link rel='stylesheet' id='mainstyle-css'  href='http://cdn1.codebetter.com/wp-content/themes/codebetter/style.css?ver=3.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='jquerystyle-css'  href='http://cdn1.codebetter.com/wp-content/themes/codebetter/jquery-ui-1.8.1.custom.css?ver=3.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp_greet_box_style-css'  href='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/css/style.css?ver=3.4.2' type='text/css' media='all' />
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/jquery/jquery.js?ver=1.7.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-includes/js/comment-reply.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/js/functions.js?ver=3.4.2'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/js/js-mode.js?ver=3.4.2'></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://codebetter.com/stevehebert/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://cdn1.codebetter.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Manually Mapping WSDL soap:address location on the fly' href='http://codebetter.com/stevehebert/2007/11/13/manually-mapping-wsdl-soap-address-location-on-the-fly/' />
+<link rel='next' title='End of an Era &#8211; my favorite Favre story' href='http://codebetter.com/stevehebert/2008/03/04/end-of-an-era-my-favorite-favre-story/' />
+<meta name="generator" content="WordPress 3.4.2" />
+<link rel='shortlink' href='http://codebetter.com/stevehebert/?p=327' />
+
+<!-- All in One SEO Pack 1.6.15.2 by Michael Torbert of Semper Fi Web Design[83,168] -->
+<link rel="canonical" href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/" />
+<!-- /all in one seo pack -->
+<link rel="stylesheet" href="http://cdn1.codebetter.com/wp-content/plugins/digg-digg/include/../css/diggdigg-style.css?ver=5.2.9" type="text/css" media="screen" /><meta id="syntaxhighlighteranchor" name="syntaxhighlighter-version" content="3.1.3" />
+	
+	<script type='text/javascript' src='http://d1.openx.org/spcjs.php?id=7744&amp;target=_blank'></script>
+	<style type="text/css">body { padding-top:0px !important; } html { margin-top: 0px !important; }</style>
+<!-- BuySellAds Ad Code -->
+<script type="text/javascript">
+(function(){
+  var bsa = document.createElement('script');
+     bsa.type = 'text/javascript';
+     bsa.async = true;
+     bsa.src = 'http://s3.buysellads.com/ac/bsa.js';
+  (document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);
+})();
+</script>
+<!-- End BuySellAds Ad Code -->
+</head>
+
+<body>
+
+			
+		<div class="container_12 ui-tabs ui-widget ui-widget-content ui-corner-all" id="tabs">			
+			<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				<li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#ui-tabs-1">CodeBetter.Com</a></li>
+				<li class="ui-state-default ui-corner-top"><a href="http://devlicio.us">Devlicio.Us</a></li>				
+				<div id="top-search">
+				<form action="http://codebetter.com/globalsearch/" id="cse-search-box">
+  <div>
+   <fieldset id="search">
+		<input type="hidden" name="cx" value="005178204031477491434:2bg5jtwgsfe" />
+		<input type="hidden" name="cof" value="FORID:9" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text"  class="text-input" id="s" name="q" size="31" />
+		<input type="image" src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/search-img.png" class="form-button" id="searchsubmit" value="GO" name="">				   	
+	</fieldset>
+  </div>
+</form>
+<script type="text/javascript" src="http://www.google.com/cse/brand?form=cse-search-box&lang=en&sitesearch=true"></script>
+				</div>				
+			</ul><div id="ui-tabs-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom"></div><div id="ui-tabs-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-tabs-hide"></div>
+		</div>
+			
+		<div id="main" class="container_12">
+		
+			<div id="logo" class="grid_3"><a href="/" title="CodeBetter.Com - Stuff you need to Code Better!"><image src="http://cdn1.codebetter.com/wp-content/themes/codebetter/images/codebetter_logo.png" height="48" width="223"></image></a></div>
+			<div id="ad_leaderboard" class="grid_9">
+			<!-- BuySellAds Zone Code -->
+<div id="bsap_1276080" class="bsarocks bsap_4fe632babdccc2b4b049e4f08cc3c549"></div>
+<!-- End BuySellAds Zone Code --></div>
+			
+			<div id="globalNav" class="grid_12">
+				<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+				</ul>
+								
+			</div><!-- end div#globalNav.container_12 -->				
+	
+		<div id="content" class="container_12">
+			<div id="main" class="grid_8">
+
+
+				<div id="post-327" class="post-327 post type-post status-publish format-standard hentry category-featured">
+					<h1 class="entry-title">Linq to Objects – measuring performance implications (part 1)</h1>
+
+					<div class="entry-meta">
+						<span class="meta-prep meta-prep-author">Posted by </span>
+						<span class="author vcard"><a class="url fn n" href="http://codebetter.com/stevehebert/author/stevehebert/" title="View all posts by stevehebert">stevehebert</a></span>
+						<span class="meta-sep"> on  </span>
+						<a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/" title="11:02 am" rel="bookmark"><span class="entry-date">February 6, 2008</span></a>
+											</div><!-- .entry-meta -->
+
+					<div class="entry-content">
+						<div id="greet_block"><noscript><div class="greet_block wpgb_cornered"><div class="greet_text"><div class="greet_image"><a href="http://codebetter.com/stevehebert/feed/rss/"  rel="nofollow"><img src="http://cdn1.codebetter.com/wp-content/plugins/wp-greet-box/images/rss_icon.png" alt="WP Greet Box icon"/></a></div>Hello there! If you are new here, you might want to <a href="http://codebetter.com/stevehebert/feed/rss/" rel="nofollow"><strong>subscribe to the RSS feed</strong></a> for updates on this topic.<div style="clear:both"></div><div class="greet_block_powered_by">Powered by <a href="http://omninoggin.com/projects/wordpress-plugins/wp-greet-box-wordpress-plugin/" title="WP Greet Box WordPress Plugin" style="text-decoration:none;">WP Greet Box</a> <a href="http://omninoggin.com/" title="WordPress Plugin" style="text-decoration:none;">WordPress Plugin</a></div><div style="clear:both"></div></div></div></noscript></div><p><P class="MsoNormal"><FONT size="3"><FONT face="Calibri">After working with Linq-to-objects, I started thinking about how this tool could work in the wrong hands.<SPAN>&nbsp; </SPAN>At its simplest, a seemingly elegant query could easily turn into a CPU hog if the underlying data structure isn’t organized well.<SPAN>&nbsp; At its best, how will these queries make use of the underlying data structures?</SPAN></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri">What to do?<SPAN>&nbsp; </SPAN>Write some code and get some numbers to compare.</FONT></FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">What I found was interesting, eye-opening&nbsp;and opened more questions for another day. I set out to compare Linq performance over a reasonably well-optimized data structure by varying the where clause composition and also comparing this to code going directly after the data structure in typical pre-Linq fashion.</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">What I learned was fascinating – let’s take a look at the code</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">Given a dictionary defined as: <BR><EM>private Dictionary&lt;int, string&gt; _lookupList = new Dictionary&lt;int, string&gt;();</EM></FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">I populate it using a loop where the upper limit is a const I can vary:<BR><EM>for (int x = 0; x &lt; _listSize; x++ )<BR><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>_lookupList.Add(x, string.Format(&#8220;item#{0}&#8221;, x));</EM></FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">I can then use Linq to query the item dictionary with something like this:</FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri"><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN><EM>string[] myResult = (from i in _lookupList<BR><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>where i.Key &gt;= lowerLimit &amp;&amp; i.Key &lt;= upperLimit &amp;&amp; i.Value.Contains(&#8220;1&#8243;) <BR><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN>select i.Value).ToArray();</EM></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">Let’s take three variations as follows:</FONT></P><br />
+<P class="MsoListParagraphCxSpFirst"><SPAN><SPAN><FONT face="Calibri" size="3">1)</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">where i.Key &gt;= lowerLimit &amp;&amp; i.Key &lt;= upperLimit &amp;&amp; i.Value.Contains(&#8220;1&#8243;)</FONT></P><br />
+<P class="MsoListParagraphCxSpMiddle"><SPAN><SPAN><FONT face="Calibri" size="3">2)</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">where i.Value.Contains(&#8220;1&#8243;) &amp;&amp; i.Key &gt;= lowerLimit &amp;&amp; i.Key &lt;= upperLimit</FONT></P><br />
+<P class="MsoListParagraphCxSpLast"><SPAN><SPAN><FONT face="Calibri" size="3">3)</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">Hand-code the query to go against the data structure&nbsp;to compare performance.</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">To make sure I varied the access in different areas of the dictionary, the query was performed against 10 discrete key values in the beginning, middle and end of the dictionary. Performance was consistent across each item, showing that Linq was utilizing the datastructure to some degree – as expected.<SPAN>&nbsp; </SPAN>The .Contains method further reduced the return set to range from 1-2 items depending on where the midpoint was calculated. These test sets were run 10 times and the averages taken.</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3"><STRONG>The results:</STRONG></FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">Item#1 – averaged 2643 ms<BR>Item#2 – averaged 671 ms<BR>Item#3 – averaged &lt;1 ms</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3"><STRONG>Observations:</STRONG>&nbsp;</FONT></P><br />
+<P class="MsoNormal"><FONT face="Calibri" size="3">The difference between #1 and #2 is a factor of 4. <SPAN>&nbsp;</SPAN>I am not sure how this actually performed but I suspect that&nbsp;item #2 scanned the entire contents of the dictionary.<SPAN>&nbsp; </SPAN>It is hard to tell since a test where you eliminate the where clause results in a very different memory allocation pattern and therefore inherently larger timing numbers.</FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri">The difference between #3 and the other items is staggering.<SPAN>&nbsp; </SPAN>Keep in mind, I tried to handicap this with a try/catch block around the indexer into the dictionary, stored the matching values in a List&lt;string&gt; and then performed a List&lt;string&gt;.ToArray() just for good measure.<SPAN>&nbsp; </SPAN></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri">That’s eye popping – it’s more than two factors of 10 faster than the best optimized Linq query and more than three factors of 10 faster than the worst optimized.<SPAN>&nbsp; </SPAN></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri">Bottom line &#8211; despite my best efforts I just couldn’t make my hand-written code perform as poorly as Linq.<SPAN>&nbsp; </SPAN></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri"><SPAN><STRONG>Summary:</STRONG></SPAN></FONT></FONT></P><br />
+<P class="MsoNormal"><FONT size="3"><FONT face="Calibri">So what did I learn?<SPAN>&nbsp; </SPAN></FONT></FONT></P><br />
+<P class="MsoListParagraphCxSpFirst"><SPAN><SPAN><FONT size="3">·</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">Variations on where-clause construction have an implied order when considering performance.&nbsp; What are these implied rules exactly?&nbsp; I&#8217;d love to know.</FONT></P><br />
+<P class="MsoListParagraphCxSpMiddle"><SPAN><SPAN><FONT size="3">·</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">An entirely different test would have to be constructed to understand join performance.</FONT></P><br />
+<P class="MsoListParagraphCxSpMiddle"><SPAN><SPAN><FONT size="3">·</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">How does the [Indexable] attribute play into optimization choices and what are the performance considerations of that attribute?</FONT></P><br />
+<P class="MsoListParagraphCxSpLast"><SPAN><SPAN><FONT size="3">·</FONT><SPAN>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </SPAN></SPAN></SPAN><FONT face="Calibri" size="3">When doing intensive object querying,&nbsp; Linq for Objects needs to be&nbsp;eyed very carefully in context of the application.</FONT></P><br />
+<P><STRONG>+++&nbsp; Addition per Comment</STRONG></P><br />
+<P>Here is the code that Jimmy Bogard requested.&nbsp; As noted in my post, I added exception handling and chose to use a List&lt;string&gt; to gather the match values and finally convert to an array of strings just as the Linq function did. If anything, I am going for the most conservative path in this case.&nbsp; The call to this function is responsible for time measurement.</P><br />
+<P>private void HandCodedAccessorFunction(int lowerLimit, int upperLimit)<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; List&lt;string&gt; result = new List&lt;string&gt;();<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int y = 0;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (int x = lowerLimit; x &lt;= upperLimit; x++)<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (_lookupList[x].Contains(&#8220;1&#8243;))<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result.Add(_lookupList[x]);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; y++;<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; catch (Exception)<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Console.Writeline(&#8220;Exception thrown&#8221;);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string[] ar = result.ToArray();<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Console.WriteLine(y);<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</P></p>
+											</div><!-- .entry-content -->
+
+
+					<div class="entry-utility">
+					This entry was posted in <a href="http://codebetter.com/stevehebert/category/featured/" title="View all posts in Featured" rel="category tag">Featured</a>. Bookmark the <a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/" title="Permalink to Linq to Objects – measuring performance implications (part 1)" rel="bookmark">permalink</a>. Follow any comments here with the <a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/feed/" title="Comments RSS to Linq to Objects – measuring performance implications (part 1)" rel="alternate" type="application/rss+xml">RSS feed for this post</a>.
+					</div><!-- .entry-utility -->
+				</div><!-- #post-327 -->
+
+				<div id="nav-below" class="navigation">
+					<div class="nav-previous"><a href="http://codebetter.com/stevehebert/2007/11/13/manually-mapping-wsdl-soap-address-location-on-the-fly/" rel="prev"><span class="meta-nav">&larr;</span> Manually Mapping WSDL soap:address location on the fly</a></div>
+					<div class="nav-next"><a href="http://codebetter.com/stevehebert/2008/03/04/end-of-an-era-my-favorite-favre-story/" rel="next">End of an Era &#8211; my favorite Favre story <span class="meta-nav">&rarr;</span></a></div>
+				</div><!-- #nav-below -->
+
+							<div id="comments">
+
+
+			<h3 id="comments-title">16 Responses to <em>Linq to Objects – measuring performance implications (part 1)</em> </h3>
+
+
+			<ol class="commentlist">
+						<li class="comment even thread-even depth-1" id="li-comment-538">
+		<div id="comment-538">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://julian.birch@gmail.com' rel='external nofollow' class='url'>Julian Birch</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-538">February 7, 2008 at 6:17 pm</a></div>
+
+		<div class="comment-body"><p>The question of fairness is valid.  The hardcoded version assumes a massive amount about the actual data in the structure, not just the data structure itself.  For instance, the linq one will work if the dictionary is only populated with even numbers, will stop running after the first three if you ask it to, &#038;c.  You&#8217;d have to modify the hardcoded version to use yield return to match that semantic.</p>
+<p>Bear in mind that you can make the linq query use the same algorithm as the hardcoded version, simply by implementing a Numbers(from, to) function.  The query then becomes</p>
+<p>from x in Numbers(lowerLimit; upperLimit)<br />
+where _lookupList[x].Contains(&#8220;1&#8243;)<br />
+select x</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-537">
+		<div id="comment-537">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-537">February 6, 2008 at 9:16 pm</a></div>
+
+		<div class="comment-body"><p>Hi Eric,</p>
+<p>Thanks &#8211; it makes perfect sense now.  It&#8217;ll be interesting to see if MS makes any of the containers Linq-aware in the long run.  </p>
+<p>I don&#8217;t believe you need paragraph tags &#8211; we use Community Server here and I&#8217;ve never seen a reference to paragraph tags in their documentation.</p>
+<p>Thanks again,<br />
+-Steve</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-536">
+		<div id="comment-536">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Eric Lee</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-536">February 6, 2008 at 7:56 pm</a></div>
+
+		<div class="comment-body"><p>Yes, that makes sense if you think about how Linq works.  Linq can work in two modes; either it can do all the querying work itself using an IEnumerable interface on your container (in which case it has to use brute-force searching) or it can delegate the responsibility for intelligent execution to the container itself using an IQueryable interface.</p>
+<p>In the case of Linq to SQL, the SQL container implements IQueryable so the end result of a Linq to SQL query is not brute-force and can take advantage of all of the SQL engine&#8217;s goodness.</p>
+<p>In the case of the Dictionary<> object, it doesn&#8217;t implement IQueryable so Linq has no choice but to fall back to using the IEnumerable interface which of course bypasses all of the Dictionary&#8217;s key-based goodness.  If Dictionary (or your snazzy custom-built data structure) implemented IQueryable, then that wouldn&#8217;t happen.</p>
+<p>So the lesson to learn here is that when you use Linq, you either need to make sure your container implements IQueryable or be prepared for IEnumerable-based algorithm performance.  Which is a good lesson to learn because it&#8217;s not obvious at first glance, though it makes total sense after a few seconds thought.  How could Linq possibly know how to take advantage of the quirks of every conceivable data structure?  Obviously it can&#8217;t.  It has its own strategy that works against anything that can manage to implement IEnumerable, and it can take advantage of custom strategies if they&#8217;re provided via IQueryable.</p>
+<p>(I haven&#8217;t used CodeBetter much before &#8211; are paragraph tags required for proper formatting in comments?)</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-535">
+		<div id="comment-535">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Anonymous</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-535">February 6, 2008 at 7:06 pm</a></div>
+
+		<div class="comment-body"><p>I believe your HandCodedAccessorFunction is unfairly implemented, to compare apples with apples, you might want to try somethig like</p>
+<p>private void HandCodedAccessorFunction(int lowerLimit, int upperLimit)<br />
+        {<br />
+            List<string> result = new List</string><string>();<br />
+            int y = 0;<br />
+            foreach (KeyValuePair<int ,string> kv in _lookupList)<br />
+            {<br />
+                try<br />
+                {<br />
+                   if (kv.Key >= lowerLimit &#038;&#038; kv.Key <= upperLimit &#038;&#038; kv.Value.Contains(&#8220;1&#8243;))<br />
+                    {<br />
+                        result.Add(kv.Value);<br />
+                        y++;<br />
+                    }<br />
+                }<br />
+                catch (Exception)<br />
+                {<br />
+                     Console.WriteLine(&#8220;Exception thrown&#8221;);<br />
+                }<br />
+            }</p>
+<p>            string[] ar = result.ToArray();</p>
+<p>            Console.WriteLine(y);<br />
+        }<br />
+</int></string></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-534">
+		<div id="comment-534">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-534">February 6, 2008 at 6:48 pm</a></div>
+
+		<div class="comment-body"><p>Eric &#8211; that&#8217;s great that you mention that. I was just running that experiment to see if Linq even pays attention to the underlying datastructure to make any optimizations.  The answer is a resounding &#8216;no&#8217;.  </p>
+<p>If I change my custom function to interate through the entire contents of the dictionary, using the order of the where clause to determine the order of my tests in the custom function then the results are nearly equal.  There is slight benefit to the custom function, but it&#8217;s really immaterial (typically < 10% speed difference).</p>
+<p>So the bottom line is &#8211; if you hand Linq datastructure, performance will be the same as handing it an &#8216;array&#8217; of elements without being able to leverage the underlying data structure.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-533">
+		<div id="comment-533">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Eric Lee</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-533">February 6, 2008 at 6:05 pm</a></div>
+
+		<div class="comment-body"><p>It&#8217;s important to draw the correct conclusion from this experiment.</p>
+<p>What the data are (probably) telling us is that Linq isn&#8217;t smart enough to realize that the dictionary key in this case is an &#8220;iterable&#8221; key, that is, that it could iterate through all possible values from the lower limit to the higher limit and look up values that way instead of doing a brute-force test of every key in the dictionary.</p>
+<p>If the key type was anything other than an int or char, like say a float or a string, then it wouldn&#8217;t be a iterable key and your hand-rolled algorithm wouldn&#8217;t work (at least not without some restrictions on the key data to make it iterable, like only whole-number floats or only strings of length one).  I would expect Linq and the hand-rolled code to be much closer in performance in that case.</p>
+<p>So you did answer the question you asked in the beginning of your post: Linq doesn&#8217;t always take full advantage of the properties of the underlying data structure.  You do have to think about things from Linq&#8217;s perspective and realize when it might miss a special optimizable case.</p>
+<p>However, it would (probably) be wrong to conclude that Linq performance is always poor.  I haven&#8217;t run any experiments myself yet but I bet if you changed the dictionary key to an arbitrary string that Linq&#8217;s best time and your best hand-rolled time would be equivalent because you couldn&#8217;t take advantage of your &#8220;iterate over the key range&#8221; trick.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-532">
+		<div id="comment-532">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jimmybogard.lostechies.com' rel='external nofollow' class='url'>Jimmy Bogard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-532">February 6, 2008 at 5:49 pm</a></div>
+
+		<div class="comment-body"><p>Ah the numbers are making sense now&#8230;your LINQ query iterates over the entire Dictionary, while the reference implementation only iterates over the bounds.  The larger the source, the bigger the difference will be, especially if your upper and lower bounds are very close to each other.</p>
+<p>My guess is that the performance difference follows the same ratio as the difference between the bounds size and the total size of the list/dictionary.</p>
+<p>Very interesting stuff, deferred execution magic under the covers and what not.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-531">
+		<div id="comment-531">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-531">February 6, 2008 at 5:40 pm</a></div>
+
+		<div class="comment-body"><p>Darrell,</p>
+<p>I couldn&#8217;t agree more.  The question I am trying to get to the heart of is just how expensive is Linq to Objects.  Based on that knowledge I can make better decisions of where to use and where not to &#8211; as you mentioned.  Depending on your application and runtime pattern, this information simply gives me the ability to better understand the topic going into a project. </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-530">
+		<div id="comment-530">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jimmybogard.lostechies.com' rel='external nofollow' class='url'>Jimmy Bogard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-530">February 6, 2008 at 5:37 pm</a></div>
+
+		<div class="comment-body"><p>Also, I&#8217;d like to see what numbers you set for &#8220;_listSize&#8221;, &#8220;lowerLimit&#8221; and &#8220;upperLimit&#8221;.  Without the original test code and these numbers it&#8217;s difficult to figure out the numbers.</p>
+<p>When compiled, LINQ to objects gets compiled into the Enumerable extension method calls, so it&#8217;s semantically equivalent to this:</p>
+<p>_lookupList.Where(i => i.Key >= lowerLimit &#038;&#038; i.Key <= upperLimit &#038;&#038; i.Value.Contains(&#8220;1&#8243;)).Select(i.Value).ToArray();</p>
+<p>That&#8217;s what you&#8217;ll see in reflector (minus the anonymous delegate stuff pulled out).</p>
+<p>There is no runtime-compilation of Linq to Objects as there is for Linq to SQL.  Linq to SQL uses expression trees that have to be compiled at runtime.</p>
+<p>It&#8217;s not surprising the first query takes longer than the second.  Boolean ANDs are short-circuited, and &#8220;Contains&#8221; is much more expensive than integer comparisons.  Now I&#8217;m super-duper curious to see your reference implementation.</p>
+<p>Also note that the dictionary is not actually iterated over until you call &#8220;ToArray&#8221;.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-529">
+		<div id="comment-529">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-529">February 6, 2008 at 5:21 pm</a></div>
+
+		<div class="comment-body"><p>Jimmy &#8211; I added the custom query to the end of the post.  I have not looked at the profiler numbers yet.  I am just looking at overall numbers to get a grasp of the collective overhead at this point.  </p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-528">
+		<div id="comment-528">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn">Ian Cooper</cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-528">February 6, 2008 at 5:09 pm</a></div>
+
+		<div class="comment-body"><p>LINQ To SQL expends a lot of extra time parsing the query expression tree and turning it into code (and SQL). To alleviate this issue Compile.Query lets you amortize that cost <a href="http://blogs.msdn.com/ricom/archive/2007/07/05/dlinq-linq-to-sql-performance-part-4.aspx" rel="nofollow">http://blogs.msdn.com/ricom/archive/2007/07/05/dlinq-linq-to-sql-performance-part-4.aspx</a></p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-527">
+		<div id="comment-527">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://jimmybogard.lostechies.com' rel='external nofollow' class='url'>Jimmy Bogard</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-527">February 6, 2008 at 4:24 pm</a></div>
+
+		<div class="comment-body"><p>Have you looked at any profiler numbers?  I&#8217;m very curious to know where the time was being spent.  Underneath the covers, the LINQ query shouldn&#8217;t be doing much more than your custom query.  Can you share what your custom query code was also?</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-526">
+		<div id="comment-526">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://dawdevel.ca' rel='external nofollow' class='url'>Darrell Wright</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-526">February 6, 2008 at 4:17 pm</a></div>
+
+		<div class="comment-body"><p>I guess this is one of those situations where you must weigh the ease of development and readability vs pure performance.  Let the profiler tell us where it is slow later on if it feels slow.  2s vs 1ms for something outside a loop called once is a no brainer.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-525">
+		<div id="comment-525">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-525">February 6, 2008 at 4:14 pm</a></div>
+
+		<div class="comment-body"><p>Darrell,</p>
+<p>That just brought up another thought: What I am testing is Linq to Objects, not Linq to Sql.  However, in any call to the database you would have the actual database interaction + the linq overhead.  I believe that isolating each of those cost components is pretty hard to do with Linq to Sql &#8211; and I wonder if Linq to Objects will effectively isolate the linq overhead and answer that question as well?</p>
+<p>That&#8217;s a great question that I cannot answer off the top of my head &#8211; it really depends on the Linq wiring that is specialized for linq to sql.</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment even thread-even depth-1" id="li-comment-524">
+		<div id="comment-524">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-524">February 6, 2008 at 4:04 pm</a></div>
+
+		<div class="comment-body"><p>To answer Darrell,</p>
+<p>That&#8217;s a great question.  I actually threw out the first value returned for the following reasons:</p>
+<p>1) It was consistently 85%-95% higher than all the other values.<br />
+2) Given that I had just finished populating a large dictionary< ...> instance, I was concerned that the first run might not be an accurate measure.</p>
+<p>If I had included that first number, Linq&#8217;s performance would have looked worse.  In hindsight, I should have included it simply because the first execution of my hand-written query did not have any performance degradation on first call.</p>
+<p>-Steve</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+		<li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-523">
+		<div id="comment-523">
+		<div class="comment-author vcard">
+			<img alt='' src='http://0.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=40' class='avatar avatar-40 photo avatar-default' height='40' width='40' />			<cite class="fn"><a href='http://codebetter.com/blogs/steve.hebert' rel='external nofollow' class='url'>shebert</a></cite> <span class="says">says:</span>		</div>
+		
+		<div class="comment-meta commentmetadata"><a href="http://codebetter.com/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#comment-523">February 6, 2008 at 3:57 pm</a></div>
+
+		<div class="comment-body"><p>My apologies to Darrell Wright &#8211; I hit the wrong button when responding to your Comment.  Here it is:</p>
+<p>What about subsequent calls to the query?  From what I understand, Linq will compile the query on the first use if you don&#8217;t precompile it.  The 2s time may be reflecting this and on additional uses it will be faster.</p>
+<p>blogs.msdn.com/&#8230;/performance-quiz-13-linq-to-sql-compiled-query-cost-solution.aspx</p>
+</div>
+
+		<div class="reply">
+					</div>
+	</div>
+
+	</li>
+			</ol>
+
+
+
+								<div id="respond">
+				<h3 id="reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/stevehebert/2008/02/06/linq-to-objects-relating-data-structure-organization-to-where-clause-optimization/#respond" style="display:none;">Cancel reply</a></small></h3>
+									<p class="must-log-in">You must be <a href="http://codebetter.com/stevehebert/wp-login.php?redirect_to=http%3A%2F%2Fcodebetter.com%2Fstevehebert%2F2008%2F02%2F06%2Flinq-to-objects-relating-data-structure-organization-to-where-clause-optimization%2F">logged in</a> to post a comment.</p>												</div><!-- #respond -->
+						
+</div><!-- #comments -->
+
+		</div><!-- #main -->
+			<div id="sidebar" class="grid_4">
+
+		<div id="primary" class="widget-area">
+			<ul class="xoxo">
+				<div class="ad-container">
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29416);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=2782afb'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29416&amp;n=2782afb' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29417);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=e94cea6'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29417&amp;n=e94cea6' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29418);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=9ba3022'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29418&amp;n=9ba3022' /></a></noscript><script type='text/javascript'><!--// <![CDATA[
+    OA_show(29419);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=f467b52'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29419&amp;n=f467b52' /></a></noscript>
+				</div>
+			
+				<li id="user_bio-2" class="widget-container widget_user_bio"><h3 class="widget-title"></h3>One of these days I will add something to my user profile! For now, I shall remain mysterious.
+</li>		
+						
+			</ul>
+			
+		</div><!-- #primary .widget-area -->
+		
+		<div id="secondary" class="widget-area">
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(220407);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=68b8307'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=220407&amp;n=68b8307' /></a></noscript>				
+				
+				<ul class="xoxo">		
+									</ul>	
+				
+<script type='text/javascript'><!--// <![CDATA[
+    OA_show(29421);
+// ]]> --></script><noscript><a target='_blank' href='http://d1.openx.org/ck.php?n=3f8e353'><img border='0' alt='' src='http://d1.openx.org/avw.php?zoneid=29421&amp;n=3f8e353' /></a></noscript>
+				
+		</div><!-- #secondary .widget-area -->			</div><!--sidebar-->
+		</div><!-- #container -->
+</div><!-- end div tabs see header.php -->
+	
+	<div id="footer">
+		<div class="container_12">
+		<div id="footer-widget-area">
+				<div class="grid_4">					
+					<ul>
+					<li><a href="http://codebetter.com" title="home">Home</a></li>
+					<li class="page_item page-item-2"><a href="http://codebetter.com/about/">About</a></li>
+<li class="page_item page-item-8"><a href="http://codebetter.com/codebetter-ci/">CodeBetter CI</a></li>
+<li class="page_item page-item-6"><a href="http://codebetter.com/community/">Community</a></li>
+<li class="page_item page-item-10"><a href="http://codebetter.com/editors/">Editors</a></li>
+<li class="page_item page-item-41"><a href="http://codebetter.com/globalsearch/">Search Results</a></li>
+					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=FFFFFF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
+					</ul>
+				</div><!-- #second .widget-area -->
+				<div class="grid_4">
+					
+					<h3>Friends of CodeBetter.Com</h3>
+<ul>
+
+<li><a href="http://red-gate.com/">Red-Gate Tools For SQL and .NET</a></li>
+<li><a href="http://telerik.com">Telerik .NET Tools</a></li>
+<li><a href="http://jetbrains.com/resharper/">JetBrains - ReSharper</a></li>
+<li><a href="http://scootersoftware.com">Beyond Compare</a></li>
+<li><a href="http://www.ndepend.com/">NDepend</a></li>
+<li><a href="http://www.sapphiresteel.com/">Ruby In Steel</a></li>
+<li><a href="http://www.slickedit.com/">SlickEdit</a></li>
+<li><a href="http://www.gurock.com/products/smartinspect/">SmartInspect .NET Logging</a></li>
+<li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
+<li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
+<li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
+<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
+<li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
+<li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
+<li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
+<li><a href="http://nservicebus.com" target="_blank">NServiceBus</a></li>
+<li><a href="http://ravendb.net" target="_blank">RavenDb</a></li>
+<li><a href="http://www.websequencediagrams.com/" target="_blank">Web Sequence Diagrams</a></li>
+	</ul>				
+				</div><!-- #third .widget-area -->
+				<div class="grid_4">
+					CodeBetter.Com &copy; '12<br />
+						Stuff you need to Code Better!<br />
+				Proudly powered by <span id="generator-link"><a href="http://wordpress.org/" title="Semantic Personal Publishing Platform" rel="generator">WordPress</a></span>.					
+				</div><!-- #fourth .widget-area -->
+			</div><!-- #footer-widget-area -->		
+		
+			</div><!-- end div.container_12 -->
+
+	</div><!-- end div#footer -->
+		
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-531207-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushRuby.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJScript.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPython.js?ver=3.0.83b'></script>
+<script type='text/javascript' src='http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/third-party-brushes/shBrushFSharp.js?ver=3.0.83b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore.css?ver=3.0.83b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "http://cdn1.codebetter.com/wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeDefault.css?ver=3.0.83b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['gutter'] = false;
+    SyntaxHighlighter.defaults['tab-size'] = 2;
+    SyntaxHighlighter.defaults['toolbar'] = false;
+    SyntaxHighlighter.defaults['wrap-lines'] = true; 
+	SyntaxHighlighter.defaults['pad-line-numbers'] = false;
+	SyntaxHighlighter.all();
+</script>
+
+<script type='text/javascript'>//<![CDATA[
+    if (typeof jQuery == 'undefined') {
+        document.write(unescape("%3Cscript src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js' type='text/javascript' %3E%3C/script%3E"));
+    }//]]></script>
+<script type='text/javascript' language='Javascript' src='http://s1.lqcdn.com/m.min.js?dt=2.3.110202.1'></script>
+<script type='text/javascript' language='Javascript'> if(jQuery.LqmAds)jQuery.LqmAds();</script>
+ 
+</body>
+</html>
+<!-- Dynamic page generated in 0.393 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-26 14:34:14 -->
+
+<!-- super cache -->

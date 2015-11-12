@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Glenn Block &#187; ASP.NET Web API</title>
+	<atom:link href="http://codebetter.com/glennblock/category/asp-net-web-api/feed/" rel="self" type="application/rss+xml" />
+	<link>http://codebetter.com/glennblock</link>
+	<description>CodeBetter.Com - Stuff you need to Code Better!</description>
+	<lastBuildDate>Fri, 09 Nov 2012 17:54:08 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>http://wordpress.org/?v=3.4.2</generator>
+		<item>
+		<title>Two ways to work with HTTP responses in ApiController, HttpResponseMessage and HttpResponseException</title>
+		<link>http://codebetter.com/glennblock/2012/05/24/two-ways-to-work-with-http-responses-in-apicontroller-httpresponsemessage-and-httpresponseexception/</link>
+		<comments>http://codebetter.com/glennblock/2012/05/24/two-ways-to-work-with-http-responses-in-apicontroller-httpresponsemessage-and-httpresponseexception/#comments</comments>
+		<pubDate>Thu, 24 May 2012 09:29:51 +0000</pubDate>
+		<dc:creator>Glenn Block</dc:creator>
+				<category><![CDATA[ASP.NET Web API]]></category>
+
+		<guid isPermaLink="false">http://codebetter.com/glennblock/?p=420</guid>
+		<description><![CDATA[ASP.NET Web API provides two different ways to work with manipulating HTTP response messages from within your API Controller action. Throw an HttpResonseException – This exception allows you to pass in an HttpResponseMessage / set status and headers. Web API&#160;&#8230; <a href="http://codebetter.com/glennblock/2012/05/24/two-ways-to-work-with-http-responses-in-apicontroller-httpresponsemessage-and-httpresponseexception/">Continue&#160;reading&#160;<span class="meta-nav">&#8594;</span></a>]]></description>
+			<content:encoded><![CDATA[<!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>ASP.NET Web API provides two different ways to work with manipulating HTTP response messages from within your API Controller action. </p>
+<ul>
+<li>Throw an HttpResonseException – This exception allows you to pass in an HttpResponseMessage / set status and headers. Web API will then immediately return the response.
+<li>Return an HttpResponseMessage – You can simply return an HttpResponseMessage from your action.</li>
+</ul>
+<p>So which&nbsp; should you use when? Are they both identical? Cuong Le recently <a href="http://stackoverflow.com/questions/10660721/asp-net-web-api-different-between-httpresponsemessage-and-httpresponseexception">asked</a> this question on StackOverflow.</p>
+<p>The simple answer is no they are not the same.</p>
+<p>The main difference between the two is this. The exception is useful to immediately stop processing and exit. For example assume I have the following code</p>
+<script src="http://gist.github.com/2780444.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-2780444" class="gist">
+    
+
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerController</span> <span class="p">:</span> <span class="n">ApiController</span> <span class="p">{</span></div><div class='line' id='LC2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">private</span> <span class="n">ICustomerContext</span> <span class="n">repo</span><span class="p">;</span></div><div class='line' id='LC3'><br/></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="nf">CustomerController</span><span class="p">(</span><span class="n">ICustomerContext</span> <span class="n">repo</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC5'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">this</span><span class="p">.</span><span class="n">repo</span> <span class="p">=</span> <span class="n">repo</span><span class="p">;</span></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC7'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="n">Customer</span> <span class="nf">Get</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">customer</span> <span class="p">=</span> <span class="n">repo</span><span class="p">.</span><span class="n">Customers</span><span class="p">.</span><span class="n">SingleOrDefault</span><span class="p">(</span><span class="n">c</span><span class="p">=&gt;</span><span class="n">c</span><span class="p">.</span><span class="n">CustomerID</span> <span class="p">==</span> <span class="n">id</span><span class="p">);</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">if</span> <span class="p">(</span><span class="n">customer</span> <span class="p">==</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpResponseException</span><span class="p">(</span><span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span><span class="p">));</span></div><div class='line' id='LC12'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">customer</span><span class="p">;</span></div><div class='line' id='LC14'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC15'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC16'><br/></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/2780444/dc824790b96d7f3544ea7b13abc48832b885ed76/gistfile1.cs" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/2780444#file_gistfile1.cs" style="float:right;margin-right:10px;color:#666">gistfile1.cs</a>
+            <a href="https://gist.github.com/2780444">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p>If this code runs and I pass an id that is not present, it will immediately stop processing and return a status code of 404.</p>
+<p>If instead I return HttpResponseMessage, the request will happily continue the rest of it&#8217;s processing and return a 404. The main difference being end the request or not.</p>
+<p>As <a href="http://twitter.com/darrel_miller">Darrel</a> said, the exception is useful in cases where in some cases I want processing to continue (as in when customer is found) and in others I don&#8217;t.</p>
+<p>The place where you might want to return HttpResponseMessage directly is in an HTTP POST to return a status code of 201 and set the location header. In that case I do want processing to continue. That would would do with this code.*</p>
+<script src="http://gist.github.com/2780448.js"></script><noscript><link rel="stylesheet" href="https://gist.github.com/stylesheets/gist/embed.css"><div id="gist-2780448" class="gist">
+    
+
+        <div class="gist-file">
+          <div class="gist-data gist-syntax">
+              <div class="highlight"><pre><div class='line' id='LC1'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerController</span> <span class="p">:</span> <span class="n">ApiController</span> <span class="p">{</span></div><div class='line' id='LC2'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">private</span> <span class="n">ICustomerContext</span> <span class="n">repo</span><span class="p">;</span></div><div class='line' id='LC3'><br/></div><div class='line' id='LC4'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="nf">CustomerController</span><span class="p">(</span><span class="n">ICustomerContext</span> <span class="n">repo</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC5'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">this</span><span class="p">.</span><span class="n">repo</span> <span class="p">=</span> <span class="n">repo</span><span class="p">;</span></div><div class='line' id='LC6'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC7'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><div class='line' id='LC8'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">public</span> <span class="n">HttpResponseMessage</span> <span class="nf">Post</span><span class="p">(</span><span class="n">Customer</span> <span class="n">customer</span><span class="p">)</span> <span class="p">{</span></div><div class='line' id='LC9'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">repo</span><span class="p">.</span><span class="n">Add</span><span class="p">(</span><span class="n">customer</span><span class="p">);</span></div><div class='line' id='LC10'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">repo</span><span class="p">.</span><span class="n">SaveChanges</span><span class="p">();</span></div><div class='line' id='LC11'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kt">var</span> <span class="n">response</span> <span class="p">=</span> <span class="n">Request</span><span class="p">.</span><span class="n">CreateResponse</span><span class="p">(</span><span class="n">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span><span class="p">,</span> <span class="n">customer</span><span class="p">);</span></div><div class='line' id='LC12'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="n">response</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="n">Location</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Uri</span><span class="p">(</span><span class="n">Request</span><span class="p">.</span><span class="n">RequestUri</span><span class="p">,</span> <span class="kt">string</span><span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;customer/{0}&quot;</span><span class="p">,</span> <span class="n">customer</span><span class="p">.</span><span class="n">id</span><span class="p">));</span></div><div class='line' id='LC13'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return</span> <span class="n">response</span><span class="p">;</span></div><div class='line' id='LC14'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC15'>&nbsp;&nbsp;&nbsp;&nbsp;<span class="p">}</span></div><div class='line' id='LC16'><br/></div></pre></div>
+          </div>
+
+          <div class="gist-meta">
+            <a href="https://gist.github.com/raw/2780448/eb30ccf61fcb1a55c8dbea5131dfa8282761ebb3/gistfile1.cs" style="float:right;">view raw</a>
+            <a href="https://gist.github.com/2780448#file_gistfile1.cs" style="float:right;margin-right:10px;color:#666">gistfile1.cs</a>
+            <a href="https://gist.github.com/2780448">This Gist</a> brought to you by <a href="http://github.com">GitHub</a>.
+          </div>
+        </div>
+</div>
+</noscript>
+<p><strong>*note:</strong> If you are using the beta bits you would create a new HttpResponseMessage&lt;Customer&gt;. I am using the later bits however which require you to use the CreateResponse extension method off of the Request.</p>
+<p>Above, I am creating a response which sets the status code to 201, passes in the customer, and then sets the location header.</p>
+<p>The response is then returned and the request continues processing.</p>
+<p>Hope this helps clarify the difference.</p>
+<div class="shr-publisher-420"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->]]></content:encoded>
+			<wfw:commentRss>http://codebetter.com/glennblock/2012/05/24/two-ways-to-work-with-http-responses-in-apicontroller-httpresponsemessage-and-httpresponseexception/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+		</item>
+		<item>
+		<title>Why are there 2 controllers in the ASP.NET Web API ContactManager example? REST has nothing to with it.</title>
+		<link>http://codebetter.com/glennblock/2012/02/28/why-are-there-2-controllers-in-the-asp-net-web-api-contactmanager-example-rest-has-nothing-to-with-it-2/</link>
+		<comments>http://codebetter.com/glennblock/2012/02/28/why-are-there-2-controllers-in-the-asp-net-web-api-contactmanager-example-rest-has-nothing-to-with-it-2/#comments</comments>
+		<pubDate>Tue, 28 Feb 2012 07:39:46 +0000</pubDate>
+		<dc:creator>Glenn Block</dc:creator>
+				<category><![CDATA[ASP.NET Web API]]></category>
+
+		<guid isPermaLink="false">http://codebetter.com/glennblock/?p=361</guid>
+		<description><![CDATA[&#60;some snarkiness follows/&#62; Rob expressed his disagreement (disgust) with the two controllers present in the sample when he made this bold statement: He then went on to further elaborate on the pedantic nature of the REST community and how his&#160;&#8230; <a href="http://codebetter.com/glennblock/2012/02/28/why-are-there-2-controllers-in-the-asp-net-web-api-contactmanager-example-rest-has-nothing-to-with-it-2/">Continue&#160;reading&#160;<span class="meta-nav">&#8594;</span></a>]]></description>
+			<content:encoded><![CDATA[<!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>&lt;some snarkiness follows/&gt;</p>
+<p><a href="http://wekeroad.com">Rob</a> expressed his disagreement (disgust) with the two controllers present in the sample when he made this bold <a href="https://twitter.com/#!/robconery/status/172452469710921730">statement</a>:</p>
+<p><a href="http://codebetter.com/glennblock/files/2012/02/image.png"><img style="margin: 0px 0px 24px;padding-left: 0px;padding-right: 0px;padding-top: 0px;border-width: 0px" src="http://codebetter.com/glennblock/files/2012/02/image_thumb.png" alt="image" width="494" height="231" border="0" /></a></p>
+<p>He then went on to further <a href="http://wekeroad.com/2012/02/28/someone-save-us-from-rest/">elaborate</a> on the pedantic nature of the REST community and how his making a comment unleashed a religious war on the poor soul. At some point I was dragged in which then led to Rob, <a href="http://twitter.com/darrel_miller">Darrel</a> and I in a long but civil debate/discussion on Jabbr.</p>
+<p>I am not going to defend the REST community and affirm or deny whether it is pedantic or not. That’s completely besides the point and it has zero to do with the sample.</p>
+<p>In that post he then said:</p>
+<p><strong>“The developer who wrote those two Controllers will avidly defend them to me, citing Fielding and quoting Wikipedia.”</strong></p>
+<p>That developer just happens to be me. I won’t defend them on that basis. In fact, the decision to have two controllers had NOTHING to do with REST and nothing to do with any HTTP guideline.</p>
+<p>It was a decision based on preference not based on keeping to some elite code.</p>
+<h1>Why two controllers? (Yes I will mention HTTP here).</h1>
+<p>Mainly separation of concerns. An item resource is semantically different from a collection resource. One handles an item, the other handles a collection. I could have handled both in the same class however I chose not to and felt that it was easier to test / maintain keeping them separate. I spoke to several folks at the time that also felt that keeping the separation made sense, so I left it the way that it was.</p>
+<p><strong>Why two URIs?</strong></p>
+<p>The other question one might ask “Why are there two base URIs, /contacts and /contact?” That’s a reasonable question.</p>
+<p>Context, from an HTTP perspective, a URI is just an identifier, it can be anything. It doesn’t have to even make sense to the client, but there is nothing wrong if it does. For example, have you looked at your average MSDN page lately? I’ll bet your not going to memorize those URIs any time soon. Try this one on for size: <a href="http://msdn.microsoft.com/en-us/magazine/cc135976.aspx">http://msdn.microsoft.com/en-us/magazine/cc135976.aspx</a>.</p>
+<p>The first reason, is well because I could. Although it is very common to have base URIs for items and collections be the same, nothing forces you to do that because again it’s just an identifier. Speaking to various folks I found some preferred that it not be while many others thought it MUST be the same . In order to break that mental mold I chose to keep them separate.</p>
+<p>The second reason was to illustrate how to keep the client decoupled from the server by leveraging some of what HTTP has to offer. By the conventional wisdom / using a single base URI, the client posts to “/contacts” and gets back a response which contains the new ContactID. The client then has logic to retrieve that ID and to append it to the base URI i.e. “/contacts/1” to get that contact. That however is flawed and won’t work in the ContactManager sample as the item is at a different base URI <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_wink.gif' alt=';-)' class='wp-smiley' /> </p>
+<p>It’s not an issue though because fortunately HTTP provides an answer for us, the location header. If we put on our pedantic hats and head on over to the HTTP <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.30">RFC</a> we see the following:</p>
+<p>“For 201 (Created) responses, the Location is that of the new resource which was created by the request.”.</p>
+<p>201 is the status code returned from POST whenever a resource is created. When the server creates a resource it can also include a Location header indicating the URI where that new resource is located. For example if I post to “/contacts” the server can return me a location header of “/contact/1” to tell me where to find it.</p>
+<p>It doesn’t have to have an ID in the URI though! It could be the name “/contact/glenn%20block”. It could be a guid i.e. “/contact/849bb2ff-ccff-4315-b2ea-4dcb9736b394”. It is completely up to the server and the contents of the URI may not even appear in the contact response itself. It doesn’t matter though. As long as my client is pedantic <img src='http://cdn1.codebetter.com/wp-includes/images/smilies/icon_smile.gif' alt=':-)' class='wp-smiley' />  and follows the RFC all it has to do is save the location header URI and it can find that resource.</p>
+<p>The beauty of this is that the server can evolve over time how it creates those URIs and the client is not broken. Oh no you are probably saying, here come the REST zealots!</p>
+<p>Hardly. For example (kudos to <a href="http://twitter.com/howard_dierking">@howard_dierking</a> for this scenario) imagine initially when we created our system we used long IDs in the URI that point to each contact. Then over time we realize we need to scale out and replicate across servers. At that point we need an ID that is unique across all DB instances, such as a GUID. We can now silently change the contact URI to use a GUID instead. Our clients happily operate without a hitch as they simply take the newer URI that is handed to them in the location header.</p>
+<p>I hope this clarifies why we have 2 controllers which itself has nothing to do with REST.</p>
+<div class="shr-publisher-361"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->]]></content:encoded>
+			<wfw:commentRss>http://codebetter.com/glennblock/2012/02/28/why-are-there-2-controllers-in-the-asp-net-web-api-contactmanager-example-rest-has-nothing-to-with-it-2/feed/</wfw:commentRss>
+		<slash:comments>26</slash:comments>
+		</item>
+		<item>
+		<title>Disabling the Xml Formatter in ASP.NET Web API&#8211;The easy way</title>
+		<link>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way-2/</link>
+		<comments>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way-2/#comments</comments>
+		<pubDate>Sun, 26 Feb 2012 07:42:09 +0000</pubDate>
+		<dc:creator>Glenn Block</dc:creator>
+				<category><![CDATA[ASP.NET Web API]]></category>
+
+		<guid isPermaLink="false">http://codebetter.com/glennblock/?p=345</guid>
+		<description><![CDATA[OK, I have not posted yet on the fact that WCF Web API is now reborn as ASP.NET Web API. I just did! Yes it is true. That in itself is very awesome news which I am sure many of&#160;&#8230; <a href="http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way-2/">Continue&#160;reading&#160;<span class="meta-nav">&#8594;</span></a>]]></description>
+			<content:encoded><![CDATA[<!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>OK, I have not posted yet on the fact that WCF Web API is now reborn as ASP.NET Web API. I just did! Yes it is true. That in itself is very awesome news which I am sure many of you have already heard about. If not, go jump to Scott Gu’s blog <a href="http://weblogs.asp.net/scottgu/archive/2012/02/23/asp-net-web-api-part-1.aspx">here</a> right now! I still have a post planned on that. Yes, I HAVE to post….later!</p>
+<p>Moving on so that this idea doesn’t get lost in the warehouse of “to be posted” posts.</p>
+<p>A common request people are asking is how to disable / remove the xml formatter so that their web apis ONLY return JSON regardless of the accept header.</p>
+<p>There’s a few different common approaches to doing this, including:</p>
+<ul>
+<li>Create a custom message handler which overrides accept headers. I did one a long time ago <a href="http://codepaste.net/wehh49">here</a>. The handler is then registered in the config.</li>
+<li>Remove the formatter from the collection. There’s a pretty easy way to do this as the formatters collection actually exposes an XmlFormatter property thus you can just remove it from the collection. Below is a snippet showing how to do this using the global config when hosted in ASP.NET.</li>
+</ul>
+<pre style="border-bottom: #cecece 1px solid;border-left: #cecece 1px solid;padding-bottom: 5px;background-color: #fbfbfb;padding-left: 5px;width: 595px;padding-right: 5px;height: 62px;overflow: auto;border-top: #cecece 1px solid;border-right: #cecece 1px solid;padding-top: 5px"><pre style="background-color: #fbfbfb;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">var formatters = GlobalConfiguration.Configuration.Formatters;
+</pre>
+<pre style="background-color: #fbfbfb;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">formatters.Remove(formatters.XmlFormatter);</pre>
+<p>&nbsp;</p>
+<p>This evening I was reading my friend Shawn Wildermuth’s blog&nbsp; post <a href="http://wildermuth.com/2012/2/22/WebAPI_for_the_MVC_Guy">“WebAPI for the MVC guy”</a> (which you should also check out) and I saw he was using a&nbsp; significantly more complex variant of the second option by looping through the formatters to remove the XmlFormatter. I am sure he would not have done that had he known about the formatter hanging off of the formatters collection, however it’s probably not the most obvious.</p>
+<p>Looking at the code I then realized there’s a third. It’s by far the least amount of code of any of the approaches I’ve seen and it’s so dead simple</p>
+<pre><pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();</pre>
+<p>&nbsp;</p>
+<p>What this does is remove the supported media types from the XmlFormatter. Our content negotiation algorithm looks at that collection to determine if that formatter is a match. By making it empty, well it becomes no-op.</p>
+<p>Any questions?</p>
+<div class="shr-publisher-345"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->]]></content:encoded>
+			<wfw:commentRss>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way-2/feed/</wfw:commentRss>
+		<slash:comments>6</slash:comments>
+		</item>
+		<item>
+		<title>Disabling the xml formatter in ASP.NET Web API&#8211;The easy way</title>
+		<link>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way/</link>
+		<comments>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way/#comments</comments>
+		<pubDate>Sun, 26 Feb 2012 07:39:59 +0000</pubDate>
+		<dc:creator>Glenn Block</dc:creator>
+				<category><![CDATA[ASP.NET Web API]]></category>
+
+		<guid isPermaLink="false">http://codebetter.com/glennblock/?p=342</guid>
+		<description><![CDATA[OK, I have not posted yet on the fact that WCF Web API is now reborn as ASP.NET Web API. I just did! Yes it is true. That in itself is very awesome news which I am sure many of&#160;&#8230; <a href="http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way/">Continue&#160;reading&#160;<span class="meta-nav">&#8594;</span></a>]]></description>
+			<content:encoded><![CDATA[<!-- Start Shareaholic LikeButtonSetTop Automatic --><!-- End Shareaholic LikeButtonSetTop Automatic --><p>OK, I have not posted yet on the fact that WCF Web API is now reborn as ASP.NET Web API. I just did! Yes it is true. That in itself is very awesome news which I am sure many of you have already heard about. If not, go jump to Scott Gu’s blog <a href="http://weblogs.asp.net/scottgu/archive/2012/02/23/asp-net-web-api-part-1.aspx">here</a> right now! I still have a post planned on that. Yes, I HAVE to post….later!</p>
+<p>Moving on so that this idea doesn’t get lost in the warehouse of “to be posted” posts.</p>
+<p>A common request people are asking is how to disable / remove the xml formatter so that their web apis ONLY return JSON regardless of the accept header.</p>
+<p>There’s a few different common approaches to doing this. Including:</p>
+<ul>
+<li>Create a custom message handler which overrides accept headers. I did one a long time ago <a href="http://codepaste.net/wehh49">here</a>. The handler is then registered in the config.</li>
+<li>Remove the formatter from the collection. There’s a pretty easy way to do this as the formatters collection actually exposes an XmlFormatter property thus you can just remove it from the collection. Below is a snippet showing how to do this using the global config when hosted in ASP.NET.</li>
+</ul>
+<pre style="border-bottom: #cecece 1px solid;border-left: #cecece 1px solid;padding-bottom: 5px;background-color: #fbfbfb;padding-left: 5px;width: 595px;padding-right: 5px;height: 62px;overflow: auto;border-top: #cecece 1px solid;border-right: #cecece 1px solid;padding-top: 5px"><pre style="background-color: #fbfbfb;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">var formatters = GlobalConfiguration.Configuration.Formatters;
+</pre>
+<pre style="background-color: #fbfbfb;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">formatters.Remove(formatters.XmlFormatter);</pre>
+<p>&nbsp;</p>
+<p>This evening I was reading my friend Shawn Wildermuth’s blog&nbsp; post <a href="http://wildermuth.com/2012/2/22/WebAPI_for_the_MVC_Guy">“WebAPI for the MVC guy”</a> (which you should also check out) and I saw he was using a&nbsp; significantly more complex variant of the second option by looping through the formatters to remove the XmlFormatter. I am sure he would not have done that had he known about the formatter hanging off of the formatters collection, however it’s probably not the most obvious.</p>
+<p>Looking at the code I then realized there’s a third. It’s by far the least amount of code of any of the approaches I’ve seen and it’s so dead simple</p>
+<pre><pre style="background-color: #ffffff;margin: 0em;width: 100%;font-family: consolas,'Courier New',courier,monospace;font-size: 12px">GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();</pre>
+<p>&nbsp;</p>
+<p>What this does is remove the supported media types from the XmlFormatter. Our content negotiation algorithm looks at that collection to determine if that formatter is a match. By making it empty, well it becomes no-op.</p>
+<p>Any questions?</p>
+<div class="shr-publisher-342"></div><!-- Start Shareaholic LikeButtonSetBottom Automatic --><!-- End Shareaholic LikeButtonSetBottom Automatic -->]]></content:encoded>
+			<wfw:commentRss>http://codebetter.com/glennblock/2012/02/26/disabling-the-xml-formatter-in-asp-net-web-apithe-easy-way/feed/</wfw:commentRss>
+		<slash:comments>2</slash:comments>
+		</item>
+	</channel>
+</rss>
+
+<!-- Dynamic page generated in 0.940 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2012-11-26 15:00:20 -->
