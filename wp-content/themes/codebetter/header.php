@@ -90,7 +90,7 @@ style="display: none;" marginheight="0" marginwidth="0">
 					<li><a href="http://feeds.feedburner.com/CodeBetter" rel="alternate" type="application/rss+xml"><img src="http://www.feedburner.com/fb/images/pub/feed-icon16x16.png" alt="" style="vertical-align:middle;border:0"/></a><a href="http://feeds.feedburner.com/CodeBetter"><img src="http://feeds.feedburner.com/~fc/CodeBetter?bg=EFEFEF&amp;fg=2E9BD2&amp;anim=1" height="26" width="88" style="vertical-align:middle;border:0"/></a></li>
 				</ul>
 			</div><!-- end div#globalNav.container_12 -->
-			<div id="aspose" class="grid_12">
+			<div id="aspose" class="grid_12" style="font-size:large;">
 				<a href="http://www.aspose.com/products/total/net?utm_source=codebetter&utm_medium=banner&utm_campaign=codebetter-sponsored">Sponsored By Aspose - File Format APIs for .NET</a>
 				<p>Aspose are the market leader of .NET APIs for file business formats – natively work with DOCX, XLSX, PPT, PDF, MSG, MPP, images formats and many more!</p>
 			</div>
