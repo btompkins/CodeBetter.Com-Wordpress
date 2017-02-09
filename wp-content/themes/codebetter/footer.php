@@ -26,7 +26,6 @@
 <li>NGEDIT: <a href="http://www.viemu.com/">ViEmu</a> and <a href="http://www.codekana.com/">Codekana</a> </li>
 <li><a href="http://www.devexpress.com/" target="_blank">DevExpress</a></li>
 <li><a href="http://nhprof.com" target="_blank">NHibernate Profiler</a></li>
-<li><a href="http://unfuddle.com" target="_blank">Unfuddle</a></li>
 <li><a href="http://www.balsamiq.com/products/mockups" target="_blank">Balsamiq Mockups</a></li>
 <li><a href="http://scrumy.com" target="_blank">Scrumy</a></li>
 <li><a href="http://umbraco.com" target="_blank">Umbraco</a></li>
